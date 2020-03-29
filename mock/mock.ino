@@ -1,5 +1,10 @@
 // install this https://github.com/maniacbug/StandardCplusplus
 #include <StandardCplusplus.h>
+
+// If this fails, install ArduinoSTL from the Arduino library
+// and use the following instead:
+// #include <ArduinoSTL.h>
+
 #include <map>
 
 // change it to \n in case of line termination is not \n\r
