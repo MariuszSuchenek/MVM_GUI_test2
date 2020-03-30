@@ -19,6 +19,7 @@ class DataFiller():
         self._monitors = {}
         self._data = {}
         self._window_width = window_width
+        self._xdata = np.arange(-self._window_width, 0)
         return
 
     def connect_plot(self, name, plot):
@@ -28,7 +29,7 @@ class DataFiller():
         '''
         self._plots[name] = plot.plot()
         self._data[name] = np.linspace(0, 0, self._window_width)
-        self._plots[name].setData(self._data[name])
+        self._plots[name].setData(self._xdata, self._data[name])
 
         plot.setLabel(axis='left', text=to_units.get(name, ''))
 
@@ -55,7 +56,7 @@ class DataFiller():
         self._data[name][-1] = data_point
 
         # set the data to the plot to show
-        self._plots[name].setData(self._data[name])
+        self._plots[name].setData(self._xdata, self._data[name])
 
         self.update_monitor(name)
 
