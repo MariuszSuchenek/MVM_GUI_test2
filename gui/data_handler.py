@@ -49,6 +49,7 @@ class DataHandler():
         '''
 
         self._running = False
+        self._threadpool.waitForDone()
 
     def esp32_io(self, data_callback):
         '''
