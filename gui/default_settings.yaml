@@ -7,6 +7,9 @@ read_from_esp: True
 # Number of samples to display in the graphs:
 nsamples: 100
 
+# time in seconds between two data retrieval
+sampling_interval: 0.1
+
 # Variables to display in the graphs (must match names in the ESP):
 plot_top_var: mve
 plot_mid_var: vti
