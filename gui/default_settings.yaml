@@ -1,9 +1,8 @@
 # The serial port to use:
-port: '/dev/pts/5'
-# port: '/dev/cu.usbmodem141301'
+port: '/dev/cu.usbmodem141301'
 
 # If false, opens the GUI but doesn't read data:
-read_from_esp: False
+read_from_esp: True
 
 # Number of samples to display in the graphs:
 nsamples: 100
