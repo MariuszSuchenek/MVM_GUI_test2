@@ -117,6 +117,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.mode = 1
             self.button_startauto.setText("Stop Automatic")
             self.button_startman.setDisabled(True)
+
+            # change button color
+            palette = self.button_startauto.palette()
+            role = self.button_startauto.backgroundRole() #choose whatever you like
+            palette.setColor(role, QtGui.QColor("#fc6203"))
+            self.button_startauto.setPalette(palette)
         else:
             confirmation = QtWidgets.QMessageBox.warning(
                     self, 
@@ -130,6 +136,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.button_startauto.setText("Start Automatic")
                 self.button_startman.setEnabled(True)
 
+                # change button color
+                palette = self.button_startauto.palette()
+                role = self.button_startauto.backgroundRole() #choose whatever you like
+                palette.setColor(role, QtGui.QColor("#eeeeee"))
+                self.button_startauto.setPalette(palette)
+
     def toggle_manual(self):
         """
         Toggles between manual mode (2) and stop (0).
@@ -140,6 +152,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.mode = 2
             self.button_startman.setText("Stop Manual")
             self.button_startauto.setDisabled(True)
+
+            # change button color
+            palette = self.button_startman.palette()
+            role = self.button_startman.backgroundRole() #choose whatever you like
+            palette.setColor(role, QtGui.QColor("#fc6203"))
+            self.button_startman.setPalette(palette)
         else:
             confirmation = QtWidgets.QMessageBox.warning(
                     self, 
@@ -152,3 +170,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.mode = 0
                 self.button_startman.setText("Start Manual")
                 self.button_startauto.setEnabled(True)
+
+                # change button color
+                palette = self.button_startman.palette()
+                role = self.button_startman.backgroundRole() #choose whatever you like
+                palette.setColor(role, QtGui.QColor("#eeeeee"))
+                self.button_startman.setPalette(palette)
