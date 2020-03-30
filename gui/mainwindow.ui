@@ -7,36 +7,37 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>460</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>460</height>
+    <height>480</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>800</width>
-    <height>460</height>
+    <height>480</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushbutton_settings">
+   <widget class="QPushButton" name="button_settings">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>370</y>
       <width>161</width>
-      <height>91</height>
+      <height>101</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <pointsize>15</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
@@ -44,102 +45,6 @@
     <property name="text">
      <string>Settings</string>
     </property>
-   </widget>
-   <widget class="QFrame" name="frame_7">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>10</y>
-      <width>161</width>
-      <height>121</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>161</width>
-      <height>121</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>161</width>
-      <height>121</height>
-     </size>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="leftMargin">
-      <number>1</number>
-     </property>
-     <property name="topMargin">
-      <number>1</number>
-     </property>
-     <property name="rightMargin">
-      <number>1</number>
-     </property>
-     <property name="bottomMargin">
-      <number>1</number>
-     </property>
-     <property name="spacing">
-      <number>1</number>
-     </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Ppeak</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Pmean</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" rowspan="2">
-      <widget class="QLabel" name="label_13">
-       <property name="font">
-        <font>
-         <pointsize>20</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>10</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="2">
-      <widget class="QLabel" name="label_10">
-       <property name="font">
-        <font>
-         <pointsize>30</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>30</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </widget>
    <widget class="PlotWidget" name="plot_top" native="true">
     <property name="geometry">
@@ -177,7 +82,7 @@
       <x>159</x>
       <y>370</y>
       <width>161</width>
-      <height>91</height>
+      <height>111</height>
      </rect>
     </property>
    </widget>
@@ -187,7 +92,7 @@
       <x>320</x>
       <y>370</y>
       <width>161</width>
-      <height>91</height>
+      <height>111</height>
      </rect>
     </property>
    </widget>
@@ -197,17 +102,101 @@
       <x>480</x>
       <y>370</y>
       <width>161</width>
-      <height>91</height>
+      <height>111</height>
      </rect>
     </property>
    </widget>
-   <widget class="ToolSettings" name="toolsettings_4" native="true">
+   <widget class="QPushButton" name="button_startauto">
     <property name="geometry">
      <rect>
       <x>640</x>
       <y>370</y>
       <width>161</width>
-      <height>91</height>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>161</width>
+      <height>51</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>161</width>
+      <height>51</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Start Automatic</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_startman">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>420</y>
+      <width>161</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>161</width>
+      <height>51</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>161</width>
+      <height>51</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Start Manual</string>
+    </property>
+   </widget>
+   <widget class="Monitor" name="monitor_top" native="true">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>250</y>
+      <width>161</width>
+      <height>121</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="Monitor" name="monitor_mid" native="true">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>130</y>
+      <width>161</width>
+      <height>121</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="Monitor" name="monitor_bot" native="true">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>10</y>
+      <width>161</width>
+      <height>121</height>
      </rect>
     </property>
    </widget>
@@ -225,6 +214,12 @@
    <class>PlotWidget</class>
    <extends>QWidget</extends>
    <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Monitor</class>
+   <extends>QWidget</extends>
+   <header>monitor/monitor</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
