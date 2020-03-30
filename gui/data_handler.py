@@ -31,7 +31,7 @@ class DataHandler():
         '''
         self._data_f = data_filler
 
-    def eps32_data_callback(self, parameter, data):
+    def esp32_data_callback(self, parameter, data):
         '''
         This method is called everytime there is a new read from
         the ESP32, and it receives the parameters read, and
@@ -50,7 +50,7 @@ class DataHandler():
 
         self._running = False
 
-    def eps32_io(self, data_callback):
+    def esp32_io(self, data_callback):
         '''
         This is the main function that runs in the thread.
         '''
@@ -67,7 +67,7 @@ class DataHandler():
             vte = float(self._esp32.get("vte"))
 
             # data_callback emits a signal, which is
-            # received by eps32_data_callback, which
+            # received by esp32_data_callback, which
             # then sets the parameters in the DataFiller
             data_callback.emit('mve', mve)
             data_callback.emit('vti', vti)
@@ -92,8 +92,8 @@ class DataHandler():
         '''
         Starts the thread.
         '''
-        worker = Worker(self.eps32_io)
-        worker.signals.result.connect(self.eps32_data_callback)
+        worker = Worker(self.esp32_io)
+        worker.signals.result.connect(self.esp32_data_callback)
         worker.signals.finished.connect(self.thread_complete)
 
         self._threadpool.start(worker)
