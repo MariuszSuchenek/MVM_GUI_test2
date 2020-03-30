@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 from PyQt5 import QtWidgets, uic
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from toolsettings.toolsettings import ToolSettings
 from monitor.monitor import Monitor
+from settings.settings import Settings
+from serial.esp32serial import ESP32Serial
 
 import pyqtgraph as pg
 import sys
@@ -71,9 +74,9 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect settings button to Settings overlay.
         '''
+        self.settings = Settings(self) 
         self.button_settings = self.findChild(QtWidgets.QPushButton, "button_settings")
-
-        self.show() # Show the GUI
+        self.button_settings.pressed.connect(self.settings.show)
 
     def toggle_automatic(self):
         """
@@ -104,8 +107,3 @@ class MainWindow(QtWidgets.QMainWindow):
             self.mode = 0
             self.button_startman.setText("Start Manual")
             self.button_startauto.setEnabled(True)
-
-# Display the GUI
-app = QtWidgets.QApplication(sys.argv) 
-window = MainWindow() 
-app.exec_()

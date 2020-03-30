@@ -25,6 +25,10 @@ class ToolSettings(QtWidgets.QWidget):
         """
         Sets up main values for the ToolSettings widget, including the name and the values for the
         range as (minimum, initial, maximum).
+
+        name: The name to be displayed.
+        setrange: Tuple (min, current, max) specifying the allowed min/max values and current value.
+        units: String value for the units to be displayed.
         """
         self.label_name.setText(name)
 
@@ -40,13 +44,15 @@ class ToolSettings(QtWidgets.QWidget):
         if units is not None:
             self.label_units.setText(str(units))
         else:
-            self.lable_units.setText("")
+            self.label_units.setText("")
 
         self.update(val)
 
     def update(self, value):
         """
         Updates the slider position and text value to a provided value (min < value < max).
+
+        value: The value that the setting will display.
         """
         self.slider_value.setSliderPosition(value)
         self.label_value.setText(str(value))
