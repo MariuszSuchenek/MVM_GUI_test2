@@ -89,6 +89,7 @@ class DataHandler():
             self._n_attempts += 1
             if self._n_attempts > 100:
                 raise Exception('Failed to communicate with ESP after 100 attempts.')
+            self._running = False
             self.start_io_thread()
 
     def start_io_thread(self):
