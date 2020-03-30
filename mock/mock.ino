@@ -1,4 +1,3 @@
-// install this https://github.com/maniacbug/StandardCplusplus
 #include <StandardCplusplus.h>
 
 // If this fails, install ArduinoSTL from the Arduino library
@@ -6,6 +5,8 @@
 // #include <ArduinoSTL.h>
 
 #include <map>
+#include <vector>
+#include <algorithm> // std::find
 
 // change it to \n in case of line termination is not \n\r
 auto const terminator = '\r';
@@ -13,10 +14,14 @@ auto const separator = ' ';
 
 std::map<String, String> parameters;
 
+std::vector<String> random_measures;
+
 void setup()
 {
   Serial.begin(115200);
   Serial.setTimeout(50000);
+
+  random_measures = { "mve", "vti", "vte" };
 }
 
 // this is tricky, didn't had the time to think a better algo
@@ -43,9 +48,20 @@ String set(String const& command)
 String get(String const& command)
 {
   auto const name = parse_word(command);
-  auto const it = parameters.find(name);
 
-  return it == parameters.end() ? String("unknown") : it->second;
+  auto const it = std::find(
+      random_measures.begin()
+    , random_measures.end()
+    , name
+  );
+
+  if (it != random_measures.end()) {
+    return String(random(10, 40));
+  } else {
+    auto const it = parameters.find(name);
+
+    return it == parameters.end() ? String("unknown") : it->second;
+  }
 }
 
 void loop()
