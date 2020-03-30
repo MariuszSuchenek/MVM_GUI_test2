@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>MVM GUI</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QPushButton" name="button_settings">

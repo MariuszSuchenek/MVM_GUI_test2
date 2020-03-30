@@ -1,0 +1,13 @@
+# The serial port to use:
+port: '/dev/cu.usbmodem141301'
+
+# If false, opens the GUI but doesn't read data:
+read_from_esp: True
+
+# Number of samples to display in the graphs:
+nsamples: 100
+
+# Variables to display in the graphs (must match names in the ESP):
+plot_top_var: mve
+plot_mid_var: vti
+plot_bot_var: vte

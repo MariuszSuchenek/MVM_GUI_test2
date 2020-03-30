@@ -5,19 +5,25 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from toolsettings.toolsettings import ToolSettings
 from monitor.monitor import Monitor
 from settings.settings import Settings
-from serial.esp32serial import ESP32Serial
+from data_filler import DataFiller
+from data_handler import DataHandler
 
 import pyqtgraph as pg
 import sys
 
+
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, config, *args, **kwargs):
         """
         Initializes the main window for the MVM GUI. See below for subfunction setup description.
         """
 
         super(MainWindow, self).__init__(*args, **kwargs)
         uic.loadUi('mainwindow.ui', self) # Load the .ui file
+
+        self.config = config
+
+        self.data_filler = DataFiller(config['nsamples'])
 
         '''
         Set up tool settings (bottom bar)
@@ -61,6 +67,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.monitors[1].setup("O<sub>2</sub>", setrange=(35, 41, 45),   units="(b/min)")
         self.monitors[2].setup("MVe",           setrange=(50, 71, 400),  units="(b/min)")
 
+        self.data_filler.connect_monitor(config['plot_top_var'], self.monitors[2])
+        # Need to add the other monitors...which ones?
+
+
         '''
         Set up plots (PyQtPlot)
 
@@ -70,6 +80,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plots.append(self.findChild(QtWidgets.QWidget, "plot_top"))
         self.plots.append(self.findChild(QtWidgets.QWidget, "plot_mid"))
         self.plots.append(self.findChild(QtWidgets.QWidget, "plot_bot"))
+        self.data_filler.connect_plot(config['plot_top_var'], self.plots[0])
+        self.data_filler.connect_plot(config['plot_mid_var'], self.plots[1])
+        self.data_filler.connect_plot(config['plot_bot_var'], self.plots[2])
 
         '''
         Connect settings button to Settings overlay.
@@ -77,6 +90,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings = Settings(self) 
         self.button_settings = self.findChild(QtWidgets.QPushButton, "button_settings")
         self.button_settings.pressed.connect(self.settings.show)
+
+        '''
+        Instantiate DataHandler, which will start a new
+        thread to read data from the ESP32. We also connect
+        the DataFiller to it, so the thread will pass the
+        data directly to the DataFiller, which will 
+        then display them.
+        '''
+        self._data_h = DataHandler(config['port'])
+        self._data_h.connect_data_filler(self.data_filler)
+        if config['read_from_esp']:
+            self._data_h.start_io_thread()
 
     def toggle_automatic(self):
         """
