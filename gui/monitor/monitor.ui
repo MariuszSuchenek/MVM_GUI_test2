@@ -147,6 +147,7 @@
     <widget class="QLabel" name="label_value">
      <property name="font">
       <font>
+       <family>Noto Mono</family>
        <pointsize>30</pointsize>
       </font>
      </property>
