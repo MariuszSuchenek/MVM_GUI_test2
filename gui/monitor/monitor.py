@@ -24,6 +24,9 @@ class Monitor(QtWidgets.QWidget):
         self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue1"))
         self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue2"))
 
+        # Set up connections
+        self.mouseReleaseEvent = self.clear_alarm
+
         self.setAutoFillBackground(True)
         self.show()
     def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red'):
@@ -68,12 +71,19 @@ class Monitor(QtWidgets.QWidget):
         self.label_value.setText(str(value))
 
         # handle palette changes due to alarm
+        if self.is_alarm():
+            palette = self.palette()
+            role = self.backgroundRole() #choose whatever you like
+            palette.setColor(role, QtGui.QColor(self.alarmcolor))
+            self.setPalette(palette)
+
+    def clear_alarm(self, event):
+        """
+        Clears previous out of range alarms by reverting the background color.
+        """
         palette = self.palette()
         role = self.backgroundRole() #choose whatever you like
-        if self.is_alarm():
-            palette.setColor(role, QtGui.QColor(self.alarmcolor))
-        else:
-            palette.setColor(role, QtGui.QColor("#eeeeee"))
+        palette.setColor(role, QtGui.QColor("#eeeeee"))
         self.setPalette(palette)
 
     def is_alarm(self):
