@@ -13,10 +13,10 @@ class WorkerSignals(QObject):
 
     finished
         No data
-    
+
     error
         `tuple` (exctype, value, traceback.format_exc() )
-    
+
     result
         `parameter`, `object` data returned from processing: parameter, value
 
@@ -37,7 +37,7 @@ class Worker(QRunnable):
 
     Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
 
-    :param callback: The function callback to run on this worker thread. Supplied args and 
+    :param callback: The function callback to run on this worker thread. Supplied args and
                      kwargs will be passed through to the runner.
     :type callback: function
     :param args: Arguments to pass to the callback function
@@ -52,18 +52,18 @@ class Worker(QRunnable):
         self.fn = fn
         self.args = args
         self.kwargs = kwargs
-        self.signals = WorkerSignals()    
+        self.signals = WorkerSignals()
 
         # Add the callback to our kwargs
-        # self.kwargs['progress_callback'] = self.signals.progress        
-        self.kwargs['data_callback'] = self.signals.result        
+        # self.kwargs['progress_callback'] = self.signals.progress
+        self.kwargs['data_callback'] = self.signals.result
 
     @pyqtSlot()
     def run(self):
         '''
         Initialise the runner function with passed args, kwargs.
         '''
-        
+
         # Retrieve args/kwargs here; and fire processing using them
         try:
             result = self.fn(*self.args, **self.kwargs)
