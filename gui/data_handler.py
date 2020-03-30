@@ -32,7 +32,7 @@ class DataHandler():
 
     def eps32_data_callback(self, parameter, data):
         '''
-        This method is called everytime there is a new read from 
+        This method is called everytime there is a new read from
         the ESP32, and it receives the parameters read, and
         the data associated to it
         '''
@@ -45,17 +45,17 @@ class DataHandler():
     def eps32_io(self, data_callback):
         '''
         This is the main function that runs in the thread.
-        As of now, it generated random data which is set in 
+        As of now, it generated random data which is set in
         the ESP, and the same data is then retrieved.
         '''
-        
+
         try:
             esp32 = ESP32Serial(self._port)
         except:
             print(f"\033[91mERROR: Cannot communicate with port {self._port}\033[0m")
             return
 
-        
+
         while True:
             # set a random value for now
             result = esp32.set("mve", random.randint(10, 40))
@@ -70,9 +70,9 @@ class DataHandler():
             mve = float(esp32.get("mve"))
             vti = float(esp32.get("vti"))
             vte = float(esp32.get("vte"))
-            
+
             # data_callback emits a signal, which is
-            # received by eps32_data_callback, which 
+            # received by eps32_data_callback, which
             # then sets the parameters in the DataFiller
             data_callback.emit('mve', mve)
             data_callback.emit('vti', vti)
@@ -81,8 +81,8 @@ class DataHandler():
             # Sleep for some time...
             time.sleep(0.1)
 
-        return "Done."    
-            
+        return "Done."
+
     def thread_complete(self):
         '''
         Called when a thread ends.
@@ -99,9 +99,7 @@ class DataHandler():
         '''
         worker = Worker(self.eps32_io)
         worker.signals.result.connect(self.eps32_data_callback)
-        worker.signals.finished.connect(self.thread_complete) 
+        worker.signals.finished.connect(self.thread_complete)
 
-        self._threadpool.start(worker) 
-
-
+        self._threadpool.start(worker)
 
