@@ -13,7 +13,7 @@ import sys
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, config, *args, **kwargs):
+    def __init__(self, config, esp32, *args, **kwargs):
         """
         Initializes the main window for the MVM GUI. See below for subfunction setup description.
         """
@@ -24,12 +24,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.config = config
 
         self.data_filler = DataFiller(config['nsamples'])
+        self.esp32 = esp32
 
         '''
         Set up tool settings (bottom bar)
 
         self.toolsettings[..] are the objects that hold min, max values for a given setting as
-        as the current value (displayed as a slider and as a number). 
+        as the current value (displayed as a slider and as a number).
         '''
         self.toolsettings = [];
         self.toolsettings.append(self.findChild(QtWidgets.QWidget, "toolsettings_1"))
@@ -54,7 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Set up data monitor/alarms (side bar)
 
-        self.monitors[..] are the objects that hold monitor values and thresholds for alarm min 
+        self.monitors[..] are the objects that hold monitor values and thresholds for alarm min
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
@@ -62,7 +63,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.monitors.append(self.findChild(QtWidgets.QWidget, "monitor_top"))
         self.monitors.append(self.findChild(QtWidgets.QWidget, "monitor_mid"))
         self.monitors.append(self.findChild(QtWidgets.QWidget, "monitor_bot"))
-        
+
         self.monitors[0].setup("RR",            setrange=(5, 12, 30),    units="(b/min)")
         self.monitors[1].setup("O<sub>2</sub>", setrange=(35, 41, 45),   units="(b/min)")
         self.monitors[2].setup("MVe",           setrange=(50, 71, 400),  units="(b/min)")
@@ -87,7 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect settings button to Settings overlay.
         '''
-        self.settings = Settings(self) 
+        self.settings = Settings(self)
         self.button_settings = self.findChild(QtWidgets.QPushButton, "button_settings")
         self.button_settings.pressed.connect(self.settings.show)
 
@@ -95,13 +96,16 @@ class MainWindow(QtWidgets.QMainWindow):
         Instantiate DataHandler, which will start a new
         thread to read data from the ESP32. We also connect
         the DataFiller to it, so the thread will pass the
-        data directly to the DataFiller, which will 
+        data directly to the DataFiller, which will
         then display them.
         '''
-        self._data_h = DataHandler(config['port'])
+        self._data_h = DataHandler(config, self.esp32)
         self._data_h.connect_data_filler(self.data_filler)
         if config['read_from_esp']:
             self._data_h.start_io_thread()
+
+    def closeEvent(self, event):
+        self._data_h.stop_io()
 
     def toggle_automatic(self):
         """
@@ -125,7 +129,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Changes text from "Start" to "Stop" and en/disables automatic button depending on mode.
         """
         if self.mode == 0:
-            self.mode = 2 
+            self.mode = 2
             self.button_startman.setText("Stop Manual")
             self.button_startauto.setDisabled(True)
         else:
