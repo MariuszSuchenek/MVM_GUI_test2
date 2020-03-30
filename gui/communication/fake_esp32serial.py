@@ -7,10 +7,13 @@ as needed.
 """
 
 from threading import Lock
+import random
         
 class FakeESP32Serial:
     def __init__(self):
         self.lock = Lock()
+        self.set_params = {}
+        self.random_params = ["mve", "vti", "vte"]
         
     def set(self, name, value):
         """
@@ -25,6 +28,7 @@ class FakeESP32Serial:
         """
 
         with self.lock:
+            self.set_params[name] = value
             return "OK"
     
     def get(self, name):
@@ -38,4 +42,9 @@ class FakeESP32Serial:
         """
 
         with self.lock:
-            return 1.5
+            if name in self.set_params:
+                return self.set_params[name]
+            elif name in self.random_params:
+                return random.uniform(10, 100)
+            else:
+                return 0
