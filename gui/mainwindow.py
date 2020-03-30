@@ -10,6 +10,7 @@ from data_handler import DataHandler
 
 import pyqtgraph as pg
 import sys
+import time
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -115,14 +116,18 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if self.mode == 0:
             self.mode = 1
-            self.button_startauto.setText("Stop Automatic")
             self.button_startman.setDisabled(True)
+            self.button_startauto.setDisabled(True)
 
-            # change button color
+            # Set timeout for being able to stop this mode
             palette = self.button_startauto.palette()
-            role = self.button_startauto.backgroundRole() #choose whatever you like
-            palette.setColor(role, QtGui.QColor("#fc6203"))
-            self.button_startauto.setPalette(palette)
+            role = self.button_startauto.backgroundRole() 
+            QtCore.QTimer.singleShot(self.config['start_mode_timeout'], lambda: ( 
+                    # change button color and enable the stop button
+                    self.button_startauto.setText("Stop Automatic"),
+                    palette.setColor(role, QtGui.QColor("#fc6203")),
+                    self.button_startauto.setPalette(palette),
+                    self.button_startauto.setEnabled(True)))
         else:
             confirmation = QtWidgets.QMessageBox.warning(
                     self, 
@@ -138,7 +143,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 # change button color
                 palette = self.button_startauto.palette()
-                role = self.button_startauto.backgroundRole() #choose whatever you like
+                role = self.button_startauto.backgroundRole() 
                 palette.setColor(role, QtGui.QColor("#eeeeee"))
                 self.button_startauto.setPalette(palette)
 
@@ -150,14 +155,20 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if self.mode == 0:
             self.mode = 2
-            self.button_startman.setText("Stop Manual")
             self.button_startauto.setDisabled(True)
-
-            # change button color
+            self.button_startman.setDisabled(True)
+            
+            # Set timeout for being able to stop this mode
             palette = self.button_startman.palette()
-            role = self.button_startman.backgroundRole() #choose whatever you like
-            palette.setColor(role, QtGui.QColor("#fc6203"))
-            self.button_startman.setPalette(palette)
+            role = self.button_startman.backgroundRole() 
+            QtCore.QTimer.singleShot(self.config['start_mode_timeout'], lambda: ( 
+                    # change button color and enable the stop button
+                    self.button_startman.setText("Stop Manual"),
+                    palette.setColor(role, QtGui.QColor("#fc6203")),
+                    self.button_startman.setPalette(palette),
+                    self.button_startman.setEnabled(True)))
+
+
         else:
             confirmation = QtWidgets.QMessageBox.warning(
                     self, 
@@ -173,6 +184,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 # change button color
                 palette = self.button_startman.palette()
-                role = self.button_startman.backgroundRole() #choose whatever you like
+                role = self.button_startman.backgroundRole() 
                 palette.setColor(role, QtGui.QColor("#eeeeee"))
                 self.button_startman.setPalette(palette)
