@@ -19,6 +19,7 @@ class ToolSettings(QtWidgets.QWidget):
         self.label_units = self.findChild(QtWidgets.QLabel, "label_units")
 
         self.slider_value.valueChanged.connect(self.update)
+        self.slider_value.setDisabled(True)
 
         self.show()
     def setup(self, name, setrange=(0,0,100), units=None):
