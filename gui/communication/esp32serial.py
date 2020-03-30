@@ -38,6 +38,9 @@ class ESP32Serial:
                                         timeout=timeout, **kwargs)
         self.lock = Lock()
 
+        while self.connection.read():
+            pass
+
     def __del__(self):
         """
         Destructor.
