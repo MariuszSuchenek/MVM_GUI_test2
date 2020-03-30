@@ -29,7 +29,8 @@ class Monitor(QtWidgets.QWidget):
 
         self.setAutoFillBackground(True)
         self.show()
-    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red', color='black'):
+    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red', 
+            color='black', step=None, dec_precision=0):
         """
         Sets up main values for the Monitor widget, including the name and the values for the
         range as (minimum, initial, maximum). Also optionally set the units and statistical values
@@ -40,6 +41,7 @@ class Monitor(QtWidgets.QWidget):
         units: String value for the units to be displayed.
         alarmcolor: Background color that the monitor will change to on alarm
         color: Text color
+        step: optional value for nearest rounded value (e.g. step=10 rounds to nearest 10)
         """
         self.label_name.setText(name)
 
@@ -50,6 +52,8 @@ class Monitor(QtWidgets.QWidget):
         self.value = val
         self.minimum = low
         self.maximum = high
+        self.step = step
+        self.dec_precision = dec_precision
 
         # Handle optional units
         if units is not None:
@@ -71,8 +75,11 @@ class Monitor(QtWidgets.QWidget):
 
         value: The value that the monitor will display.
         """
-        self.value = value;
-        self.label_value.setText("%.2f" % value)
+        if self.step is not None:
+            self.value = round(value / self.step) * self.step
+        else:
+            self.value = value;
+        self.label_value.setText("%.0f" % self.value)
 
         # handle palette changes due to alarm
         if self.is_alarm():

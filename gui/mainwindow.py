@@ -67,7 +67,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 "min": 0,
                 "init": 50,
                 "max": 100,
+                "step": None,
                 "units": None,
+                "dec_precision": 2,
                 "color": "black",
                 "alarmcolor": "red"}
 
@@ -82,7 +84,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         entry.get("max", monitor_default["max"])),
                     units=entry.get("units", monitor_default["units"]),
                     alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
-                    color=entry.get("color", monitor_default["color"]))
+                    color=entry.get("color", monitor_default["color"]),
+                    step=entry.get("step", monitor_default["step"]),
+                    dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
             self.monitors[name] = monitor
         self.data_filler.connect_monitor(config['plot_top_var'], self.monitors['monitor_top'])
         # Need to add the other monitors...which ones?

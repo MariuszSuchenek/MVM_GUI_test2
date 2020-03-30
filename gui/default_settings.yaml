@@ -20,28 +20,34 @@ start_mode_timeout: 2000 # [ms] between pressing Start and allowing Stop (max 30
 
 # Setup monitors (key value monitor_* must match widget name in mainwindow.ui)
 monitor_top: 
-    name: "RR"
-    min: 5
-    init: 12
-    max: 30
-    units: "(b/min)"
+    name: "Insp. Press."
+    min: 10
+    init: 30
+    max: 80
+    step: 1
+    dec_precision: 0
+    units: "(mbar)"
     color: "black"
     alarmcolor: "red"
 
 monitor_mid: 
-    name: "O<sub>2</sub>"
-    min: 35
-    init: 41
-    max: 45
-    units: "%"
+    name: "V<sub>tidal</sub>"
+    min: 50
+    init: 100
+    max: 1500
+    step: 100
+    dec_precision: 0
+    units: "mL"
     color: "blue"
     alarmcolor: "red"
 
 monitor_bot: 
     name: "MVe"
-    min: 50
-    init: 71
-    max: 400
-    units: "(l/min)"
+    min: 2 
+    init: 10
+    max: 20
+    step: 1
+    dec_precision: 0
+    units: "(slpm)"
     color: "green"
     alarmcolor: "red"
