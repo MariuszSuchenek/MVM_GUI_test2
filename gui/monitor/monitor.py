@@ -29,7 +29,7 @@ class Monitor(QtWidgets.QWidget):
 
         self.setAutoFillBackground(True)
         self.show()
-    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red'):
+    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red', color='black'):
         """
         Sets up main values for the Monitor widget, including the name and the values for the
         range as (minimum, initial, maximum). Also optionally set the units and statistical values
@@ -38,6 +38,8 @@ class Monitor(QtWidgets.QWidget):
         name: The name to be displayed.
         setrange: Tuple (min, current, max) specifying the allowed min/max values and current value.
         units: String value for the units to be displayed.
+        alarmcolor: Background color that the monitor will change to on alarm
+        color: Text color
         """
         self.label_name.setText(name)
 
@@ -54,6 +56,8 @@ class Monitor(QtWidgets.QWidget):
             self.label_units.setText(str(units))
         else:
             self.label_units.setText("")
+
+        self.setStyleSheet("QWidget { color: " + str(color) + "; }");
 
         self.alarmcolor = alarmcolor
         self.update(val)
