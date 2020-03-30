@@ -82,11 +82,13 @@ class DataHandler():
         '''
         Called when a thread ends.
         '''
-        print(f"\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
-        self._n_attempts += 1
-        if self._n_attempts > 100:
-            raise Exception('Failed to communicate with ESP after 100 attempts.')
-        self.start_io_thread()
+
+        if self._running:
+            print(f"\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
+            self._n_attempts += 1
+            if self._n_attempts > 100:
+                raise Exception('Failed to communicate with ESP after 100 attempts.')
+            self.start_io_thread()
 
     def start_io_thread(self):
         '''
