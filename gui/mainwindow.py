@@ -122,7 +122,14 @@ class MainWindow(QtWidgets.QMainWindow):
             # Set timeout for being able to stop this mode
             palette = self.button_startauto.palette()
             role = self.button_startauto.backgroundRole() 
-            QtCore.QTimer.singleShot(self.config['start_mode_timeout'], lambda: ( 
+            if 'start_mode_timeout' in self.config:
+                timeout = self.config['start_mode_timeout']
+                # set maximum timeout
+                if timeout > 3000: 
+                    timeout = 3000
+            else:
+                timeout = 1000
+            QtCore.QTimer.singleShot(timeout, lambda: ( 
                     # change button color and enable the stop button
                     self.button_startauto.setText("Stop Automatic"),
                     palette.setColor(role, QtGui.QColor("#fc6203")),
@@ -161,7 +168,14 @@ class MainWindow(QtWidgets.QMainWindow):
             # Set timeout for being able to stop this mode
             palette = self.button_startman.palette()
             role = self.button_startman.backgroundRole() 
-            QtCore.QTimer.singleShot(self.config['start_mode_timeout'], lambda: ( 
+            if 'start_mode_timeout' in self.config:
+                timeout = self.config['start_mode_timeout']
+                # set maximum timeout
+                if timeout > 3000: 
+                    timeout = 3000
+            else:
+                timeout = 1000
+            QtCore.QTimer.singleShot(timeout, lambda: ( 
                     # change button color and enable the stop button
                     self.button_startman.setText("Stop Manual"),
                     palette.setColor(role, QtGui.QColor("#fc6203")),
