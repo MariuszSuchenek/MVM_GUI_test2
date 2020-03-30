@@ -72,8 +72,6 @@ class ESP32Serial:
 
         arguments:
         - name           the parameter name as a string
-        - value          the value to assign to the variable as any type
-                         convertible to string
 
         returns: the requested value
         """

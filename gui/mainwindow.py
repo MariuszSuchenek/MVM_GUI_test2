@@ -101,8 +101,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self._data_h = DataHandler(config, self.esp32)
         self._data_h.connect_data_filler(self.data_filler)
-        if config['read_from_esp']:
-            self._data_h.start_io_thread()
+        self._data_h.start_io_thread()
 
     def closeEvent(self, event):
         self._data_h.stop_io()
