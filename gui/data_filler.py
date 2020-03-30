@@ -33,6 +33,7 @@ class DataFiller():
 
         plot.setLabel(axis='left', text=to_units.get(name, ''))
         plot.setMouseEnabled(x=False, y=False)
+        plot.setMenuEnabled(False)
 
     def connect_monitor(self, name, monitor):
         '''
