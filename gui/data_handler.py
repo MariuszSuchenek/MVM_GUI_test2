@@ -37,6 +37,13 @@ class DataHandler():
         the ESP32, and it receives the parameters read, and
         the data associated to it
         '''
+
+        if parameter == 'Done.' and data is None and not self._running:
+            # it is the signal that the thread is closing gracefully,
+            # ignore it! TODO: feel free to implement a better way to do
+            # this.
+            return
+
         # print('Got data:', parameter, data)
         status = self._data_f.add_data_point(parameter, data)
 
