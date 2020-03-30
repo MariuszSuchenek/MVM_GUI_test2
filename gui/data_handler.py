@@ -2,7 +2,6 @@
 import sys, traceback
 import random, time
 from PyQt5.QtCore import QThreadPool
-from communication.esp32serial import ESP32Serial
 from communication.threading_utils import Worker
 
 class DataHandler():
@@ -13,14 +12,16 @@ class DataHandler():
     and this class will fill the data direclty.
     '''
 
-    def __init__(self, port):
+    def __init__(self, config, esp32):
         '''
         Initializes this class by creating a new QThreadPool
         '''
+        self._running = False
         self._threadpool = QThreadPool()
         print('Number of available threads:', self._threadpool.maxThreadCount())
 
-        self._port = port
+        self._config = config
+        self._esp32 = esp32
 
         self._n_attempts = 0
 
@@ -42,6 +43,13 @@ class DataHandler():
         if not status:
             print(f"\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
 
+    def stop_io(self):
+        '''
+        Ask the thread to gracefully stop iterating
+        '''
+
+        self._running = False
+
     def eps32_io(self, data_callback):
         '''
         This is the main function that runs in the thread.
@@ -49,27 +57,19 @@ class DataHandler():
         the ESP, and the same data is then retrieved.
         '''
 
-        try:
-            esp32 = ESP32Serial(self._port)
-        except:
-            print(f"\033[91mERROR: Cannot communicate with port {self._port}\033[0m")
+        if self._running:
             return
 
+        self._running = True
 
-        while True:
+        while self._running:
             # set a random value for now
-            result = esp32.set("mve", random.randint(10, 40))
-            result = esp32.set("vti", random.randint(10, 40))
-            result = esp32.set("vte", random.randint(10, 40))
 
-            if result != 'OK':
-                print(f"\033[91mERROR: Failed to retrieve parameter from the EPS!\033[0m")
-                return
 
             # retrieve the same random value
-            mve = float(esp32.get("mve"))
-            vti = float(esp32.get("vti"))
-            vte = float(esp32.get("vte"))
+            mve = float(self._esp32.get("mve"))
+            vti = float(self._esp32.get("vti"))
+            vte = float(self._esp32.get("vte"))
 
             # data_callback emits a signal, which is
             # received by eps32_data_callback, which
@@ -79,7 +79,7 @@ class DataHandler():
             data_callback.emit('vte', vte)
 
             # Sleep for some time...
-            time.sleep(0.1)
+            time.sleep(self._config['sampling_interval'])
 
         return "Done."
 
