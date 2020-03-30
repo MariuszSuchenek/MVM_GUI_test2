@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from PyQt5 import QtWidgets, uic
+from PyQt5 import QtGui
 import sys
 
 class Monitor(QtWidgets.QWidget):
@@ -23,8 +24,12 @@ class Monitor(QtWidgets.QWidget):
         self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue1"))
         self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue2"))
 
+        # Set up connections
+        self.mouseReleaseEvent = self.clear_alarm
+
+        self.setAutoFillBackground(True)
         self.show()
-    def setup(self, name, setrange=(0,50,100), units=None, stats=None):
+    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red'):
         """
         Sets up main values for the Monitor widget, including the name and the values for the
         range as (minimum, initial, maximum). Also optionally set the units and statistical values
@@ -49,6 +54,8 @@ class Monitor(QtWidgets.QWidget):
             self.label_units.setText(str(units))
         else:
             self.label_units.setText("")
+
+        self.alarmcolor = alarmcolor
         self.update(val)
 
         # Handle optional stats
@@ -62,6 +69,22 @@ class Monitor(QtWidgets.QWidget):
         """
         self.value = value;
         self.label_value.setText(str(value))
+
+        # handle palette changes due to alarm
+        if self.is_alarm():
+            palette = self.palette()
+            role = self.backgroundRole() #choose whatever you like
+            palette.setColor(role, QtGui.QColor(self.alarmcolor))
+            self.setPalette(palette)
+
+    def clear_alarm(self, event):
+        """
+        Clears previous out of range alarms by reverting the background color.
+        """
+        palette = self.palette()
+        role = self.backgroundRole() #choose whatever you like
+        palette.setColor(role, QtGui.QColor("#eeeeee"))
+        self.setPalette(palette)
 
     def is_alarm(self):
         """
