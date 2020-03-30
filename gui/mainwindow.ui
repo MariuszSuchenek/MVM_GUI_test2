@@ -170,7 +170,7 @@
      <string>Start Assisted</string>
     </property>
    </widget>
-   <widget class="Monitor" name="monitor_top" native="true">
+   <widget class="Monitor" name="monitor_bot" native="true">
     <property name="geometry">
      <rect>
       <x>640</x>
@@ -190,7 +190,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="Monitor" name="monitor_bot" native="true">
+   <widget class="Monitor" name="monitor_top" native="true">
     <property name="geometry">
      <rect>
       <x>640</x>

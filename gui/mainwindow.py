@@ -60,16 +60,35 @@ class MainWindow(QtWidgets.QMainWindow):
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
-        self.monitors = [];
-        self.monitors.append(self.findChild(QtWidgets.QWidget, "monitor_top"))
-        self.monitors.append(self.findChild(QtWidgets.QWidget, "monitor_mid"))
-        self.monitors.append(self.findChild(QtWidgets.QWidget, "monitor_bot"))
+        monitor_names = {"monitor_top", "monitor_mid", "monitor_bot"};
+        self.monitors = {};
+        monitor_default = {
+                "name": "NoName",
+                "min": 0,
+                "init": 50,
+                "max": 100,
+                "step": None,
+                "units": None,
+                "dec_precision": 2,
+                "color": "black",
+                "alarmcolor": "red"}
 
-        self.monitors[0].setup("RR",            setrange=(5, 12, 30),    units="(b/min)")
-        self.monitors[1].setup("O<sub>2</sub>", setrange=(35, 41, 45),   units="(b/min)")
-        self.monitors[2].setup("MVe",           setrange=(50, 71, 400),  units="(b/min)")
-
-        self.data_filler.connect_monitor(config['plot_top_var'], self.monitors[2])
+        for name in monitor_names:
+            monitor = self.findChild(QtWidgets.QWidget, name)
+            entry = config.get(name, monitor_default)
+            monitor.setup(
+                    entry.get("name", monitor_default["name"]),
+                    setrange=(
+                        entry.get("min", monitor_default["min"]),
+                        entry.get("init", monitor_default["init"]),
+                        entry.get("max", monitor_default["max"])),
+                    units=entry.get("units", monitor_default["units"]),
+                    alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
+                    color=entry.get("color", monitor_default["color"]),
+                    step=entry.get("step", monitor_default["step"]),
+                    dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
+            self.monitors[name] = monitor
+        self.data_filler.connect_monitor(config['plot_top_var'], self.monitors['monitor_top'])
         # Need to add the other monitors...which ones?
 
 
