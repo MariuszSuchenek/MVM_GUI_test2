@@ -72,6 +72,6 @@ class Worker(QRunnable):
             exctype, value = sys.exc_info()[:2]
             self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:
-            self.signals.result.emit(result)  # Return the result of the processing
+            self.signals.result.emit(result, None)  # Return the result of the processing
         finally:
             self.signals.finished.emit()  # Done
