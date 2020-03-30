@@ -47,11 +47,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         Connect each to their respective mode toggle functions.
         '''
-        self.mode = 0 # 0 is stop, 1 is auto, 2 is manual
+        self.mode = 0 # 0 is stop, 1 is auto, 2 is assisted
         self.button_startauto = self.findChild(QtWidgets.QPushButton, "button_startauto")
         self.button_startman = self.findChild(QtWidgets.QPushButton, "button_startman")
         self.button_startauto.pressed.connect(self.toggle_automatic)
-        self.button_startman.pressed.connect(self.toggle_manual)
+        self.button_startman.pressed.connect(self.toggle_assisted)
 
         '''
         Set up data monitor/alarms (side bar)
@@ -112,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Toggles between automatic mode (1) and stop (0).
 
-        Changes text from "Start" to "Stop" and en/disables manual button depending on mode.
+        Changes text from "Start" to "Stop" and en/disables assisted button depending on mode.
         """
         if self.mode == 0:
             self.mode = 1
@@ -154,9 +154,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 palette.setColor(role, QtGui.QColor("#eeeeee"))
                 self.button_startauto.setPalette(palette)
 
-    def toggle_manual(self):
+    def toggle_assisted(self):
         """
-        Toggles between manual mode (2) and stop (0).
+        Toggles between assisted mode (2) and stop (0).
 
         Changes text from "Start" to "Stop" and en/disables automatic button depending on mode.
         """
@@ -177,7 +177,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 timeout = 1000
             QtCore.QTimer.singleShot(timeout, lambda: ( 
                     # change button color and enable the stop button
-                    self.button_startman.setText("Stop Manual"),
+                    self.button_startman.setText("Stop Assisted"),
                     palette.setColor(role, QtGui.QColor("#fc6203")),
                     self.button_startman.setPalette(palette),
                     self.button_startman.setEnabled(True)))
@@ -186,14 +186,14 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             confirmation = QtWidgets.QMessageBox.warning(
                     self, 
-                    '**STOPPING MANUAL MODE**', 
-                    "Are you sure you want to STOP MANUAL MODE?", 
+                    '**STOPPING ASSISTED MODE**', 
+                    "Are you sure you want to STOP ASSISTED MODE?", 
                     QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
                     QtWidgets.QMessageBox.Cancel)
 
             if confirmation == QtWidgets.QMessageBox.Ok:
                 self.mode = 0
-                self.button_startman.setText("Start Manual")
+                self.button_startman.setText("Start Assisted")
                 self.button_startauto.setEnabled(True)
 
                 # change button color
