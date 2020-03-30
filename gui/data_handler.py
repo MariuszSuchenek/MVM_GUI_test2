@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import sys, traceback
-import random, time
+import time
 from PyQt5.QtCore import QThreadPool
 from communication.threading_utils import Worker
 
@@ -53,8 +53,6 @@ class DataHandler():
     def eps32_io(self, data_callback):
         '''
         This is the main function that runs in the thread.
-        As of now, it generated random data which is set in
-        the ESP, and the same data is then retrieved.
         '''
 
         if self._running:
@@ -63,10 +61,7 @@ class DataHandler():
         self._running = True
 
         while self._running:
-            # set a random value for now
-
-
-            # retrieve the same random value
+            # retrieve the values
             mve = float(self._esp32.get("mve"))
             vti = float(self._esp32.get("vti"))
             vte = float(self._esp32.get("vte"))
