@@ -79,7 +79,7 @@ class Monitor(QtWidgets.QWidget):
             self.value = round(value / self.step) * self.step
         else:
             self.value = value;
-        self.label_value.setText("%.0f" % self.value)
+        self.label_value.setText("%.*f" % (self.dec_precision, self.value))
 
         # handle palette changes due to alarm
         if self.is_alarm():
