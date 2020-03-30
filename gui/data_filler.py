@@ -70,9 +70,9 @@ class DataFiller():
 
         if name in self._monitors:
             # Mean
-            self._monitors[name].label_statvalues[0].setText(str(np.mean(self._data[name])))
+            self._monitors[name].label_statvalues[0].setText("%.2f" % np.mean(self._data[name]))
             # Max
-            self._monitors[name].label_statvalues[1].setText(str(np.max(self._data[name])))
+            self._monitors[name].label_statvalues[1].setText("%.2f" % np.max(self._data[name]))
             # Value
             self._monitors[name].update(self._data[name][-1])
         else:

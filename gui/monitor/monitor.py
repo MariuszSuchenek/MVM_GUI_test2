@@ -68,7 +68,7 @@ class Monitor(QtWidgets.QWidget):
         value: The value that the monitor will display.
         """
         self.value = value;
-        self.label_value.setText(str(value))
+        self.label_value.setText("%.2f" % value)
 
         # handle palette changes due to alarm
         if self.is_alarm():
