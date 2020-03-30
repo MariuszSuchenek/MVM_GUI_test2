@@ -104,6 +104,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if config['read_from_esp']:
             self._data_h.start_io_thread()
 
+    def closeEvent(self, event):
+        self._data_h.stop_io()
+
     def toggle_automatic(self):
         """
         Toggles between automatic mode (1) and stop (0).
