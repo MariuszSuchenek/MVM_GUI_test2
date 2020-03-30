@@ -118,9 +118,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.button_startauto.setText("Stop Automatic")
             self.button_startman.setDisabled(True)
         else:
-            self.mode = 0
-            self.button_startauto.setText("Start Automatic")
-            self.button_startman.setEnabled(True)
+            confirmation = QtWidgets.QMessageBox.warning(
+                    self, 
+                    '**STOPPING AUTOMATIC MODE**', 
+                    "Are you sure you want to STOP AUTOMATIC MODE?", 
+                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
+                    QtWidgets.QMessageBox.Cancel)
+
+            if confirmation == QtWidgets.QMessageBox.Ok:
+                self.mode = 0
+                self.button_startauto.setText("Start Automatic")
+                self.button_startman.setEnabled(True)
 
     def toggle_manual(self):
         """
@@ -133,6 +141,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.button_startman.setText("Stop Manual")
             self.button_startauto.setDisabled(True)
         else:
-            self.mode = 0
-            self.button_startman.setText("Start Manual")
-            self.button_startauto.setEnabled(True)
+            confirmation = QtWidgets.QMessageBox.warning(
+                    self, 
+                    '**STOPPING MANUAL MODE**', 
+                    "Are you sure you want to STOP MANUAL MODE?", 
+                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
+                    QtWidgets.QMessageBox.Cancel)
+
+            if confirmation == QtWidgets.QMessageBox.Ok:
+                self.mode = 0
+                self.button_startman.setText("Start Manual")
+                self.button_startauto.setEnabled(True)
