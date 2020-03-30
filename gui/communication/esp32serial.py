@@ -28,11 +28,14 @@ class ESP32Serial:
         - baudrate       the preferred baudrate, default 115200
         - terminator     the line terminator, binary encoded, default
                          b'\n'
+        - timeout        sets the read() timeout in seconds
         """
 
         baudrate = kwargs["baudrate"] if "baudrate" in kwargs else 115200
+        timeout = kwargs["timeout"] if "timeout" in kwargs else 1
         self.term = kwargs["terminator"] if "terminator" in kwargs else b'\n'
-        self.connection = serial.Serial(port=port, baudrate=baudrate)
+        self.connection = serial.Serial(port=port, baudrate=baudrate,
+                                        timeout=timeout, **kwargs)
         self.lock = Lock()
 
     def __del__(self):
