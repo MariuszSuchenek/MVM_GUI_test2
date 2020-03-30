@@ -42,9 +42,11 @@ class FakeESP32Serial:
         """
 
         with self.lock:
+            retval = 0
+            
             if name in self.set_params:
-                return self.set_params[name]
+                retval = self.set_params[name]
             elif name in self.random_params:
-                return random.uniform(10, 100)
-            else:
-                return 0
+                retval = random.uniform(10, 100)
+                
+            return str(retval)

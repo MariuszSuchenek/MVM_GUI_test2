@@ -13,7 +13,7 @@ import yaml
 
 from mainwindow import MainWindow
 from communication.esp32serial import ESP32Serial
-import communication.fake_esp32serial
+from communication.fake_esp32serial import FakeESP32Serial
 
 if __name__ == "__main__":
     base_dir = os.path.dirname(__file__)
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             # it won't run in a terminal!
             print(f"\033[91mERROR: Cannot communicate with port {config['port']}\033[0m")
     else:
-        esp32 = communication.fake_esp32serial.FakeESP32Serial()
+        esp32 = FakeESP32Serial()
 
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow(config, esp32)
