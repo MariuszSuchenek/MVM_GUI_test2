@@ -133,11 +133,7 @@ class DataHandler():
 
         result = self._esp32.set(param, value)
 
-        print(result, self._config['return_success_code'])
-        print(type(result), type(self._config['return_success_code']))
-
         if result == self._config['return_success_code']:
-            print('here')
             return True
         else:
             return False

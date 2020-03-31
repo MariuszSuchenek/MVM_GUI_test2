@@ -280,7 +280,7 @@ QDoubleSpinBox::down-button  {
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>40</x>
         <y>30</y>
         <width>200</width>
         <height>40</height>
@@ -300,9 +300,9 @@ QDoubleSpinBox::down-button  {
      <widget class="QLabel" name="label_7">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>40</x>
         <y>140</y>
-        <width>170</width>
+        <width>211</width>
         <height>40</height>
        </rect>
       </property>
@@ -314,7 +314,7 @@ QDoubleSpinBox::down-button  {
        </font>
       </property>
       <property name="text">
-       <string>Flow trigger</string>
+       <string>Flow trigger (lpm)</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_8">

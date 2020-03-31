@@ -58,7 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toolsettings.append(self.findChild(QtWidgets.QWidget, "toolsettings_3"))
 
         self.toolsettings[0].setup("Resp. Rate",          setrange=(4.,  12., 100.), units="b/min")
-        self.toolsettings[1].setup("Insp./Expir.",        setrange=(0., 0.5,  1.), units="ratio")
+        self.toolsettings[1].setup("Insp./Expir.",        setrange=(0., 0.5,  10.), units="ratio")
         # self.toolsettings[0].setup("O<sub>2</sub> conc.", setrange=(21, 40, 100), units="%")
         # self.toolsettings[1].setup("PEEP",                setrange=(0,   5, 50),  units="cmH<sub>2</sub>O")
 
@@ -134,8 +134,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.settings.connect_data_handler(self._data_h)
         self.settings.connect_workers()
-
         self.settings.connect_toolsettings(self.toolsettings)
+        self.settings.load_presets_auto()
+        self.settings.load_presets_assist()
 
 
     def closeEvent(self, event):
