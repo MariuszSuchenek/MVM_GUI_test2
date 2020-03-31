@@ -24,7 +24,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.config = config
 
-        self.data_filler = DataFiller(config['nsamples'])
+        self.data_filler = DataFiller(config)
         self.esp32 = esp32
 
         '''
@@ -88,7 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     step=entry.get("step", monitor_default["step"]),
                     dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
             self.monitors[name] = monitor
-        self.data_filler.connect_monitor(config['plot_top_var'], self.monitors['monitor_top'])
+        self.data_filler.connect_monitor('monitor_top', self.monitors['monitor_top'])
         # Need to add the other monitors...which ones?
 
 
@@ -101,9 +101,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plots.append(self.findChild(QtWidgets.QWidget, "plot_top"))
         self.plots.append(self.findChild(QtWidgets.QWidget, "plot_mid"))
         self.plots.append(self.findChild(QtWidgets.QWidget, "plot_bot"))
-        self.data_filler.connect_plot(config['plot_top_var'], self.plots[0])
-        self.data_filler.connect_plot(config['plot_mid_var'], self.plots[1])
-        self.data_filler.connect_plot(config['plot_bot_var'], self.plots[2])
+        self.data_filler.connect_plot('monitor_top', self.plots[0])
+        self.data_filler.connect_plot('monitor_mid', self.plots[1])
+        self.data_filler.connect_plot('monitor_bot', self.plots[2])
 
         '''
         Connect settings button to Settings overlay.

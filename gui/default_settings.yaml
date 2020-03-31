@@ -10,18 +10,40 @@ nsamples: 100
 # time in seconds between two data retrieval
 sampling_interval: 0.1
 
-# Variables to display in the graphs (must match names in the ESP):
-plot_top_var: pressure
-plot_mid_var: flow
-plot_bot_var: o2
+# Variables to display in the graphs (must match names in the ESP or an available function):
+# plot_top_var: pressure  # Inspiration pressure
+# plot_mid_var: volume    # Tidal volume   
+# plot_bot_var: flow      # This is mve I assume
 
-# The parameters that will be read from the ESP
+# The parameters that will be read from the ESP and stored for possible use
 read_params: ['pressure', 'flow', 'o2', 'bpm', 'all']
+
+# Thickness of the lines drawn in the plots
+line_width: 1
+
+# The units used for each variable:
+var_units: 
+    pressure: 'mbar'
+    flow: 'lpm'
+    o2: '%'
+    bpm: 'Hz'
+    volume: 'mL'
+
+# The colors used for each:
+var_units: 
+    pressure: 'mbar'
+    flow: 'lpm'
+    o2: '%'
+    bpm: 'Hz'
+    volume: 'mL'
 
 # Control Start/Stop Auto/Man behavior
 start_mode_timeout: 2000 # [ms] between pressing Start and allowing Stop (max 3000)
 
+
 # Setup monitors (key value monitor_* must match widget name in mainwindow.ui)
+# Variables to display in the graphs are in plot_var 
+# and the must match names in the ESP or an available function
 monitor_top: 
     name: "Insp. Press."
     min: 10
@@ -30,8 +52,9 @@ monitor_top:
     step: 1
     dec_precision: 0
     units: "(mbar)"
-    color: "black"
+    color: "rgb(128,128,0)" # "black"
     alarmcolor: "red"
+    plot_var: pressure
 
 monitor_mid: 
     name: "V<sub>tidal</sub>"
@@ -41,8 +64,9 @@ monitor_mid:
     step: 100
     dec_precision: 0
     units: "mL"
-    color: "blue"
+    color: "rgb(0,0,255)" # "blue"
     alarmcolor: "red"
+    plot_var: volume
 
 monitor_bot: 
     name: "MVe"
@@ -52,5 +76,6 @@ monitor_bot:
     step: 1
     dec_precision: 0
     units: "(slpm)"
-    color: "green"
+    color: "rgb(0,128,0)" # "green"
     alarmcolor: "red"
+    plot_var: flow
