@@ -227,7 +227,7 @@ class Settings(QtWidgets.QMainWindow):
             self._insp_expir_ratio_input.setStyleSheet("color: green")
 
         # Finally, update the value in the toolsettings
-        self._toolsettings[1].update(ratio)
+        self._toolsettings[1].update(den)
 
         return
 
