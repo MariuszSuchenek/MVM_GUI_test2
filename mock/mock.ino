@@ -50,6 +50,14 @@ String get(String const& command)
 {
   auto const name = parse_word(command);
 
+  if (name == "all") {
+    return
+        String(random(10, 100)) + ","
+      + String(random(10, 100)) + ","
+      + String(random(10, 100)) + ","
+      + String(random(10, 100));
+  }
+
   auto const it = std::find(
       random_measures.begin()
     , random_measures.end()
