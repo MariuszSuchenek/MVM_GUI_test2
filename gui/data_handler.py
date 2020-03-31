@@ -69,7 +69,6 @@ class DataHandler():
         self._running = True
 
         while self._running:
-            current_values = {}
 
             # Get all params from ESP
             current_values = self._esp32.get_all()
@@ -103,7 +102,6 @@ class DataHandler():
         # we calculate tidal volume as
         # volume = flow / bpm
         if 'bpm' in values and 'flow' in values:
-            values['volume'] = values['flow'] / values['bpm']       # L
             values['volume'] = values['flow'] / values['bpm'] * 1e3 # mL
 
         # 2) 
@@ -136,8 +134,5 @@ class DataHandler():
 
         result = self._esp32.set(param, value)
 
-        if result == self._config['return_success_code']:
-            return True
-        else:
-            return False
+        return result == self._config['return_success_code']
 
