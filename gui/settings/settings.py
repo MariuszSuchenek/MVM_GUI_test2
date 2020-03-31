@@ -12,9 +12,13 @@ class Settings(QtWidgets.QMainWindow):
         super(Settings, self).__init__(*args)
         uic.loadUi("settings/settings.ui", self)
 
-        self._debug = False
+        self._debug = True
 
         self._config = config
+
+        # This contains all the default params
+        self._current_values = {}
+        self._current_values_temp = {}
 
         # Don't ask me why I am redefining these...
 
@@ -89,11 +93,13 @@ class Settings(QtWidgets.QMainWindow):
         self._respiratory_rate_input.setValue(rr['default'])
         self._respiratory_rate_input.setMinimum(rr['min'])
         self._respiratory_rate_input.setMaximum(rr['max'])
+        self._current_values['respiratory_rate'] = rr['default']
 
         ie = self._config['insp_expir_ratio']
         self._insp_expir_ratio_input.setValue(ie['default'])
         self._insp_expir_ratio_input.setMinimum(ie['min'])
         self._insp_expir_ratio_input.setMaximum(ie['max'])
+        self._current_values['insp_expir_ratio'] = ie['default']
 
         self.resp_rate_worker()
         self.insp_expir_ratio_worker()
@@ -103,6 +109,8 @@ class Settings(QtWidgets.QMainWindow):
 
         self._insp_expir_ratio_input.hide()
         self._insp_expir_ratio_input.show()
+
+        self._current_values_temp = self._current_values
 
 
         try:
@@ -117,19 +125,23 @@ class Settings(QtWidgets.QMainWindow):
         self._pressure_trigger_input.setValue(pt['default'])
         self._pressure_trigger_input.setMinimum(pt['min'])
         self._pressure_trigger_input.setMaximum(pt['max'])
+        self._current_values['pressure_trigger'] = pt['default']
 
         ft = self._config['flow_trigger']
         self._flow_trigger_input.setValue(ft['default'])
         self._flow_trigger_input.setMinimum(ft['min'])
         self._flow_trigger_input.setMaximum(ft['max'])
+        self._current_values['flow_trigger'] = ft['default']
 
         mr = self._config['minimal_resp_rate']
         self._min_resp_rate_input.setValue(mr['default'])
         self._min_resp_rate_input.setMinimum(mr['min'])
         self._min_resp_rate_input.setMaximum(mr['max'])
+        self._current_values['minimal_resp_rate'] = mr['default']
 
         eb = self._config['enable_backup']
         self._enable_backup_checkbox.setChecked(eb)
+        self._current_values['enable_backup'] = eb
 
         self.pressure_trigger_worker()
         self.flow_trigger_worker()
@@ -145,41 +157,48 @@ class Settings(QtWidgets.QMainWindow):
         self._min_resp_rate_input.hide()
         self._min_resp_rate_input.show()
 
+        self._current_values_temp = self._current_values
+
 
     def close_settings_worker(self):
         '''
-        Closes the settings window
+        Closes the settings window, w/o applying
+        any changes to the parameters
         '''
+        self._current_values_temp = self._current_values
         self.close()
 
 
     def start_worker_auto(self):
         '''
-        Starts the run
+        Starts the run, applying all the changes selected
         '''
+        self._current_values = self._current_values_temp
+        self.send_auto_values_to_hardware()
         self._start_stop_worker.toggle_automatic()
         self.close()
 
 
     def start_worker_assist(self):
         '''
-        Starts the run
+        Starts the run, applying all the changes selected
         '''
+        self._current_values = self._current_values_temp
+        self.send_assist_values_to_hardware()
         self._start_stop_worker.toggle_assisted()
         self.close()
 
 
-    def resp_rate_worker(self):
+    def send_auto_values_to_hardware(self):
         '''
-        Worker function that sets the respiratory rate in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
-        color becomes green. It is usually very fast, and so you
-        cannot notice the red.
-        AUTOMATIC
         '''
-        rr = self._respiratory_rate_input.value()
-        
+
+        #
+        # RR
+        #
+
+        rr = self._current_values['respiratory_rate']
+
         if self._debug: print('Setting RR to', rr)
 
         # Update the value in the config file
@@ -197,21 +216,13 @@ class Settings(QtWidgets.QMainWindow):
         # Finally, update the value in the toolsettings
         self._toolsettings[0].update(rr)
 
-        return
 
+        #
+        # I:E
+        #
 
-    def insp_expir_ratio_worker(self):
-        '''
-        Worker function that sets the insp/expir ratio in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
-        color becomes green. It is usually very fast, and so you
-        cannot notice the red.
-        AUTOMATIC
-        '''
-        den = self._insp_expir_ratio_input.value()
-        ratio = 1./den
-        
+        ratio = self._current_values['insp_expir_ratio']
+
         if self._debug: print('value of Ratio', ratio)
 
         # Update the value in the config file
@@ -227,21 +238,18 @@ class Settings(QtWidgets.QMainWindow):
             self._insp_expir_ratio_input.setStyleSheet("color: green")
 
         # Finally, update the value in the toolsettings
-        self._toolsettings[1].update(den)
-
-        return
+        self._toolsettings[1].update(1/ratio)
 
 
-    def pressure_trigger_worker(self):
+    def send_assist_values_to_hardware(self):
         '''
-        Worker function that sets the pressure trigger in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
-        color becomes green. It is usually very fast, and so you
-        cannot notice the red.
-        ASSISTED
         '''
-        pressure = self._pressure_trigger_input.value()
+
+        #
+        # Pressure trigger
+        #
+
+        pressure = self._current_values['pressure_trigger']
         
         if self._debug: print('value of Pressure Trigger', pressure)
 
@@ -260,21 +268,11 @@ class Settings(QtWidgets.QMainWindow):
         # Finally, update the value in the toolsettings
         # self._toolsettings[1].update(ratio)
 
-        return
+        #
+        # Flow trigger
+        #
 
-
-    def flow_trigger_worker(self):
-        '''
-        Worker function that sets the flow trigger in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
-        color becomes green. It is usually very fast, and so you
-        cannot notice the red.
-        ASSISTED
-        '''
-        flow = self._flow_trigger_input.value()
-        
-        if self._debug: print('value of Pressure Trigger', flow)
+        flow = self._current_values['flow_trigger']
 
         # Update the value in the config file
         self._config['flow_trigger']['current'] = flow
@@ -291,6 +289,70 @@ class Settings(QtWidgets.QMainWindow):
         # Finally, update the value in the toolsettings
         # self._toolsettings[1].update(ratio)
 
+
+
+       
+
+
+
+    def resp_rate_worker(self):
+        '''
+        Worker function that sets the respiratory rate in the arduino
+        When the request to update values is made, the color of the 
+        number is red. When the number is written to the arduino, the 
+        color becomes green. It is usually very fast, and so you
+        cannot notice the red.
+        AUTOMATIC
+        '''
+        rr = self._respiratory_rate_input.value()
+        self._current_values_temp['respiratory_rate'] = rr
+
+        return
+
+
+    def insp_expir_ratio_worker(self):
+        '''
+        Worker function that sets the insp/expir ratio in the arduino
+        When the request to update values is made, the color of the 
+        number is red. When the number is written to the arduino, the 
+        color becomes green. It is usually very fast, and so you
+        cannot notice the red.
+        AUTOMATIC
+        '''
+        den = self._insp_expir_ratio_input.value()
+        ratio = 1./den
+        self._current_values_temp['insp_expir_ratio'] = ratio
+
+        return
+
+
+    def pressure_trigger_worker(self):
+        '''
+        Worker function that sets the pressure trigger in the arduino
+        When the request to update values is made, the color of the 
+        number is red. When the number is written to the arduino, the 
+        color becomes green. It is usually very fast, and so you
+        cannot notice the red.
+        ASSISTED
+        '''
+        pressure = self._pressure_trigger_input.value()
+        self._current_values_temp['pressure_trigger'] = pressure
+
+        return
+
+
+    def flow_trigger_worker(self):
+        '''
+        Worker function that sets the flow trigger in the arduino
+        When the request to update values is made, the color of the 
+        number is red. When the number is written to the arduino, the 
+        color becomes green. It is usually very fast, and so you
+        cannot notice the red.
+        ASSISTED
+        '''
+        flow = self._flow_trigger_input.value()
+        self._current_values_temp['flow_trigger'] = flow
+        
         return
 
 
@@ -307,23 +369,6 @@ class Settings(QtWidgets.QMainWindow):
         print('min_resp_rate_worker not implemented.')
         return
 
-        # mrr = self._min_resp_rate_input.value()
-        
-        # if self._debug: print('value of Min Resp Rate', mrr)
-
-        # # Set color to red until we know the value has been set.
-        # self._min_resp_rate_input.setStyleSheet("color: red")
-
-        # status = self._data_h.set_data('assist_flow_min', mrr)
-
-        # if status == True:
-        #     # Now set the color to green, as we know it has been set
-        #     self._min_resp_rate_input.setStyleSheet("color: green")
-
-        # # Finally, update the value in the toolsettings
-        # # self._toolsettings[1].update(ratio)
-
-        # return
 
 
     def enable_backup_worker(self):
