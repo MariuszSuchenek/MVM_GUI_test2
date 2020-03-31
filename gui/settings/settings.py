@@ -166,6 +166,16 @@ class Settings(QtWidgets.QMainWindow):
         any changes to the parameters
         '''
         self._current_values_temp = self._current_values
+
+        # Restore to previous values
+        self._respiratory_rate_input.setValue(self._current_values['respiratory_rate'])
+        self._insp_expir_ratio_input.setValue(self._current_values['insp_expir_ratio'])
+
+        self._pressure_trigger_input.setValue(self._current_values['pressure_trigger'])
+        self._flow_trigger_input.setValue(self._current_values['flow_trigger'])
+        self._min_resp_rate_input.setValue(self._current_values['minimal_resp_rate'])
+        self._enable_backup_checkbox.setChecked(self._current_values['enable_backup'])
+
         self.close()
 
 
