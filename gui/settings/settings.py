@@ -41,7 +41,7 @@ class Settings(QtWidgets.QMainWindow):
 
     def connect_data_handler(self, data_h):
         '''
-        Connects the handler to this class, 
+        Connects the handler to this class,
         so to have it avalable to set data
         '''
         self._data_h = data_h
@@ -260,7 +260,7 @@ class Settings(QtWidgets.QMainWindow):
         #
 
         pressure = self._current_values['pressure_trigger']
-        
+
         if self._debug: print('value of Pressure Trigger', pressure)
 
         # Update the value in the config file
@@ -300,16 +300,11 @@ class Settings(QtWidgets.QMainWindow):
         # self._toolsettings[1].update(ratio)
 
 
-
-       
-
-
-
     def resp_rate_worker(self):
         '''
         Worker function that sets the respiratory rate in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
+        When the request to update values is made, the color of the
+        number is red. When the number is written to the arduino, the
         color becomes green. It is usually very fast, and so you
         cannot notice the red.
         AUTOMATIC
@@ -323,8 +318,8 @@ class Settings(QtWidgets.QMainWindow):
     def insp_expir_ratio_worker(self):
         '''
         Worker function that sets the insp/expir ratio in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
+        When the request to update values is made, the color of the
+        number is red. When the number is written to the arduino, the
         color becomes green. It is usually very fast, and so you
         cannot notice the red.
         AUTOMATIC
@@ -339,8 +334,8 @@ class Settings(QtWidgets.QMainWindow):
     def pressure_trigger_worker(self):
         '''
         Worker function that sets the pressure trigger in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
+        When the request to update values is made, the color of the
+        number is red. When the number is written to the arduino, the
         color becomes green. It is usually very fast, and so you
         cannot notice the red.
         ASSISTED
@@ -354,23 +349,23 @@ class Settings(QtWidgets.QMainWindow):
     def flow_trigger_worker(self):
         '''
         Worker function that sets the flow trigger in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
+        When the request to update values is made, the color of the
+        number is red. When the number is written to the arduino, the
         color becomes green. It is usually very fast, and so you
         cannot notice the red.
         ASSISTED
         '''
         flow = self._flow_trigger_input.value()
         self._current_values_temp['flow_trigger'] = flow
-        
+
         return
 
 
     def min_resp_rate_worker(self):
         '''
         Worker function that sets the min resp rate in the arduino
-        When the request to update values is made, the color of the 
-        number is red. When the number is written to the arduino, the 
+        When the request to update values is made, the color of the
+        number is red. When the number is written to the arduino, the
         color becomes green. It is usually very fast, and so you
         cannot notice the red.
         ASSISTED
