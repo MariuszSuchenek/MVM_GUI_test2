@@ -72,15 +72,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toolsettings[2].setup("O<sub>2</sub> conc.", setrange=(21, 40, 100), units="%")
         # self.toolsettings[1].setup("PEEP",                setrange=(0,   5, 50),  units="cmH<sub>2</sub>O")
 
-        '''
-        Set up start/stop auto/min mode buttons.
-
-        Connect each to their respective mode toggle functions.
-        '''
-        self.button_startauto = self.findChild(QtWidgets.QPushButton, "button_startauto")
-        self.button_startman = self.findChild(QtWidgets.QPushButton, "button_startman")
-        self.button_startauto.pressed.connect(self.toggle_automatic)
-        self.button_startman.pressed.connect(self.toggle_assisted)
 
         '''
         Set up data monitor/alarms (side bar)
@@ -142,6 +133,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._start_stop_worker = StartStopWorker(self, self.config, self.esp32, self.button_startauto, self.button_startman)
 
         '''
+        Set up start/stop auto/min mode buttons.
+
+        Connect each to their respective mode toggle functions.
+        '''
+        self.button_startauto = self.findChild(QtWidgets.QPushButton, "button_startauto")
+        self.button_startman = self.findChild(QtWidgets.QPushButton, "button_startman")
+        self.button_startauto.pressed.connect(self._start_stop_worker.toggle_automatic)
+        self.button_startman.pressed.connect(self._start_stop_worker.toggle_assisted)
+
+        '''
         Connect settings button to Settings overlay.
         '''
         self.settings = Settings(config, self)
@@ -155,68 +156,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.load_presets_auto()
         self.settings.load_presets_assist()
 
-
-        
-
-
     def closeEvent(self, event):
         self._data_h.stop_io()
-
-    def start_button_pressed(self, button):
-        self.button_startman.setDisabled(True)
-        self.button_startauto.setEnabled(False)
-        self.button_startman.repaint()
-        self.button_startauto.repaint()
-        text = button.text()
-        text = text.replace('Start', 'Stop')
-        button.setText(text)
-
-    def stop_button_pressed(self, button):
-        button.setDown(False)
-        currentMode = button.text().split(' ')[1].upper()
-        confirmation = QtWidgets.QMessageBox.warning(
-            self, 
-            '**STOPPING AUTOMATIC MODE**', 
-            "Are you sure you want to STOP " + currentMode + " MODE?", 
-            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
-            QtWidgets.QMessageBox.Cancel)
-        
-        if confirmation == QtWidgets.QMessageBox.Ok:
-            self.mode = self.MODE_STOP
-            text = button.text()
-            text = text.replace('Stop', 'Start')
-            button.setText(text)
-            self.button_startauto.setEnabled(True)
-            self.button_startman.setEnabled(True)
-            self.button_startman.repaint()
-            self.button_startauto.repaint()
-
-    def button_timeout(self):
-        print('Setting timeout')
-        timeout = 1000
-        # Set timeout for being able to stop this mode
-        if 'start_mode_timeout' in self.config:
-            timeout = self.config['start_mode_timeout']
-            # set maximum timeout
-            if timeout > 3000: 
-                timeout = 3000
-        return timeout
-            
-    def toggle_automatic(self):
-        """
-        Toggles between automatic mode (1) and stop (0).
-
-        Changes text from "Start" to "Stop" and en/disables assisted button depending on mode.
-        """
-        self._start_stop_worker.toggle_automatic()
-       
-
-
-    def toggle_assisted(self):
-        """
-        Toggles between assisted mode (2) and stop (0).
-
-        Changes text from "Start" to "Stop" and en/disables automatic button depending on mode.
-        """
-        self._start_stop_worker.toggle_assisted()
 
