@@ -160,7 +160,7 @@ QDoubleSpinBox::down-button  {
        </font>
       </property>
       <property name="text">
-       <string>Start Automatic</string>
+       <string>Apply</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_load_preset_auto">
@@ -274,7 +274,7 @@ QDoubleSpinBox::down-button  {
        </font>
       </property>
       <property name="text">
-       <string>Start Assisted</string>
+       <string>Apply</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_load_preset_assist">
