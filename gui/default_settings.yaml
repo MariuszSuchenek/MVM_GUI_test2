@@ -18,6 +18,9 @@ sampling_interval: 0.1
 # The parameters that will be read from the ESP and stored for possible use
 read_params: ['pressure', 'flow', 'o2', 'bpm', 'all']
 
+# This is the string returned by the ESP in case of success
+return_success_code: 'OK'
+
 # Thickness of the lines drawn in the plots
 line_width: 1
 

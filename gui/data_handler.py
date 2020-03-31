@@ -47,8 +47,8 @@ class DataHandler():
         # print('Got data:', parameter, data)
         status = self._data_f.add_data_point(parameter, data)
 
-        if not status:
-            print(f"\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
+        # if not status:
+        #     print(f"\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
 
     def stop_io(self):
         '''
@@ -128,4 +128,17 @@ class DataHandler():
         worker.signals.finished.connect(self.thread_complete)
 
         self._threadpool.start(worker)
+
+    def set_data(self, param, value):
+
+        result = self._esp32.set(param, value)
+
+        print(result, self._config['return_success_code'])
+        print(type(result), type(self._config['return_success_code']))
+
+        if result == self._config['return_success_code']:
+            print('here')
+            return True
+        else:
+            return False
 

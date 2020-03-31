@@ -52,7 +52,7 @@ class DataFiller():
         name 'name'
         '''
         if name not in self._plots:
-            print(f"\033[91mERROR: Can't set data for plot with name {name}.\033[0m")
+            # print(f"\033[91mERROR: Can't set data for plot with name {name}.\033[0m")
             return False
 
         # shift data 1 sample left

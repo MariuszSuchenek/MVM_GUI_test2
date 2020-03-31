@@ -23,9 +23,28 @@ class MainWindow(QtWidgets.QMainWindow):
         uic.loadUi('mainwindow.ui', self) # Load the .ui file
 
         self.config = config
-
-        self.data_filler = DataFiller(config)
         self.esp32 = esp32
+
+
+        '''
+        Instantiate the DataFiller, which takes
+        care of filling plots data
+        '''
+        self.data_filler = DataFiller(config)
+
+        '''
+        Instantiate DataHandler, which will start a new
+        thread to read data from the ESP32. We also connect
+        the DataFiller to it, so the thread will pass the
+        data directly to the DataFiller, which will
+        then display them.
+        '''
+        self._data_h = DataHandler(config, self.esp32)
+        self._data_h.connect_data_filler(self.data_filler)
+        self._data_h.start_io_thread()
+
+
+
 
         '''
         Set up tool settings (bottom bar)
@@ -38,9 +57,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toolsettings.append(self.findChild(QtWidgets.QWidget, "toolsettings_2"))
         self.toolsettings.append(self.findChild(QtWidgets.QWidget, "toolsettings_3"))
 
-        self.toolsettings[0].setup("O<sub>2</sub> conc.", setrange=(21, 40, 100), units="%")
-        self.toolsettings[1].setup("PEEP",                setrange=(0,   5, 50),  units="cmH<sub>2</sub>O")
-        self.toolsettings[2].setup("Resp. Rate",          setrange=(4,  12, 100), units="b/min")
+        self.toolsettings[0].setup("Resp. Rate",          setrange=(4.,  12., 100.), units="b/min")
+        self.toolsettings[1].setup("Insp./Expir.",        setrange=(0., 0.5,  1.), units="ratio")
+        # self.toolsettings[0].setup("O<sub>2</sub> conc.", setrange=(21, 40, 100), units="%")
+        # self.toolsettings[1].setup("PEEP",                setrange=(0,   5, 50),  units="cmH<sub>2</sub>O")
 
         '''
         Set up start/stop auto/min mode buttons.
@@ -112,16 +132,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_settings = self.findChild(QtWidgets.QPushButton, "button_settings")
         self.button_settings.pressed.connect(self.settings.show)
 
-        '''
-        Instantiate DataHandler, which will start a new
-        thread to read data from the ESP32. We also connect
-        the DataFiller to it, so the thread will pass the
-        data directly to the DataFiller, which will
-        then display them.
-        '''
-        self._data_h = DataHandler(config, self.esp32)
-        self._data_h.connect_data_filler(self.data_filler)
-        self._data_h.start_io_thread()
+        self.settings.connect_data_handler(self._data_h)
+        self.settings.connect_workers()
+
+        self.settings.connect_toolsettings(self.toolsettings)
+
 
     def closeEvent(self, event):
         self._data_h.stop_io()

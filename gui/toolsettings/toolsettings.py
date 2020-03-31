@@ -54,8 +54,10 @@ class ToolSettings(QtWidgets.QWidget):
 
         value: The value that the setting will display.
         """
+        value_str = f'{value:.2}'
+
         self.slider_value.setSliderPosition(value)
-        self.label_value.setText(str(value))
+        self.label_value.setText(value_str)
         self.value = value
 
 

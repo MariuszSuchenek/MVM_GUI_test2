@@ -143,7 +143,7 @@ QDoubleSpinBox::down-button  {
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="pushButton_start_auto">
       <property name="geometry">
        <rect>
         <x>550</x>
@@ -163,7 +163,7 @@ QDoubleSpinBox::down-button  {
        <string>Start Automatic</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_5">
+     <widget class="QPushButton" name="pushButton_load_preset_auto">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -183,7 +183,7 @@ QDoubleSpinBox::down-button  {
        <string>Load presets</string>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+     <widget class="QDoubleSpinBox" name="spinBox_rr">
       <property name="geometry">
        <rect>
         <x>250</x>
@@ -192,11 +192,16 @@ QDoubleSpinBox::down-button  {
         <height>80</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>25</pointsize>
+       </font>
+      </property>
       <property name="buttonSymbols">
        <enum>QAbstractSpinBox::PlusMinus</enum>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="doubleSpinBox">
+     <widget class="QDoubleSpinBox" name="spinBox_insp_expir_ratio">
       <property name="geometry">
        <rect>
         <x>350</x>
@@ -204,6 +209,13 @@ QDoubleSpinBox::down-button  {
         <width>411</width>
         <height>80</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>25</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
       </property>
       <property name="minimum">
        <double>1.000000000000000</double>
@@ -225,7 +237,7 @@ QDoubleSpinBox::down-button  {
      <attribute name="title">
       <string>Assisted Mode Settings</string>
      </attribute>
-     <widget class="QPushButton" name="pushButton_4">
+     <widget class="QPushButton" name="pushButton_start_assist">
       <property name="geometry">
        <rect>
         <x>550</x>
@@ -245,7 +257,7 @@ QDoubleSpinBox::down-button  {
        <string>Start Assisted</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_6">
+     <widget class="QPushButton" name="pushButton_load_preset_assist">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -325,7 +337,7 @@ QDoubleSpinBox::down-button  {
        <string>Minimal Respiratory Rate</string>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+     <widget class="QDoubleSpinBox" name="spinBox_pressure_trigger">
       <property name="geometry">
        <rect>
         <x>260</x>
@@ -334,11 +346,16 @@ QDoubleSpinBox::down-button  {
         <height>80</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>25</pointsize>
+       </font>
+      </property>
       <property name="buttonSymbols">
        <enum>QAbstractSpinBox::PlusMinus</enum>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+     <widget class="QDoubleSpinBox" name="spinBox_flow_trigger">
       <property name="geometry">
        <rect>
         <x>260</x>
@@ -347,11 +364,16 @@ QDoubleSpinBox::down-button  {
         <height>80</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>25</pointsize>
+       </font>
+      </property>
       <property name="buttonSymbols">
        <enum>QAbstractSpinBox::PlusMinus</enum>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
+     <widget class="QDoubleSpinBox" name="spinBox_min_resp_rate">
       <property name="geometry">
        <rect>
         <x>460</x>
@@ -373,7 +395,7 @@ QDoubleSpinBox::down-button  {
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="checkBox_enable_backup">
       <property name="geometry">
        <rect>
         <x>20</x>
