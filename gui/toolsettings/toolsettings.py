@@ -13,7 +13,7 @@ class ToolSettings(QtWidgets.QWidget):
         uic.loadUi("toolsettings/toolsettings.ui", self)
         self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
-        self.slider_value = self.findChild(QtWidgets.QSlider, "slider_value")
+        self.slider_value = self.findChild(QtWidgets.QProgressBar, "slider_value")
         self.label_min = self.findChild(QtWidgets.QLabel, "label_min")
         self.label_max = self.findChild(QtWidgets.QLabel, "label_max")
         self.label_units = self.findChild(QtWidgets.QLabel, "label_units")
@@ -54,7 +54,7 @@ class ToolSettings(QtWidgets.QWidget):
 
         value: The value that the setting will display.
         """
-        self.slider_value.setSliderPosition(value)
+        self.slider_value.setValue(value)
         self.label_value.setText(str(value))
         self.value = value
 

@@ -31,7 +31,7 @@
      <rect>
       <x>0</x>
       <y>370</y>
-      <width>161</width>
+      <width>131</width>
       <height>101</height>
      </rect>
     </property>
@@ -79,30 +79,30 @@
    <widget class="ToolSettings" name="toolsettings_1" native="true">
     <property name="geometry">
      <rect>
-      <x>159</x>
+      <x>130</x>
       <y>370</y>
-      <width>161</width>
-      <height>111</height>
+      <width>171</width>
+      <height>101</height>
      </rect>
     </property>
    </widget>
    <widget class="ToolSettings" name="toolsettings_2" native="true">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>300</x>
       <y>370</y>
-      <width>161</width>
-      <height>111</height>
+      <width>171</width>
+      <height>101</height>
      </rect>
     </property>
    </widget>
    <widget class="ToolSettings" name="toolsettings_3" native="true">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>470</x>
       <y>370</y>
-      <width>161</width>
-      <height>111</height>
+      <width>171</width>
+      <height>101</height>
      </rect>
     </property>
    </widget>
