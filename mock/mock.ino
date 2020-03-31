@@ -80,7 +80,8 @@ void loop()
     command.trim();
     auto const command_type = command.substring(0, 3);
 
-    if (command_type == "get") {
+    if (command.length() == 0) {
+    } else if (command_type == "get") {
       Serial.println("valore=" + get(command));
     } else if (command_type == "set") {
       Serial.println("valore=" + set(command));
