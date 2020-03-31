@@ -21,7 +21,8 @@ void setup()
   Serial.begin(115200);
   Serial.setTimeout(50000);
 
-  random_measures = { "mve", "vti", "vte" };
+  random_measures = { "mve", "vti", "vte", "pressure", "bpm",
+                      "flow", "o2" };
 }
 
 // this is tricky, didn't had the time to think a better algo
@@ -49,6 +50,14 @@ String get(String const& command)
 {
   auto const name = parse_word(command);
 
+  if (name == "all") {
+    return
+        String(random(10, 100)) + ","
+      + String(random(10, 100)) + ","
+      + String(random(10, 100)) + ","
+      + String(random(10, 100));
+  }
+
   auto const it = std::find(
       random_measures.begin()
     , random_measures.end()
@@ -56,7 +65,7 @@ String get(String const& command)
   );
 
   if (it != random_measures.end()) {
-    return String(random(10, 40));
+    return String(random(10, 100));
   } else {
     auto const it = parameters.find(name);
 
@@ -71,12 +80,13 @@ void loop()
     command.trim();
     auto const command_type = command.substring(0, 3);
 
-    if (command_type == "get") {
-      Serial.println(get(command));
+    if (command.length() == 0) {
+    } else if (command_type == "get") {
+      Serial.println("valore=" + get(command));
     } else if (command_type == "set") {
-      Serial.println(set(command));
+      Serial.println("valore=" + set(command));
     } else {
-      Serial.println("notok");
+      Serial.println("valore=notok");
     }
   }
 }

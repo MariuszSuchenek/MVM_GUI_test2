@@ -6,7 +6,30 @@ from threading import Lock
 import serial # pySerial
 
 
-__all__ = ("ESP32Serial",)
+__all__ = ("ESP32Serial", "ESP32Exception")
+
+
+class ESP32Exception(Exception):
+    """
+    Exception class for decoding and hardware failures.
+    """
+
+    def __init__(self, verb, line, output):
+        """
+        Contructor
+
+        arguments:
+        - verb           the transmit verb = {get, set}
+        - line           the line transmitted to ESP32 that is failing
+        - output         what the ESP32 is replying
+        """
+
+        self.verb = verb
+        self.line = line
+        self.output = output
+
+        super(ESP32Exception, self).__init__(
+                f"ERROR in {verb}: line: '{line}'; output: {output}")
 
 
 class ESP32Serial:
@@ -28,12 +51,18 @@ class ESP32Serial:
         - baudrate       the preferred baudrate, default 115200
         - terminator     the line terminator, binary encoded, default
                          b'\n'
+        - timeout        sets the read() timeout in seconds
         """
 
         baudrate = kwargs["baudrate"] if "baudrate" in kwargs else 115200
+        timeout = kwargs["timeout"] if "timeout" in kwargs else 1
         self.term = kwargs["terminator"] if "terminator" in kwargs else b'\n'
-        self.connection = serial.Serial(port=port, baudrate=baudrate)
+        self.connection = serial.Serial(port=port, baudrate=baudrate,
+                                        timeout=timeout, **kwargs)
         self.lock = Lock()
+
+        while self.connection.read():
+            pass
 
     def __del__(self):
         """
@@ -44,6 +73,23 @@ class ESP32Serial:
 
         with self.lock:
             self.connection.close()
+
+    def _parse(self, result):
+        """
+        Parses the message from ESP32
+
+        arguments:
+        - result         what the ESP replied as a binary buffer
+
+        returns the requested value as a string
+        """
+
+        check_str, value = result.decode().split('=')
+        check_str = check_str.strip()
+
+        if check_str != 'valore':
+            raise Exception("protocol error: 'valore=' expected")
+        return value.strip()
 
     def set(self, name, value):
         """
@@ -63,8 +109,17 @@ class ESP32Serial:
             # Raspbian
             command = 'set ' + name + ' ' + str(value) + '\r\n'
             self.connection.write(command.encode())
-            result = self.connection.read_until(terminator=self.term)
-            return result.decode().strip()
+
+            result = b""
+            retry = 10
+            while retry:
+                retry -= 1
+                try:
+                    result = self.connection.read_until(terminator=self.term)
+                    return self._parse(result)
+                except Exception as exc:
+                    print(f"ERROR: set failing: {result.decode()} {str(exc)}")
+            raise ESP32Exception("set", command, result.decode())
 
     def get(self, name):
         """
@@ -79,5 +134,38 @@ class ESP32Serial:
         with self.lock:
             command = 'get ' + name + '\r\n'
             self.connection.write(command.encode())
-            result = self.connection.read_until(terminator=self.term)
-            return result.decode().strip()
+
+            result = b""
+            retry = 10
+            while retry:
+                retry -= 1
+                try:
+                    result = self.connection.read_until(terminator=self.term)
+                    return self._parse(result)
+                except Exception as exc:
+                    print(f"ERROR: get failing: {result.decode()} {str(exc)}")
+            raise ESP32Exception("get", command, result.decode())
+
+    def get_all(self):
+        """
+        Get the pressure, flow, o2, and bpm at once and in this order.
+
+        returns: a dict with member keys as written above and values as
+        strings.
+        """
+
+        with self.lock:
+            self.connection.write(b"get all\r\n")
+
+            result = b""
+            retry = 10
+            while retry:
+                retry -= 1
+                try:
+                    result = self.connection.read_until(terminator=self.term)
+                    pressure, flow, o2, bpm = self._parse(result).split(',')
+                    return { "pressure": pressure, "flow": flow, "o2": o2,
+                             "bpm": bpm }
+                except Exception as exc:
+                    print(f"ERROR: get failing: {result.decode()} {str(exc)}")
+            raise ESP32Exception("get", command, result.decode())
