@@ -31,7 +31,11 @@ class DataFiller():
         self._plots[name].setData(self._xdata, self._data[name])
         self._colors[name] = self._config[monitor_name]['color']
 
-        plot.setLabel(axis='left', text=self._config['var_units'].get(name, ''))
+        y_axis_label = self._config[monitor_name]['name']
+        y_axis_label += ' ['
+        y_axis_label += self._config['var_units'].get(name, '')
+        y_axis_label += ']'
+        plot.setLabel(axis='left', text=y_axis_label)
         plot.setMouseEnabled(x=False, y=False)
         plot.setMenuEnabled(False)
 
