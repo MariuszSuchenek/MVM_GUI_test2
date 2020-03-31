@@ -57,7 +57,7 @@ String get(String const& command)
   );
 
   if (it != random_measures.end()) {
-    return String(random(10, 40));
+    return String(random(10, 100));
   } else {
     auto const it = parameters.find(name);
 
