@@ -6,7 +6,30 @@ from threading import Lock
 import serial # pySerial
 
 
-__all__ = ("ESP32Serial",)
+__all__ = ("ESP32Serial", "ESP32Exception")
+
+
+class ESP32Exception(Exception):
+    """
+    Exception class for decoding and hardware failures.
+    """
+
+    def __init__(self, verb, line, output):
+        """
+        Contructor
+
+        arguments:
+        - verb           the transmit verb = {get, set}
+        - line           the line transmitted to ESP32 that is failing
+        - output         what the ESP32 is replying
+        """
+
+        self.verb = verb
+        self.line = line
+        self.output = output
+
+        super(ESP32Exception, self).__init__(
+                f"ERROR in {verb}: line: '{line}'; output: {output}")
 
 
 class ESP32Serial:
