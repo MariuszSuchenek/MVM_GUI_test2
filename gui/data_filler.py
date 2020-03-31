@@ -1,3 +1,4 @@
+from PyQt5 import QtGui
 import numpy as np
 import pyqtgraph as pg
 from ast import literal_eval # to convert a string to list
@@ -16,8 +17,10 @@ class DataFiller():
         self._data = {}
         self._colors = {}
         self._config = config
-        self._window_width = self._config['nsamples']
-        self._xdata = np.arange(-self._window_width, 0)
+        self._n_smaples = self._config['nsamples']
+        self._sampling = self._config['sampling_interval']
+        self._time_window = self._n_smaples * self._sampling # seconds
+        self._xdata = np.linspace(-self._time_window, 0, self._n_smaples)
         return
 
     def connect_plot(self, monitor_name, plot):
@@ -27,15 +30,27 @@ class DataFiller():
         '''
         name = self._config[monitor_name]['plot_var']
         self._plots[name] = plot.plot()
-        self._data[name] = np.linspace(0, 0, self._window_width)
+        self._data[name] = np.linspace(0, 0, self._n_smaples)
         self._plots[name].setData(self._xdata, self._data[name])
         self._colors[name] = self._config[monitor_name]['color']
 
+        # Set the Y axis
         y_axis_label = self._config[monitor_name]['name']
         y_axis_label += ' ['
         y_axis_label += self._config['var_units'].get(name, '')
         y_axis_label += ']'
         plot.setLabel(axis='left', text=y_axis_label)
+
+        # Set the X axis
+        if self._config['show_x_axis_labels']:
+            plot.setLabel(axis='bottom', text='Time [s]')
+
+        # Remove x ticks, if selected
+        if not self._config['show_x_axis_ticks']:
+            plot.getAxis('bottom').setTicks([])
+            plot.getAxis('bottom').setStyle(tickTextOffset=0, tickTextHeight=0)
+
+        # Remove mouse interaction with plots
         plot.setMouseEnabled(x=False, y=False)
         plot.setMenuEnabled(False)
 
