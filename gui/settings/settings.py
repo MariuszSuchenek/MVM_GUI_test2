@@ -5,14 +5,16 @@ import os
 import yaml
 
 class Settings(QtWidgets.QMainWindow):
-    def __init__(self, *args):
+    def __init__(self, config, *args):
         """
         Initialized the Settings overlay widget.
         """
         super(Settings, self).__init__(*args)
         uic.loadUi("settings/settings.ui", self)
 
-        self._debug = True
+        self._debug = False
+
+        self._config = config
 
         # Don't ask me why I am redefining these...
 
@@ -33,15 +35,15 @@ class Settings(QtWidgets.QMainWindow):
         self._close_2_btn = self.pushButton_close_2
 
         # Reading in presets from config files
-        base_dir = os.path.dirname(__file__)
-        file = os.path.join(base_dir, '../presets_automatic_mode.yaml')
-        with open(file) as f:
-            self._presets_auto = yaml.load(f, Loader=yaml.FullLoader)
-            print ('Automatic Mode Presets:', yaml.dump(self._presets_auto), sep='\n')
-        file = os.path.join(base_dir, '../presets_assisted_mode.yaml')
-        with open(file) as f:
-            self._presets_assist = yaml.load(f, Loader=yaml.FullLoader)
-            print ('Assisted Mode Presets:', yaml.dump(self._presets_assist), sep='\n')
+        # base_dir = os.path.dirname(__file__)
+        # file = os.path.join(base_dir, '../presets_automatic_mode.yaml')
+        # with open(file) as f:
+        #     self._presets_auto = yaml.load(f, Loader=yaml.FullLoader)
+        #     print ('Automatic Mode Presets:', yaml.dump(self._presets_auto), sep='\n')
+        # file = os.path.join(base_dir, '../presets_assisted_mode.yaml')
+        # with open(file) as f:
+        #     self._presets_assist = yaml.load(f, Loader=yaml.FullLoader)
+        #     print ('Assisted Mode Presets:', yaml.dump(self._presets_assist), sep='\n')
 
         
 
@@ -67,7 +69,7 @@ class Settings(QtWidgets.QMainWindow):
         and stores it here, as it will be called when the
         Start button is pressed from the settings panel
         '''
-        self.start_stop_worker = start_stop_worker
+        self._start_stop_worker = start_stop_worker
 
 
     def connect_workers(self):
@@ -94,14 +96,13 @@ class Settings(QtWidgets.QMainWindow):
 
 
     def load_presets_auto(self):
-        print('load_presets_auto')
 
-        rr = self._presets_auto['respiratory_rate']
+        rr = self._config['respiratory_rate']
         self._respiratory_rate_input.setValue(rr['default'])
         self._respiratory_rate_input.setMinimum(rr['min'])
         self._respiratory_rate_input.setMaximum(rr['max'])
 
-        ie = self._presets_auto['insp_expir_ratio']
+        ie = self._config['insp_expir_ratio']
         self._insp_expir_ratio_input.setValue(ie['default'])
         self._insp_expir_ratio_input.setMinimum(ie['min'])
         self._insp_expir_ratio_input.setMaximum(ie['max'])
@@ -124,22 +125,22 @@ class Settings(QtWidgets.QMainWindow):
 
     def load_presets_assist(self):
 
-        pt = self._presets_assist['pressure_trigger']
+        pt = self._config['pressure_trigger']
         self._pressure_trigger_input.setValue(pt['default'])
         self._pressure_trigger_input.setMinimum(pt['min'])
         self._pressure_trigger_input.setMaximum(pt['max'])
 
-        ft = self._presets_assist['flow_trigger']
+        ft = self._config['flow_trigger']
         self._flow_trigger_input.setValue(ft['default'])
         self._flow_trigger_input.setMinimum(ft['min'])
         self._flow_trigger_input.setMaximum(ft['max'])
 
-        mr = self._presets_assist['minimal_resp_rate']
+        mr = self._config['minimal_resp_rate']
         self._min_resp_rate_input.setValue(mr['default'])
         self._min_resp_rate_input.setMinimum(mr['min'])
         self._min_resp_rate_input.setMaximum(mr['max'])
 
-        eb = self._presets_assist['enable_backup']
+        eb = self._config['enable_backup']
         self._enable_backup_checkbox.setChecked(eb)
 
         self.pressure_trigger_worker()
@@ -168,7 +169,7 @@ class Settings(QtWidgets.QMainWindow):
         '''
         Starts the run
         '''
-        self.start_stop_worker.toggle_automatic()
+        self._start_stop_worker.toggle_automatic()
         self.close()
 
 
@@ -176,7 +177,7 @@ class Settings(QtWidgets.QMainWindow):
         '''
         Starts the run
         '''
-        self.start_stop_worker.toggle_assisted()
+        self._start_stop_worker.toggle_assisted()
         self.close()
 
 
@@ -192,6 +193,9 @@ class Settings(QtWidgets.QMainWindow):
         rr = self._respiratory_rate_input.value()
         
         if self._debug: print('Setting RR to', rr)
+
+        # Update the value in the config file
+        self._config['respiratory_rate']['current'] = rr
 
         # Set color to red until we know the value has been set.
         self._respiratory_rate_input.setStyleSheet("color: red")
@@ -222,6 +226,9 @@ class Settings(QtWidgets.QMainWindow):
         
         if self._debug: print('value of Ratio', ratio)
 
+        # Update the value in the config file
+        self._config['insp_expir_ratio']['current'] = ratio
+
         # Set color to red until we know the value has been set.
         self._insp_expir_ratio_input.setStyleSheet("color: red")
 
@@ -250,6 +257,9 @@ class Settings(QtWidgets.QMainWindow):
         
         if self._debug: print('value of Pressure Trigger', pressure)
 
+        # Update the value in the config file
+        self._config['pressure_trigger']['current'] = pressure
+
         # Set color to red until we know the value has been set.
         self._pressure_trigger_input.setStyleSheet("color: red")
 
@@ -277,6 +287,9 @@ class Settings(QtWidgets.QMainWindow):
         flow = self._flow_trigger_input.value()
         
         if self._debug: print('value of Pressure Trigger', flow)
+
+        # Update the value in the config file
+        self._config['flow_trigger']['current'] = flow
 
         # Set color to red until we know the value has been set.
         self._flow_trigger_input.setStyleSheet("color: red")

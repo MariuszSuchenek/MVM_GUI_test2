@@ -118,6 +118,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
             self.monitors[name] = monitor
         self.data_filler.connect_monitor('monitor_top', self.monitors['monitor_top'])
+        self.data_filler.connect_monitor('monitor_mid', self.monitors['monitor_mid'])
+        self.data_filler.connect_monitor('monitor_bot', self.monitors['monitor_bot'])
         # Need to add the other monitors...which ones?
 
 
@@ -142,7 +144,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect settings button to Settings overlay.
         '''
-        self.settings = Settings(self)
+        self.settings = Settings(config, self)
         self.button_settings = self.findChild(QtWidgets.QPushButton, "button_settings")
         self.button_settings.pressed.connect(self.settings.show)
 

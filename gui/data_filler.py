@@ -6,7 +6,7 @@ class DataFiller():
     '''
     This class fills the data for all the
     displayed plots on the screen, and 
-    updates the plots accordingly   
+    updates the plots accordingly.
     '''
 
     def __init__(self, config):

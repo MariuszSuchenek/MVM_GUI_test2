@@ -93,8 +93,8 @@ class DataHandler():
 
     def construct_missing_params(self, values):
 
-        # 1) Calculate Tital Volume
-        # bpm is respiratory rate [Hz????????]
+        # 1) Calculate Tidal Volume
+        # bpm is respiratory rate [Hz I believe]
         # flow is respiratory minute volume [lpm]
         # we calculate tidal volume as
         # volume = flow / bpm

@@ -82,3 +82,56 @@ monitor_bot:
     color: "rgb(0,128,0)" # "green"
     alarmcolor: "red"
     plot_var: flow
+
+
+
+
+
+
+
+#
+# Automatic Mode
+#
+
+# Respiration Rate (breaths per minute)
+respiratory_rate:
+    default: 12
+    min: 4
+    max: 50
+    current: None
+
+# Inspiration/Expiration
+insp_expir_ratio:
+    default: 0.5
+    min: 0.33
+    max: 1.
+    current: None
+
+
+
+#
+# Assisted Mode
+#
+
+# The trigger that starts the respiration
+pressure_trigger: 
+    default: 1.
+    min: 0.
+    max: 10.
+    current: None
+
+# 
+flow_trigger: 
+    default: 1.
+    min: 0.
+    max: 10.
+    current: None
+
+#
+minimal_resp_rate:
+    default: 1.
+    min: 0.
+    max: 10.
+    current: None
+
+enable_backup: False

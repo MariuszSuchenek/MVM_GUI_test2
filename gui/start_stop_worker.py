@@ -51,6 +51,9 @@ class StartStopWorker():
             result = self.esp32.set('mode', AUTOMATIC)
             result = self.esp32.set('run', DO_RUN)
 
+            import yaml
+            print ('-----Config:', yaml.dump(self.config), sep='\n')
+
             if result != self.config['return_success_code']:
                 print(f"\033[91mERROR: Failed to start with mode AUTOMATIC.\033[0m")
 
