@@ -10,11 +10,6 @@ nsamples: 100
 # time in seconds between two data retrieval
 sampling_interval: 0.1
 
-# Variables to display in the graphs (must match names in the ESP or an available function):
-# plot_top_var: pressure  # Inspiration pressure
-# plot_mid_var: volume    # Tidal volume   
-# plot_bot_var: flow      # This is mve I assume
-
 # The parameters that will be read from the ESP and stored for possible use
 read_params: ['pressure', 'flow', 'o2', 'bpm', 'all']
 
@@ -25,14 +20,6 @@ return_success_code: 'OK'
 line_width: 1
 
 # The units used for each variable:
-var_units: 
-    pressure: 'mbar'
-    flow: 'lpm'
-    o2: '%'
-    bpm: 'Hz'
-    volume: 'mL'
-
-# The colors used for each:
 var_units: 
     pressure: 'mbar'
     flow: 'lpm'
