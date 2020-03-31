@@ -8,13 +8,14 @@ as needed.
 
 from threading import Lock
 import random
-        
+
 class FakeESP32Serial:
     def __init__(self):
         self.lock = Lock()
         self.set_params = {}
-        self.random_params = ["mve", "vti", "vte"]
-        
+        self.random_params = ["mve", "vti", "vte", "pressure", "flow",
+                              "o2", "bpm"]
+
     def set(self, name, value):
         """
         Set command wrapper
@@ -30,7 +31,7 @@ class FakeESP32Serial:
         with self.lock:
             self.set_params[name] = value
             return "OK"
-    
+
     def get(self, name):
         """
         Get command wrapper
@@ -43,10 +44,25 @@ class FakeESP32Serial:
 
         with self.lock:
             retval = 0
-            
+
             if name in self.set_params:
                 retval = self.set_params[name]
             elif name in self.random_params:
                 retval = random.uniform(10, 100)
-                
+
             return str(retval)
+
+    def get_all(self):
+        """
+        Get the pressure, flow, o2, and bpm at once and in this order.
+
+        returns: a dict with member keys as written above and values as
+        strings.
+        """
+
+        with self.lock:
+            return {"pressure": random.uniform(10, 100),
+                    "flow":     random.uniform(10, 100),
+                    "o2":       random.uniform(10, 100),
+                    "bpm":      random.uniform(10, 100)}
+
