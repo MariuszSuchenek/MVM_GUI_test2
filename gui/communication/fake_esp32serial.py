@@ -8,13 +8,13 @@ as needed.
 
 from threading import Lock
 import random
-        
+
 class FakeESP32Serial:
     def __init__(self):
         self.lock = Lock()
         self.set_params = {}
         self.random_params = ["mve", "vti", "vte"]
-        
+
     def set(self, name, value):
         """
         Set command wrapper
@@ -30,7 +30,7 @@ class FakeESP32Serial:
         with self.lock:
             self.set_params[name] = value
             return "OK"
-    
+
     def get(self, name):
         """
         Get command wrapper
@@ -43,10 +43,10 @@ class FakeESP32Serial:
 
         with self.lock:
             retval = 0
-            
+
             if name in self.set_params:
                 retval = self.set_params[name]
             elif name in self.random_params:
                 retval = random.uniform(10, 100)
-                
+
             return str(retval)
