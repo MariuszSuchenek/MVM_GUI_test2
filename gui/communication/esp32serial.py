@@ -74,6 +74,23 @@ class ESP32Serial:
         with self.lock:
             self.connection.close()
 
+    def _parse(self, result):
+        """
+        Parses the message from ESP32
+
+        arguments:
+        - result         what the ESP replied as a binary buffer
+
+        returns the requested value as a string
+        """
+
+        check_str, value = result.decode().split('=')
+        check_str = check_str.strip()
+
+        if check_str != 'valore':
+            raise Exception("protocol error: 'valore=' expected")
+        return value.strip()
+
     def set(self, name, value):
         """
         Set command wrapper
