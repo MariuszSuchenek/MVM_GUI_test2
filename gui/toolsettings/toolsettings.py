@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
+from PyQt5 import QtGui
 import sys
 
 class ToolSettings(QtWidgets.QWidget):
@@ -13,10 +14,17 @@ class ToolSettings(QtWidgets.QWidget):
         uic.loadUi("toolsettings/toolsettings.ui", self)
         self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
-        self.slider_value = self.findChild(QtWidgets.QSlider, "slider_value")
+        self.slider_value = self.findChild(QtWidgets.QProgressBar, "slider_value")
         self.label_min = self.findChild(QtWidgets.QLabel, "label_min")
         self.label_max = self.findChild(QtWidgets.QLabel, "label_max")
         self.label_units = self.findChild(QtWidgets.QLabel, "label_units")
+
+        # Set background color
+        palette = self.palette()
+        role = self.backgroundRole()
+        palette.setColor(role, QtGui.QColor("#eeeeee"))
+        self.setPalette(palette)
+
 
         self.slider_value.valueChanged.connect(self.update)
 
@@ -61,8 +69,7 @@ class ToolSettings(QtWidgets.QWidget):
 
         value: The value that the setting will display.
         """
-
-        self.slider_value.setSliderPosition(value)
+        self.slider_value.setValue(value)
         
         if isinstance(value, float):
             value = f'{value:.3}'

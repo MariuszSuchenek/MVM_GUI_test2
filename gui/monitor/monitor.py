@@ -94,7 +94,7 @@ class Monitor(QtWidgets.QWidget):
         """
         palette = self.palette()
         role = self.backgroundRole() #choose whatever you like
-        palette.setColor(role, QtGui.QColor("#eeeeee"))
+        palette.setColor(role, QtGui.QColor("#000000"))
         self.setPalette(palette)
 
     def is_alarm(self):
