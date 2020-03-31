@@ -98,13 +98,12 @@ class DataHandler():
         '''
 
         # 1) Calculate Tidal Volume
-        # bpm is respiratory rate [Hz I believe]
-        # flow is respiratory minute volume [lpm]
+        # bpm is respiratory rate [1/minute]
+        # flow is respiratory minute volume [L/minute]
         # we calculate tidal volume as
         # volume = flow / bpm
         if 'bpm' in values and 'flow' in values:
-            values['volume'] = values['flow'] / values['bpm']       # L / 60
-            values['volume'] = values['flow'] / values['bpm'] * 60  # L
+            values['volume'] = values['flow'] / values['bpm']       # L
             values['volume'] = values['flow'] / values['bpm'] * 1e3 # mL
 
         # 2) 
