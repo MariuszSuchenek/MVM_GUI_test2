@@ -20,10 +20,10 @@ return_success_code: 'OK'
 line_width: 1
 
 # Toggles the x axis labels in the graphs (specifcally, the 'Time [s]' label)
-show_x_axis_labels: False
+show_x_axis_labels: True
 
 # Toggles the x axis ticks in the graphs (specifcally, the number on the x axis)
-show_x_axis_ticks: False
+show_x_axis_ticks: True
 
 # The units used for each variable:
 var_units: 
