@@ -7,6 +7,7 @@ class DataFiller():
     This class fills the data for all the
     displayed plots on the screen, and 
     updates the plots accordingly.
+    It also passes data to the monitors.
     '''
 
     def __init__(self, config):

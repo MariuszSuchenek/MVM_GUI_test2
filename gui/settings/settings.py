@@ -34,18 +34,6 @@ class Settings(QtWidgets.QMainWindow):
         self._start_assisted_btn = self.pushButton_start_assist
         self._close_2_btn = self.pushButton_close_2
 
-        # Reading in presets from config files
-        # base_dir = os.path.dirname(__file__)
-        # file = os.path.join(base_dir, '../presets_automatic_mode.yaml')
-        # with open(file) as f:
-        #     self._presets_auto = yaml.load(f, Loader=yaml.FullLoader)
-        #     print ('Automatic Mode Presets:', yaml.dump(self._presets_auto), sep='\n')
-        # file = os.path.join(base_dir, '../presets_assisted_mode.yaml')
-        # with open(file) as f:
-        #     self._presets_assist = yaml.load(f, Loader=yaml.FullLoader)
-        #     print ('Assisted Mode Presets:', yaml.dump(self._presets_assist), sep='\n')
-
-        
 
     def connect_data_handler(self, data_h):
         '''

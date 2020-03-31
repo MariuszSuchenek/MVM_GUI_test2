@@ -7,7 +7,7 @@ from communication.threading_utils import Worker
 class DataHandler():
     '''
     This class takes care of starting a new QThread which
-    is entirey dedicated to reading data from the ESP32.
+    is entirey dedicated to read data from the ESP32.
     You will need to connect a DataFiller using connect_data_filler(),
     and this class will fill the data direclty.
     '''
@@ -92,6 +92,10 @@ class DataHandler():
         return "Done."
 
     def construct_missing_params(self, values):
+        '''
+        Constructs parameters than can be calculated 
+        from those available in the ESP.
+        '''
 
         # 1) Calculate Tidal Volume
         # bpm is respiratory rate [Hz I believe]

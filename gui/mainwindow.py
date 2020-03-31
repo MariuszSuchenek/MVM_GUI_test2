@@ -53,8 +53,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._data_h.start_io_thread()
 
 
-
-
         '''
         Set up tool settings (bottom bar)
 
@@ -68,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.toolsettings[0].setup("Resp. Rate",          setrange=(4.,  12., 100.), units="b/min")
         self.toolsettings[1].setup("Insp./Expir.",        setrange=(0., 0.5,  10.), units="ratio")
-        # self.toolsettings[0].setup("O<sub>2</sub> conc.", setrange=(21, 40, 100), units="%")
+        self.toolsettings[2].setup("O<sub>2</sub> conc.", setrange=(21, 40, 100), units="%")
         # self.toolsettings[1].setup("PEEP",                setrange=(0,   5, 50),  units="cmH<sub>2</sub>O")
 
         '''

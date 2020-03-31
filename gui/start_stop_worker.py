@@ -8,6 +8,12 @@ DO_RUN = 1
 DONOT_RUN = 0
 
 class StartStopWorker():
+    '''
+    A class entirely dedicated to start and stop 
+    the ventilator. For now, this is called from the
+    mainwindow, or from the settings panel.
+    '''
+
     def __init__(self, main_window, config, esp32, button_startauto, button_startman):
         self.main_window = main_window
         self.config = config
@@ -50,9 +56,6 @@ class StartStopWorker():
             # Send signal to ESP to start automatic mode
             result = self.esp32.set('mode', AUTOMATIC)
             result = self.esp32.set('run', DO_RUN)
-
-            import yaml
-            print ('-----Config:', yaml.dump(self.config), sep='\n')
 
             if result != self.config['return_success_code']:
                 print(f"\033[91mERROR: Failed to start with mode AUTOMATIC.\033[0m")
