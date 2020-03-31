@@ -185,7 +185,6 @@ class Settings(QtWidgets.QMainWindow):
         '''
         self._current_values = self._current_values_temp
         self.send_auto_values_to_hardware()
-        self._start_stop_worker.toggle_automatic()
         self.close()
 
 
@@ -195,7 +194,6 @@ class Settings(QtWidgets.QMainWindow):
         '''
         self._current_values = self._current_values_temp
         self.send_assist_values_to_hardware()
-        self._start_stop_worker.toggle_assisted()
         self.close()
 
 
