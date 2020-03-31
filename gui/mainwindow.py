@@ -23,6 +23,9 @@ DONOT_RUN = 0
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    MODE_STOP   = 0
+    MODE_AUTO   = 1
+    MODE_ASSIST = 2
     def __init__(self, config, esp32, *args, **kwargs):
         """
         Initializes the main window for the MVM GUI. See below for subfunction setup description.
@@ -74,7 +77,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         Connect each to their respective mode toggle functions.
         '''
-        self.mode = STOP
         self.button_startauto = self.findChild(QtWidgets.QPushButton, "button_startauto")
         self.button_startman = self.findChild(QtWidgets.QPushButton, "button_startman")
         self.button_startauto.pressed.connect(self.toggle_automatic)
@@ -160,6 +162,46 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         self._data_h.stop_io()
 
+    def start_button_pressed(self, button):
+        self.button_startman.setDisabled(True)
+        self.button_startauto.setEnabled(False)
+        self.button_startman.repaint()
+        self.button_startauto.repaint()
+        text = button.text()
+        text = text.replace('Start', 'Stop')
+        button.setText(text)
+
+    def stop_button_pressed(self, button):
+        button.setDown(False)
+        currentMode = button.text().split(' ')[1].upper()
+        confirmation = QtWidgets.QMessageBox.warning(
+            self, 
+            '**STOPPING AUTOMATIC MODE**', 
+            "Are you sure you want to STOP " + currentMode + " MODE?", 
+            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
+            QtWidgets.QMessageBox.Cancel)
+        
+        if confirmation == QtWidgets.QMessageBox.Ok:
+            self.mode = self.MODE_STOP
+            text = button.text()
+            text = text.replace('Stop', 'Start')
+            button.setText(text)
+            self.button_startauto.setEnabled(True)
+            self.button_startman.setEnabled(True)
+            self.button_startman.repaint()
+            self.button_startauto.repaint()
+
+    def button_timeout(self):
+        print('Setting timeout')
+        timeout = 1000
+        # Set timeout for being able to stop this mode
+        if 'start_mode_timeout' in self.config:
+            timeout = self.config['start_mode_timeout']
+            # set maximum timeout
+            if timeout > 3000: 
+                timeout = 3000
+        return timeout
+            
     def toggle_automatic(self):
         """
         Toggles between automatic mode (1) and stop (0).
@@ -169,6 +211,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._start_stop_worker.toggle_automatic()
        
 
+
     def toggle_assisted(self):
         """
         Toggles between assisted mode (2) and stop (0).
@@ -176,3 +219,4 @@ class MainWindow(QtWidgets.QMainWindow):
         Changes text from "Start" to "Stop" and en/disables automatic button depending on mode.
         """
         self._start_stop_worker.toggle_assisted()
+

@@ -1,11 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-STOP = -1
-AUTOMATIC = 0
-ASSISTED = 1
 
-DO_RUN = 1
-DONOT_RUN = 0
 
 class StartStopWorker():
     '''
@@ -13,6 +8,12 @@ class StartStopWorker():
     the ventilator. For now, this is called from the
     mainwindow, or from the settings panel.
     '''
+    MODE_STOP = -1
+    MODE_AUTO = 0
+    MODE_ASSIST = 1
+
+    DO_RUN = 1
+    DONOT_RUN = 0
 
     def __init__(self, main_window, config, esp32, button_startauto, button_startman):
         self.main_window = main_window
@@ -21,8 +22,49 @@ class StartStopWorker():
         self.button_startauto = button_startauto
         self.button_startman = button_startman
 
-        self.mode = STOP
+        self.mode = self.MODE_STOP
         return 
+
+    def start_button_pressed(self, button):
+        self.button_startman.setDisabled(True)
+        self.button_startauto.setEnabled(False)
+        self.button_startman.repaint()
+        self.button_startauto.repaint()
+        text = button.text()
+        text = text.replace('Start', 'Stop')
+        button.setText(text)
+
+    def stop_button_pressed(self, button):
+        button.setDown(False)
+        currentMode = button.text().split(' ')[1].upper()
+        confirmation = QtWidgets.QMessageBox.warning(
+            self.main_window, 
+            '**STOPPING AUTOMATIC MODE**', 
+            "Are you sure you want to STOP " + currentMode + " MODE?", 
+            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
+            QtWidgets.QMessageBox.Cancel)
+        
+        if confirmation == QtWidgets.QMessageBox.Ok:
+            self.mode = self.MODE_STOP
+            text = button.text()
+            text = text.replace('Stop', 'Start')
+            button.setText(text)
+            button.setStyleSheet("color: black")
+            self.button_startauto.setEnabled(True)
+            self.button_startman.setEnabled(True)
+            self.button_startman.repaint()
+            self.button_startauto.repaint()
+
+    def button_timeout(self):
+        print('Setting timeout')
+        timeout = 1000
+        # Set timeout for being able to stop this mode
+        if 'start_mode_timeout' in self.config:
+            timeout = self.config['start_mode_timeout']
+            # set maximum timeout
+            if timeout > 3000: 
+                timeout = 3000
+        return timeout
 
     def toggle_automatic(self):
         """
@@ -30,59 +72,28 @@ class StartStopWorker():
 
         Changes text from "Start" to "Stop" and en/disables assisted button depending on mode.
         """
-        if self.mode == STOP:
-            self.mode = AUTOMATIC
-            self.button_startman.setDisabled(True)
-            self.button_startauto.setDisabled(True)
 
-            # Set timeout for being able to stop this mode
-            palette = self.button_startauto.palette()
-            role = self.button_startauto.backgroundRole() 
-            if 'start_mode_timeout' in self.config:
-                timeout = self.config['start_mode_timeout']
-                # set maximum timeout
-                if timeout > 3000: 
-                    timeout = 3000
-            else:
-                timeout = 1000
-            QtCore.QTimer.singleShot(timeout, lambda: ( 
-                    # change button color and enable the stop button
-                    self.button_startauto.setText("Stop Automatic"),
-                    palette.setColor(role, QtGui.QColor("#fc6203")),
-                    self.button_startauto.setPalette(palette),
-                    self.button_startauto.setEnabled(True),
-                    self.button_startauto.setStyleSheet("color: red")))
+        print('Current mode: {}'.format(self.mode))
+        if self.mode == self.MODE_STOP:
+            self.mode = self.MODE_AUTO
 
             # Send signal to ESP to start automatic mode
-            result = self.esp32.set('mode', AUTOMATIC)
-            result = self.esp32.set('run', DO_RUN)
+            result = self.esp32.set('mode', self.MODE_AUTO)
+            result = self.esp32.set('run', self.DO_RUN)
 
-            if result != self.config['return_success_code']:
-                print(f"\033[91mERROR: Failed to start with mode AUTOMATIC.\033[0m")
+            self.start_button_pressed(self.button_startauto)
+
+            QtCore.QTimer.singleShot(self.button_timeout(), lambda: ( 
+                     self.button_startauto.setDisabled(False),
+                     self.button_startauto.setStyleSheet("color: red")))
 
         else:
-            confirmation = QtWidgets.QMessageBox.warning(
-                    self.main_window, 
-                    '**STOPPING AUTOMATIC MODE**', 
-                    "Are you sure you want to STOP AUTOMATIC MODE?", 
-                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
-                    QtWidgets.QMessageBox.Cancel)
+            # Send signal to ESP to stop running
+            self.esp32.set('run', self.DONOT_RUN)
+            self.esp32.set('mode', self.MODE_STOP)
 
-            if confirmation == QtWidgets.QMessageBox.Ok:
-                self.mode = STOP
-                self.button_startauto.setText("Start Automatic")
-                self.button_startman.setEnabled(True)
-                self.button_startauto.setStyleSheet("color: black")
+            self.stop_button_pressed(self.button_startauto)
 
-                # change button color
-                palette = self.button_startauto.palette()
-                role = self.button_startauto.backgroundRole() 
-                palette.setColor(role, QtGui.QColor("#eeeeee"))
-                self.button_startauto.setPalette(palette)
-
-                # Send signal to ESP to stop running
-                self.esp32.set('run', DONOT_RUN)
-                self.esp32.set('mode', STOP)
 
     def toggle_assisted(self):
         """
@@ -90,57 +101,28 @@ class StartStopWorker():
 
         Changes text from "Start" to "Stop" and en/disables automatic button depending on mode.
         """
-        if self.mode == STOP:
-            self.mode = ASSISTED
-            self.button_startauto.setDisabled(True)
-            self.button_startman.setDisabled(True)
-            
-            # Set timeout for being able to stop this mode
-            palette = self.button_startman.palette()
-            role = self.button_startman.backgroundRole() 
-            if 'start_mode_timeout' in self.config:
-                timeout = self.config['start_mode_timeout']
-                # set maximum timeout
-                if timeout > 3000: 
-                    timeout = 3000
-            else:
-                timeout = 1000
-            QtCore.QTimer.singleShot(timeout, lambda: ( 
-                    # change button color and enable the stop button
-                    self.button_startman.setText("Stop Assisted"),
-                    palette.setColor(role, QtGui.QColor("#fc6203")),
-                    self.button_startman.setPalette(palette),
-                    self.button_startman.setEnabled(True),
-                    self.button_startman.setStyleSheet("QPushButton {color: red;}")))
+
+        if self.mode == self.MODE_STOP:
+            self.mode = self.MODE_ASSIST
 
             # Send signal to ESP to start automatic mode
-            result = self.esp32.set('mode', ASSISTED)
-            result = self.esp32.set('run', DO_RUN)
+            result = self.esp32.set('mode', self.MODE_ASSIST)
+            result = self.esp32.set('run', self.DO_RUN)
 
             if result != self.config['return_success_code']:
-                print(f"\033[91mERROR: Failed to start with mode ASSISTED.\033[0m")
+                print(f"\033[91mERROR: Failed to start with mode AUTOMATIC.\033[0m")
 
+            self.start_button_pressed(self.button_startman)
+            
+            QtCore.QTimer.singleShot(self.button_timeout(), lambda: ( 
+                    self.button_startman.setDisabled(False),
+                    self.button_startman.setStyleSheet("color: red")))
 
         else:
-            confirmation = QtWidgets.QMessageBox.warning(
-                    self.main_window, 
-                    '**STOPPING ASSISTED MODE**', 
-                    "Are you sure you want to STOP ASSISTED MODE?", 
-                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
-                    QtWidgets.QMessageBox.Cancel)
+            # Send signal to ESP to stop running
+            self.esp32.set('run', self.DONOT_RUN)
+            self.esp32.set('mode', self.MODE_STOP)
 
-            if confirmation == QtWidgets.QMessageBox.Ok:
-                self.mode = STOP
-                self.button_startman.setText("Start Assisted")
-                self.button_startauto.setEnabled(True)
-                self.button_startman.setStyleSheet("color: black")
+            self.stop_button_pressed(self.button_startman)
 
-                # change button color
-                palette = self.button_startman.palette()
-                role = self.button_startman.backgroundRole() 
-                palette.setColor(role, QtGui.QColor("#eeeeee"))
-                self.button_startman.setPalette(palette)
-
-                # Send signal to ESP to stop running
-                self.esp32.set('run', DONOT_RUN)
-                self.esp32.set('mode', STOP)
+      
