@@ -109,8 +109,17 @@ class ESP32Serial:
             # Raspbian
             command = 'set ' + name + ' ' + str(value) + '\r\n'
             self.connection.write(command.encode())
-            result = self.connection.read_until(terminator=self.term)
-            return result.decode().strip()
+
+            result = b""
+            retry = 10
+            while retry:
+                retry -= 1
+                try:
+                    result = self.connection.read_until(terminator=self.term)
+                    return self._parse(result)
+                except Exception as exc:
+                    print(f"ERROR: set failing: {result.decode()} {str(exc)}")
+            raise ESP32Exception("set", command, result.decode())
 
     def get(self, name):
         """
@@ -125,8 +134,17 @@ class ESP32Serial:
         with self.lock:
             command = 'get ' + name + '\r\n'
             self.connection.write(command.encode())
-            result = self.connection.read_until(terminator=self.term)
-            return result.decode().strip()
+
+            result = b""
+            retry = 10
+            while retry:
+                retry -= 1
+                try:
+                    result = self.connection.read_until(terminator=self.term)
+                    return self._parse(result)
+                except Exception as exc:
+                    print(f"ERROR: get failing: {result.decode()} {str(exc)}")
+            raise ESP32Exception("get", command, result.decode())
 
     def get_all(self):
         """
@@ -138,7 +156,16 @@ class ESP32Serial:
 
         with self.lock:
             self.connection.write(b"get all\r\n")
-            result = self.connection.read_until(terminator=self.term)
-        pressure, flow, o2, bpm = result.decode().strip().split(',')
-        return { "pressure": pressure, "flow": flow, "o2": o2, "bpm": bpm }
 
+            result = b""
+            retry = 10
+            while retry:
+                retry -= 1
+                try:
+                    result = self.connection.read_until(terminator=self.term)
+                    pressure, flow, o2, bpm = self._parse(result).split(',')
+                    return { "pressure": pressure, "flow": flow, "o2": o2,
+                             "bpm": bpm }
+                except Exception as exc:
+                    print(f"ERROR: get failing: {result.decode()} {str(exc)}")
+            raise ESP32Exception("get", command, result.decode())
