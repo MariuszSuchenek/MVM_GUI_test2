@@ -128,19 +128,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.data_filler.connect_plot('monitor_bot', self.plots[2])
 
         '''
-        The StartStopWorker class takes care of starting and stopping a run
-        '''
-        self._start_stop_worker = StartStopWorker(self, self.config, self.esp32, self.button_startauto, self.button_startman)
-
-        '''
         Set up start/stop auto/min mode buttons.
 
         Connect each to their respective mode toggle functions.
+        The StartStopWorker class takes care of starting and stopping a run
         '''
-        self.button_startauto = self.findChild(QtWidgets.QPushButton, "button_startauto")
-        self.button_startman = self.findChild(QtWidgets.QPushButton, "button_startman")
-        self.button_startauto.pressed.connect(self._start_stop_worker.toggle_automatic)
-        self.button_startman.pressed.connect(self._start_stop_worker.toggle_assisted)
+        self.button_startstop = self.findChild(QtWidgets.QPushButton, "button_startstop")
+        self.button_autoassist = self.findChild(QtWidgets.QPushButton, "button_autoassist")
+        
+        self._start_stop_worker = StartStopWorker(
+                self, 
+                self.config, 
+                self.esp32, 
+                self.button_startstop, 
+                self.button_autoassist)
+
+        self.button_startstop.pressed.connect(self._start_stop_worker.toggle_start_stop)
+        self.button_autoassist.pressed.connect(self._start_stop_worker.toggle_mode)
 
         '''
         Connect settings button to Settings overlay.
