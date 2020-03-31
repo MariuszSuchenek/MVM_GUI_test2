@@ -7,7 +7,7 @@ from communication.threading_utils import Worker
 class DataHandler():
     '''
     This class takes care of starting a new QThread which
-    is entirey dedicated to reading data from the ESP32.
+    is entirey dedicated to read data from the ESP32.
     You will need to connect a DataFiller using connect_data_filler(),
     and this class will fill the data direclty.
     '''
@@ -47,8 +47,8 @@ class DataHandler():
         # print('Got data:', parameter, data)
         status = self._data_f.add_data_point(parameter, data)
 
-        if not status:
-            print(f"\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
+        # if not status:
+        #     print(f"\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
 
     def stop_io(self):
         '''
@@ -69,22 +69,43 @@ class DataHandler():
         self._running = True
 
         while self._running:
-            # retrieve the values
-            mve = float(self._esp32.get("mve"))
-            vti = float(self._esp32.get("vti"))
-            vte = float(self._esp32.get("vte"))
 
-            # data_callback emits a signal, which is
-            # received by esp32_data_callback, which
-            # then sets the parameters in the DataFiller
-            data_callback.emit('mve', mve)
-            data_callback.emit('vti', vti)
-            data_callback.emit('vte', vte)
+            # Get all params from ESP
+            current_values = self._esp32.get_all()
+
+            # Converting from str to float
+            for p, v in current_values.items():
+                current_values[p] = float(v)
+
+            # some parameters need to be constructed, as they
+            # are not direclty available from the ESP:
+            self.construct_missing_params(current_values)
+
+            # finally, emit for all the values we have:
+            for p, v in current_values.items():
+                data_callback.emit(p, v)
 
             # Sleep for some time...
             time.sleep(self._config['sampling_interval'])
 
         return "Done."
+
+    def construct_missing_params(self, values):
+        '''
+        Constructs parameters than can be calculated 
+        from those available in the ESP.
+        '''
+
+        # 1) Calculate Tidal Volume
+        # bpm is respiratory rate [1/minute]
+        # flow is respiratory minute volume [L/minute]
+        # we calculate tidal volume as
+        # volume = flow / bpm
+        if 'bpm' in values and 'flow' in values:
+            values['volume'] = values['flow'] / values['bpm'] * 1e3 # mL
+
+        # 2) 
+
 
     def thread_complete(self):
         '''
@@ -108,4 +129,10 @@ class DataHandler():
         worker.signals.finished.connect(self.thread_complete)
 
         self._threadpool.start(worker)
+
+    def set_data(self, param, value):
+
+        result = self._esp32.set(param, value)
+
+        return result == self._config['return_success_code']
 

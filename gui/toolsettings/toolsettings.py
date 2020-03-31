@@ -48,14 +48,28 @@ class ToolSettings(QtWidgets.QWidget):
 
         self.update(val)
 
+    def update_range(self, valuerange=(0,1)):
+        self.slider_value.setMinimum(valuerange[0])
+        self.slider_value.setMaximum(valuerange[1])
+        self.label_min.setText(str(valuerange[0]))
+        self.label_max.setText(str(valuerange[1]))
+
+
     def update(self, value):
         """
         Updates the slider position and text value to a provided value (min < value < max).
 
         value: The value that the setting will display.
         """
+
         self.slider_value.setSliderPosition(value)
-        self.label_value.setText(str(value))
+        
+        if isinstance(value, float):
+            value = f'{value:.3}'
+        else:
+            value = str(value)
+
+        self.label_value.setText(value)
         self.value = value
 
 
