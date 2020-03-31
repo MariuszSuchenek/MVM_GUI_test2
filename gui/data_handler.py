@@ -71,12 +71,12 @@ class DataHandler():
         while self._running:
             current_values = {}
 
-            # retrieve the values and save them into
-            # the current_values dictionary
-            for param in self._config['read_params']:
-                value = float(self._esp32.get(param))
-                current_values[param] = value
-                # print ('Reading ', param, value)
+            # Get all params from ESP
+            current_values = self._esp32.get_all()
+
+            # Converting from str to float
+            for p, v in current_values.items():
+                current_values[p] = float(v)
 
             # some parameters need to be constructed, as they
             # are not direclty available from the ESP:
