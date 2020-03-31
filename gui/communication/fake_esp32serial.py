@@ -51,3 +51,18 @@ class FakeESP32Serial:
                 retval = random.uniform(10, 100)
 
             return str(retval)
+
+    def get_all(self):
+        """
+        Get the pressure, flow, o2, and bpm at once and in this order.
+
+        returns: a dict with member keys as written above and values as
+        strings.
+        """
+
+        with self.lock:
+            return {"pressure": random.uniform(10, 100),
+                    "flow":     random.uniform(10, 100),
+                    "o2":       random.uniform(10, 100),
+                    "bpm":      random.uniform(10, 100)}
+
