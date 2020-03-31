@@ -27,7 +27,7 @@ monitor_top:
     step: 1
     dec_precision: 0
     units: "(mbar)"
-    color: "black"
+    color: "yellow"
     alarmcolor: "red"
 
 monitor_mid: 
@@ -38,7 +38,7 @@ monitor_mid:
     step: 100
     dec_precision: 0
     units: "mL"
-    color: "blue"
+    color: "limegreen"
     alarmcolor: "red"
 
 monitor_bot: 
@@ -49,5 +49,5 @@ monitor_bot:
     step: 1
     dec_precision: 0
     units: "(slpm)"
-    color: "green"
+    color: "cyan"
     alarmcolor: "red"
