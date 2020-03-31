@@ -70,16 +70,10 @@ class DataHandler():
 
         while self._running:
             # retrieve the values
-            mve = float(self._esp32.get("mve"))
-            vti = float(self._esp32.get("vti"))
-            vte = float(self._esp32.get("vte"))
-
-            # data_callback emits a signal, which is
-            # received by esp32_data_callback, which
-            # then sets the parameters in the DataFiller
-            data_callback.emit('mve', mve)
-            data_callback.emit('vti', vti)
-            data_callback.emit('vte', vte)
+            for param in self._config['read_params']:
+                value = float(self._esp32.get(param))
+                # print ('Reading ', param, value)
+                data_callback.emit(param, value)
 
             # Sleep for some time...
             time.sleep(self._config['sampling_interval'])

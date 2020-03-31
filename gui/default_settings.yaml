@@ -11,9 +11,12 @@ nsamples: 100
 sampling_interval: 0.1
 
 # Variables to display in the graphs (must match names in the ESP):
-plot_top_var: mve
-plot_mid_var: vti
-plot_bot_var: vte
+plot_top_var: pressure
+plot_mid_var: flow
+plot_bot_var: o2
+
+# The parameters that will be read from the ESP
+read_params: ['pressure', 'flow', 'o2', 'bpm', 'all']
 
 # Control Start/Stop Auto/Man behavior
 start_mode_timeout: 2000 # [ms] between pressing Start and allowing Stop (max 3000)
