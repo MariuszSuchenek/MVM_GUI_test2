@@ -21,7 +21,8 @@ void setup()
   Serial.begin(115200);
   Serial.setTimeout(50000);
 
-  random_measures = { "mve", "vti", "vte" };
+  random_measures = { "mve", "vti", "vte", "pressure", "bpm",
+                      "flow", "o2" };
 }
 
 // this is tricky, didn't had the time to think a better algo
