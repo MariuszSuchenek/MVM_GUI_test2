@@ -21,6 +21,7 @@ class Settings(QtWidgets.QMainWindow):
         self._insp_expir_ratio_input = self.spinBox_insp_expir_ratio
         self._load_preset_auto_btn = self.pushButton_load_preset_auto
         self._start_automatic_btn = self.pushButton_start_auto
+        self._close_1_btn = self.pushButton_close_1
 
         # Assisted
         self._pressure_trigger_input = self.spinBox_pressure_trigger
@@ -29,6 +30,7 @@ class Settings(QtWidgets.QMainWindow):
         self._enable_backup_checkbox = self.checkBox_enable_backup
         self._load_preset_assist_btn = self.pushButton_load_preset_assist
         self._start_assisted_btn = self.pushButton_start_assist
+        self._close_2_btn = self.pushButton_close_2
 
         # Reading in presets from config files
         base_dir = os.path.dirname(__file__)
@@ -59,6 +61,15 @@ class Settings(QtWidgets.QMainWindow):
         self._toolsettings = toolsettings
 
 
+    def connect_start_stop_worker(self, start_stop_worker):
+        '''
+        Receives the StartStopWorker from the mainwindow
+        and stores it here, as it will be called when the
+        Start button is pressed from the settings panel
+        '''
+        self.start_stop_worker = start_stop_worker
+
+
     def connect_workers(self):
         '''
         Connects all the buttons, inputs, etc
@@ -72,8 +83,14 @@ class Settings(QtWidgets.QMainWindow):
         self._min_resp_rate_input.valueChanged.connect(self.min_resp_rate_worker)
         self._enable_backup_checkbox.stateChanged.connect(self.enable_backup_worker)
 
+        self._start_automatic_btn.clicked.connect(self.start_worker_auto)
+        self._start_assisted_btn.clicked.connect(self.start_worker_assist)
+
         self._load_preset_auto_btn.clicked.connect(self.load_presets_auto)
         self._load_preset_assist_btn.clicked.connect(self.load_presets_assist)
+
+        self._close_1_btn.clicked.connect(self.close_settings_worker)
+        self._close_2_btn.clicked.connect(self.close_settings_worker)
 
 
     def load_presets_auto(self):
@@ -138,6 +155,29 @@ class Settings(QtWidgets.QMainWindow):
 
         self._min_resp_rate_input.hide()
         self._min_resp_rate_input.show()
+
+
+    def close_settings_worker(self):
+        '''
+        Closes the settings window
+        '''
+        self.close()
+
+
+    def start_worker_auto(self):
+        '''
+        Starts the run
+        '''
+        self.start_stop_worker.toggle_automatic()
+        self.close()
+
+
+    def start_worker_assist(self):
+        '''
+        Starts the run
+        '''
+        self.start_stop_worker.toggle_assisted()
+        self.close()
 
 
     def resp_rate_worker(self):

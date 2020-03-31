@@ -7,10 +7,19 @@ from monitor.monitor import Monitor
 from settings.settings import Settings
 from data_filler import DataFiller
 from data_handler import DataHandler
+from start_stop_worker import StartStopWorker
 
 import pyqtgraph as pg
 import sys
 import time
+
+STOP = -1
+AUTOMATIC = 0
+ASSISTED = 1
+
+DO_RUN = 1
+DONOT_RUN = 0
+
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -67,7 +76,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         Connect each to their respective mode toggle functions.
         '''
-        self.mode = 0 # 0 is stop, 1 is auto, 2 is assisted
+        self.mode = STOP
         self.button_startauto = self.findChild(QtWidgets.QPushButton, "button_startauto")
         self.button_startman = self.findChild(QtWidgets.QPushButton, "button_startman")
         self.button_startauto.pressed.connect(self.toggle_automatic)
@@ -126,6 +135,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.data_filler.connect_plot('monitor_bot', self.plots[2])
 
         '''
+        The StartStopWorker class takes care of starting and stopping a run
+        '''
+        self._start_stop_worker = StartStopWorker(self, self.config, self.esp32, self.button_startauto, self.button_startman)
+
+        '''
         Connect settings button to Settings overlay.
         '''
         self.settings = Settings(self)
@@ -133,10 +147,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_settings.pressed.connect(self.settings.show)
 
         self.settings.connect_data_handler(self._data_h)
-        self.settings.connect_workers()
         self.settings.connect_toolsettings(self.toolsettings)
+        self.settings.connect_start_stop_worker(self._start_stop_worker)
+        self.settings.connect_workers()
         self.settings.load_presets_auto()
         self.settings.load_presets_assist()
+
+
+        
 
 
     def closeEvent(self, event):
@@ -148,45 +166,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         Changes text from "Start" to "Stop" and en/disables assisted button depending on mode.
         """
-        if self.mode == 0:
-            self.mode = 1
-            self.button_startman.setDisabled(True)
-            self.button_startauto.setDisabled(True)
-
-            # Set timeout for being able to stop this mode
-            palette = self.button_startauto.palette()
-            role = self.button_startauto.backgroundRole() 
-            if 'start_mode_timeout' in self.config:
-                timeout = self.config['start_mode_timeout']
-                # set maximum timeout
-                if timeout > 3000: 
-                    timeout = 3000
-            else:
-                timeout = 1000
-            QtCore.QTimer.singleShot(timeout, lambda: ( 
-                    # change button color and enable the stop button
-                    self.button_startauto.setText("Stop Automatic"),
-                    palette.setColor(role, QtGui.QColor("#fc6203")),
-                    self.button_startauto.setPalette(palette),
-                    self.button_startauto.setEnabled(True)))
-        else:
-            confirmation = QtWidgets.QMessageBox.warning(
-                    self, 
-                    '**STOPPING AUTOMATIC MODE**', 
-                    "Are you sure you want to STOP AUTOMATIC MODE?", 
-                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
-                    QtWidgets.QMessageBox.Cancel)
-
-            if confirmation == QtWidgets.QMessageBox.Ok:
-                self.mode = 0
-                self.button_startauto.setText("Start Automatic")
-                self.button_startman.setEnabled(True)
-
-                # change button color
-                palette = self.button_startauto.palette()
-                role = self.button_startauto.backgroundRole() 
-                palette.setColor(role, QtGui.QColor("#eeeeee"))
-                self.button_startauto.setPalette(palette)
+        self._start_stop_worker.toggle_automatic()
+       
 
     def toggle_assisted(self):
         """
@@ -194,44 +175,4 @@ class MainWindow(QtWidgets.QMainWindow):
 
         Changes text from "Start" to "Stop" and en/disables automatic button depending on mode.
         """
-        if self.mode == 0:
-            self.mode = 2
-            self.button_startauto.setDisabled(True)
-            self.button_startman.setDisabled(True)
-            
-            # Set timeout for being able to stop this mode
-            palette = self.button_startman.palette()
-            role = self.button_startman.backgroundRole() 
-            if 'start_mode_timeout' in self.config:
-                timeout = self.config['start_mode_timeout']
-                # set maximum timeout
-                if timeout > 3000: 
-                    timeout = 3000
-            else:
-                timeout = 1000
-            QtCore.QTimer.singleShot(timeout, lambda: ( 
-                    # change button color and enable the stop button
-                    self.button_startman.setText("Stop Assisted"),
-                    palette.setColor(role, QtGui.QColor("#fc6203")),
-                    self.button_startman.setPalette(palette),
-                    self.button_startman.setEnabled(True)))
-
-
-        else:
-            confirmation = QtWidgets.QMessageBox.warning(
-                    self, 
-                    '**STOPPING ASSISTED MODE**', 
-                    "Are you sure you want to STOP ASSISTED MODE?", 
-                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
-                    QtWidgets.QMessageBox.Cancel)
-
-            if confirmation == QtWidgets.QMessageBox.Ok:
-                self.mode = 0
-                self.button_startman.setText("Start Assisted")
-                self.button_startauto.setEnabled(True)
-
-                # change button color
-                palette = self.button_startman.palette()
-                role = self.button_startman.backgroundRole() 
-                palette.setColor(role, QtGui.QColor("#eeeeee"))
-                self.button_startman.setPalette(palette)
+        self._start_stop_worker.toggle_assisted()

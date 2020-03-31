@@ -180,7 +180,7 @@ QDoubleSpinBox::down-button  {
        </font>
       </property>
       <property name="text">
-       <string>Load presets</string>
+       <string>Load Presets</string>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="spinBox_rr">
@@ -225,6 +225,26 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="singleStep">
        <double>0.100000000000000</double>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_close_1">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>330</y>
+        <width>220</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>25</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Close</string>
       </property>
      </widget>
     </widget>
@@ -274,7 +294,7 @@ QDoubleSpinBox::down-button  {
        </font>
       </property>
       <property name="text">
-       <string>Load presets</string>
+       <string>Load Presets</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_6">
@@ -452,6 +472,26 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_close_2">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>330</y>
+        <width>220</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>25</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Close</string>
       </property>
      </widget>
     </widget>
