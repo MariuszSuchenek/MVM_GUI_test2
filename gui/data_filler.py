@@ -19,6 +19,7 @@ class DataFiller():
         self._monitors = {}
         self._data = {}
         self._window_width = window_width
+        self._xdata = np.arange(-self._window_width, 0)
         return
 
     def connect_plot(self, name, plot):
@@ -28,9 +29,11 @@ class DataFiller():
         '''
         self._plots[name] = plot.plot()
         self._data[name] = np.linspace(0, 0, self._window_width)
-        self._plots[name].setData(self._data[name])
+        self._plots[name].setData(self._xdata, self._data[name])
 
         plot.setLabel(axis='left', text=to_units.get(name, ''))
+        plot.setMouseEnabled(x=False, y=False)
+        plot.setMenuEnabled(False)
 
     def connect_monitor(self, name, monitor):
         '''
@@ -55,7 +58,7 @@ class DataFiller():
         self._data[name][-1] = data_point
 
         # set the data to the plot to show
-        self._plots[name].setData(self._data[name])
+        self._plots[name].setData(self._xdata, self._data[name])
 
         self.update_monitor(name)
 
@@ -69,9 +72,9 @@ class DataFiller():
 
         if name in self._monitors:
             # Mean
-            self._monitors[name].label_statvalues[0].setText(str(np.mean(self._data[name])))
+            self._monitors[name].label_statvalues[0].setText("%.2f" % np.mean(self._data[name]))
             # Max
-            self._monitors[name].label_statvalues[1].setText(str(np.max(self._data[name])))
+            self._monitors[name].label_statvalues[1].setText("%.2f" % np.max(self._data[name]))
             # Value
             self._monitors[name].update(self._data[name][-1])
         else:

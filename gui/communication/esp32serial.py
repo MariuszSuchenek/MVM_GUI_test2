@@ -78,8 +78,6 @@ class ESP32Serial:
 
         arguments:
         - name           the parameter name as a string
-        - value          the value to assign to the variable as any type
-                         convertible to string
 
         returns: the requested value
         """
@@ -89,3 +87,18 @@ class ESP32Serial:
             self.connection.write(command.encode())
             result = self.connection.read_until(terminator=self.term)
             return result.decode().strip()
+
+    def get_all(self):
+        """
+        Get the pressure, flow, o2, and bpm at once and in this order.
+
+        returns: a dict with member keys as written above and values as
+        strings.
+        """
+
+        with self.lock:
+            self.connection.write(b"get all\r\n")
+            result = self.connection.read_until(terminator=self.term)
+        pressure, flow, o2, bpm = result.decode().strip().split(',')
+        return { "pressure": pressure, "flow": flow, "o2": o2, "bpm": bpm }
+
