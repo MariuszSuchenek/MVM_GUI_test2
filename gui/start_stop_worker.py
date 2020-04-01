@@ -5,8 +5,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class StartStopWorker():
     '''
     A class entirely dedicated to start and stop 
-    the ventilator. For now, this is called from the
-    mainwindow, or from the settings panel.
+    the ventilator, and also to set the ventilator
+    mode. For now, this is called only from the
+    mainwindow.
     '''
     MODE_STOP = -1
     MODE_AUTO = 0
@@ -22,17 +23,42 @@ class StartStopWorker():
         self.button_startstop = button_startstop
         self.button_autoassist = button_autoassist
 
-        self.mode = self.MODE_STOP
-        self.desired_mode = self.MODE_AUTO
+        self.mode = self.MODE_AUTO
+        self.run  = self.DONOT_RUN
         return 
 
+    def raise_comm_error(self, message):
+        """
+        Opens an error window with 'message'.
+        """
+        confirmation = QtWidgets.QMessageBox.critical(
+            self.main_window, 
+            '** COMMUNICATION ERROR **', 
+            '** COMMUNICATION ERROR **\n' + message, 
+            QtWidgets.QMessageBox.Ok, 
+            QtWidgets.QMessageBox.Cancel)
+
     def toggle_mode(self):
-        if self.desired_mode == self.MODE_AUTO:
-            self.desired_mode = self.MODE_ASSIST
-            self.button_autoassist.setText("Assisted")
+        """
+        Toggles between desired mode (MODE_AUTO or MODE_ASSIST).
+        """
+        if self.mode == self.MODE_AUTO:
+            result = self.esp32.set('mode', self.MODE_ASSIST)
+
+            if result:
+                self.button_autoassist.setText("Assisted")
+                self.mode = self.MODE_ASSIST
+            else:
+                self.raise_comm_error('Cannot set assisted mode.')
+
         else:
-            self.desired_mode = self.MODE_AUTO
-            self.button_autoassist.setText("Automatic")
+            result = self.esp32.set('mode', self.MODE_AUTO)
+
+            if result:
+                self.button_autoassist.setText("Automatic")
+                self.mode = self.MODE_AUTO
+            else:
+                self.raise_comm_error('Cannot set automatic mode.')
 
     def start_button_pressed(self):
         self.button_startstop.setDisabled(True)
@@ -48,11 +74,12 @@ class StartStopWorker():
     def stop_button_pressed(self):
         self.button_startstop.setEnabled(True)
         self.button_autoassist.setEnabled(True)
-        self.button_startstop.repaint()
-        self.button_autoassist.repaint()
 
         self.button_startstop.setText("Start")
         self.button_startstop.setStyleSheet("color: black")
+
+        self.button_startstop.repaint()
+        self.button_autoassist.repaint()
 
     def confirm_stop_pressed(self):
         self.button_autoassist.setDown(False)
@@ -67,7 +94,6 @@ class StartStopWorker():
 
 
     def button_timeout(self):
-        print('Setting timeout')
         timeout = 1000
         # Set timeout for being able to stop this mode
         if 'start_mode_timeout' in self.config:
@@ -79,30 +105,31 @@ class StartStopWorker():
 
     def toggle_start_stop(self):
         """
-        Toggles between desired mode (MODE_ASSIST or MODE_AUTO) and MODE_STOP.
+        Toggles between desired run state (DO_RUN or DONOT_RUN).
         """
 
-        print('Current mode: {}'.format(self.mode))
-        if self.mode == self.MODE_STOP:
-            self.mode = self.desired_mode
+        if self.run == self.DONOT_RUN:
 
-            # Send signal to ESP to start automatic mode
-            result = self.esp32.set('mode', self.mode)
+            # Send signal to ESP to start running
             result = self.esp32.set('run', self.DO_RUN)
 
-            if result != self.config['return_success_code']:
-                print(f"\033[91mERROR: Failed to start with mode AUTOMATIC.\033[0m")
-
-            self.start_button_pressed()
+            if result:
+                self.run = self.DO_RUN
+                self.start_button_pressed()
+            else:
+                self.raise_comm_error('Cannot start ventilator.')
 
 
         else:
             if self.confirm_stop_pressed():
-                self.mode = self.MODE_STOP
-                
-                # Send signal to ESP to stop running
-                self.esp32.set('run', self.DONOT_RUN)
-                self.esp32.set('mode', self.MODE_STOP)
 
-                self.stop_button_pressed()
+                # Send signal to ESP to stop running
+                result = self.esp32.set('run', self.DONOT_RUN)
+
+                if result:
+                    self.run = self.DONOT_RUN
+                    self.stop_button_pressed()
+                else:
+                    self.raise_comm_error('Cannot stop ventilator.')
+
 
