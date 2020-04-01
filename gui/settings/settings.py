@@ -4,6 +4,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import yaml
 
+from presets.presets import Presets
+
 class Settings(QtWidgets.QMainWindow):
     def __init__(self, config, *args):
         """
@@ -38,6 +40,16 @@ class Settings(QtWidgets.QMainWindow):
         self._start_assisted_btn = self.pushButton_start_assist
         self._close_2_btn = self.pushButton_close_2
 
+        # Init presets
+        self.current_preset = None
+        self._respiratory_rate_input.focusInEvent = lambda event: self.spawn_presets_window([1,2,3,4]) 
+
+
+    def spawn_presets_window(self, presets):
+        if self.current_preset is not None:
+            self.current_preset.close()
+        self.current_preset = Presets(presets, self)
+        print("Newpresets")
 
     def connect_data_handler(self, data_h):
         '''
