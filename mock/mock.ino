@@ -52,10 +52,10 @@ String get(String const& command)
 
   if (name == "all") {
     return
-        String(random(10, 100)) + ","
-      + String(random(10, 100)) + ","
-      + String(random(10, 100)) + ","
-      + String(random(10, 100));
+        String(random(10, 79)) + ","  // pessure
+      + String(random(3, 21)) + ","   // pressure
+      + String(random(10, 100)) + "," // o2
+      + String(random(12, 20));       // bpm
   }
 
   auto const it = std::find(
@@ -90,4 +90,3 @@ void loop()
     }
   }
 }
-
