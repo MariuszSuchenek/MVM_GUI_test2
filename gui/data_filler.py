@@ -101,6 +101,9 @@ class DataFiller():
         plot.getAxis('bottom').setPen(pg.mkPen(color, width=self._config['axis_line_width']))
         plot.getAxis('left').setPen(pg.mkPen(color, width=self._config['axis_line_width']))
 
+        if self._config['show_safe_ranges_on_graphs']:
+            self.show_safe_ranges(monitor_name, plot)
+
         # Remove mouse interaction with plots
         plot.setMouseEnabled(x=False, y=False)
         plot.setMenuEnabled(False)
@@ -127,6 +130,32 @@ class DataFiller():
         p.setY(y)
         self._x_label.setPos(p)
         plot.getAxis('bottom').scene().addItem(self._x_label)
+
+    def show_safe_ranges(self, monitor_name, plot):
+        '''
+        Adds to lines corresponding to where the 
+        alarm values are
+        '''
+
+        # Min Line
+        self._line_min = pg.InfiniteLine(pos=self._config[monitor_name]['min'], 
+                                         angle=0, 
+                                         movable=False,
+                                         pen=pg.mkPen(cosmetic=False, 
+                                                      width=0, 
+                                                      color='r',
+                                                      style=QtCore.Qt.DotLine))
+
+        # Max Line
+        self._line_max = pg.InfiniteLine(pos=self._config[monitor_name]['max'], 
+                                         angle=0, 
+                                         movable=False,
+                                         pen=pg.mkPen(cosmetic=False, 
+                                                      width=0, 
+                                                      color='r',
+                                                      style=QtCore.Qt.DotLine))
+        plot.addItem(self._line_min)
+        plot.addItem(self._line_max)
 
 
     def connect_monitor(self, monitor_name, monitor):

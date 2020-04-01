@@ -19,17 +19,20 @@ return_success_code: 'OK'
 # Thickness of the lines drawn in the plots
 line_width: 1
 
-#
+# The widht of the line that draws the axes
 axis_line_width: 1
 
-#
+# The color used to draw the axes
 axis_line_color: "rgb(255,228,181)"
 
+# Shows the values that will trigger the alarms directly on the plots
+show_safe_ranges_on_graphs: True
+
 # Toggles the x axis labels in the graphs (specifcally, the 'Time [s]' label)
-show_x_axis_labels: False
+show_x_axis_labels: True
 
 # Toggles the x axis ticks in the graphs (specifcally, the numbers on the x axis)
-show_x_axis_ticks: False
+show_x_axis_ticks: True
 
 # The units used for each variable:
 var_units: 
