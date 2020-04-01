@@ -44,14 +44,15 @@ class Settings(QtWidgets.QMainWindow):
         self.current_preset = None
         self.current_preset_name = None
         self.fake_btn_rr.clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
-        # self._respiratory_rate_input.focusInEvent = lambda event: self.spawn_presets_window('respiratory_rate') 
-        self._insp_expir_ratio_input.focusInEvent = lambda event: self.spawn_presets_window('insp_expir_ratio') 
-        self._pressure_trigger_input.focusInEvent = lambda event: self.spawn_presets_window('pressure_trigger') 
-        self._flow_trigger_input.focusInEvent     = lambda event: self.spawn_presets_window('flow_trigger') 
-        self._min_resp_rate_input.focusInEvent    = lambda event: self.spawn_presets_window('minimal_resp_rate') 
+        self.fake_btn_ie.clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
+        self.fake_btn_pr_trigger.clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
+        self.fake_btn_flow_trig.clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
+        self.fake_btn_min_resp_rate.clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
 
 
     def spawn_presets_window(self, name):
+
+        # print('preset type: ', type(self._config[name]['presets']))
 
         presets = self._config[name]['presets']
 
@@ -86,7 +87,10 @@ class Settings(QtWidgets.QMainWindow):
 
     def preset_worker(self):
 
-        value = float(self.sender().text())
+        value = self.sender().text()
+        value = value.split(' ')[0]
+        value = float(value)
+        print('value', value)
 
         if self.current_preset_name == 'respiratory_rate':
             self._respiratory_rate_input.setValue(value)
@@ -94,6 +98,15 @@ class Settings(QtWidgets.QMainWindow):
         elif self.current_preset_name == 'insp_expir_ratio':
             self._insp_expir_ratio_input.setValue(value)
             self._current_values_temp['insp_expir_ratio'] = value
+        elif self.current_preset_name == 'pressure_trigger':
+            self._pressure_trigger_input.setValue(value)
+            self._current_values_temp['pressure_trigger'] = value
+        elif self.current_preset_name == 'flow_trigger':
+            self._flow_trigger_input.setValue(value)
+            self._current_values_temp['flow_trigger'] = value
+        # elif self.current_preset_name == 'min_resp_rate':
+        #     self._flow_trigger_input.setValue(value)
+        #     self._current_values_temp['flow_trigger'] = value
 
         self.hide_preset_worker()
 

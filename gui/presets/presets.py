@@ -23,7 +23,11 @@ class Presets(QtWidgets.QWidget):
             self.button_preset.append(self.findChild(QtWidgets.QPushButton, "button_preset"+str(i)))
 
         for preset, button in zip(presets, self.button_preset):
-            button.setText(str(preset))
+            if len(preset[1]):
+                btn_txt = str(preset[0]) + ' (' + preset[1] + ')' 
+            else:
+                btn_txt = str(preset[0])
+            button.setText(btn_txt)
 
         # Hide the buttons that are not needed
         for i in range(len(presets), len(self.button_preset)):
