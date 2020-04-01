@@ -66,6 +66,9 @@ QDoubleSpinBox::down-button  {
       <pointsize>25</pointsize>
      </font>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
     <property name="tabPosition">
      <enum>QTabWidget::North</enum>
     </property>
