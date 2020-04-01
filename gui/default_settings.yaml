@@ -123,6 +123,7 @@ insp_expir_ratio:
     step: 0.01
     current: None
     units: "ratio"
+    show_fraction: True
 
 
 
