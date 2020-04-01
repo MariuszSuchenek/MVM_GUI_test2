@@ -3,51 +3,6 @@ import numpy as np
 import pyqtgraph as pg
 from ast import literal_eval # to convert a string to list
 
-
-class CustomAxis(pg.AxisItem):
-    '''
-    Apparently you cannot change the position of the label
-    in pyqtgraph, as it is hardcoded :(
-    This class overrides the AxisItem so the `nudge` can
-    be set externally. `nudge` controls the offset between 
-    the label and the axis.
-    '''
-    @property
-    def nudge(self):
-        if not hasattr(self, "_nudge"):
-            self._nudge = 5
-        return self._nudge
-
-    @nudge.setter
-    def nudge(self, nudge):
-        self._nudge = nudge
-        s = self.size()
-        # call resizeEvent indirectly
-        self.resize(s + QtCore.QSizeF(1, 1))
-        self.resize(s)
-
-    def resizeEvent(self, ev=None):
-        # s = self.size()
-
-        ## Set the position of the label
-        nudge = self.nudge
-        br = self.label.boundingRect()
-        p = QtCore.QPointF(0, 0)
-        if self.orientation == "left":
-            p.setY(int(self.size().height() / 2 + br.width() / 2))
-            p.setX(-nudge)
-        elif self.orientation == "right":
-            p.setY(int(self.size().height() / 2 + br.width() / 2))
-            p.setX(int(self.size().width() - br.height() + nudge))
-        elif self.orientation == "top":
-            p.setY(-nudge)
-            p.setX(int(self.size().width() / 2.0 - br.width() / 2.0))
-        elif self.orientation == "bottom":
-            p.setX(int(self.size().width() / 2.0 - br.width() / 2.0))
-            p.setY(int(self.size().height() - br.height() + nudge))
-        self.label.setPos(p)
-        self.picture = None
-
 class DataFiller():
     '''
     This class fills the data for all the
@@ -101,8 +56,16 @@ class DataFiller():
         plot.getAxis('bottom').setPen(pg.mkPen(color, width=self._config['axis_line_width']))
         plot.getAxis('left').setPen(pg.mkPen(color, width=self._config['axis_line_width']))
 
+        # Show the alarm thresholds on plots
         if self._config['show_safe_ranges_on_graphs']:
             self.show_safe_ranges(monitor_name, plot)
+
+        # Fix the y axis range
+        value_min = self._config[monitor_name]['min']
+        value_max = self._config[monitor_name]['max']
+        ymin = value_min - (value_max-value_min)*0.1
+        ymax = value_max + (value_max-value_min)*0.1
+        plot.setYRange(ymin, ymax)
 
         # Remove mouse interaction with plots
         plot.setMouseEnabled(x=False, y=False)
