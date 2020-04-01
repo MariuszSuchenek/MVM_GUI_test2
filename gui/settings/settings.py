@@ -101,6 +101,16 @@ class Settings(QtWidgets.QMainWindow):
         self._insp_expir_ratio_input.setMaximum(ie['max'])
         self._current_values['insp_expir_ratio'] = ie['default']
 
+        # assign an easy lookup for toolsettings
+        self.toolsettings_lookup = {}
+        self.toolsettings_lookup["respiratory_rate"] = self._toolsettings["toolsettings_1"]
+        self.toolsettings_lookup["insp_expir_ratio"] = self._toolsettings["toolsettings_2"]
+        
+        # setup the toolsettings with preset values
+        self.toolsettings_lookup["respiratory_rate"].load_presets("respiratory_rate")
+        self.toolsettings_lookup["insp_expir_ratio"].load_presets("insp_expir_ratio")
+
+        # start workers
         self.resp_rate_worker()
         self.insp_expir_ratio_worker()
 
@@ -112,12 +122,6 @@ class Settings(QtWidgets.QMainWindow):
 
         self._current_values_temp = self._current_values
 
-
-        try:
-            self._toolsettings[0].update_range(valuerange=(rr['min'],rr['max']))
-            self._toolsettings[1].update_range(valuerange=(ie['min'],ie['max']))
-        except:
-            pass
 
     def load_presets_assist(self):
 
@@ -222,7 +226,7 @@ class Settings(QtWidgets.QMainWindow):
             self._respiratory_rate_input.setStyleSheet("color: green")
 
         # Finally, update the value in the toolsettings
-        self._toolsettings[0].update(rr)
+        self.toolsettings_lookup["respiratory_rate"].update(rr)
 
 
         #
@@ -246,7 +250,7 @@ class Settings(QtWidgets.QMainWindow):
             self._insp_expir_ratio_input.setStyleSheet("color: green")
 
         # Finally, update the value in the toolsettings
-        self._toolsettings[1].update(1/ratio)
+        self.toolsettings_lookup["insp_expir_ratio"].update(1/ratio)
 
 
     def send_assist_values_to_hardware(self):
@@ -274,7 +278,7 @@ class Settings(QtWidgets.QMainWindow):
             self._pressure_trigger_input.setStyleSheet("color: green")
 
         # Finally, update the value in the toolsettings
-        # self._toolsettings[1].update(ratio)
+        # self.toolsettings_lookup["insp_expir_ratio"].update(1/ratio)
 
         #
         # Flow trigger
@@ -295,7 +299,7 @@ class Settings(QtWidgets.QMainWindow):
             self._flow_trigger_input.setStyleSheet("color: green")
 
         # Finally, update the value in the toolsettings
-        # self._toolsettings[1].update(ratio)
+        # self.toolsettings_lookup["insp_expir_ratio"].update(1/ratio)
 
 
     def resp_rate_worker(self):
