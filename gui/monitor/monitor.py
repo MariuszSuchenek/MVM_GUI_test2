@@ -16,7 +16,6 @@ class Monitor(QtWidgets.QWidget):
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
         self.label_min = self.findChild(QtWidgets.QLabel, "label_min")
         self.label_max = self.findChild(QtWidgets.QLabel, "label_max")
-        self.label_units = self.findChild(QtWidgets.QLabel, "label_units")
         self.label_statnames = [];
         self.label_statnames.append(self.findChild(QtWidgets.QLabel, "label_statname1"))
         self.label_statnames.append(self.findChild(QtWidgets.QLabel, "label_statname2"))
@@ -43,7 +42,6 @@ class Monitor(QtWidgets.QWidget):
         color: Text color
         step: optional value for nearest rounded value (e.g. step=10 rounds to nearest 10)
         """
-        self.label_name.setText(name)
 
         # unpack and assign min, current, and max
         (low, val, high) = setrange
@@ -57,9 +55,8 @@ class Monitor(QtWidgets.QWidget):
 
         # Handle optional units
         if units is not None:
-            self.label_units.setText(str(units))
-        else:
-            self.label_units.setText("")
+            name = name + " <font size=10pt>[" + str(units) + "]</font>"
+        self.label_name.setText(name)
 
         self.setStyleSheet("QWidget { color: " + str(color) + "; }");
 
