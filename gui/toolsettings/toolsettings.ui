@@ -247,6 +247,7 @@
          <font>
           <weight>75</weight>
           <bold>true</bold>
+          <stylestrategy>PreferAntialias</stylestrategy>
          </font>
         </property>
         <property name="text">
@@ -280,6 +281,7 @@
           <pointsize>10</pointsize>
           <weight>75</weight>
           <bold>true</bold>
+          <stylestrategy>PreferAntialias</stylestrategy>
          </font>
         </property>
         <property name="text">
@@ -356,6 +358,13 @@
           </disabled>
          </palette>
         </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+          <stylestrategy>PreferAntialias</stylestrategy>
+         </font>
+        </property>
         <property name="text">
          <string>0</string>
         </property>
@@ -426,6 +435,13 @@
            </colorrole>
           </disabled>
          </palette>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+          <stylestrategy>PreferAntialias</stylestrategy>
+         </font>
         </property>
         <property name="text">
          <string>100</string>
