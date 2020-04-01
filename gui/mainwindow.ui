@@ -2181,13 +2181,13 @@
      </palette>
     </property>
    </widget>
-   <widget class="QPushButton" name="button_startauto">
+   <widget class="QPushButton" name="button_startstop">
     <property name="geometry">
      <rect>
       <x>640</x>
       <y>390</y>
       <width>161</width>
-      <height>51</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -2619,13 +2619,13 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>15</pointsize>
+      <pointsize>16</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
     <property name="text">
-     <string>Start Automatic</string>
+     <string>Start</string>
     </property>
    </widget>
    <widget class="Monitor" name="monitor_bot" native="true">
@@ -2670,13 +2670,13 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="button_startman">
+   <widget class="QPushButton" name="button_autoassist">
     <property name="geometry">
      <rect>
       <x>640</x>
-      <y>440</y>
+      <y>450</y>
       <width>161</width>
-      <height>41</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -3108,13 +3108,13 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>15</pointsize>
+      <pointsize>14</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
     <property name="text">
-     <string>Start Assisted</string>
+     <string>Automatic</string>
     </property>
    </widget>
   </widget>
