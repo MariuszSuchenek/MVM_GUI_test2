@@ -255,7 +255,7 @@ class Settings(QtWidgets.QMainWindow):
             print(f"\033[91mERROR: Can't set data for ESP with param {name}.\033[0m")
 
         # Finally, update the value in the toolsettings
-        self.toolsettings_lookup["insp_expir_ratio"].update(1/ratio)
+        self.toolsettings_lookup["insp_expir_ratio"].update(ratio)
 
 
     def send_assist_values_to_hardware(self):

@@ -25,10 +25,9 @@ class ToolSettings(QtWidgets.QWidget):
         palette.setColor(role, QtGui.QColor("#eeeeee"))
         self.setPalette(palette)
 
-        self.slider_value.valueChanged.connect(self.update)
-
         self.show()
-    def setup(self, name, setrange=(0,0,100), units=None, step=0.1, dec_precision=0, current=None):
+    def setup(self, name, setrange=(0,0,100), units=None, step=0.1, dec_precision=0, current=None,
+            show_fraction=False):
         """
         Sets up main values for the ToolSettings widget, including the name and the values for the
         range as (minimum, initial, maximum).
@@ -37,6 +36,7 @@ class ToolSettings(QtWidgets.QWidget):
         setrange: Tuple (min, current, max) specifying the allowed min/max values and current value.
         units: String value for the units to be displayed.
         step: sets the granularity of a single step of the parameter
+        show_fraction: If true, will display fractional values instead of decimal
         """
         self.label_name.setText(name)
 
@@ -49,6 +49,7 @@ class ToolSettings(QtWidgets.QWidget):
         
         self.dec_precision = dec_precision
         self.current = current
+        self.show_fraction = show_fraction
 
         # Handle optional units
         if units is not None:
@@ -67,7 +68,8 @@ class ToolSettings(QtWidgets.QWidget):
                 "current": None,
                 "units": "-",
                 "step": 1,
-                "dec_precision": 0}
+                "dec_precision": 0,
+                "show_fraction": False}
         entry = self._config.get(name, toolsettings_default)
         self.setup(
                 entry.get("name", toolsettings_default["name"]),
@@ -78,7 +80,8 @@ class ToolSettings(QtWidgets.QWidget):
                 units=entry.get("units", toolsettings_default["units"]),
                 step=entry.get("step", toolsettings_default["step"]),
                 current=entry.get("current", toolsettings_default["current"]),
-                dec_precision=entry.get("dec_precision", toolsettings_default["dec_precision"]))
+                dec_precision=entry.get("dec_precision", toolsettings_default["dec_precision"]),
+                show_fraction=entry.get("show_fraction", toolsettings_default["show_fraction"]))
 
     def connect_config(self, config):
         self._config = config
@@ -108,20 +111,21 @@ class ToolSettings(QtWidgets.QWidget):
     def update(self, value):
         """
         Updates the slider position and text value to a provided value (min < value < max).
+        Displays a fractional value instead of a decimal, if floating point is given.
 
         value: The value that the setting will display.
+        fraction: If true, display fractional values instead of decimal
         """
-        value = round(value / self.step) * self.step
-        slider_value = int(self.slider_scale * (value - self.min))
-
-        self.slider_value.setValue(slider_value)
-        
-        if isinstance(value, float):
-            value = f'{value:.3}'
+        if self.show_fraction:
+            # Display fraction
+            (num, den) = value.as_integer_ratio()
+            disp_value = "1:%.2g" % (float(den) / float(num))
         else:
-            value = str(value)
+            # Display decimal/integer
+            disp_value = "%g" % (round(value / self.step) * self.step)
 
-        self.label_value.setText(value)
+        slider_value = int(self.slider_scale * (value - self.min))
+        self.slider_value.setValue(slider_value)
+        self.label_value.setText(disp_value)
         self.value = value
-
 

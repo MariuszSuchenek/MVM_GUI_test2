@@ -117,12 +117,13 @@ respiratory_rate:
 # Inspiration/Expiration
 insp_expir_ratio:
     name: "Insp./Expir."
-    default: 0.5
+    default:  0.5
     min: 0.33
     max: 1.
-    step: 0.1
+    step: 0.01
     current: None
     units: "ratio"
+    show_fraction: True
 
 
 
