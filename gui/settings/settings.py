@@ -96,10 +96,10 @@ class Settings(QtWidgets.QMainWindow):
         self._current_values['respiratory_rate'] = rr['default']
 
         ie = self._config['insp_expir_ratio']
-        self._insp_expir_ratio_input.setValue(ie['default'])
-        self._insp_expir_ratio_input.setMinimum(ie['min'])
-        self._insp_expir_ratio_input.setMaximum(ie['max'])
-        self._current_values['insp_expir_ratio'] = ie['default']
+        self._insp_expir_ratio_input.setValue(1./ie['default'])
+        self._insp_expir_ratio_input.setMinimum(1./ie['max'])
+        self._insp_expir_ratio_input.setMaximum(1./ie['min'])
+        self._current_values['insp_expir_ratio'] = 1./ie['default']
 
         self.resp_rate_worker()
         self.insp_expir_ratio_worker()
@@ -215,7 +215,8 @@ class Settings(QtWidgets.QMainWindow):
         # Set color to red until we know the value has been set.
         self._respiratory_rate_input.setStyleSheet("color: red")
 
-        status = self._data_h.set_data('rate', rr)
+        esp_param_name = self._config['esp_settable_param']['respiratory_rate']
+        status = self._data_h.set_data(esp_param_name, rr)
 
         if status == True:
             # Now set the color to green, as we know it has been set
@@ -231,7 +232,7 @@ class Settings(QtWidgets.QMainWindow):
 
         ratio = self._current_values['insp_expir_ratio']
 
-        if self._debug: print('value of Ratio', ratio)
+        if self._debug: print('Setting I:E to', ratio)
 
         # Update the value in the config file
         self._config['insp_expir_ratio']['current'] = ratio
@@ -239,14 +240,18 @@ class Settings(QtWidgets.QMainWindow):
         # Set color to red until we know the value has been set.
         self._insp_expir_ratio_input.setStyleSheet("color: red")
 
-        status = self._data_h.set_data('ratio', ratio)
+        esp_param_name = self._config['esp_settable_param']['insp_expir_ratio']
+        status = self._data_h.set_data(esp_param_name, ratio)
 
-        if status == True:
+        if status:
             # Now set the color to green, as we know it has been set
             self._insp_expir_ratio_input.setStyleSheet("color: green")
 
+        else:
+            print(f"\033[91mERROR: Can't set data for ESP with param {name}.\033[0m")
+
         # Finally, update the value in the toolsettings
-        self._toolsettings[1].update(1/ratio)
+        self._toolsettings[1].update(ratio)
 
 
     def send_assist_values_to_hardware(self):
@@ -267,7 +272,8 @@ class Settings(QtWidgets.QMainWindow):
         # Set color to red until we know the value has been set.
         self._pressure_trigger_input.setStyleSheet("color: red")
 
-        status = self._data_h.set_data('assist_ptrigger', pressure)
+        esp_param_name = self._config['esp_settable_param']['pressure_trigger']
+        status = self._data_h.set_data(esp_param_name, pressure)
 
         if status == True:
             # Now set the color to green, as we know it has been set
@@ -288,7 +294,8 @@ class Settings(QtWidgets.QMainWindow):
         # Set color to red until we know the value has been set.
         self._flow_trigger_input.setStyleSheet("color: red")
 
-        status = self._data_h.set_data('assist_flow_min', flow)
+        esp_param_name = self._config['esp_settable_param']['flow_trigger']
+        status = self._data_h.set_data(esp_param_name, flow)
 
         if status == True:
             # Now set the color to green, as we know it has been set
