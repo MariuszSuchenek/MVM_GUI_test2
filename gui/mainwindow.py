@@ -23,9 +23,6 @@ DONOT_RUN = 0
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    MODE_STOP   = 0
-    MODE_AUTO   = 1
-    MODE_ASSIST = 2
     def __init__(self, config, esp32, *args, **kwargs):
         """
         Initializes the main window for the MVM GUI. See below for subfunction setup description.
@@ -62,16 +59,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toolsettings[..] are the objects that hold min, max values for a given setting as
         as the current value (displayed as a slider and as a number).
         '''
-        self.toolsettings = [];
-        self.toolsettings.append(self.findChild(QtWidgets.QWidget, "toolsettings_1"))
-        self.toolsettings.append(self.findChild(QtWidgets.QWidget, "toolsettings_2"))
-        self.toolsettings.append(self.findChild(QtWidgets.QWidget, "toolsettings_3"))
+        toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
+        self.toolsettings = {};
 
-        self.toolsettings[0].setup("Resp. Rate",          setrange=(4.,  12., 100.), units="b/min")
-        self.toolsettings[1].setup("Insp./Expir.",        setrange=(0., 0.5,  10.), units="ratio")
-        self.toolsettings[2].setup("O<sub>2</sub> conc.", setrange=(21, 40, 100), units="%")
-        # self.toolsettings[1].setup("PEEP",                setrange=(0,   5, 50),  units="cmH<sub>2</sub>O")
-
+        for name in toolsettings_names:
+            toolsettings = self.findChild(QtWidgets.QWidget, name)
+            toolsettings.connect_config(config)
+            self.toolsettings[name] = toolsettings
 
         '''
         Set up data monitor/alarms (side bar)
@@ -80,8 +74,8 @@ class MainWindow(QtWidgets.QMainWindow):
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
-        monitor_names = {"monitor_top", "monitor_mid", "monitor_bot"};
-        self.monitors = {};
+        monitor_names = {"monitor_top", "monitor_mid", "monitor_bot"}
+        self.monitors = {}
         monitor_default = {
                 "name": "NoName",
                 "min": 0,
