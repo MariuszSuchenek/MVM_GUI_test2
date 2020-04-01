@@ -111,12 +111,8 @@ class ToolSettings(QtWidgets.QWidget):
 
         value: The value that the setting will display.
         """
-        print(self.label_name.text())
         value = round(value / self.step) * self.step
         slider_value = int(self.slider_scale * (value - self.min))
-
-        print(str(self.min) + " " + str(value) + " " + str(self.max))
-        print(str(self.slider_value.minimum()) + " " + str(slider_value) + " " + str(self.slider_value.maximum()))
 
         self.slider_value.setValue(slider_value)
         
