@@ -55,7 +55,7 @@ class Monitor(QtWidgets.QWidget):
 
         # Handle optional units
         if units is not None:
-            name = name + " <font size=10pt>[" + str(units) + "]</font>"
+            name = name + " " + str(units)
         self.label_name.setText(name)
 
         self.setStyleSheet("QWidget { color: " + str(color) + "; }");

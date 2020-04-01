@@ -63,7 +63,7 @@ QDoubleSpinBox::down-button  {
     </property>
     <property name="font">
      <font>
-      <pointsize>25</pointsize>
+      <pointsize>15</pointsize>
      </font>
     </property>
     <property name="focusPolicy">
@@ -103,7 +103,7 @@ QDoubleSpinBox::down-button  {
       <property name="font">
        <font>
         <family>.SF NS Text</family>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -124,7 +124,7 @@ QDoubleSpinBox::down-button  {
       <property name="font">
        <font>
         <family>.SF NS Text</family>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -157,7 +157,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -177,7 +177,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -197,7 +197,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
        </font>
       </property>
       <property name="buttonSymbols">
@@ -215,7 +215,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -241,7 +241,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -254,7 +254,7 @@ QDoubleSpinBox::down-button  {
     <widget class="QWidget" name="tab_2">
      <property name="font">
       <font>
-       <pointsize>25</pointsize>
+       <pointsize>15</pointsize>
       </font>
      </property>
      <attribute name="title">
@@ -271,7 +271,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -291,7 +291,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -311,7 +311,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -331,7 +331,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -344,14 +344,14 @@ QDoubleSpinBox::down-button  {
       <property name="geometry">
        <rect>
         <x>210</x>
-        <y>250</y>
+        <y>260</y>
         <width>251</width>
-        <height>50</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <pointsize>12</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -371,7 +371,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
        </font>
       </property>
       <property name="buttonSymbols">
@@ -389,7 +389,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
        </font>
       </property>
       <property name="buttonSymbols">
@@ -429,7 +429,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <pointsize>12</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -488,7 +488,7 @@ QDoubleSpinBox::down-button  {
       </property>
       <property name="font">
        <font>
-        <pointsize>25</pointsize>
+        <pointsize>15</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
