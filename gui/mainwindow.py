@@ -137,8 +137,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.button_startstop, 
                 self.button_autoassist)
 
-        self.button_startstop.pressed.connect(self._start_stop_worker.toggle_start_stop)
-        self.button_autoassist.pressed.connect(self._start_stop_worker.toggle_mode)
+        self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
+        self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
 
         '''
         Connect settings button to Settings overlay.

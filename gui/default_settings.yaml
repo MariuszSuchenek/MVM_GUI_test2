@@ -13,6 +13,15 @@ sampling_interval: 0.1
 # The parameters that will be read from the ESP and stored for possible use
 read_params: ['pressure', 'flow', 'o2', 'bpm', 'all']
 
+# The parameters that can be set on the ESP
+# The values below must match those used in the ESP
+esp_settable_param:
+    respiratory_rate: 'rate'
+    insp_expir_ratio: 'ratio'
+    pressure_trigger: 'assist_ptrigger'
+    flow_trigger: 'assist_flow_min'
+
+
 # This is the string returned by the ESP in case of success
 return_success_code: 'OK'
 
