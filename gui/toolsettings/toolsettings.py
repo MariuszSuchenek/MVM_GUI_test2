@@ -25,8 +25,6 @@ class ToolSettings(QtWidgets.QWidget):
         palette.setColor(role, QtGui.QColor("#eeeeee"))
         self.setPalette(palette)
 
-        self.slider_value.valueChanged.connect(self.update)
-
         self.show()
     def setup(self, name, setrange=(0,0,100), units=None, step=0.1, dec_precision=0, current=None):
         """
