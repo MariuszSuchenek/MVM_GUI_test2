@@ -56,8 +56,16 @@ class DataFiller():
         plot.getAxis('bottom').setPen(pg.mkPen(color, width=self._config['axis_line_width']))
         plot.getAxis('left').setPen(pg.mkPen(color, width=self._config['axis_line_width']))
 
+        # Show the alarm thresholds on plots
         if self._config['show_safe_ranges_on_graphs']:
             self.show_safe_ranges(monitor_name, plot)
+
+        # Fix the y axis range
+        value_min = self._config[monitor_name]['min']
+        value_max = self._config[monitor_name]['max']
+        ymin = value_min - (value_max-value_min)*0.1
+        ymax = value_max + (value_max-value_min)*0.1
+        plot.setYRange(ymin, ymax)
 
         # Remove mouse interaction with plots
         plot.setMouseEnabled(x=False, y=False)
