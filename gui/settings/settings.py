@@ -42,16 +42,31 @@ class Settings(QtWidgets.QMainWindow):
 
         # Init presets
         self.current_preset = None
-        self._respiratory_rate_input.focusInEvent = lambda event: self.spawn_presets_window(self._config['respiratory_rate']['presets']) 
-        print(self._config['respiratory_rate']['presets'])
+        self.current_preset_name = None
+        self.fake_btn_rr.clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
+        # self._respiratory_rate_input.focusInEvent = lambda event: self.spawn_presets_window('respiratory_rate') 
+        self._insp_expir_ratio_input.focusInEvent = lambda event: self.spawn_presets_window('insp_expir_ratio') 
+        self._pressure_trigger_input.focusInEvent = lambda event: self.spawn_presets_window('pressure_trigger') 
+        self._flow_trigger_input.focusInEvent     = lambda event: self.spawn_presets_window('flow_trigger') 
+        self._min_resp_rate_input.focusInEvent    = lambda event: self.spawn_presets_window('minimal_resp_rate') 
 
 
-    def spawn_presets_window(self, presets):
+    def spawn_presets_window(self, name):
+
+        presets = self._config[name]['presets']
+
+        self.current_preset_name = name
+
         if self.current_preset is not None:
             self.current_preset.close()
+
         self.current_preset = Presets(presets, self)
         self.current_preset.show()
         self.current_preset.button_cancel.pressed.connect(self.hide_preset_worker)
+        for btn in self.current_preset.button_preset:
+            btn.pressed.connect(self.preset_worker)
+
+        self.inactivate_settings_buttons()
 
         # Always set the focus to the tab
         self.tabWidget.setFocus()
@@ -68,6 +83,24 @@ class Settings(QtWidgets.QMainWindow):
 
         # Always set the focus to the tab
         self.tabWidget.setFocus()
+
+    def preset_worker(self):
+
+        value = float(self.sender().text())
+
+        if self.current_preset_name == 'respiratory_rate':
+            self._respiratory_rate_input.setValue(value)
+            self._current_values_temp['respiratory_rate'] = value
+        elif self.current_preset_name == 'insp_expir_ratio':
+            self._insp_expir_ratio_input.setValue(value)
+            self._current_values_temp['insp_expir_ratio'] = value
+
+        self.hide_preset_worker()
+
+
+
+    def inactivate_settings_buttons(self):
+        return
 
     def connect_data_handler(self, data_h):
         '''
@@ -348,8 +381,12 @@ class Settings(QtWidgets.QMainWindow):
         cannot notice the red.
         AUTOMATIC
         '''
-        rr = self._respiratory_rate_input.value()
-        self._current_values_temp['respiratory_rate'] = rr
+        # if value is not None:
+        #     self._respiratory_rate_input.setValue(value)
+        # else:
+        #     value = self._respiratory_rate_input.value()
+        value = self._respiratory_rate_input.value()
+        self._current_values_temp['respiratory_rate'] = value
 
         return
 

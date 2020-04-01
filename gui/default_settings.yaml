@@ -132,7 +132,10 @@ insp_expir_ratio:
     current: None
     units: "ratio"
     show_fraction: True
-
+    presets:
+        - 1 # 1:1
+        - 2 # 1:2
+        - 3 # 1:3
 
 
 #
@@ -145,6 +148,12 @@ pressure_trigger:
     min: 0.
     max: 10.
     current: None
+    presets:
+        - 80 # Hard
+        - 60 # Medium
+        - 30 # Normal
+        - 10 # Soft
+
 
 # 
 flow_trigger: 
@@ -152,6 +161,13 @@ flow_trigger:
     min: 0.
     max: 10.
     current: None
+    presets:
+        - 10
+        - 15
+        - 20
+        - 25
+        - 30
+        - 35
 
 #
 minimal_resp_rate:
@@ -159,5 +175,10 @@ minimal_resp_rate:
     min: 0.
     max: 10.
     current: None
+    presets:
+        - 3
+        - 5
+        - 10
+        - 15
 
 enable_backup: False

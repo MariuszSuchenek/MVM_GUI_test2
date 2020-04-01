@@ -14,6 +14,7 @@ class Presets(QtWidgets.QWidget):
         uic.loadUi("presets/presets.ui", self)
 
         self.value = None
+        # self.settings_owner = args[0] if len(args) else None
 
         # get the buttons from the preset dialog
         self.button_cancel = self.findChild(QtWidgets.QPushButton, "button_cancel")
@@ -25,7 +26,7 @@ class Presets(QtWidgets.QWidget):
             button.setText(str(preset))
 
         # Hide the buttons that are not needed
-        for i in range(len(presets), len(self.button_preset) - len(presets)):
+        for i in range(len(presets), len(self.button_preset)):
             self.button_preset[i].hide()
 
 
