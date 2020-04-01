@@ -8,8 +8,10 @@ as needed.
 
 from threading import Lock
 import random
+from communication.peep import peep
 
 class FakeESP32Serial:
+    peep = peep()
     def __init__(self):
         self.lock = Lock()
         self.set_params = {}
@@ -61,8 +63,8 @@ class FakeESP32Serial:
         """
 
         with self.lock:
-            return {"pressure": random.uniform(10, 100),
-                    "flow":     random.uniform(10, 100),
+            return {"pressure": self.peep.pressure(),
+                    "flow":     self.peep.flow(),
                     "o2":       random.uniform(10, 100),
                     "bpm":      random.uniform(10, 100)}
 
