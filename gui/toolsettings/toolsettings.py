@@ -103,23 +103,27 @@ class ToolSettings(QtWidgets.QWidget):
         self.label_max.setText(str(valuerange[1]))
 
 
-    def update(self, value):
+    def update(self, value, denominator=16):
         """
         Updates the slider position and text value to a provided value (min < value < max).
 
         value: The value that the setting will display.
+        denominator: For step values less than 1, nearest fractions will be displayed with this maximum denominator
         """
-        value = round(value / self.step) * self.step
+        if self.step < 1 and value <= 1:
+            # Display fraction
+            (num, den) = (round(value * denominator) / denominator).as_integer_ratio()
+            disp_value = "%d:%d" % (num, den)
+
+        else:
+            # Display normal number
+            disp_value = "%g" % (round(value / self.step) * self.step)
+
         slider_value = int(self.slider_scale * (value - self.min))
 
         self.slider_value.setValue(slider_value)
         
-        if isinstance(value, float):
-            value = f'{value:.3}'
-        else:
-            value = str(value)
-
-        self.label_value.setText(value)
+        self.label_value.setText(disp_value)
         self.value = value
 
 
