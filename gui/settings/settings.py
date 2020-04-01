@@ -42,14 +42,32 @@ class Settings(QtWidgets.QMainWindow):
 
         # Init presets
         self.current_preset = None
-        self._respiratory_rate_input.focusInEvent = lambda event: self.spawn_presets_window([1,2,3,4]) 
+        self._respiratory_rate_input.focusInEvent = lambda event: self.spawn_presets_window(self._config['respiratory_rate']['presets']) 
+        print(self._config['respiratory_rate']['presets'])
 
 
     def spawn_presets_window(self, presets):
         if self.current_preset is not None:
             self.current_preset.close()
         self.current_preset = Presets(presets, self)
-        print("Newpresets")
+        self.current_preset.show()
+        self.current_preset.button_cancel.pressed.connect(self.hide_preset_worker)
+
+        # Always set the focus to the tab
+        self.tabWidget.setFocus()
+
+
+    def hide_preset_worker(self):
+        '''
+        Hides the Preset window
+        '''
+        self.current_preset.hide()
+        # Reset the Settings window
+        self.hide()
+        self.show()
+
+        # Always set the focus to the tab
+        self.tabWidget.setFocus()
 
     def connect_data_handler(self, data_h):
         '''

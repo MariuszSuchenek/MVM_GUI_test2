@@ -145,7 +145,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.settings = Settings(config, self)
         self.button_settings = self.findChild(QtWidgets.QPushButton, "button_settings")
-        self.button_settings.pressed.connect(self.settings.show)
+        self.button_settings.pressed.connect(self.show_settings_worker)
 
         self.settings.connect_data_handler(self._data_h)
         self.settings.connect_toolsettings(self.toolsettings)
@@ -153,6 +153,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.connect_workers()
         self.settings.load_presets_auto()
         self.settings.load_presets_assist()
+
+    def show_settings_worker(self):
+        '''
+        Opens the settings panel and set the Focus to the
+        tab, otherwise it may go to the SpinBox field, 
+        and trigger the presets window
+        '''
+        self.settings.show()
+        self.settings.tabWidget.setFocus()
 
     def closeEvent(self, event):
         self._data_h.stop_io()

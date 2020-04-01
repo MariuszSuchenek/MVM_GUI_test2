@@ -103,6 +103,7 @@ monitor_bot:
 #
 # Automatic Mode
 #
+# Note: can only have max 6 presets for now.
 
 # Respiration Rate (breaths per minute)
 respiratory_rate:
@@ -113,6 +114,13 @@ respiratory_rate:
     step: 1
     current: None
     units: "b/min"
+    presets:
+        - 5
+        - 10
+        - 15
+        - 20
+        - 25
+        - 30
 
 # Inspiration/Expiration
 insp_expir_ratio:
