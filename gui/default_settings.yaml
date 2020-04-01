@@ -2,7 +2,7 @@
 port: '/dev/cu.usbmodem141301'
 
 # If false, opens the GUI but doesn't read data:
-read_from_esp: True
+read_from_esp: False
 
 # Number of samples to display in the graphs:
 nsamples: 100
@@ -97,17 +97,23 @@ monitor_bot:
 
 # Respiration Rate (breaths per minute)
 respiratory_rate:
+    name: "Resp. Rate"
     default: 12
     min: 4
     max: 50
+    step: 1
     current: None
+    units: "b/min"
 
 # Inspiration/Expiration
 insp_expir_ratio:
+    name: "Insp./Expir."
     default: 0.5
     min: 0.33
     max: 1.
+    step: 0.1
     current: None
+    units: "ratio"
 
 
 
