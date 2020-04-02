@@ -71,8 +71,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect back and menu buttons to toolbar and menu
         '''
-        self.button_back.pressed.connect(lambda: self.bottombar.setCurrentIndex(0))
-        self.button_menu.pressed.connect(lambda: self.bottombar.setCurrentIndex(1))
+        self.button_back.pressed.connect(self.open_toolbar)
+        self.button_menu.pressed.connect(self.open_menu)
 
         '''
         Instantiate the DataFiller, which takes
@@ -175,7 +175,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Connect settings button to Settings overlay.
         '''
         self.settings = Settings(config, self)
-        self.button_settings.pressed.connect(self.settings.show)
+        self.button_settings.pressed.connect(self.show_settings)
 
         self.settings.connect_data_handler(self._data_h)
         self.settings.connect_toolsettings(self.toolsettings)
@@ -184,7 +184,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.load_presets_auto()
         self.settings.load_presets_assist()
 
+    def open_menu(self):
+        self.bottombar.setCurrentIndex(1)
+
+    def open_toolbar(self):
+        self.bottombar.setCurrentIndex(0)
         
+    def show_settings(self):
+        self.open_toolbar()
+        self.settings.show()
 
     def closeEvent(self, event):
         self._data_h.stop_io()
