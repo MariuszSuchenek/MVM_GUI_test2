@@ -49,7 +49,7 @@ class Settings(QtWidgets.QMainWindow):
             'enable_backup':     self.toggle_enable_backup,
         }
 
-        self._all_fakebtn_auto = {
+        self._all_fakebtn = {
             # Auto
             'respiratory_rate': self.fake_btn_rr,
             'insp_expir_ratio': self.fake_btn_ie,
@@ -68,17 +68,17 @@ class Settings(QtWidgets.QMainWindow):
         self._current_preset_name = None
 
         # Auto
-        self._all_fakebtn_auto['respiratory_rate'].clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
-        self._all_fakebtn_auto['insp_expir_ratio'].clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
-        self._all_fakebtn_auto['insp_pressure'].clicked.connect(lambda: self.spawn_presets_window('insp_pressure'))
-        self._all_fakebtn_auto['peep_auto'].clicked.connect(lambda: self.spawn_presets_window('peep_auto'))
+        self._all_fakebtn['respiratory_rate'].clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
+        self._all_fakebtn['insp_expir_ratio'].clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
+        self._all_fakebtn['insp_pressure'].clicked.connect(lambda: self.spawn_presets_window('insp_pressure'))
+        self._all_fakebtn['peep_auto'].clicked.connect(lambda: self.spawn_presets_window('peep_auto'))
 
         # Assist
-        self._all_fakebtn_auto['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
-        self._all_fakebtn_auto['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
-        self._all_fakebtn_auto['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
-        self._all_fakebtn_auto['peep_assist'].clicked.connect(lambda: self.spawn_presets_window('peep_assist'))
-        self._all_fakebtn_auto['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
+        self._all_fakebtn['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
+        self._all_fakebtn['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
+        self._all_fakebtn['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
+        self._all_fakebtn['peep_assist'].clicked.connect(lambda: self.spawn_presets_window('peep_assist'))
+        self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
 
 
 
