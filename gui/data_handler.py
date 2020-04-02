@@ -92,7 +92,7 @@ class DataHandler():
 
     def construct_missing_params(self, values):
         '''
-        Constructs parameters than can be calculated 
+        Constructs parameters than can be calculated
         from those available in the ESP.
         '''
 
@@ -104,7 +104,7 @@ class DataHandler():
         if 'bpm' in values and 'flow' in values:
             values['volume'] = values['flow'] / values['bpm'] * 1e3 # mL
 
-        # 2) 
+        # 2)
 
 
     def thread_complete(self):
