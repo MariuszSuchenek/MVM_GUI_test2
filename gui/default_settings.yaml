@@ -1,5 +1,5 @@
 # The serial port to use:
-port: '/dev/cu.usbmodem141301'
+port: '/dev/cu.usbmodem143301'
 
 # If false, opens the GUI but doesn't read data:
 read_from_esp: True
@@ -16,10 +16,15 @@ read_params: ['pressure', 'flow', 'o2', 'bpm', 'all']
 # The parameters that can be set on the ESP
 # The values below must match those used in the ESP
 esp_settable_param:
-    respiratory_rate: 'rate'
-    insp_expir_ratio: 'ratio'
-    pressure_trigger: 'assist_ptrigger'
-    flow_trigger: 'assist_flow_min'
+    respiratory_rate:  'rate'
+    insp_expir_ratio:  'ratio'
+    insp_pressure:     'TODO'
+    peep_auto:         'TODO'
+    pressure_trigger:  'assist_ptrigger'
+    flow_trigger:      'assist_flow_min'
+    support_pressure:  'TODO'
+    peep_assist:       'TODO'
+    minimal_resp_rate: 'TODO'
 
 
 # This is the string returned by the ESP in case of success
@@ -103,6 +108,7 @@ monitor_bot:
 #
 # Automatic Mode
 #
+# Note: can only have max 6 presets for now.
 
 # Respiration Rate (breaths per minute)
 respiratory_rate:
@@ -113,6 +119,13 @@ respiratory_rate:
     step: 1
     current: None
     units: "b/min"
+    presets:
+        - [5, '']
+        - [10, '']
+        - [15, '']
+        - [20, '']
+        - [25, '']
+        - [30, '']
 
 # Inspiration/Expiration
 insp_expir_ratio:
@@ -124,32 +137,120 @@ insp_expir_ratio:
     current: None
     units: "ratio"
     show_fraction: True
+    presets:
+        - [1, ''] # 1:1
+        - [2, ''] # 1:2
+        - [3, ''] # 1:3
 
+# Inspiratory Pressure
+insp_pressure:
+    name: "Insp. Pressure"
+    default:  15
+    min: 0
+    max: 40
+    current: None
+    units: "mbar"
+    presets:
+        - [5, '']
+        - [10, '']
+        - [15, '']
+        - [20, '']
+        - [25, '']
+        - [30, '']
+
+# PEEP (auto mode)
+peep_auto:
+    name: "PEEP (Auto)"
+    default:  7.5
+    min: 0
+    max: 20
+    current: None
+    units: "mbar"
+    presets:
+        - [2, '']
+        - [5, '']
+        - [7.5, '']
+        - [10, '']
+        - [15, '']
 
 
 #
 # Assisted Mode
 #
+# Note: can only have max 6 presets for now.
 
 # The trigger that starts the respiration
 pressure_trigger: 
+    name: "Pressure Trigger"
     default: 1.
     min: 0.
-    max: 10.
+    max: 90.
     current: None
+    presets:
+        - [80, 'Hard']
+        - [60, 'Medium']
+        - [30, 'Normal']
+        - [10, 'Soft']
 
-# 
+
+# Flow Trigger
 flow_trigger: 
-    default: 1.
+    name: "Flow Trigger"
+    default: 20.
     min: 0.
-    max: 10.
+    max: 40.
     current: None
+    presets:
+        - [10, '']
+        - [15, '']
+        - [20, '']
+        - [25, '']
+        - [30, '']
+        - [35, '']
 
-#
+# Support Pressure
+support_pressure:
+    name: "Support Pressure"
+    default: 10.
+    min: 0.
+    max: 40.
+    current: None
+    units: "mbar"
+    presets:
+        - [5, '']
+        - [10, '']
+        - [15, '']
+        - [20, '']
+        - [25, '']
+        - [30, '']
+
+# PEEP Assist
+peep_assist:
+    name: "PEEP (Assist)"
+    default: 7.5
+    min: 0.
+    max: 20.
+    current: None
+    units: "mbar"
+    presets:
+        - [2, '']
+        - [5, '']
+        - [7.5, '']
+        - [10, '']
+        - [15, '']
+
+# Minimal Respiratory Rate
 minimal_resp_rate:
-    default: 1.
+    default: 10.
     min: 0.
-    max: 10.
+    max: 20.
     current: None
+    presets:
+        - [3, '']
+        - [5, '']
+        - [10, '']
+        - [15, '']
 
-enable_backup: False
+
+# Enable backup
+enable_backup: True
