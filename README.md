@@ -18,7 +18,8 @@
 
 You can run with 
 ```
-./gui/mvm_gui.py
+cd gui/
+./mvm_gui.py
 ```
 
 Default settings are stored in 
@@ -32,5 +33,5 @@ Basics settings are:
 
 More settings and description can be found in the yaml file itself.
 
-If you want to read from an Arduino (ESP), you need to download `mock.ino`
-into your Arduino device, and specify the serial port in the settings file.
+If you want to read from an Arduino (ESP), you need to upload `mock/mock.ino`
+to your Arduino device, and specify the serial port in the settings file.
