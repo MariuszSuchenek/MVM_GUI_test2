@@ -48,7 +48,7 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_ASSIST)
 
             if result:
-                self.button_autoassist.setText("Set Automatic")
+                self.button_autoassist.setText("Mode:\nAssisted")
                 self.mode = self.MODE_ASSIST
             else:
                 self.raise_comm_error('Cannot set assisted mode.')
@@ -57,7 +57,7 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_AUTO)
 
             if result:
-                self.button_autoassist.setText("Set Assisted")
+                self.button_autoassist.setText("Mode:\nAutomatic")
                 self.mode = self.MODE_AUTO
             else:
                 self.raise_comm_error('Cannot set automatic mode.')
@@ -88,7 +88,13 @@ class StartStopWorker():
 
     def confirm_stop_pressed(self):
         self.button_autoassist.setDown(False)
-        currentMode = self.button_autoassist.text().upper()
+        if self.mode == self.MODE_AUTO:
+            currentMode = "AUTOMATIC"
+        elif self.mode == self.MODE_ASSIST:
+            currentMode = "ASSISTED"
+        else:
+            # should never be able to get here
+            currentMode = "(UNKNOWN)"
         confirmation = QtWidgets.QMessageBox.warning(
             self.main_window,
             '**STOPPING ' + currentMode + ' MODE**',
