@@ -110,6 +110,8 @@ class Settings(QtWidgets.QMainWindow):
         Hides the Preset window
         '''
         self._current_preset.hide()
+        self.activate_settings_buttons()
+
         # Reset the Settings window
         self.repaint()
 
@@ -130,7 +132,16 @@ class Settings(QtWidgets.QMainWindow):
 
 
     def inactivate_settings_buttons(self):
-        return
+        '''
+        Inactivates all in the settings window
+        '''
+        self.tabWidget.setDisabled(True)
+
+    def activate_settings_buttons(self):
+        '''
+        Activates all in the settings window
+        '''
+        self.tabWidget.setEnabled(True)
 
     def connect_data_handler(self, data_h):
         '''
