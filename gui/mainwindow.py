@@ -46,8 +46,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get toolbar widgets
         '''
-        self.button_menu =       self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
-        self.label_status =      self.toolbar.findChild(QtWidgets.QLabel,      "label_status")
+        self.button_menu =  self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
+        self.label_status = self.toolbar.findChild(QtWidgets.QLabel,      "label_status")
 
         toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
         self.toolsettings = {};
@@ -60,11 +60,11 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get menu widgets and connect settings for the menu widget
         '''
-        self.button_back =     self.menu.findChild(QtWidgets.QPushButton, "button_back")
-        self.button_settings = self.menu.findChild(QtWidgets.QPushButton, "button_settings")
-        self.button_expause =  self.menu.findChild(QtWidgets.QPushButton, "button_expause")
-        self.button_inpause =  self.menu.findChild(QtWidgets.QPushButton, "button_inpause")
-        self.button_freeze =   self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
+        self.button_back =       self.menu.findChild(QtWidgets.QPushButton, "button_back")
+        self.button_settings =   self.menu.findChild(QtWidgets.QPushButton, "button_settings")
+        self.button_expause =    self.menu.findChild(QtWidgets.QPushButton, "button_expause")
+        self.button_inpause =    self.menu.findChild(QtWidgets.QPushButton, "button_inpause")
+        self.button_freeze =     self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
         self.button_startstop =  self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
         self.button_autoassist = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
 
