@@ -23,6 +23,10 @@ if __name__ == "__main__":
         config = yaml.load(f, Loader=yaml.FullLoader)
     print ('Config:', yaml.dump(config), sep='\n')
 
+    if 'fakeESP32' in sys.argv:
+        config['read_from_esp'] = False
+        print('******* Simulating communication with ESP32')
+        
     if config['read_from_esp']:
         try:
             esp32 = ESP32Serial(config['port'])
