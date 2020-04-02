@@ -160,7 +160,7 @@ class Settings(QtWidgets.QMainWindow):
     def connect_workers(self):
         '''
         Connects all the buttons, inputs, etc
-        to the the appropriate working function
+        to the the appropriate working functions
         '''
         for param, btn in self._all_spinboxes.items():
             if param == 'enable_backup':
@@ -236,7 +236,7 @@ class Settings(QtWidgets.QMainWindow):
 
     def apply_worker(self):
         '''
-        Starts the run, applying all the changes selected
+        Applyes the current changes and sends them to the ESP
         '''
         self._current_values = copy.copy(self._current_values_temp)
         self.send_values_to_hardware()
@@ -245,6 +245,7 @@ class Settings(QtWidgets.QMainWindow):
 
     def send_values_to_hardware(self):
         '''
+        Sends the currently set values to the ESP
         '''
         for param, btn in self._all_spinboxes.items():
 
@@ -253,7 +254,8 @@ class Settings(QtWidgets.QMainWindow):
                 continue
 
             value = self._current_values[param]
-            if self._debug: print('Value of', param, ':', value)
+
+            if self._debug: print('Setting value of', param, ':', value)
 
             # Update the value in the config file
             self._config[param]['current'] = value
