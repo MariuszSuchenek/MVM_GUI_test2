@@ -288,6 +288,3 @@ class Settings(QtWidgets.QMainWindow):
                     print('. value', btn.value())
                     self._current_values_temp[param] = btn.value()
 
-
-
- 
