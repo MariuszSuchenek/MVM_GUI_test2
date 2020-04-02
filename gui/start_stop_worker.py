@@ -48,7 +48,7 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_ASSIST)
 
             if result:
-                self.button_autoassist.setText("Set Assisted")
+                self.button_autoassist.setText("Set Automatic")
                 self.mode = self.MODE_ASSIST
             else:
                 self.raise_comm_error('Cannot set assisted mode.')
@@ -57,7 +57,7 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_AUTO)
 
             if result:
-                self.button_autoassist.setText("Set Automatic")
+                self.button_autoassist.setText("Set Assisted")
                 self.mode = self.MODE_AUTO
             else:
                 self.raise_comm_error('Cannot set automatic mode.')
