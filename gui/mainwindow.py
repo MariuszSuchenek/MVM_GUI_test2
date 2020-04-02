@@ -39,7 +39,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the toolbar and menu widgets
         '''
-        self.bottombar = self.findChild(QtWidgets.QWidget, "bottombar")
+        self.bottombar = self.findChild(QtWidgets.QStackedWidget, "bottombar")
         self.toolbar =   self.findChild(QtWidgets.QWidget, "toolbar")
         self.menu =      self.findChild(QtWidgets.QWidget, "menu")
 
