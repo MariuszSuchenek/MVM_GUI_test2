@@ -16,12 +16,13 @@ class StartStopWorker():
     DO_RUN = 1
     DONOT_RUN = 0
 
-    def __init__(self, main_window, config, esp32, button_startstop, button_autoassist):
+    def __init__(self, main_window, config, esp32, button_startstop, button_autoassist, menu):
         self.main_window = main_window
         self.config = config
         self.esp32 = esp32
         self.button_startstop = button_startstop
         self.button_autoassist = button_autoassist
+        self.menu = menu
 
         self.mode = self.MODE_AUTO
         self.run  = self.DONOT_RUN
@@ -69,7 +70,8 @@ class StartStopWorker():
         self.button_startstop.setText("Stop")
         QtCore.QTimer.singleShot(self.button_timeout(), lambda: ( 
                  self.button_startstop.setEnabled(True),
-                 self.button_startstop.setStyleSheet("color: red")))
+                 self.button_startstop.setStyleSheet("color: red"),
+                 self.menu.set_running()))
 
     def stop_button_pressed(self):
         self.button_startstop.setEnabled(True)
@@ -80,6 +82,8 @@ class StartStopWorker():
 
         self.button_startstop.repaint()
         self.button_autoassist.repaint()
+
+        self.menu.set_stopped()
 
     def confirm_stop_pressed(self):
         self.button_autoassist.setDown(False)
