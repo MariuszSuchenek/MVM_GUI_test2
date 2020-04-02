@@ -1687,9 +1687,9 @@ QDoubleSpinBox::down-button  {
      <widget class="MVMToggle" name="toggle_enable_backup" native="true">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>30</x>
         <y>320</y>
-        <width>121</width>
+        <width>131</width>
         <height>41</height>
        </rect>
       </property>
