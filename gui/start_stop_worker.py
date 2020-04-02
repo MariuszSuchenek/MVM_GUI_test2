@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class StartStopWorker():
     '''
-    A class entirely dedicated to start and stop 
+    A class entirely dedicated to start and stop
     the ventilator, and also to set the ventilator
     mode. For now, this is called only from the
     mainwindow.
@@ -16,26 +16,29 @@ class StartStopWorker():
     DO_RUN = 1
     DONOT_RUN = 0
 
-    def __init__(self, main_window, config, esp32, button_startstop, button_autoassist):
+    def __init__(self, main_window, config, esp32, button_startstop,
+            button_autoassist, toolbar):
         self.main_window = main_window
         self.config = config
         self.esp32 = esp32
         self.button_startstop = button_startstop
         self.button_autoassist = button_autoassist
+        self.toolbar = toolbar
+        self.mode_text = "Automatic"
 
         self.mode = self.MODE_AUTO
         self.run  = self.DONOT_RUN
-        return 
+        return
 
     def raise_comm_error(self, message):
         """
         Opens an error window with 'message'.
         """
         confirmation = QtWidgets.QMessageBox.critical(
-            self.main_window, 
-            '** COMMUNICATION ERROR **', 
-            '** COMMUNICATION ERROR **\n' + message, 
-            QtWidgets.QMessageBox.Ok, 
+            self.main_window,
+            '** COMMUNICATION ERROR **',
+            '** COMMUNICATION ERROR **\n' + message,
+            QtWidgets.QMessageBox.Ok,
             QtWidgets.QMessageBox.Cancel)
 
     def toggle_mode(self):
@@ -46,7 +49,9 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_ASSIST)
 
             if result:
-                self.button_autoassist.setText("Assisted")
+                self.mode_text = "Assisted"
+                self.button_autoassist.setText("Set\nAutomatic")
+                self.update_startstop_text()
                 self.mode = self.MODE_ASSIST
             else:
                 self.raise_comm_error('Cannot set assisted mode.')
@@ -55,40 +60,52 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_AUTO)
 
             if result:
-                self.button_autoassist.setText("Automatic")
+                self.mode_text = "Automatic"
+                self.button_autoassist.setText("Set\nAssisted")
+                self.update_startstop_text()
                 self.mode = self.MODE_AUTO
             else:
                 self.raise_comm_error('Cannot set automatic mode.')
+
+    def update_startstop_text(self):
+        if self.run == self.DONOT_RUN:
+            self.button_startstop.setText("Start\n" + self.mode_text)
+        else:
+            self.button_startstop.setText("Stop\n" + self.mode_text)
 
     def start_button_pressed(self):
         self.button_startstop.setDisabled(True)
         self.button_autoassist.setDisabled(True)
         self.button_startstop.repaint()
         self.button_autoassist.repaint()
+        self.update_startstop_text()
 
-        self.button_startstop.setText("Stop")
-        QtCore.QTimer.singleShot(self.button_timeout(), lambda: ( 
+        QtCore.QTimer.singleShot(self.button_timeout(), lambda: (
+                 self.update_startstop_text(),
                  self.button_startstop.setEnabled(True),
-                 self.button_startstop.setStyleSheet("color: red")))
+                 self.button_startstop.setStyleSheet("color: red"),
+                 self.toolbar.set_running(self.mode_text)))
 
     def stop_button_pressed(self):
         self.button_startstop.setEnabled(True)
         self.button_autoassist.setEnabled(True)
 
-        self.button_startstop.setText("Start")
+        self.update_startstop_text()
         self.button_startstop.setStyleSheet("color: black")
 
         self.button_startstop.repaint()
         self.button_autoassist.repaint()
 
+        self.toolbar.set_stopped(self.mode_text)
+
     def confirm_stop_pressed(self):
         self.button_autoassist.setDown(False)
-        currentMode = self.button_autoassist.text().upper()
+        currentMode = self.mode_text.upper()
         confirmation = QtWidgets.QMessageBox.warning(
-            self.main_window, 
-            '**STOPPING ' + currentMode + ' MODE**', 
-            "Are you sure you want to STOP " + currentMode + " MODE?", 
-            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
+            self.main_window,
+            '**STOPPING ' + currentMode + ' MODE**',
+            "Are you sure you want to STOP " + currentMode + " MODE?",
+            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
             QtWidgets.QMessageBox.Cancel)
         return confirmation == QtWidgets.QMessageBox.Ok
 
@@ -99,7 +116,7 @@ class StartStopWorker():
         if 'start_mode_timeout' in self.config:
             timeout = self.config['start_mode_timeout']
             # set maximum timeout
-            if timeout > 3000: 
+            if timeout > 3000:
                 timeout = 3000
         return timeout
 

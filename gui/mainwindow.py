@@ -3,11 +3,13 @@ from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from toolsettings.toolsettings import ToolSettings
+from toolbar.toolbar import Toolbar
 from monitor.monitor import Monitor
 from settings.settings import Settings
 from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
+from menu.menu import Menu
 
 import pyqtgraph as pg
 import sys
@@ -34,6 +36,43 @@ class MainWindow(QtWidgets.QMainWindow):
         self.config = config
         self.esp32 = esp32
 
+        '''
+        Get the toolbar and menu widgets
+        '''
+        self.bottombar = self.findChild(QtWidgets.QStackedWidget, "bottombar")
+        self.toolbar =   self.findChild(QtWidgets.QWidget, "toolbar")
+        self.menu =      self.findChild(QtWidgets.QWidget, "menu")
+
+        '''
+        Get toolbar widgets
+        '''
+        self.button_menu =  self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
+        self.label_status = self.toolbar.findChild(QtWidgets.QLabel,      "label_status")
+
+        toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
+        self.toolsettings = {};
+
+        for name in toolsettings_names:
+            toolsettings = self.toolbar.findChild(QtWidgets.QWidget, name)
+            toolsettings.connect_config(config)
+            self.toolsettings[name] = toolsettings
+
+        '''
+        Get menu widgets and connect settings for the menu widget
+        '''
+        self.button_back =       self.menu.findChild(QtWidgets.QPushButton, "button_back")
+        self.button_settings =   self.menu.findChild(QtWidgets.QPushButton, "button_settings")
+        self.button_expause =    self.menu.findChild(QtWidgets.QPushButton, "button_expause")
+        self.button_inpause =    self.menu.findChild(QtWidgets.QPushButton, "button_inpause")
+        self.button_freeze =     self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
+        self.button_startstop =  self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
+        self.button_autoassist = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
+
+        '''
+        Connect back and menu buttons to toolbar and menu
+        '''
+        self.button_back.pressed.connect(self.open_toolbar)
+        self.button_menu.pressed.connect(self.open_menu)
 
         '''
         Instantiate the DataFiller, which takes
@@ -127,15 +166,14 @@ class MainWindow(QtWidgets.QMainWindow):
         Connect each to their respective mode toggle functions.
         The StartStopWorker class takes care of starting and stopping a run
         '''
-        self.button_startstop = self.findChild(QtWidgets.QPushButton, "button_startstop")
-        self.button_autoassist = self.findChild(QtWidgets.QPushButton, "button_autoassist")
-        
+
         self._start_stop_worker = StartStopWorker(
-                self, 
-                self.config, 
-                self.esp32, 
-                self.button_startstop, 
-                self.button_autoassist)
+                self,
+                self.config,
+                self.esp32,
+                self.button_startstop,
+                self.button_autoassist,
+                self.toolbar)
 
         self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
         self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
@@ -144,22 +182,22 @@ class MainWindow(QtWidgets.QMainWindow):
         Connect settings button to Settings overlay.
         '''
         self.settings = Settings(config, self)
-        self.button_settings = self.findChild(QtWidgets.QPushButton, "button_settings")
-        self.button_settings.pressed.connect(self.show_settings_worker)
+        self.button_settings.pressed.connect(self.show_settings)
 
         self.settings.connect_data_handler(self._data_h)
         self.settings.connect_toolsettings(self.toolsettings)
         self.settings.connect_start_stop_worker(self._start_stop_worker)
         self.settings.connect_workers()
         self.settings.load_presets()
-        self.settings.send_values_to_hardware()
 
-    def show_settings_worker(self):
-        '''
-        Opens the settings panel and set the Focus to the
-        tab, otherwise it may go to the SpinBox field, 
-        and trigger the presets window
-        '''
+    def open_menu(self):
+        self.bottombar.setCurrentIndex(1)
+
+    def open_toolbar(self):
+        self.bottombar.setCurrentIndex(0)
+
+    def show_settings(self):
+        self.open_toolbar()
         self.settings.show()
         self.settings.tabWidget.setFocus()
 
