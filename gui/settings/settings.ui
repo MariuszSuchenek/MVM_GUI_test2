@@ -791,7 +791,7 @@ QDoubleSpinBox::down-button  {
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_start_auto">
+        <widget class="QPushButton" name="pushButton_apply_auto">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -1375,7 +1375,7 @@ QDoubleSpinBox::down-button  {
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_start_assist">
+        <widget class="QPushButton" name="pushButton_apply_assist">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
            <horstretch>0</horstretch>
