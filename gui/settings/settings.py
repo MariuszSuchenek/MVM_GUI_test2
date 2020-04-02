@@ -46,6 +46,7 @@ class Settings(QtWidgets.QMainWindow):
             'support_pressure':  self.spinBox_support_pressure,
             'peep_assist':       self.spinBox_peep_assist,
             'minimal_resp_rate': self.spinBox_min_resp_rate,
+            'enable_backup':     self.toggle_enable_backup,
         }
 
         self._all_fakebtn_auto = {
@@ -160,8 +161,11 @@ class Settings(QtWidgets.QMainWindow):
         Connects all the buttons, inputs, etc
         to the the appropriate working function
         '''
-        for btn in self._all_spinboxes.values():
-            btn.valueChanged.connect(self.worker)
+        for param, btn in self._all_spinboxes.items():
+            if param == 'enable_backup':
+                btn.clicked.connect(self.worker)
+            else:
+                btn.valueChanged.connect(self.worker)
 
         self._apply_automatic_btn.clicked.connect(self.start_worker)
         self._apply_assisted_btn.clicked.connect(self.start_worker)
@@ -183,6 +187,7 @@ class Settings(QtWidgets.QMainWindow):
 
             if param == 'enable_backup':
                 btn.setChecked(value_config)
+                self._current_values[param] = value_config
             elif param == 'insp_expir_ratio':
                 btn.setValue(1./value_config['default'])
                 btn.setMinimum(1./value_config['max'])
