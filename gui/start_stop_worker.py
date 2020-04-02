@@ -24,6 +24,7 @@ class StartStopWorker():
         self.button_startstop = button_startstop
         self.button_autoassist = button_autoassist
         self.toolbar = toolbar
+        self.mode_text = "Automatic"
 
         self.mode = self.MODE_AUTO
         self.run  = self.DONOT_RUN
@@ -48,7 +49,9 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_ASSIST)
 
             if result:
-                self.button_autoassist.setText("Mode:\nAssisted")
+                self.mode_text = "Assisted"
+                self.button_autoassist.setText("Set\nAutomatic")
+                self.update_startstop_text()
                 self.mode = self.MODE_ASSIST
             else:
                 self.raise_comm_error('Cannot set assisted mode.')
@@ -57,44 +60,47 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_AUTO)
 
             if result:
-                self.button_autoassist.setText("Mode:\nAutomatic")
+                self.mode_text = "Automatic"
+                self.button_autoassist.setText("Set\nAssisted")
+                self.update_startstop_text()
                 self.mode = self.MODE_AUTO
             else:
                 self.raise_comm_error('Cannot set automatic mode.')
+
+    def update_startstop_text(self):
+        if self.run == self.DONOT_RUN:
+            self.button_startstop.setText("Start\n" + self.mode_text)
+        else:
+            self.button_startstop.setText("Stop\n" + self.mode_text)
 
     def start_button_pressed(self):
         self.button_startstop.setDisabled(True)
         self.button_autoassist.setDisabled(True)
         self.button_startstop.repaint()
         self.button_autoassist.repaint()
+        self.update_startstop_text()
 
-        self.button_startstop.setText("Stop")
         QtCore.QTimer.singleShot(self.button_timeout(), lambda: (
+                 self.update_startstop_text(),
                  self.button_startstop.setEnabled(True),
                  self.button_startstop.setStyleSheet("color: red"),
-                 self.toolbar.set_running()))
+                 self.toolbar.set_running(self.mode_text)))
 
     def stop_button_pressed(self):
         self.button_startstop.setEnabled(True)
         self.button_autoassist.setEnabled(True)
 
-        self.button_startstop.setText("Start")
+        self.update_startstop_text()
         self.button_startstop.setStyleSheet("color: black")
 
         self.button_startstop.repaint()
         self.button_autoassist.repaint()
 
-        self.toolbar.set_stopped()
+        self.toolbar.set_stopped(self.mode_text)
 
     def confirm_stop_pressed(self):
         self.button_autoassist.setDown(False)
-        if self.mode == self.MODE_AUTO:
-            currentMode = "AUTOMATIC"
-        elif self.mode == self.MODE_ASSIST:
-            currentMode = "ASSISTED"
-        else:
-            # should never be able to get here
-            currentMode = "(UNKNOWN)"
+        currentMode = self.mode_text.upper()
         confirmation = QtWidgets.QMessageBox.warning(
             self.main_window,
             '**STOPPING ' + currentMode + ' MODE**',
