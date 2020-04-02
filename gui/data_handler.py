@@ -48,7 +48,7 @@ class DataHandler():
         status = self._data_f.add_data_point(parameter, data)
 
         # if not status:
-        #     print(f"\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
+        #     print("\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
 
     def stop_io(self):
         '''
