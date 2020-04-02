@@ -47,8 +47,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Get toolbar widgets
         '''
         self.button_menu =       self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
-        self.button_startstop =  self.toolbar.findChild(QtWidgets.QPushButton, "button_startstop")
-        self.button_autoassist = self.toolbar.findChild(QtWidgets.QPushButton, "button_autoassist")
+        self.label_status =      self.toolbar.findChild(QtWidgets.QLabel,      "label_status")
 
         toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
         self.toolsettings = {};
@@ -66,7 +65,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_expause =  self.menu.findChild(QtWidgets.QPushButton, "button_expause")
         self.button_inpause =  self.menu.findChild(QtWidgets.QPushButton, "button_inpause")
         self.button_freeze =   self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
-        self.label_status =    self.menu.findChild(QtWidgets.QLabel,      "label_status")
+        self.button_startstop =  self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
+        self.button_autoassist = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
 
         '''
         Connect back and menu buttons to toolbar and menu
@@ -173,7 +173,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.esp32,
                 self.button_startstop,
                 self.button_autoassist,
-                self.menu)
+                self.toolbar)
 
         self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
         self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
