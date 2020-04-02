@@ -35,7 +35,7 @@ class Settings(QtWidgets.QMainWindow):
         self._pressure_trigger_input = self.spinBox_pressure_trigger
         self._flow_trigger_input = self.spinBox_flow_trigger
         self._min_resp_rate_input = self.spinBox_min_resp_rate
-        self._enable_backup_checkbox = self.checkBox_enable_backup
+        self._enable_backup_toggle = self.toggle_enable_backup
         self._load_preset_assist_btn = self.pushButton_load_preset_assist
         self._start_assisted_btn = self.pushButton_start_assist
         self._close_2_btn = self.pushButton_close_2
@@ -79,8 +79,7 @@ class Settings(QtWidgets.QMainWindow):
         '''
         self.current_preset.hide()
         # Reset the Settings window
-        self.hide()
-        self.show()
+        self.repaint()
 
         # Always set the focus to the tab
         self.tabWidget.setFocus()
@@ -90,7 +89,6 @@ class Settings(QtWidgets.QMainWindow):
         value = self.sender().text()
         value = value.split(' ')[0]
         value = float(value)
-        print('value', value)
 
         if self.current_preset_name == 'respiratory_rate':
             self._respiratory_rate_input.setValue(value)
@@ -104,9 +102,9 @@ class Settings(QtWidgets.QMainWindow):
         elif self.current_preset_name == 'flow_trigger':
             self._flow_trigger_input.setValue(value)
             self._current_values_temp['flow_trigger'] = value
-        # elif self.current_preset_name == 'min_resp_rate':
-        #     self._flow_trigger_input.setValue(value)
-        #     self._current_values_temp['flow_trigger'] = value
+        elif self.current_preset_name == 'minimal_resp_rate':
+            self._min_resp_rate_input.setValue(value)
+            self._current_values_temp['minimal_resp_rate'] = value
 
         self.hide_preset_worker()
 
@@ -151,7 +149,7 @@ class Settings(QtWidgets.QMainWindow):
         self._pressure_trigger_input.valueChanged.connect(self.pressure_trigger_worker)
         self._flow_trigger_input.valueChanged.connect(self.flow_trigger_worker)
         self._min_resp_rate_input.valueChanged.connect(self.min_resp_rate_worker)
-        self._enable_backup_checkbox.stateChanged.connect(self.enable_backup_worker)
+        self._enable_backup_toggle.clicked.connect(self.enable_backup_worker)
 
         self._start_automatic_btn.clicked.connect(self.start_worker_auto)
         self._start_assisted_btn.clicked.connect(self.start_worker_assist)
@@ -220,7 +218,7 @@ class Settings(QtWidgets.QMainWindow):
         self._current_values['minimal_resp_rate'] = mr['default']
 
         eb = self._config['enable_backup']
-        self._enable_backup_checkbox.setChecked(eb)
+        self._enable_backup_toggle.setChecked(eb)
         self._current_values['enable_backup'] = eb
 
         self.pressure_trigger_worker()
@@ -254,7 +252,7 @@ class Settings(QtWidgets.QMainWindow):
         self._pressure_trigger_input.setValue(self._current_values['pressure_trigger'])
         self._flow_trigger_input.setValue(self._current_values['flow_trigger'])
         self._min_resp_rate_input.setValue(self._current_values['minimal_resp_rate'])
-        self._enable_backup_checkbox.setChecked(self._current_values['enable_backup'])
+        self._enable_backup_toggle.setChecked(self._current_values['enable_backup'])
 
         self.close()
 
@@ -385,6 +383,17 @@ class Settings(QtWidgets.QMainWindow):
         # self.toolsettings_lookup["insp_expir_ratio"].update(1/ratio)
 
 
+        #
+        # Minimal Resposatory Rate
+        #
+        # TODO
+
+        #
+        # Enable Backup
+        #
+        # TODO
+
+
     def resp_rate_worker(self):
         '''
         Worker function that sets the respiratory rate in the arduino
@@ -459,8 +468,9 @@ class Settings(QtWidgets.QMainWindow):
         cannot notice the red.
         ASSISTED
         '''
+        resp_rate = self._min_resp_rate_input.value()
+        self._current_values_temp['min_resp_rate'] = resp_rate
 
-        print('min_resp_rate_worker not implemented.')
         return
 
 
@@ -470,7 +480,11 @@ class Settings(QtWidgets.QMainWindow):
         Worker function that sets the enable backup param in the arduino
         ASSISTED
         '''
-        print('enable_backup_worker not implemented.')
+        if self.sender().isChecked():
+            self._current_values_temp['enable_backup'] = True
+        else:
+            self._current_values_temp['enable_backup'] = False
+
         return
 
 
