@@ -44,7 +44,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu =      self.findChild(QtWidgets.QWidget, "menu")
 
         '''
-        Get toolbar widgets 
+        Get toolbar widgets
         '''
         self.button_menu =       self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
         self.button_startstop =  self.toolbar.findChild(QtWidgets.QPushButton, "button_startstop")
@@ -58,7 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toolsettings.connect_config(config)
             self.toolsettings[name] = toolsettings
 
-        ''' 
+        '''
         Get menu widgets and connect settings for the menu widget
         '''
         self.button_back =     self.menu.findChild(QtWidgets.QPushButton, "button_back")
@@ -98,6 +98,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toolsettings[..] are the objects that hold min, max values for a given setting as
         as the current value (displayed as a slider and as a number).
         '''
+        toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
+        self.toolsettings = {};
+
+        for name in toolsettings_names:
+            toolsettings = self.findChild(QtWidgets.QWidget, name)
+            toolsettings.connect_config(config)
+            self.toolsettings[name] = toolsettings
 
         '''
         Set up data monitor/alarms (side bar)
@@ -159,12 +166,12 @@ class MainWindow(QtWidgets.QMainWindow):
         Connect each to their respective mode toggle functions.
         The StartStopWorker class takes care of starting and stopping a run
         '''
-        
+
         self._start_stop_worker = StartStopWorker(
-                self, 
-                self.config, 
-                self.esp32, 
-                self.button_startstop, 
+                self,
+                self.config,
+                self.esp32,
+                self.button_startstop,
                 self.button_autoassist,
                 self.menu)
 
@@ -181,18 +188,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.connect_toolsettings(self.toolsettings)
         self.settings.connect_start_stop_worker(self._start_stop_worker)
         self.settings.connect_workers()
-        self.settings.load_presets_auto()
-        self.settings.load_presets_assist()
+        self.settings.load_presets()
 
     def open_menu(self):
         self.bottombar.setCurrentIndex(1)
 
     def open_toolbar(self):
         self.bottombar.setCurrentIndex(0)
-        
+
     def show_settings(self):
         self.open_toolbar()
         self.settings.show()
+        self.settings.tabWidget.setFocus()
 
     def closeEvent(self, event):
         self._data_h.stop_io()

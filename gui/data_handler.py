@@ -48,7 +48,7 @@ class DataHandler():
         status = self._data_f.add_data_point(parameter, data)
 
         # if not status:
-        #     print(f"\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
+        #     print("\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
 
     def stop_io(self):
         '''
@@ -92,7 +92,7 @@ class DataHandler():
 
     def construct_missing_params(self, values):
         '''
-        Constructs parameters than can be calculated 
+        Constructs parameters than can be calculated
         from those available in the ESP.
         '''
 
@@ -104,7 +104,7 @@ class DataHandler():
         if 'bpm' in values and 'flow' in values:
             values['volume'] = values['flow'] / values['bpm'] * 1e3 # mL
 
-        # 2) 
+        # 2)
 
 
     def thread_complete(self):
@@ -113,7 +113,7 @@ class DataHandler():
         '''
 
         if self._running:
-            print(f"\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
+            print("\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
             self._n_attempts += 1
             if self._n_attempts > 100:
                 raise Exception('Failed to communicate with ESP after 100 attempts.')

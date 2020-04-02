@@ -29,7 +29,7 @@ class ESP32Exception(Exception):
         self.output = output
 
         super(ESP32Exception, self).__init__(
-                f"ERROR in {verb}: line: '{line}'; output: {output}")
+                "ERROR in %s: line: '%s'; output: %s" % (verb, line, output))
 
 
 class ESP32Serial:
@@ -118,7 +118,7 @@ class ESP32Serial:
                     result = self.connection.read_until(terminator=self.term)
                     return self._parse(result)
                 except Exception as exc:
-                    print(f"ERROR: set failing: {result.decode()} {str(exc)}")
+                    print("ERROR: set failing: %s %s" % (result.decode(), str(exc)))
             raise ESP32Exception("set", command, result.decode())
 
     def get(self, name):
@@ -143,7 +143,7 @@ class ESP32Serial:
                     result = self.connection.read_until(terminator=self.term)
                     return self._parse(result)
                 except Exception as exc:
-                    print(f"ERROR: get failing: {result.decode()} {str(exc)}")
+                    print("ERROR: get failing: %s %s" % (result.decode(), str(exc)))
             raise ESP32Exception("get", command, result.decode())
 
     def get_all(self):
@@ -167,5 +167,5 @@ class ESP32Serial:
                     return { "pressure": pressure, "flow": flow, "o2": o2,
                              "bpm": bpm }
                 except Exception as exc:
-                    print(f"ERROR: get failing: {result.decode()} {str(exc)}")
+                    print("ERROR: get failing: %s %s" % (result.decode(), str(exc)))
             raise ESP32Exception("get", command, result.decode())
