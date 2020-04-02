@@ -152,6 +152,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.connect_start_stop_worker(self._start_stop_worker)
         self.settings.connect_workers()
         self.settings.load_presets()
+        self.settings.send_values_to_hardware()
 
     def show_settings_worker(self):
         '''

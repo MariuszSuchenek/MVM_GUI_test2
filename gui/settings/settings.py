@@ -210,6 +210,8 @@ class Settings(QtWidgets.QMainWindow):
 
         self._current_values_temp = self._current_values
 
+        self.repaint()
+
 
     def close_settings_worker(self):
         '''
@@ -222,8 +224,8 @@ class Settings(QtWidgets.QMainWindow):
         for param, btn in self._all_spinboxes.items():
             if param == 'enable_backup':
                 btn.setChecked(self._current_values[param])
-
-            btn.setValue(self._current_values[param])
+            else:
+                btn.setValue(self._current_values[param])
 
         self.close()
 
@@ -241,6 +243,11 @@ class Settings(QtWidgets.QMainWindow):
         '''
         '''
         for param, btn in self._all_spinboxes.items():
+
+            if param == 'enable_backup':
+                # TODO
+                continue
+
             value = self._current_values[param]
             if self._debug: print('Value of', param, ':', value)
 
@@ -280,6 +287,7 @@ class Settings(QtWidgets.QMainWindow):
                 else:
                     print('. value', btn.value())
                     self._current_values_temp[param] = btn.value()
+
 
 
  
