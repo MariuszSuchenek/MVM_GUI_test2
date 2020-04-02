@@ -29,7 +29,7 @@ if __name__ == "__main__":
         except:
             # TODO: find a more graphical way to report the error
             # it won't run in a terminal!
-            print(f"\033[91mERROR: Cannot communicate with port {config['port']}\033[0m")
+            print("\033[91mERROR: Cannot communicate with port %s\033[0m" % config['port'])
     else:
         esp32 = FakeESP32Serial()
 

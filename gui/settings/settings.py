@@ -252,7 +252,7 @@ class Settings(QtWidgets.QMainWindow):
             self._insp_expir_ratio_input.setStyleSheet("color: green")
 
         else:
-            print(f"\033[91mERROR: Can't set data for ESP with param {name}.\033[0m")
+            print("\033[91mERROR: Can't set data for ESP with param %s.\033[0m" % name)
 
         # Finally, update the value in the toolsettings
         self.toolsettings_lookup["insp_expir_ratio"].update(ratio)

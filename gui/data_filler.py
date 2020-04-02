@@ -81,7 +81,7 @@ class DataFiller():
         '''
         self._x_label = QtGui.QGraphicsTextItem()
         self._x_label.setVisible(True)
-        self._x_label.setHtml(f'<p style="color: {self._config["axis_line_color"]}">Time [s]:</p>')  
+        self._x_label.setHtml('<p style="color: %s">Time [s]:</p>' % self._config["axis_line_color"])  
 
         # Find the position of the label
         br = self._x_label.boundingRect()
@@ -137,7 +137,7 @@ class DataFiller():
         name 'name'
         '''
         if name not in self._plots:
-            # print(f"\033[91mERROR: Can't set data for plot with name {name}.\033[0m")
+            # print("\033[91mERROR: Can't set data for plot with name %s.\033[0m" % name)
             return False
 
         # shift data 1 sample left

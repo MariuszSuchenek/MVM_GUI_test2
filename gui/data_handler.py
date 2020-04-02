@@ -113,7 +113,7 @@ class DataHandler():
         '''
 
         if self._running:
-            print(f"\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
+            print("\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
             self._n_attempts += 1
             if self._n_attempts > 100:
                 raise Exception('Failed to communicate with ESP after 100 attempts.')
