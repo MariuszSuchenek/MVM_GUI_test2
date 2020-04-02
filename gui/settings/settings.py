@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import yaml
+import copy 
 
 from presets.presets import Presets
 
@@ -167,8 +168,8 @@ class Settings(QtWidgets.QMainWindow):
             else:
                 btn.valueChanged.connect(self.worker)
 
-        self._apply_automatic_btn.clicked.connect(self.start_worker)
-        self._apply_assisted_btn.clicked.connect(self.start_worker)
+        self._apply_automatic_btn.clicked.connect(self.apply_worker)
+        self._apply_assisted_btn.clicked.connect(self.apply_worker)
 
         self._load_preset_auto_btn.clicked.connect(self.load_presets)
         self._load_preset_assist_btn.clicked.connect(self.load_presets)
@@ -208,7 +209,7 @@ class Settings(QtWidgets.QMainWindow):
         self.toolsettings_lookup["respiratory_rate"].load_presets("respiratory_rate")
         self.toolsettings_lookup["insp_expir_ratio"].load_presets("insp_expir_ratio")
 
-        self._current_values_temp = self._current_values
+        self._current_values_temp = copy.copy(self._current_values)
 
         self.repaint()
 
@@ -218,23 +219,26 @@ class Settings(QtWidgets.QMainWindow):
         Closes the settings window, w/o applying
         any changes to the parameters
         '''
-        self._current_values_temp = self._current_values
+        self._current_values_temp = copy.copy(self._current_values)
 
         # Restore to previous values
         for param, btn in self._all_spinboxes.items():
             if param == 'enable_backup':
                 btn.setChecked(self._current_values[param])
             else:
+                print('resetting', param, 'to ', self._current_values[param])
                 btn.setValue(self._current_values[param])
+
+        self.repaint()
 
         self.close()
 
 
-    def start_worker(self):
+    def apply_worker(self):
         '''
         Starts the run, applying all the changes selected
         '''
-        self._current_values = self._current_values_temp
+        self._current_values = copy.copy(self._current_values_temp)
         self.send_values_to_hardware()
         self.close()
 
@@ -285,6 +289,5 @@ class Settings(QtWidgets.QMainWindow):
                 elif param == 'insp_expir_ratio':
                     self._current_values_temp[param] = 1./btn.value()
                 else:
-                    print('. value', btn.value())
                     self._current_values_temp[param] = btn.value()
 
