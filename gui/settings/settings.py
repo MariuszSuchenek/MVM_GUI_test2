@@ -26,12 +26,12 @@ class Settings(QtWidgets.QMainWindow):
 
         # Automatic
         self._load_preset_auto_btn = self.pushButton_load_preset_auto
-        self._start_automatic_btn = self.pushButton_apply_auto
+        self._apply_automatic_btn = self.pushButton_apply_auto
         self._close_1_btn = self.pushButton_close_1
 
         # Assisted
         self._load_preset_assist_btn = self.pushButton_load_preset_assist
-        self._start_assisted_btn = self.pushButton_apply_assist
+        self._apply_assisted_btn = self.pushButton_apply_assist
         self._close_2_btn = self.pushButton_close_2
 
         self._all_spinboxes = {
@@ -163,8 +163,8 @@ class Settings(QtWidgets.QMainWindow):
         for btn in self._all_spinboxes.values():
             btn.valueChanged.connect(self.worker)
 
-        self._start_automatic_btn.clicked.connect(self.start_worker)
-        self._start_assisted_btn.clicked.connect(self.start_worker)
+        self._apply_automatic_btn.clicked.connect(self.start_worker)
+        self._apply_assisted_btn.clicked.connect(self.start_worker)
 
         self._load_preset_auto_btn.clicked.connect(self.load_presets)
         self._load_preset_assist_btn.clicked.connect(self.load_presets)

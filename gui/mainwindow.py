@@ -151,8 +151,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.connect_toolsettings(self.toolsettings)
         self.settings.connect_start_stop_worker(self._start_stop_worker)
         self.settings.connect_workers()
-        self.settings.load_presets_auto()
-        self.settings.load_presets_assist()
+        self.settings.load_presets()
 
     def show_settings_worker(self):
         '''
