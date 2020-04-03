@@ -47,11 +47,11 @@ class DataFiller():
         plot.setLabel(axis='left', text=y_axis_label)
 
         # Set the X axis
-        if self._config['show_x_axis_labels'] and 'bot' in monitor_name:
+        if self._config['show_x_axis_labels'] and 'bot' in monitor_name and not self._looping:
             self.add_x_axis_label(plot)
 
         # Remove x ticks, if selected
-        if not self._config['show_x_axis_ticks']:
+        if self._looping or not self._config['show_x_axis_ticks']:
             plot.getAxis('bottom').setTicks([])
             plot.getAxis('bottom').setStyle(tickTextOffset=0, tickTextHeight=0)
 
@@ -137,9 +137,9 @@ class DataFiller():
                                          angle=90, 
                                          movable=False,
                                          pen=pg.mkPen(cosmetic=False, 
-                                                      width=0, 
-                                                      color='r',
-                                                      style=QtCore.Qt.DotLine))
+                                                      width=self._sampling * 4, 
+                                                      color='k',
+                                                      style=QtCore.Qt.SolidLine))
 
         plot.addItem(self._looping_lines[name])
 
@@ -171,7 +171,7 @@ class DataFiller():
             if self._looping_data_idx[name] == self._n_smaples:
                 self._looping_data_idx[name] = 0
                 
-            x_val = self._xdata[self._looping_data_idx[name]]
+            x_val = self._xdata[self._looping_data_idx[name]] - self._sampling * 0.1
             self._looping_lines[name].setValue(x_val)
         else:
             # Scrolling plots - shift data 1 sample left
