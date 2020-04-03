@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import yaml
+import copy 
 
 from presets.presets import Presets
 
@@ -49,7 +50,7 @@ class Settings(QtWidgets.QMainWindow):
             'enable_backup':     self.toggle_enable_backup,
         }
 
-        self._all_fakebtn_auto = {
+        self._all_fakebtn = {
             # Auto
             'respiratory_rate': self.fake_btn_rr,
             'insp_expir_ratio': self.fake_btn_ie,
@@ -68,17 +69,17 @@ class Settings(QtWidgets.QMainWindow):
         self._current_preset_name = None
 
         # Auto
-        self._all_fakebtn_auto['respiratory_rate'].clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
-        self._all_fakebtn_auto['insp_expir_ratio'].clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
-        self._all_fakebtn_auto['insp_pressure'].clicked.connect(lambda: self.spawn_presets_window('insp_pressure'))
-        self._all_fakebtn_auto['peep_auto'].clicked.connect(lambda: self.spawn_presets_window('peep_auto'))
+        self._all_fakebtn['respiratory_rate'].clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
+        self._all_fakebtn['insp_expir_ratio'].clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
+        self._all_fakebtn['insp_pressure'].clicked.connect(lambda: self.spawn_presets_window('insp_pressure'))
+        self._all_fakebtn['peep_auto'].clicked.connect(lambda: self.spawn_presets_window('peep_auto'))
 
         # Assist
-        self._all_fakebtn_auto['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
-        self._all_fakebtn_auto['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
-        self._all_fakebtn_auto['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
-        self._all_fakebtn_auto['peep_assist'].clicked.connect(lambda: self.spawn_presets_window('peep_assist'))
-        self._all_fakebtn_auto['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
+        self._all_fakebtn['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
+        self._all_fakebtn['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
+        self._all_fakebtn['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
+        self._all_fakebtn['peep_assist'].clicked.connect(lambda: self.spawn_presets_window('peep_assist'))
+        self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
 
 
 
@@ -109,6 +110,8 @@ class Settings(QtWidgets.QMainWindow):
         Hides the Preset window
         '''
         self._current_preset.hide()
+        self.activate_settings_buttons()
+
         # Reset the Settings window
         self.repaint()
 
@@ -129,7 +132,16 @@ class Settings(QtWidgets.QMainWindow):
 
 
     def inactivate_settings_buttons(self):
-        return
+        '''
+        Inactivates all in the settings window
+        '''
+        self.tabWidget.setDisabled(True)
+
+    def activate_settings_buttons(self):
+        '''
+        Activates all in the settings window
+        '''
+        self.tabWidget.setEnabled(True)
 
     def connect_data_handler(self, data_h):
         '''
@@ -159,7 +171,7 @@ class Settings(QtWidgets.QMainWindow):
     def connect_workers(self):
         '''
         Connects all the buttons, inputs, etc
-        to the the appropriate working function
+        to the the appropriate working functions
         '''
         for param, btn in self._all_spinboxes.items():
             if param == 'enable_backup':
@@ -167,8 +179,8 @@ class Settings(QtWidgets.QMainWindow):
             else:
                 btn.valueChanged.connect(self.worker)
 
-        self._apply_automatic_btn.clicked.connect(self.start_worker)
-        self._apply_assisted_btn.clicked.connect(self.start_worker)
+        self._apply_automatic_btn.clicked.connect(self.apply_worker)
+        self._apply_assisted_btn.clicked.connect(self.apply_worker)
 
         self._load_preset_auto_btn.clicked.connect(self.load_presets)
         self._load_preset_assist_btn.clicked.connect(self.load_presets)
@@ -208,7 +220,7 @@ class Settings(QtWidgets.QMainWindow):
         self.toolsettings_lookup["respiratory_rate"].load_presets("respiratory_rate")
         self.toolsettings_lookup["insp_expir_ratio"].load_presets("insp_expir_ratio")
 
-        self._current_values_temp = self._current_values
+        self._current_values_temp = copy.copy(self._current_values)
 
         self.repaint()
 
@@ -218,29 +230,33 @@ class Settings(QtWidgets.QMainWindow):
         Closes the settings window, w/o applying
         any changes to the parameters
         '''
-        self._current_values_temp = self._current_values
+        self._current_values_temp = copy.copy(self._current_values)
 
         # Restore to previous values
         for param, btn in self._all_spinboxes.items():
             if param == 'enable_backup':
                 btn.setChecked(self._current_values[param])
             else:
+                print('resetting', param, 'to ', self._current_values[param])
                 btn.setValue(self._current_values[param])
+
+        self.repaint()
 
         self.close()
 
 
-    def start_worker(self):
+    def apply_worker(self):
         '''
-        Starts the run, applying all the changes selected
+        Applyes the current changes and sends them to the ESP
         '''
-        self._current_values = self._current_values_temp
+        self._current_values = copy.copy(self._current_values_temp)
         self.send_values_to_hardware()
         self.close()
 
 
     def send_values_to_hardware(self):
         '''
+        Sends the currently set values to the ESP
         '''
         for param, btn in self._all_spinboxes.items():
 
@@ -249,7 +265,8 @@ class Settings(QtWidgets.QMainWindow):
                 continue
 
             value = self._current_values[param]
-            if self._debug: print('Value of', param, ':', value)
+
+            if self._debug: print('Setting value of', param, ':', value)
 
             # Update the value in the config file
             self._config[param]['current'] = value
@@ -285,6 +302,5 @@ class Settings(QtWidgets.QMainWindow):
                 elif param == 'insp_expir_ratio':
                     self._current_values_temp[param] = 1./btn.value()
                 else:
-                    print('. value', btn.value())
                     self._current_values_temp[param] = btn.value()
 
