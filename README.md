@@ -13,6 +13,7 @@
 - PyQtGraph
 - PySerial
 - PyYaml
+- numpy
 
 ## Run
 
