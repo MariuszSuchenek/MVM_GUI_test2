@@ -25,7 +25,6 @@ class ToolSettings(QtWidgets.QWidget):
         palette.setColor(role, QtGui.QColor("#eeeeee"))
         self.setPalette(palette)
 
-        self.show()
     def setup(self, name, setrange=(0,0,100), units=None, step=0.1, dec_precision=0, current=None,
             show_fraction=False):
         """
@@ -46,7 +45,7 @@ class ToolSettings(QtWidgets.QWidget):
         self.label_min.setText(str(low))
         self.label_max.setText(str(high))
         self.value = val
-        
+
         self.dec_precision = dec_precision
         self.current = current
         self.show_fraction = show_fraction

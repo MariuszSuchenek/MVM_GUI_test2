@@ -27,16 +27,10 @@ class Monitor(QtWidgets.QWidget):
         # Set up connections
         self.mouseReleaseEvent = self.clear_alarm
 
-        # Function called when user clears an alarm.
-        # If specified, function should accept one argument
-        # (the Monitor that had the alarm cleared).
-        self.clear_alarm_callback = None
-
         self.setAutoFillBackground(True)
-        self.show()
-        
-    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red', 
-            color='black', step=None, dec_precision=0, clear_alarm_callback=None):
+
+    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red',
+            color='black', step=None, dec_precision=0):
         """
         Sets up main values for the Monitor widget, including the name and the values for the
         range as (minimum, initial, maximum). Also optionally set the units and statistical values
@@ -69,7 +63,6 @@ class Monitor(QtWidgets.QWidget):
         self.setStyleSheet("QWidget { color: " + str(color) + "; }");
 
         self.alarmcolor = alarmcolor
-        self.clear_alarm_callback = clear_alarm_callback
         self.update(val)
 
         # Handle optional stats
@@ -102,12 +95,6 @@ class Monitor(QtWidgets.QWidget):
         role = self.backgroundRole() #choose whatever you like
         palette.setColor(role, QtGui.QColor("#000000"))
         self.setPalette(palette)
-        
-        # If there's a callback function, call it.
-        # Don't do it if the event is None, to avoid a 
-        # recursive call.        
-        if self.clear_alarm_callback and event is not None:
-            self.clear_alarm_callback(self)
 
     def is_alarm(self):
         """
