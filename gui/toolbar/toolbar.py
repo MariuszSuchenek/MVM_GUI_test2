@@ -17,7 +17,6 @@ class Toolbar(QtWidgets.QWidget):
 
         self.label_status = self.findChild(QtWidgets.QLabel, "label_status")
         self.set_stopped("Automatic")
-        self.show()
 
     def set_stopped(self, mode_text=""):
         self.label_status.setText("Status: Stopped\n" + mode_text)
