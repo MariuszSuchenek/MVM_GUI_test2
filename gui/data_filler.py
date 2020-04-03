@@ -137,7 +137,7 @@ class DataFiller():
                                          angle=90, 
                                          movable=False,
                                          pen=pg.mkPen(cosmetic=False, 
-                                                      width=self._sampling * 4, 
+                                                      width=self._time_window / 25, 
                                                       color='k',
                                                       style=QtCore.Qt.SolidLine))
 
