@@ -13,5 +13,3 @@ class Menu(QtWidgets.QWidget):
         super(Menu, self).__init__(*args)
         uic.loadUi("menu/menu.ui", self)
 
-        self.show()
-

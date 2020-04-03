@@ -27,8 +27,7 @@ class Monitor(QtWidgets.QWidget):
         self.mouseReleaseEvent = self.clear_alarm
 
         self.setAutoFillBackground(True)
-        self.show()
-    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red', 
+    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red',
             color='black', step=None, dec_precision=0):
         """
         Sets up main values for the Monitor widget, including the name and the values for the
