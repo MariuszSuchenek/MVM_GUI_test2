@@ -21,6 +21,11 @@ You can run with
 cd gui/
 ./mvm_gui.py
 ```
+By default, the program will read from the specified serial port.
+If you want to run with simulated input, the program is invoked with
+```
+./mvm_gui.py fakeESP32
+```
 
 Default settings are stored in 
 ```
@@ -29,7 +34,6 @@ Default settings are stored in
 
 Basics settings are:
 - port: (string) the serial port to use
-- read_from_esp: (bool) if true reads data from the ESP32
 
 More settings and description can be found in the yaml file itself.
 
