@@ -21,6 +21,9 @@ class DataFiller():
         self._sampling = self._config['sampling_interval']
         self._time_window = self._n_smaples * self._sampling # seconds
         self._xdata = np.linspace(-self._time_window, 0, self._n_smaples)
+        self._looping = self._config['use_looping_plots']
+        self._looping_data_idx = {}
+        self._looping_lines = {}
         return
 
     def connect_plot(self, monitor_name, plot):
@@ -34,7 +37,8 @@ class DataFiller():
         self._data[name] = np.linspace(0, 0, self._n_smaples)
         self._plots[name].setData(self._xdata, self._data[name])
         self._colors[name] = self._config[monitor_name]['color']
-
+        self._looping_data_idx[name] = 0
+        
         # Set the Y axis
         y_axis_label = self._config[monitor_name]['name']
         y_axis_label += ' ['
@@ -59,6 +63,9 @@ class DataFiller():
         # Show the alarm thresholds on plots
         if self._config['show_safe_ranges_on_graphs']:
             self.show_safe_ranges(monitor_name, plot)
+
+        if self._looping:
+            self.add_looping_lines(name, plot)
 
         # Fix the y axis range
         value_min = self._config[monitor_name]['min']
@@ -120,6 +127,21 @@ class DataFiller():
         plot.addItem(self._line_min)
         plot.addItem(self._line_max)
 
+    def add_looping_lines(self, name, plot):
+        '''
+        Add line corresponding to where the 
+        data is being updated when in "looping" mode.
+        '''
+
+        self._looping_lines[name] = pg.InfiniteLine(pos=0, 
+                                         angle=90, 
+                                         movable=False,
+                                         pen=pg.mkPen(cosmetic=False, 
+                                                      width=0, 
+                                                      color='r',
+                                                      style=QtCore.Qt.DotLine))
+
+        plot.addItem(self._looping_lines[name])
 
     def connect_monitor(self, monitor_name, monitor):
         '''
@@ -140,11 +162,23 @@ class DataFiller():
             # print("\033[91mERROR: Can't set data for plot with name %s.\033[0m" % name)
             return False
 
-        # shift data 1 sample left
-        self._data[name][:-1] = self._data[name][1:]
-
-        # add the last data point
-        self._data[name][-1] = data_point
+        if self._looping:
+            # Looping plots - update next value
+            self._data[name][self._looping_data_idx[name]] = data_point
+            
+            self._looping_data_idx[name] += 1
+            
+            if self._looping_data_idx[name] == self._n_smaples:
+                self._looping_data_idx[name] = 0
+                
+            x_val = self._xdata[self._looping_data_idx[name]]
+            self._looping_lines[name].setValue(x_val)
+        else:
+            # Scrolling plots - shift data 1 sample left
+            self._data[name][:-1] = self._data[name][1:]
+    
+            # add the last data point
+            self._data[name][-1] = data_point
 
         # set the data to the plot to show
         color = self._colors[name]
@@ -170,7 +204,8 @@ class DataFiller():
             # Max
             self._monitors[name].label_statvalues[1].setText("%.2f" % np.max(self._data[name]))
             # Value
-            self._monitors[name].update(self._data[name][-1])
+            last_data_idx = self._looping_data_idx[name] - 1 if self._looping else -1
+            self._monitors[name].update(self._data[name][last_data_idx])
         else:
             return
 
