@@ -10,10 +10,12 @@ from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
 from menu.menu import Menu
+from frozenplots.frozenplots import FrozenPlots
 
 import pyqtgraph as pg
 import sys
 import time
+from pip._internal import self_outdated_check
 
 STOP = -1
 AUTOMATIC = 0
@@ -79,7 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
         care of filling plots data
         '''
         self.data_filler = DataFiller(config)
-
+        
         '''
         Instantiate DataHandler, which will start a new
         thread to read data from the ESP32. We also connect
@@ -128,23 +130,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         for name in monitor_names:
             monitor = self.findChild(QtWidgets.QWidget, name)
-            entry = config.get(name, monitor_default)
-            monitor.setup(
-                    entry.get("name", monitor_default["name"]),
-                    setrange=(
-                        entry.get("min", monitor_default["min"]),
-                        entry.get("init", monitor_default["init"]),
-                        entry.get("max", monitor_default["max"])),
-                    units=entry.get("units", monitor_default["units"]),
-                    alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
-                    color=entry.get("color", monitor_default["color"]),
-                    step=entry.get("step", monitor_default["step"]),
-                    dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
-            self.monitors[name] = monitor
+            self.monitors[name] = self.init_monitor(monitor, name, config, monitor_default)
+            
         self.data_filler.connect_monitor('monitor_top', self.monitors['monitor_top'])
         self.data_filler.connect_monitor('monitor_mid', self.monitors['monitor_mid'])
         self.data_filler.connect_monitor('monitor_bot', self.monitors['monitor_bot'])
-        # Need to add the other monitors...which ones?
 
 
         '''
@@ -189,7 +179,59 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.connect_start_stop_worker(self._start_stop_worker)
         self.settings.connect_workers()
         self.settings.load_presets()
+        
+        '''
+        Connect freeze button to FrozenPlots overlay.
+        The FrozenPlots class sets up its own plots.
+        '''
+        self.frozen_plots = FrozenPlots(config, self)
+        self.button_freeze.pressed.connect(self.show_frozen_plots)
+        
+        '''
+        Set up monitors in the FrozenPlots overlay, which are
+        connected to the LIVE data filler.
+        '''
+        self.frozen_monitors = {}
 
+        for name in monitor_names:
+            monitor = self.frozen_plots.findChild(QtWidgets.QWidget, "frozen_" + name)
+            self.frozen_monitors[name] = self.init_monitor(monitor, name, config, monitor_default)
+            
+        self.data_filler.connect_monitor('monitor_top', self.frozen_monitors['monitor_top'])
+        self.data_filler.connect_monitor('monitor_mid', self.frozen_monitors['monitor_mid'])
+        self.data_filler.connect_monitor('monitor_bot', self.frozen_monitors['monitor_bot'])
+
+    def init_monitor(self, monitor, name, config, monitor_default):
+        entry = config.get(name, monitor_default)
+        monitor.setup(
+                entry.get("name", monitor_default["name"]),
+                setrange=(
+                    entry.get("min", monitor_default["min"]),
+                    entry.get("init", monitor_default["init"]),
+                    entry.get("max", monitor_default["max"])),
+                units=entry.get("units", monitor_default["units"]),
+                alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
+                color=entry.get("color", monitor_default["color"]),
+                step=entry.get("step", monitor_default["step"]),
+                dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]),
+                clear_alarm_callback=self.monitor_clear_alarm_callback)
+        return monitor
+
+    def monitor_clear_alarm_callback(self, cleared_monitor):
+        '''
+        There are 2 monitor widgets for each monitored value (one on the
+        main window, and one on the "frozen plots" window). This
+        function means that when a user clears an alarm on one screen,
+        it is cleared on the other one as well.
+        '''
+        for monitor in self.monitors.values():
+            if monitor.name == cleared_monitor.name and monitor is not cleared_monitor:
+                monitor.clear_alarm(None)
+
+        for monitor in self.frozen_monitors.values():
+            if monitor.name == cleared_monitor.name and monitor is not cleared_monitor:
+                monitor.clear_alarm(None)
+        
     def open_menu(self):
         self.bottombar.setCurrentIndex(1)
 
@@ -200,6 +242,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.open_toolbar()
         self.settings.show()
         self.settings.tabWidget.setFocus()
+        
+    def show_frozen_plots(self):
+        for name, data in self.data_filler._data.items():
+            self.frozen_plots.set_data(name, data)
+        
+        self.open_toolbar()
+        self.frozen_plots.show()
 
     def closeEvent(self, event):
         self._data_h.stop_io()

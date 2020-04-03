@@ -127,7 +127,11 @@ class DataFiller():
         storing it in a dictionary
         '''
         name = self._config[monitor_name]['plot_var']
-        self._monitors[name] = monitor
+        
+        if name not in self._monitors:
+            self._monitors[name] = []
+        
+        self._monitors[name].append(monitor)
 
         print('NORMAL: Connected monitor', monitor_name, 'with variable', name)
 
@@ -145,7 +149,13 @@ class DataFiller():
 
         # add the last data point
         self._data[name][-1] = data_point
+        
+        return self.update_plot(name)
 
+    def update_plot(self, name):
+        '''
+        Send new data from self._data to the actual pyqtgraph plot.
+        '''
         # set the data to the plot to show
         color = self._colors[name]
         color = color.replace('rgb', '')
@@ -165,12 +175,13 @@ class DataFiller():
         '''
 
         if name in self._monitors:
-            # Mean
-            self._monitors[name].label_statvalues[0].setText("%.2f" % np.mean(self._data[name]))
-            # Max
-            self._monitors[name].label_statvalues[1].setText("%.2f" % np.max(self._data[name]))
-            # Value
-            self._monitors[name].update(self._data[name][-1])
+            for monitor in self._monitors[name]:
+                # Mean
+                monitor.label_statvalues[0].setText("%.2f" % np.mean(self._data[name]))
+                # Max
+                monitor.label_statvalues[1].setText("%.2f" % np.max(self._data[name]))
+                # Value
+                monitor.update(self._data[name][-1])
         else:
             return
 
