@@ -10,7 +10,6 @@ from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
 from menu.menu import Menu
-from frozenplots.frozenplots import FrozenPlots
 
 import pyqtgraph as pg
 import sys
@@ -41,9 +40,17 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the toolbar and menu widgets
         '''
-        self.bottombar = self.findChild(QtWidgets.QStackedWidget, "bottombar")
-        self.toolbar =   self.findChild(QtWidgets.QWidget, "toolbar")
-        self.menu =      self.findChild(QtWidgets.QWidget, "menu")
+        self.bottombar =  self.findChild(QtWidgets.QStackedWidget, "bottombar")
+        self.toolbar =    self.findChild(QtWidgets.QWidget, "toolbar")
+        self.menu =       self.findChild(QtWidgets.QWidget, "menu")
+        self.frozen_bot = self.findChild(QtWidgets.QWidget, "frozenplots_bottom")
+
+        '''
+        Get the stackable bits on the right
+        '''
+        self.rightbar     =  self.findChild(QtWidgets.QStackedWidget, "rightbar")
+        self.monitors_bar = self.findChild(QtWidgets.QWidget, "three_monitors")
+        self.frozen_right = self.findChild(QtWidgets.QWidget, "frozenplots_right")
 
         '''
         Get toolbar widgets
@@ -71,10 +78,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_autoassist = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
 
         '''
+        Get frozen plots bottom bar widgets and connect
+        '''
+        self.button_unfreeze =   self.frozen_bot.findChild(QtWidgets.QPushButton, "button_unfreeze")
+
+        '''
         Connect back and menu buttons to toolbar and menu
         '''
         self.button_back.pressed.connect(self.open_toolbar)
         self.button_menu.pressed.connect(self.open_menu)
+        self.button_freeze.pressed.connect(self.freeze_plots)
+        self.button_unfreeze.pressed.connect(self.unfreeze_plots)
 
         '''
         Instantiate the DataFiller, which takes
@@ -181,26 +195,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.load_presets()
         
         '''
-        Connect freeze button to FrozenPlots overlay.
-        The FrozenPlots class sets up its own plots.
+        Connect buttons on freeze menus
         '''
-        self.frozen_plots = FrozenPlots(config, self)
-        self.button_freeze.pressed.connect(self.show_frozen_plots)
+        self.frozen_bot.connect_workers(self.data_filler, self.plots)
+        self.frozen_right.connect_workers(self.plots)
         
-        '''
-        Set up monitors in the FrozenPlots overlay, which are
-        connected to the LIVE data filler.
-        '''
-        self.frozen_monitors = {}
-
-        for name in monitor_names:
-            monitor = self.frozen_plots.findChild(QtWidgets.QWidget, "frozen_" + name)
-            self.frozen_monitors[name] = self.init_monitor(monitor, name, config, monitor_default)
-            
-        self.data_filler.connect_monitor('monitor_top', self.frozen_monitors['monitor_top'])
-        self.data_filler.connect_monitor('monitor_mid', self.frozen_monitors['monitor_mid'])
-        self.data_filler.connect_monitor('monitor_bot', self.frozen_monitors['monitor_bot'])
-
     def init_monitor(self, monitor, name, config, monitor_default):
         entry = config.get(name, monitor_default)
         monitor.setup(
@@ -213,25 +212,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
                 color=entry.get("color", monitor_default["color"]),
                 step=entry.get("step", monitor_default["step"]),
-                dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]),
-                clear_alarm_callback=self.monitor_clear_alarm_callback)
+                dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
         return monitor
 
-    def monitor_clear_alarm_callback(self, cleared_monitor):
-        '''
-        There are 2 monitor widgets for each monitored value (one on the
-        main window, and one on the "frozen plots" window). This
-        function means that when a user clears an alarm on one screen,
-        it is cleared on the other one as well.
-        '''
-        for monitor in self.monitors.values():
-            if monitor.name == cleared_monitor.name and monitor is not cleared_monitor:
-                monitor.clear_alarm(None)
-
-        for monitor in self.frozen_monitors.values():
-            if monitor.name == cleared_monitor.name and monitor is not cleared_monitor:
-                monitor.clear_alarm(None)
-        
     def open_menu(self):
         self.bottombar.setCurrentIndex(1)
 
@@ -243,12 +226,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.show()
         self.settings.tabWidget.setFocus()
         
-    def show_frozen_plots(self):
-        for name, data in self.data_filler._data.items():
-            self.frozen_plots.set_data(name, data)
+    def freeze_plots(self):
+        self.data_filler.freeze()
+        self.rightbar.setCurrentIndex(1)
+        self.bottombar.setCurrentIndex(2)
         
-        self.open_toolbar()
-        self.frozen_plots.show()
+    def unfreeze_plots(self):
+        self.data_filler.unfreeze()
+        self.rightbar.setCurrentIndex(0)
+        self.open_menu()
 
     def closeEvent(self, event):
         self._data_h.stop_io()

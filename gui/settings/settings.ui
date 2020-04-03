@@ -32,7 +32,7 @@ QDoubleSpinBox::up-button  {
 	subcontrol-origin: margin;
 	subcontrol-position: center right;
 	background-color: #FFFFFF;
-	image: url(plus.png);
+	image: url(icons/plus.png);
 	left: 1px;
 	height: 80px;
 	width: 80px;
@@ -43,7 +43,7 @@ QDoubleSpinBox::down-button  {
 	subcontrol-origin: margin;
 	subcontrol-position: center left;
 	background-color: #FFFFFF;
-	image: url(minus.png);
+	image: url(icons/minus.png);
 	right: 1px;
 	height: 80px;
 	width: 80px;

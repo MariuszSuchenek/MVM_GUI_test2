@@ -1,53 +1,131 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
-from PyQt5 import QtCore, QtGui, QtWidgets
-import os
-import yaml
+from PyQt5 import QtGui
+import sys
 
-from frozenplots.frozen_data_filler import FrozenDataFiller
-
-class FrozenPlots(QtWidgets.QMainWindow):
-    def __init__(self, config, *args):
+class FrozenPlotsBottomMenu(QtWidgets.QWidget):
+    def __init__(self, *args):
         """
-        Initialized the "frozen-in-time" plots overlay widget.
+        Initialize the FrozenPlotsBottomMenu widget.
+
+        Grabs child widgets.
         """
-        super(FrozenPlots, self).__init__(*args)
-        uic.loadUi("frozenplots/frozenplots.ui", self)
+        super(FrozenPlotsBottomMenu, self).__init__(*args)
+        uic.loadUi("frozenplots/frozenplots_bottom.ui", self)
 
-        self._config = config
+        self.button_reset_zoom = self.findChild(QtWidgets.QPushButton, "button_reset_zoom")
+        self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
         
-        self._frozen_filler = FrozenDataFiller(config)
+    def connect_workers(self, data_filler, plots):
+        '''
+        Connect workers for bottom "freeze" menu.
+        The unfreeze button is handled by mainwindow.
+        '''
+        self.button_reset_zoom.pressed.connect(data_filler.reset_zoom)
         
-        self.button_back.clicked.connect(self.close_frozen_worker)
-        self.button_reset.clicked.connect(self.reset_zoom_worker)
+        # X axes are linked, so only need to manipulate 1 plot
+        self.xzoom.connect_workers(plots[0].getPlotItem())
 
-        # Plots are connected here.
-        self.plots = []
-        self.plots.append(self.findChild(QtWidgets.QWidget, "frozen_plot_top"))
-        self.plots.append(self.findChild(QtWidgets.QWidget, "frozen_plot_mid"))
-        self.plots.append(self.findChild(QtWidgets.QWidget, "frozen_plot_bot"))
-        self._frozen_filler.connect_plot('monitor_top', self.plots[0])
-        self._frozen_filler.connect_plot('monitor_mid', self.plots[1])
-        self._frozen_filler.connect_plot('monitor_bot', self.plots[2])
+class FrozenPlotsRightMenu(QtWidgets.QWidget):
+    def __init__(self, *args):
+        """
+        Initialize the FrozenPlotsRightMenu widget.
 
-        # Monitors are connected by mainwindow.MainWindow, as they are linked
-        # to the LIVE data, not the frozen data.
+        Grabs child widgets.
+        """
+        super(FrozenPlotsRightMenu, self).__init__(*args)
+        uic.loadUi("frozenplots/frozenplots_right.ui", self)
+
+        self.yzoom_top = self.findChild(QtWidgets.QWidget, "yzoom_top")
+        self.yzoom_mid = self.findChild(QtWidgets.QWidget, "yzoom_mid")
+        self.yzoom_bot = self.findChild(QtWidgets.QWidget, "yzoom_bot")
+
+    def connect_workers(self, plots):
+        '''
+        Connect Y zoom workers. There are 3 widgets, each controlling
+        a separate plot.
+        '''
+        self.yzoom_top.connect_workers(plots[0].getPlotItem())
+        self.yzoom_mid.connect_workers(plots[1].getPlotItem())
+        self.yzoom_bot.connect_workers(plots[2].getPlotItem())
+    
+class YZoom(QtWidgets.QWidget):
+    def __init__(self, *args):
+        """
+        Initialize the YZoom widget.
+
+        Grabs child widgets.
+        """
+        super(YZoom, self).__init__(*args)
+        uic.loadUi("frozenplots/y_zoom.ui", self)
         
-    def set_data(self, name, data):
-        '''
-        Pass on new waveforms data to the plots.
-        '''
-        self._frozen_filler.set_data(name, data)
+        self.button_plus = self.findChild(QtWidgets.QPushButton, "y_plus")
+        self.button_minus = self.findChild(QtWidgets.QPushButton, "y_minus")
+        self.button_up = self.findChild(QtWidgets.QPushButton, "y_up")
+        self.button_down = self.findChild(QtWidgets.QPushButton, "y_down")
         
-    def reset_zoom_worker(self):
-        '''
-        Resrt plots to their default zoom state.
-        '''
-        for plot in self.plots:
-            plot.autoRange()
+        self.zoom_factor = 1.25
+        self.translate_factor = 0.1
         
-    def close_frozen_worker(self):
-        '''
-        Close the frozen plots overlay.
-        '''
-        self.close()
+    def connect_workers(self, plot):
+        self.button_plus.pressed.connect(lambda: self.zoom_in(plot))
+        self.button_minus.pressed.connect(lambda: self.zoom_out(plot))
+        self.button_up.pressed.connect(lambda: self.shift_up(plot))
+        self.button_down.pressed.connect(lambda: self.shift_down(plot))
+        
+    def zoom_in(self, plot):
+        plot.getViewBox().scaleBy(y=1/self.zoom_factor)
+    
+    def zoom_out(self, plot):
+        plot.getViewBox().scaleBy(y=self.zoom_factor)
+       
+    def compute_translation(self, plot):
+        [[xmin, xmax], [ymin, ymax]] = plot.viewRange()
+        return (ymax - ymin) * self.translate_factor
+    
+    def shift_up(self, plot):
+        plot.getViewBox().translateBy(y=self.compute_translation(plot))
+        
+    def shift_down(self, plot):
+        plot.getViewBox().translateBy(y=-self.compute_translation(plot))
+        
+class XZoom(QtWidgets.QWidget):
+    def __init__(self, *args):
+        """
+        Initialize the XZoom widget.
+
+        Grabs child widgets.
+        """
+        super(XZoom, self).__init__(*args)
+        uic.loadUi("frozenplots/x_zoom.ui", self)
+        
+        self.button_plus = self.findChild(QtWidgets.QPushButton, "x_plus")
+        self.button_minus = self.findChild(QtWidgets.QPushButton, "x_minus")
+        self.button_left = self.findChild(QtWidgets.QPushButton, "x_left")
+        self.button_right = self.findChild(QtWidgets.QPushButton, "x_right")
+        
+        self.zoom_factor = 1.25
+        self.translate_factor = 0.1
+        
+    def connect_workers(self, plot):
+        self.button_plus.pressed.connect(lambda: self.zoom_in(plot))
+        self.button_minus.pressed.connect(lambda: self.zoom_out(plot))
+        self.button_left.pressed.connect(lambda: self.shift_left(plot))
+        self.button_right.pressed.connect(lambda: self.shift_right(plot))
+        
+    def zoom_in(self, plot):
+        plot.getViewBox().scaleBy(x=1/self.zoom_factor)
+    
+    def zoom_out(self, plot):
+        plot.getViewBox().scaleBy(x=self.zoom_factor)
+       
+    def compute_translation(self, plot):
+        [[xmin, xmax], [ymin, ymax]] = plot.viewRange()
+        return (xmax - xmin) * self.translate_factor
+    
+    def shift_left(self, plot):
+        plot.getViewBox().translateBy(x=-self.compute_translation(plot))
+        
+    def shift_right(self, plot):
+        plot.getViewBox().translateBy(x=self.compute_translation(plot))
+        

@@ -9,18 +9,26 @@ class DataFiller():
     displayed plots on the screen, and 
     updates the plots accordingly.
     It also passes data to the monitors.
+    
+    In "frozen" mode, we keep adding new data points to _data,
+    but don't update the displayed graph. When we unfreeze, we
+    then see the full recent data.
     '''
 
     def __init__(self, config):
+        self._qtgraphs = {}
         self._plots = {}
         self._monitors = {}
         self._data = {}
         self._colors = {}
+        self._default_ranges = {}
         self._config = config
         self._n_smaples = self._config['nsamples']
         self._sampling = self._config['sampling_interval']
         self._time_window = self._n_smaples * self._sampling # seconds
         self._xdata = np.linspace(-self._time_window, 0, self._n_smaples)
+        self._frozen = False
+        self._first_plot = None
         return
 
     def connect_plot(self, monitor_name, plot):
@@ -30,6 +38,13 @@ class DataFiller():
         '''
         name = self._config[monitor_name]['plot_var']
 
+        # Link X axes if we've already seen a plot
+        if self._first_plot:
+            plot.setXLink(self._first_plot)
+        else:
+            self._first_plot = plot
+
+        self._qtgraphs[name] = plot
         self._plots[name] = plot.plot()
         self._data[name] = np.linspace(0, 0, self._n_smaples)
         self._plots[name].setData(self._xdata, self._data[name])
@@ -65,13 +80,21 @@ class DataFiller():
         value_max = self._config[monitor_name]['max']
         ymin = value_min - (value_max-value_min)*0.1
         ymax = value_max + (value_max-value_min)*0.1
-        plot.setYRange(ymin, ymax)
+        self._default_ranges[name] = [ymin, ymax]
+        self.set_default_y_range(name)
 
         # Remove mouse interaction with plots
         plot.setMouseEnabled(x=False, y=False)
         plot.setMenuEnabled(False)
-
+                    
         print('NORMAL: Connected plot', monitor_name, 'with variable', name)
+
+    def set_default_y_range(self, name):
+        '''
+        Set the Y axis range of the plot to the defaults 
+        specified in the config file.
+        '''
+        self._qtgraphs[name].setYRange(self._default_ranges[name][0], self._default_ranges[name][1])
 
     def add_x_axis_label(self, plot):
         '''
@@ -156,17 +179,54 @@ class DataFiller():
         '''
         Send new data from self._data to the actual pyqtgraph plot.
         '''
-        # set the data to the plot to show
-        color = self._colors[name]
-        color = color.replace('rgb', '')
-        color = literal_eval(color)
-        self._plots[name].setData(self._xdata, 
-                                  self._data[name],
-                                  pen=pg.mkPen(color, width=self._config['line_width']))
-
-        self.update_monitor(name)
+        
+        if not self._frozen:
+            # Update the displayed plot with current data.
+            # In frozen mode, we don't update the display.
+            color = self._colors[name]
+            color = color.replace('rgb', '')
+            color = literal_eval(color)
+            self._plots[name].setData(self._xdata, 
+                                      self._data[name],
+                                      pen=pg.mkPen(color, width=self._config['line_width']))
+    
+            self.update_monitor(name)
 
         return True
+
+    def freeze(self):
+        '''
+        Enter "frozen" mode, where plots are not updated, and mouse/zoom
+        interaction is enabled.
+        '''
+        self._frozen = True
+        
+        for plot in self._qtgraphs.values():
+            plot.setMouseEnabled(x=True, y=True)
+    
+    def unfreeze(self):
+        '''
+        Leave "frozen" mode, resetting the zoom and showing self-updating
+        plots.
+        '''
+        self._frozen = False
+        self.reset_zoom()
+        
+        for name in self._plots.keys():
+            self.update_plot(name)
+        
+        for plot in self._qtgraphs.values():
+            plot.setMouseEnabled(x=False, y=False)
+
+    def reset_zoom(self):
+        '''
+        Revert to normal zoom range for each plot.
+        autoRange() used to set X range, then
+        custom values used for Y range.
+        '''
+        for name, plot in self._qtgraphs.items():
+            plot.autoRange()
+            self.set_default_y_range(name)
 
     def update_monitor(self, name):
         '''
