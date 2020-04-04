@@ -29,6 +29,9 @@ class DataFiller():
         self._xdata = np.linspace(-self._time_window, 0, self._n_smaples)
         self._frozen = False
         self._first_plot = None
+        self._looping = self._config['use_looping_plots']
+        self._looping_data_idx = {}
+        self._looping_lines = {}
         return
 
     def connect_plot(self, monitor_name, plot):
@@ -49,7 +52,8 @@ class DataFiller():
         self._data[name] = np.linspace(0, 0, self._n_smaples)
         self._plots[name].setData(self._xdata, self._data[name])
         self._colors[name] = self._config[monitor_name]['color']
-
+        self._looping_data_idx[name] = 0
+        
         # Set the Y axis
         y_axis_label = self._config[monitor_name]['name']
         y_axis_label += ' ['
@@ -58,11 +62,11 @@ class DataFiller():
         plot.setLabel(axis='left', text=y_axis_label)
 
         # Set the X axis
-        if self._config['show_x_axis_labels'] and 'bot' in monitor_name:
+        if self._config['show_x_axis_labels'] and 'bot' in monitor_name and not self._looping:
             self.add_x_axis_label(plot)
 
         # Remove x ticks, if selected
-        if not self._config['show_x_axis_ticks']:
+        if self._looping or not self._config['show_x_axis_ticks']:
             plot.getAxis('bottom').setTicks([])
             plot.getAxis('bottom').setStyle(tickTextOffset=0, tickTextHeight=0)
 
@@ -74,6 +78,9 @@ class DataFiller():
         # Show the alarm thresholds on plots
         if self._config['show_safe_ranges_on_graphs']:
             self.show_safe_ranges(monitor_name, plot)
+
+        if self._looping:
+            self.add_looping_lines(name, plot)
 
         # Fix the y axis range
         value_min = self._config[monitor_name]['min']
@@ -143,6 +150,21 @@ class DataFiller():
         plot.addItem(self._line_min)
         plot.addItem(self._line_max)
 
+    def add_looping_lines(self, name, plot):
+        '''
+        Add line corresponding to where the 
+        data is being updated when in "looping" mode.
+        '''
+
+        self._looping_lines[name] = pg.InfiniteLine(pos=0, 
+                                         angle=90, 
+                                         movable=False,
+                                         pen=pg.mkPen(cosmetic=False, 
+                                                      width=self._time_window / 25, 
+                                                      color='k',
+                                                      style=QtCore.Qt.SolidLine))
+
+        plot.addItem(self._looping_lines[name])
 
     def connect_monitor(self, monitor_name, monitor):
         '''
@@ -150,11 +172,7 @@ class DataFiller():
         storing it in a dictionary
         '''
         name = self._config[monitor_name]['plot_var']
-        
-        if name not in self._monitors:
-            self._monitors[name] = []
-        
-        self._monitors[name].append(monitor)
+        self._monitors[name] = monitor
 
         print('NORMAL: Connected monitor', monitor_name, 'with variable', name)
 
@@ -166,13 +184,22 @@ class DataFiller():
         if name not in self._plots:
             # print("\033[91mERROR: Can't set data for plot with name %s.\033[0m" % name)
             return False
-
-        # shift data 1 sample left
-        self._data[name][:-1] = self._data[name][1:]
-
-        # add the last data point
-        self._data[name][-1] = data_point
         
+        if self._looping:
+            # Looping plots - update next value
+            self._data[name][self._looping_data_idx[name]] = data_point
+            
+            self._looping_data_idx[name] += 1
+            
+            if self._looping_data_idx[name] == self._n_smaples:
+                self._looping_data_idx[name] = 0
+        else:
+            # Scrolling plots - shift data 1 sample left
+            self._data[name][:-1] = self._data[name][1:]
+    
+            # add the last data point
+            self._data[name][-1] = data_point
+
         return self.update_plot(name)
 
     def update_plot(self, name):
@@ -191,6 +218,10 @@ class DataFiller():
                                       pen=pg.mkPen(color, width=self._config['line_width']))
     
             self.update_monitor(name)
+
+            if self._looping:            
+                x_val = self._xdata[self._looping_data_idx[name]] - self._sampling * 0.1
+                self._looping_lines[name].setValue(x_val)
 
         return True
 
@@ -235,13 +266,13 @@ class DataFiller():
         '''
 
         if name in self._monitors:
-            for monitor in self._monitors[name]:
-                # Mean
-                monitor.label_statvalues[0].setText("%.2f" % np.mean(self._data[name]))
-                # Max
-                monitor.label_statvalues[1].setText("%.2f" % np.max(self._data[name]))
-                # Value
-                monitor.update(self._data[name][-1])
+            # Mean
+            self._monitors[name].label_statvalues[0].setText("%.2f" % np.mean(self._data[name]))
+            # Max
+            self._monitors[name].label_statvalues[1].setText("%.2f" % np.max(self._data[name]))
+            # Value
+            last_data_idx = self._looping_data_idx[name] - 1 if self._looping else -1
+            self._monitors[name].update(self._data[name][last_data_idx])
         else:
             return
 

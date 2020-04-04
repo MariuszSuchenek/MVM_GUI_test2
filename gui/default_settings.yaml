@@ -45,6 +45,9 @@ show_x_axis_labels: True
 # Toggles the x axis ticks in the graphs (specifcally, the numbers on the x axis)
 show_x_axis_ticks: True
 
+# Toggles between scrolling plots and looping plots
+use_looping_plots: False
+
 # The units used for each variable:
 var_units: 
     pressure: 'mbar'
