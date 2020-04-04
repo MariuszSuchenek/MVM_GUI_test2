@@ -14,6 +14,7 @@ from menu.menu import Menu
 import pyqtgraph as pg
 import sys
 import time
+from pip._internal import self_outdated_check
 
 STOP = -1
 AUTOMATIC = 0
@@ -39,9 +40,17 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the toolbar and menu widgets
         '''
-        self.bottombar = self.findChild(QtWidgets.QStackedWidget, "bottombar")
-        self.toolbar =   self.findChild(QtWidgets.QWidget, "toolbar")
-        self.menu =      self.findChild(QtWidgets.QWidget, "menu")
+        self.bottombar =  self.findChild(QtWidgets.QStackedWidget, "bottombar")
+        self.toolbar =    self.findChild(QtWidgets.QWidget, "toolbar")
+        self.menu =       self.findChild(QtWidgets.QWidget, "menu")
+        self.frozen_bot = self.findChild(QtWidgets.QWidget, "frozenplots_bottom")
+
+        '''
+        Get the stackable bits on the right
+        '''
+        self.rightbar     =  self.findChild(QtWidgets.QStackedWidget, "rightbar")
+        self.monitors_bar = self.findChild(QtWidgets.QWidget, "three_monitors")
+        self.frozen_right = self.findChild(QtWidgets.QWidget, "frozenplots_right")
 
         '''
         Get toolbar widgets
@@ -69,17 +78,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_autoassist = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
 
         '''
+        Get frozen plots bottom bar widgets and connect
+        '''
+        self.button_unfreeze =   self.frozen_bot.findChild(QtWidgets.QPushButton, "button_unfreeze")
+
+        '''
         Connect back and menu buttons to toolbar and menu
         '''
         self.button_back.pressed.connect(self.open_toolbar)
         self.button_menu.pressed.connect(self.open_menu)
+        self.button_freeze.pressed.connect(self.freeze_plots)
+        self.button_unfreeze.pressed.connect(self.unfreeze_plots)
 
         '''
         Instantiate the DataFiller, which takes
         care of filling plots data
         '''
         self.data_filler = DataFiller(config)
-
+        
         '''
         Instantiate DataHandler, which will start a new
         thread to read data from the ESP32. We also connect
@@ -128,23 +144,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         for name in monitor_names:
             monitor = self.findChild(QtWidgets.QWidget, name)
-            entry = config.get(name, monitor_default)
-            monitor.setup(
-                    entry.get("name", monitor_default["name"]),
-                    setrange=(
-                        entry.get("min", monitor_default["min"]),
-                        entry.get("init", monitor_default["init"]),
-                        entry.get("max", monitor_default["max"])),
-                    units=entry.get("units", monitor_default["units"]),
-                    alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
-                    color=entry.get("color", monitor_default["color"]),
-                    step=entry.get("step", monitor_default["step"]),
-                    dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
-            self.monitors[name] = monitor
+            self.monitors[name] = self.init_monitor(monitor, name, config, monitor_default)
+            
         self.data_filler.connect_monitor('monitor_top', self.monitors['monitor_top'])
         self.data_filler.connect_monitor('monitor_mid', self.monitors['monitor_mid'])
         self.data_filler.connect_monitor('monitor_bot', self.monitors['monitor_bot'])
-        # Need to add the other monitors...which ones?
 
 
         '''
@@ -189,6 +193,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.connect_start_stop_worker(self._start_stop_worker)
         self.settings.connect_workers()
         self.settings.load_presets()
+        
+        '''
+        Connect buttons on freeze menus
+        '''
+        self.frozen_bot.connect_workers(self.data_filler, self.plots)
+        self.frozen_right.connect_workers(self.plots)
+        
+    def init_monitor(self, monitor, name, config, monitor_default):
+        entry = config.get(name, monitor_default)
+        monitor.setup(
+                entry.get("name", monitor_default["name"]),
+                setrange=(
+                    entry.get("min", monitor_default["min"]),
+                    entry.get("init", monitor_default["init"]),
+                    entry.get("max", monitor_default["max"])),
+                units=entry.get("units", monitor_default["units"]),
+                alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
+                color=entry.get("color", monitor_default["color"]),
+                step=entry.get("step", monitor_default["step"]),
+                dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
+        return monitor
 
     def open_menu(self):
         self.bottombar.setCurrentIndex(1)
@@ -200,6 +225,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.open_toolbar()
         self.settings.show()
         self.settings.tabWidget.setFocus()
+        
+    def freeze_plots(self):
+        self.data_filler.freeze()
+        self.rightbar.setCurrentIndex(1)
+        self.bottombar.setCurrentIndex(2)
+        
+    def unfreeze_plots(self):
+        self.data_filler.unfreeze()
+        self.rightbar.setCurrentIndex(0)
+        self.open_menu()
 
     def closeEvent(self, event):
         self._data_h.stop_io()

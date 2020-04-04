@@ -12,6 +12,7 @@ class Monitor(QtWidgets.QWidget):
         """
         super(Monitor, self).__init__(*args)
         uic.loadUi("monitor/monitor.ui", self)
+        self.name = None
         self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
         self.label_min = self.findChild(QtWidgets.QLabel, "label_min")
@@ -27,6 +28,7 @@ class Monitor(QtWidgets.QWidget):
         self.mouseReleaseEvent = self.clear_alarm
 
         self.setAutoFillBackground(True)
+
     def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red',
             color='black', step=None, dec_precision=0):
         """
@@ -44,6 +46,7 @@ class Monitor(QtWidgets.QWidget):
 
         # unpack and assign min, current, and max
         (low, val, high) = setrange
+        self.name = name
         self.label_min.setText(str(low))
         self.label_max.setText(str(high))
         self.value = val
