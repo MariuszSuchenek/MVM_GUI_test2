@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys, traceback
 import time
+import datetime
 from PyQt5.QtCore import QThreadPool
 from communication.threading_utils import Worker
 
@@ -69,7 +70,8 @@ class DataHandler():
         self._running = True
 
         while self._running:
-
+            start = datetime.datetime.now()
+            
             # Get all params from ESP
             current_values = self._esp32.get_all()
 
@@ -85,8 +87,11 @@ class DataHandler():
             for p, v in current_values.items():
                 data_callback.emit(p, v)
 
+            delta_secs = (datetime.datetime.now() - start).total_seconds()
+            sleep_secs = max(0, self._config['sampling_interval'] - delta_secs)
+            
             # Sleep for some time...
-            time.sleep(self._config['sampling_interval'])
+            time.sleep(sleep_secs)
 
         return "Done."
 
