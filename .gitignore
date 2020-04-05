@@ -130,3 +130,5 @@ dmypy.json
 
 # QtCreator autosaver
 .autosave
+
+.DS_Store
