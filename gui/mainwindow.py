@@ -106,8 +106,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect startup buttons
         '''
-        self.button_resume_patient.pressed.connect(self.resume_patient):
-        self.button_new.pressed.connect(self.new_patient):
+        self.button_resume_patient.pressed.connect(self.resume_patient)
+        self.button_new_patient.pressed.connect(self.new_patient)
 
         '''
         Connect back and menu buttons to toolbar and menu
