@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
-import sys
+import sys, os
 
 class ToolSettings(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -11,7 +11,7 @@ class ToolSettings(QtWidgets.QWidget):
         Grabs child widgets and and connects slider value to text value.
         """
         super(ToolSettings, self).__init__(*args)
-        uic.loadUi("toolsettings/toolsettings.ui", self)
+        uic.loadUi(os.environ['MVMGUI']+"toolsettings/toolsettings.ui", self)
         self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
         self.slider_value = self.findChild(QtWidgets.QProgressBar, "slider_value")

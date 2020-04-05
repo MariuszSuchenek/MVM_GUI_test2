@@ -12,7 +12,7 @@ from start_stop_worker import StartStopWorker
 from menu.menu import Menu
 
 import pyqtgraph as pg
-import sys
+import sys, os
 import time
 from pip._internal import self_outdated_check
 
@@ -32,7 +32,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         super(MainWindow, self).__init__(*args, **kwargs)
-        uic.loadUi('mainwindow.ui', self) # Load the .ui file
+        uic.loadUi(os.environ['MVMGUI']+'mainwindow.ui', self) # Load the .ui file
 
         self.config = config
         self.esp32 = esp32

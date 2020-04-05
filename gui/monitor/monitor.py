@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
-import sys
+import sys, os
 
 class Monitor(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -11,7 +11,7 @@ class Monitor(QtWidgets.QWidget):
         Grabs child widgets.
         """
         super(Monitor, self).__init__(*args)
-        uic.loadUi("monitor/monitor.ui", self)
+        uic.loadUi(os.environ['MVMGUI']+"monitor/monitor.ui", self)
         self.name = None
         self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")

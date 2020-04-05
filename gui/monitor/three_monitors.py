@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
-import sys
+import sys, os
 
 class ThreeMonitors(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -11,7 +11,7 @@ class ThreeMonitors(QtWidgets.QWidget):
         Grabs child widgets.
         """
         super(ThreeMonitors, self).__init__(*args)
-        uic.loadUi("monitor/three_monitors.ui", self)
+        uic.loadUi(os.environ['MVMGUI']+"monitor/three_monitors.ui", self)
 
         self.show()
 
