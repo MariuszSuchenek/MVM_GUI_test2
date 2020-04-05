@@ -8,7 +8,7 @@ import copy
 from presets.presets import Presets
 
 class Settings(QtWidgets.QMainWindow):
-    def __init__(self, config, *args):
+    def __init__(self, *args):
         """
         Initialized the Settings overlay widget.
         """
@@ -17,23 +17,11 @@ class Settings(QtWidgets.QMainWindow):
 
         self._debug = True
 
-        self._config = config
-
         # This contains all the default params
         self._current_values = {}
         self._current_values_temp = {}
 
         # Don't ask me why I am redefining these...
-
-        # Automatic
-        self._load_preset_auto_btn = self.pushButton_load_preset_auto
-        self._apply_automatic_btn = self.pushButton_apply_auto
-        self._close_1_btn = self.pushButton_close_1
-
-        # Assisted
-        self._load_preset_assist_btn = self.pushButton_load_preset_assist
-        self._apply_assisted_btn = self.pushButton_apply_assist
-        self._close_2_btn = self.pushButton_close_2
 
         self._all_spinboxes = {
             # Auto
@@ -82,6 +70,8 @@ class Settings(QtWidgets.QMainWindow):
         self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
 
 
+    def connect_config(self, config):
+        self._config = config
 
 
     def spawn_presets_window(self, name):
@@ -168,7 +158,7 @@ class Settings(QtWidgets.QMainWindow):
         self._start_stop_worker = start_stop_worker
 
 
-    def connect_workers(self):
+    def connect_workers(self, settingsbar):
         '''
         Connects all the buttons, inputs, etc
         to the the appropriate working functions
@@ -179,14 +169,13 @@ class Settings(QtWidgets.QMainWindow):
             else:
                 btn.valueChanged.connect(self.worker)
 
-        self._apply_automatic_btn.clicked.connect(self.apply_worker)
-        self._apply_assisted_btn.clicked.connect(self.apply_worker)
+        self._button_apply = settingsbar.findChild(QtWidgets.QPushButton, "button_apply")
+        self._button_close = settingsbar.findChild(QtWidgets.QPushButton, "button_close")
+        self._button_loadpreset = settingsbar.findChild(QtWidgets.QPushButton, "button_loadpreset")
 
-        self._load_preset_auto_btn.clicked.connect(self.load_presets)
-        self._load_preset_assist_btn.clicked.connect(self.load_presets)
-
-        self._close_1_btn.clicked.connect(self.close_settings_worker)
-        self._close_2_btn.clicked.connect(self.close_settings_worker)
+        self._button_apply.clicked.connect(self.apply_worker)
+        self._button_loadpreset.clicked.connect(self.load_presets)
+        self._button_close.clicked.connect(self.close_settings_worker)
 
 
     def load_presets(self):
