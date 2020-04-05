@@ -199,13 +199,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect settings button to Settings overlay.
         '''
-        #self.settings = Settings(config, self)
-        self.settings.connect_config(config)
-
-        self.settings.connect_data_handler(self._data_h)
-        self.settings.connect_toolsettings(self.toolsettings)
-        self.settings.connect_start_stop_worker(self._start_stop_worker)
-        self.settings.connect_workers(self.settingsbar)
+        self.settings.connect_workers(self)
         self.settings.load_presets()
         
         '''
@@ -239,6 +233,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bottombar.setCurrentWidget(self.settingsbar)
         self.toppane.setCurrentWidget(self.settings)
         self.settings.tabWidget.setFocus()
+
+    def open_main(self):
+        self.toppane.setCurrentWidget(self.main)
         
     def freeze_plots(self):
         self.data_filler.freeze()
