@@ -70,10 +70,6 @@ class Settings(QtWidgets.QMainWindow):
         self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
 
 
-    def connect_config(self, config):
-        self._config = config
-
-
     def spawn_presets_window(self, name):
 
         presets = self._config[name]['presets']
@@ -133,45 +129,35 @@ class Settings(QtWidgets.QMainWindow):
         '''
         self.tabWidget.setEnabled(True)
 
-    def connect_data_handler(self, data_h):
-        '''
-        Connects the handler to this class,
-        so to have it avalable to set data
-        '''
-        self._data_h = data_h
 
-
-    def connect_toolsettings(self, toolsettings):
+    def open_main_and_toolbar(self):
         '''
-        Connetcs the toolsettings to this class,
-        so we can update their values
+        Switches back to the main window and toolbar
         '''
-        self._toolsettings = toolsettings
+        self.mainparent.open_main()
+        self.mainparent.open_toolbar()
 
-
-    def connect_start_stop_worker(self, start_stop_worker):
-        '''
-        Receives the StartStopWorker from the mainwindow
-        and stores it here, as it will be called when the
-        Start button is pressed from the settings panel
-        '''
-        self._start_stop_worker = start_stop_worker
-
-
-    def connect_workers(self, settingsbar):
+    def connect_workers(self, mainparent):
         '''
         Connects all the buttons, inputs, etc
         to the the appropriate working functions
         '''
+        self.mainparent = mainparent
+
+        self._config = self.mainparent.config
+        self._data_h = self.mainparent._data_h
+        self._toolsettings = self.mainparent.toolsettings
+        self._start_stop_worker = self.mainparent._start_stop_worker
+
         for param, btn in self._all_spinboxes.items():
             if param == 'enable_backup':
                 btn.clicked.connect(self.worker)
             else:
                 btn.valueChanged.connect(self.worker)
 
-        self._button_apply = settingsbar.findChild(QtWidgets.QPushButton, "button_apply")
-        self._button_close = settingsbar.findChild(QtWidgets.QPushButton, "button_close")
-        self._button_loadpreset = settingsbar.findChild(QtWidgets.QPushButton, "button_loadpreset")
+        self._button_apply = self.mainparent.settingsbar.findChild(QtWidgets.QPushButton, "button_apply")
+        self._button_close = self.mainparent.settingsbar.findChild(QtWidgets.QPushButton, "button_close")
+        self._button_loadpreset = self.mainparent.settingsbar.findChild(QtWidgets.QPushButton, "button_loadpreset")
 
         self._button_apply.clicked.connect(self.apply_worker)
         self._button_loadpreset.clicked.connect(self.load_presets)
@@ -230,8 +216,7 @@ class Settings(QtWidgets.QMainWindow):
                 btn.setValue(self._current_values[param])
 
         self.repaint()
-
-        self.close()
+        self.open_main_and_toolbar()
 
 
     def apply_worker(self):
@@ -240,7 +225,7 @@ class Settings(QtWidgets.QMainWindow):
         '''
         self._current_values = copy.copy(self._current_values_temp)
         self.send_values_to_hardware()
-        self.close()
+        self.open_main_and_toolbar()
 
 
     def send_values_to_hardware(self):
