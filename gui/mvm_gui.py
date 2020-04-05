@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     if 'fakeESP32' in sys.argv:
         print('******* Simulating communication with ESP32')
-        esp32 = FakeESP32Serial()
+        esp32 = FakeESP32Serial(config)
     else:
         try:
             esp32 = ESP32Serial(config['port'])

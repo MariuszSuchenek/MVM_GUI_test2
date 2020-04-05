@@ -64,6 +64,9 @@ class ESP32Serial:
         while self.connection.read():
             pass
 
+    def delete(self):
+        pass
+    
     def __del__(self):
         """
         Destructor.

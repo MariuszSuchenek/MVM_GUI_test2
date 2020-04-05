@@ -203,4 +203,5 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def closeEvent(self, event):
         self._data_h.stop_io()
+        self.esp32.delete()
 

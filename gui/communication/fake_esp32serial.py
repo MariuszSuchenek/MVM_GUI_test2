@@ -1,22 +1,38 @@
-"""
-A dummy class that can be used for testing the GUI when a real
-ESP32 chip isn't available.
-
-Currently just reports fixed values. Can be made more intelligent
-as needed.
-"""
-
-from threading import Lock
-import random
+from communication.esp32serial import ESP32Serial
 from communication.peep import peep
+from threading import Lock
 
-class FakeESP32Serial:
+class FakeESP32Serial(ESP32Serial):
+    """
+    Class to simulate the ESP32
+    """
     peep = peep()
-    def __init__(self):
+    def __init__(self, config, **kwargs):
+        """
+        Contructor
+        """
+        self.peep.setConfig(config)
         self.lock = Lock()
-        self.set_params = {}
-        self.random_params = ["mve", "vti", "vte", "pressure", "flow",
-                              "o2", "bpm"]
+
+    def delete(self):
+        self.peep.delete()
+
+    def _parse(self, result):
+        """
+        Parses the message from ESP32
+
+        arguments:
+        - result         what the ESP replied as a binary buffer
+
+        returns the requested value as a string
+        """
+
+        check_str, value = result.decode().split('=')
+        check_str = check_str.strip()
+
+        if check_str != 'valore':
+            raise Exception("protocol error: 'valore=' expected")
+        return value.strip()
 
     def set(self, name, value):
         """
@@ -29,10 +45,8 @@ class FakeESP32Serial:
 
         returns: an "OK" string in case of success.
         """
-
-        with self.lock:
-            self.set_params[name] = value
-            return "OK"
+        self.peep.set(name, value)
+        return 'OK'
 
     def get(self, name):
         """
@@ -45,14 +59,8 @@ class FakeESP32Serial:
         """
 
         with self.lock:
-            retval = 0
-
-            if name in self.set_params:
-                retval = self.set_params[name]
-            elif name in self.random_params:
-                retval = random.uniform(10, 100)
-
-            return str(retval)
+            result = 0
+            return result
 
     def get_all(self):
         """
@@ -63,8 +71,9 @@ class FakeESP32Serial:
         """
 
         with self.lock:
-            return {"pressure": self.peep.pressure(),
-                    "flow":     self.peep.flow(),
-                    "o2":       random.uniform(10, 100),
-                    "bpm":      random.uniform(10, 100)}
-
+            pressure = self.peep.pressure()
+            flow = self.peep.flow()
+            o2 = 1
+            bpm = 12
+            return { "pressure": pressure, "flow": flow, "o2": o2,
+                     "bpm": bpm }
