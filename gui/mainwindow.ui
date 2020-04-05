@@ -441,52 +441,101 @@
    <string>MVM GUI</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="leftMargin">
+   <widget class="QStackedWidget" name="bottombar">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>389</y>
+      <width>801</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>801</width>
+      <height>91</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>801</width>
+      <height>91</height>
+     </size>
+    </property>
+    <property name="currentIndex">
      <number>0</number>
     </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <property name="spacing">
-     <number>0</number>
-    </property>
-    <item row="1" column="0" colspan="2">
-     <widget class="QStackedWidget" name="bottombar">
-      <property name="minimumSize">
-       <size>
+    <widget class="QWidget" name="blank">
+     <widget class="QFrame" name="frame">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
         <width>801</width>
         <height>91</height>
-       </size>
+       </rect>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>801</width>
-        <height>91</height>
-       </size>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
       </property>
-      <widget class="Toolbar" name="toolbar"/>
-      <widget class="Menu" name="menu"/>
-      <widget class="FrozenPlotsBottomMenu" name="frozenplots_bottom"/>
-      <widget class="SettingsBar" name="settingsbar"/>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>3</number>
+       </property>
+       <property name="topMargin">
+        <number>3</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
+        <number>3</number>
+       </property>
+       <property name="spacing">
+        <number>3</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>MVM GUI V0.1</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QStackedWidget" name="toppane">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="MainDisplay" name="main"/>
-      <widget class="Settings" name="settings"/>
-     </widget>
-    </item>
-   </layout>
+    </widget>
+    <widget class="Toolbar" name="toolbar"/>
+    <widget class="Menu" name="menu"/>
+    <widget class="FrozenPlotsBottomMenu" name="frozenplots_bottom"/>
+    <widget class="SettingsBar" name="settingsbar"/>
+   </widget>
+   <widget class="QStackedWidget" name="toppane">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>800</width>
+      <height>389</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="Startup" name="startup"/>
+    <widget class="MainDisplay" name="main"/>
+    <widget class="Settings" name="settings"/>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
@@ -525,6 +574,12 @@
    <class>FrozenPlotsBottomMenu</class>
    <extends>QWidget</extends>
    <header>frozenplots/frozenplots</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Startup</class>
+   <extends>QWidget</extends>
+   <header>startup/startup</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

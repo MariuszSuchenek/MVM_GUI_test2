@@ -45,30 +45,38 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the toppane and child pages
         '''
-        self.toppane =  self.findChild(QtWidgets.QStackedWidget, "toppane")
-        self.main =     self.findChild(QtWidgets.QWidget,        "main")
+        self.toppane  = self.findChild(QtWidgets.QStackedWidget, "toppane")
+        self.main     = self.findChild(QtWidgets.QWidget,        "main")
         self.settings = self.findChild(QtWidgets.QWidget,        "settings")
+        self.startup  = self.findChild(QtWidgets.QWidget,        "startup")
 
         '''
         Get the bottombar and child pages
         '''
-        self.bottombar =   self.findChild(QtWidgets.QStackedWidget, "bottombar")
-        self.toolbar =     self.findChild(QtWidgets.QWidget, "toolbar")
-        self.menu =        self.findChild(QtWidgets.QWidget, "menu")
-        self.frozen_bot =  self.findChild(QtWidgets.QWidget, "frozenplots_bottom")
-        self.settingsbar = self.findChild(QtWidgets.QWidget, "settingsbar")
+        self.bottombar   = self.findChild(QtWidgets.QStackedWidget, "bottombar")
+        self.toolbar     = self.findChild(QtWidgets.QWidget,        "toolbar")
+        self.menu        = self.findChild(QtWidgets.QWidget,        "menu")
+        self.frozen_bot  = self.findChild(QtWidgets.QWidget,        "frozenplots_bottom")
+        self.settingsbar = self.findChild(QtWidgets.QWidget,        "settingsbar")
+        self.blank       = self.findChild(QtWidgets.QWidget,        "blank")
 
         '''
         Get the stackable bits on the right
         '''
         self.rightbar     = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
-        self.monitors_bar = self.main.findChild(QtWidgets.QWidget, "three_monitors")
-        self.frozen_right = self.main.findChild(QtWidgets.QWidget, "frozenplots_right")
+        self.monitors_bar = self.main.findChild(QtWidgets.QWidget,        "three_monitors")
+        self.frozen_right = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
+
+        '''
+        Get startup buttons
+        '''
+        self.button_new_patient    = self.startup.findChild(QtWidgets.QPushButton, "button_new_patient")
+        self.button_resume_patient = self.startup.findChild(QtWidgets.QPushButton, "button_resume_patient")
 
         '''
         Get toolbar widgets
         '''
-        self.button_menu =  self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
+        self.button_menu  = self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
         self.label_status = self.toolbar.findChild(QtWidgets.QLabel,      "label_status")
 
         toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
@@ -94,6 +102,12 @@ class MainWindow(QtWidgets.QMainWindow):
         Get frozen plots bottom bar widgets and connect
         '''
         self.button_unfreeze =   self.frozen_bot.findChild(QtWidgets.QPushButton, "button_unfreeze")
+
+        '''
+        Connect startup buttons
+        '''
+        self.button_resume_patient.pressed.connect(lambda:
+                (self.open_toolbar(), self.open_main()))
 
         '''
         Connect back and menu buttons to toolbar and menu
