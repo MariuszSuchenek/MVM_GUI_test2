@@ -106,8 +106,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect startup buttons
         '''
-        self.button_resume_patient.pressed.connect(lambda:
-                (self.open_toolbar(), self.open_main()))
+        self.button_resume_patient.pressed.connect(self.resume_patient):
+        self.button_new.pressed.connect(self.new_patient):
 
         '''
         Connect back and menu buttons to toolbar and menu
@@ -255,6 +255,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.data_filler.freeze()
         self.rightbar.setCurrentWidget(self.frozen_right)
         self.bottombar.setCurrentWidget(self.frozen_bot)
+
+    def new_patient(self):
+        self.open_toolbar()
+        self.open_main()
+
+    def resume_patient(self):
+        self.open_toolbar()
+        self.open_main()
         
     def unfreeze_plots(self):
         self.data_filler.unfreeze()
