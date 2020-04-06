@@ -3,7 +3,9 @@ import sys, traceback
 import time
 import datetime
 from PyQt5.QtCore import QThreadPool
+from PyQt5.QtWidgets import QMessageBox
 from communication.threading_utils import Worker
+from messagebox import MessageBox
 
 class DataHandler():
     '''
@@ -120,9 +122,19 @@ class DataHandler():
         if self._running:
             print("\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
             self._n_attempts += 1
-            if self._n_attempts > 100:
-                raise Exception('Failed to communicate with ESP after 100 attempts.')
             self._running = False
+            
+            if self._n_attempts > 10:
+                self._n_attempts = 0
+                callbacks = {QMessageBox.Retry: self.start_io_thread,
+                             QMessageBox.Abort: exit}
+                MessageBox().critical('COMMUNICATION ERROR', 
+                                      "CANNOT COMMUNICATE WITH ESP32",
+                                      "Check cable connections then click retry.",
+                                      callbacks,
+                                      QMessageBox.Retry)
+            
+            time.sleep(0.05)
             self.start_io_thread()
 
     def start_io_thread(self):

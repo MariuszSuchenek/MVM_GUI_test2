@@ -57,9 +57,9 @@ class ESP32Serial:
         baudrate = kwargs["baudrate"] if "baudrate" in kwargs else 115200
         timeout = kwargs["timeout"] if "timeout" in kwargs else 1
         self.term = kwargs["terminator"] if "terminator" in kwargs else b'\n'
+        self.lock = Lock()
         self.connection = serial.Serial(port=port, baudrate=baudrate,
                                         timeout=timeout, **kwargs)
-        self.lock = Lock()
 
         while self.connection.read():
             pass
@@ -70,9 +70,9 @@ class ESP32Serial:
 
         Closes the connection.
         """
-
-        with self.lock:
-            self.connection.close()
+        if hasattr(self, "connection"):
+            with self.lock:
+                self.connection.close()
 
     def _parse(self, result):
         """
