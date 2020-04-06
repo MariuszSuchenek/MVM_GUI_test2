@@ -89,6 +89,13 @@ class MessageBox():
         clicks a "More details" button.
         '''
         self.callbacks = button_callbacks
+        
+        # We don't set a stylesheet on the messagebox, as setting one attribute
+        # requires you to redefine every attribute so that it matches the look
+        # of the default widgets. Instead, we can set text properties using tags.
+        if text and len(text):
+            text = "<font color='#ff0000'>%s</font>" % text
+        
         self._show(title, text, info_text, QMessageBox.Critical, default_button, detail)
 
     def _show(self, title, text, info_text, icon, default_btn=None, detail_text=""):
@@ -99,9 +106,42 @@ class MessageBox():
         self.msg.setIcon(icon)
         
         self.msg.setWindowTitle(title) 
+        
+        # Make text bigger. Simplest to do using tags rather than QMessageBox stylesheet.
+        if text and len(text):
+            text = "<big>%s</big>" % text
+            
+        if info_text and len(info_text):
+            info_text = "<big>%s</big>" % info_text
+
         self.msg.setText(text) 
         self.msg.setInformativeText(info_text)
         self.msg.setDetailedText(detail_text)
+        
+        # Make the buttons bigger
+        button_style = """
+        QPushButton {
+            border: 1px solid #8f8f91;
+            background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                              stop: 0 #f6f7fa, stop: 1 #dadbde);
+            min-width: 60px;
+            min-height: 40px;
+            font-weight: bold;
+        }
+        
+        QPushButton:pressed {
+            background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                              stop: 0 #dadbde, stop: 1 #f6f7fa);
+        }
+        
+        QPushButton:flat {
+            border: none;
+        }
+        
+        QPushButton:default {
+            border: 2px solid navy;
+        }"""
+        self.msg.setStyleSheet(button_style);
         
         bitmask = 0
         for b in self.callbacks.keys():
