@@ -38,13 +38,82 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <property name="spacing">
+   <property name="horizontalSpacing">
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="PlotWidget" name="plot_top" native="true"/>
+    <widget class="QStackedWidget" name="centerpane">
+     <widget class="QWidget" name="plots_all">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="PlotWidget" name="plot_top" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>640</width>
+           <height>130</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>640</width>
+           <height>130</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="PlotWidget" name="plot_mid" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>640</width>
+           <height>130</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>640</width>
+           <height>130</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="PlotWidget" name="plot_bot" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>640</width>
+           <height>130</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>640</width>
+           <height>130</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="Alarms" name="plots_settings"/>
+    </widget>
    </item>
-   <item row="0" column="1" rowspan="3">
+   <item row="0" column="1">
     <widget class="QStackedWidget" name="rightbar">
      <property name="minimumSize">
       <size>
@@ -61,12 +130,6 @@
      <widget class="ThreeMonitors" name="three_monitors"/>
      <widget class="FrozenPlotsRightMenu" name="frozenplots_right"/>
     </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="PlotWidget" name="plot_mid" native="true"/>
-   </item>
-   <item row="2" column="0">
-    <widget class="PlotWidget" name="plot_bot" native="true"/>
    </item>
   </layout>
  </widget>
@@ -87,6 +150,12 @@
    <class>FrozenPlotsRightMenu</class>
    <extends>QWidget</extends>
    <header>frozenplots/frozenplots</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Alarms</class>
+   <extends>QWidget</extends>
+   <header>alarms/alarms</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
