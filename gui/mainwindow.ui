@@ -519,6 +519,8 @@
     <widget class="Menu" name="menu"/>
     <widget class="FrozenPlotsBottomMenu" name="frozenplots_bottom"/>
     <widget class="SettingsBar" name="settingsbar"/>
+    <widget class="AlarmsBar" name="alarmsbar"/>
+    <widget class="PauseBar" name="pausebar"/>
    </widget>
    <widget class="QStackedWidget" name="toppane">
     <property name="geometry">
@@ -534,7 +536,6 @@
     </property>
     <widget class="Startup" name="startup"/>
     <widget class="MainDisplay" name="main"/>
-    <widget class="Settings" name="settings"/>
    </widget>
   </widget>
  </widget>
@@ -559,12 +560,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>Settings</class>
-   <extends>QWidget</extends>
-   <header>settings/settings</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SettingsBar</class>
    <extends>QWidget</extends>
    <header>settings/settingsbar</header>
@@ -580,6 +575,18 @@
    <class>Startup</class>
    <extends>QWidget</extends>
    <header>startup/startup</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AlarmsBar</class>
+   <extends>QWidget</extends>
+   <header>alarms/alarmsbar</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PauseBar</class>
+   <extends>QWidget</extends>
+   <header>menu/pausebar</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
