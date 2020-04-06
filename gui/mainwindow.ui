@@ -483,7 +483,6 @@
        <number>0</number>
       </property>
       <widget class="MainDisplay" name="main"/>
-      <widget class="Settings" name="settings"/>
      </widget>
     </item>
    </layout>
@@ -507,12 +506,6 @@
    <class>MainDisplay</class>
    <extends>QWidget</extends>
    <header>maindisplay/maindisplay</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Settings</class>
-   <extends>QWidget</extends>
-   <header>settings/settings</header>
    <container>1</container>
   </customwidget>
   <customwidget>

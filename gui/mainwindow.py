@@ -199,8 +199,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect settings button to Settings overlay.
         '''
-        self.settings.connect_workers(self)
-        self.settings.load_presets()
+        self.settings = Settings(self)
+        self.toppane.insertWidget(self.toppane.count(), self.settings)
         
         '''
         Connect buttons on freeze menus
