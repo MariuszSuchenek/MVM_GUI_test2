@@ -457,34 +457,7 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <item row="0" column="0">
-     <widget class="PlotWidget" name="plot_top" native="true"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="PlotWidget" name="plot_mid" native="true"/>
-    </item>
-    <item row="2" column="0">
-     <widget class="PlotWidget" name="plot_bot" native="true"/>
-    </item>
-    <item row="0" column="1" rowspan="3">
-     <widget class="QStackedWidget" name="rightbar">
-      <property name="minimumSize">
-       <size>
-        <width>160</width>
-        <height>390</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>160</width>
-        <height>390</height>
-       </size>
-      </property>
-      <widget class="ThreeMonitors" name="three_monitors"/>
-      <widget class="FrozenPlotsRightMenu" name="frozenplots_right"/>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="2">
+    <item row="1" column="0" colspan="2">
      <widget class="QStackedWidget" name="bottombar">
       <property name="minimumSize">
        <size>
@@ -501,6 +474,15 @@
       <widget class="Toolbar" name="toolbar"/>
       <widget class="Menu" name="menu"/>
       <widget class="FrozenPlotsBottomMenu" name="frozenplots_bottom"/>
+      <widget class="SettingsBar" name="settingsbar"/>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QStackedWidget" name="toppane">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="MainDisplay" name="main"/>
      </widget>
     </item>
    </layout>
@@ -508,18 +490,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>PlotWidget</class>
-   <extends>QWidget</extends>
-   <header>pyqtgraph</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ThreeMonitors</class>
-   <extends>QWidget</extends>
-   <header>monitor/three_monitors</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>Toolbar</class>
    <extends>QWidget</extends>
@@ -533,13 +503,19 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>FrozenPlotsBottomMenu</class>
+   <class>MainDisplay</class>
    <extends>QWidget</extends>
-   <header>frozenplots/frozenplots</header>
+   <header>maindisplay/maindisplay</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>FrozenPlotsRightMenu</class>
+   <class>SettingsBar</class>
+   <extends>QWidget</extends>
+   <header>settings/settingsbar</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FrozenPlotsBottomMenu</class>
    <extends>QWidget</extends>
    <header>frozenplots/frozenplots</header>
    <container>1</container>

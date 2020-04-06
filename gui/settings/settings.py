@@ -8,7 +8,7 @@ import copy
 from presets.presets import Presets
 
 class Settings(QtWidgets.QMainWindow):
-    def __init__(self, config, *args):
+    def __init__(self, mainparent, *args):
         """
         Initialized the Settings overlay widget.
         """
@@ -16,24 +16,17 @@ class Settings(QtWidgets.QMainWindow):
         uic.loadUi("settings/settings.ui", self)
 
         self._debug = True
+        self.mainparent = mainparent
 
-        self._config = config
+        # Get access to parent widgets and data
+        self._config = self.mainparent.config
+        self._data_h = self.mainparent._data_h
+        self._toolsettings = self.mainparent.toolsettings
+        self._start_stop_worker = self.mainparent._start_stop_worker
 
         # This contains all the default params
         self._current_values = {}
         self._current_values_temp = {}
-
-        # Don't ask me why I am redefining these...
-
-        # Automatic
-        self._load_preset_auto_btn = self.pushButton_load_preset_auto
-        self._apply_automatic_btn = self.pushButton_apply_auto
-        self._close_1_btn = self.pushButton_close_1
-
-        # Assisted
-        self._load_preset_assist_btn = self.pushButton_load_preset_assist
-        self._apply_assisted_btn = self.pushButton_apply_assist
-        self._close_2_btn = self.pushButton_close_2
 
         self._all_spinboxes = {
             # Auto
@@ -64,25 +57,14 @@ class Settings(QtWidgets.QMainWindow):
             'minimal_resp_rate': self.fake_btn_min_resp_rate,
         }
 
+        # Connect all widgets
+        self.connect_workers()
+
         # Init presets
         self._current_preset = None
         self._current_preset_name = None
 
-        # Auto
-        self._all_fakebtn['respiratory_rate'].clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
-        self._all_fakebtn['insp_expir_ratio'].clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
-        self._all_fakebtn['insp_pressure'].clicked.connect(lambda: self.spawn_presets_window('insp_pressure'))
-        self._all_fakebtn['peep_auto'].clicked.connect(lambda: self.spawn_presets_window('peep_auto'))
-
-        # Assist
-        self._all_fakebtn['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
-        self._all_fakebtn['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
-        self._all_fakebtn['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
-        self._all_fakebtn['peep_assist'].clicked.connect(lambda: self.spawn_presets_window('peep_assist'))
-        self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
-
-
-
+        self.load_presets()
 
     def spawn_presets_window(self, name):
 
@@ -143,50 +125,48 @@ class Settings(QtWidgets.QMainWindow):
         '''
         self.tabWidget.setEnabled(True)
 
-    def connect_data_handler(self, data_h):
-        '''
-        Connects the handler to this class,
-        so to have it avalable to set data
-        '''
-        self._data_h = data_h
 
-
-    def connect_toolsettings(self, toolsettings):
+    def open_main_and_toolbar(self):
         '''
-        Connetcs the toolsettings to this class,
-        so we can update their values
+        Switches back to the main window and toolbar
         '''
-        self._toolsettings = toolsettings
-
-
-    def connect_start_stop_worker(self, start_stop_worker):
-        '''
-        Receives the StartStopWorker from the mainwindow
-        and stores it here, as it will be called when the
-        Start button is pressed from the settings panel
-        '''
-        self._start_stop_worker = start_stop_worker
-
+        self.mainparent.open_main()
+        self.mainparent.open_toolbar()
 
     def connect_workers(self):
         '''
         Connects all the buttons, inputs, etc
         to the the appropriate working functions
         '''
+        # Shared apply, close, preset buttons
+        self._button_apply = self.mainparent.settingsbar.findChild(QtWidgets.QPushButton, "button_apply")
+        self._button_close = self.mainparent.settingsbar.findChild(QtWidgets.QPushButton, "button_close")
+        self._button_loadpreset = self.mainparent.settingsbar.findChild(QtWidgets.QPushButton, "button_loadpreset")
+
+        self._button_apply.clicked.connect(self.apply_worker)
+        self._button_loadpreset.clicked.connect(self.load_presets)
+        self._button_close.clicked.connect(self.close_settings_worker)
+
+
+        # Auto
+        self._all_fakebtn['respiratory_rate'].clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
+        self._all_fakebtn['insp_expir_ratio'].clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
+        self._all_fakebtn['insp_pressure'].clicked.connect(lambda: self.spawn_presets_window('insp_pressure'))
+        self._all_fakebtn['peep_auto'].clicked.connect(lambda: self.spawn_presets_window('peep_auto'))
+
+        # Assist
+        self._all_fakebtn['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
+        self._all_fakebtn['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
+        self._all_fakebtn['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
+        self._all_fakebtn['peep_assist'].clicked.connect(lambda: self.spawn_presets_window('peep_assist'))
+        self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
+
         for param, btn in self._all_spinboxes.items():
             if param == 'enable_backup':
                 btn.clicked.connect(self.worker)
             else:
                 btn.valueChanged.connect(self.worker)
 
-        self._apply_automatic_btn.clicked.connect(self.apply_worker)
-        self._apply_assisted_btn.clicked.connect(self.apply_worker)
-
-        self._load_preset_auto_btn.clicked.connect(self.load_presets)
-        self._load_preset_assist_btn.clicked.connect(self.load_presets)
-
-        self._close_1_btn.clicked.connect(self.close_settings_worker)
-        self._close_2_btn.clicked.connect(self.close_settings_worker)
 
 
     def load_presets(self):
@@ -241,8 +221,7 @@ class Settings(QtWidgets.QMainWindow):
                 btn.setValue(self._current_values[param])
 
         self.repaint()
-
-        self.close()
+        self.open_main_and_toolbar()
 
 
     def apply_worker(self):
@@ -251,7 +230,7 @@ class Settings(QtWidgets.QMainWindow):
         '''
         self._current_values = copy.copy(self._current_values_temp)
         self.send_values_to_hardware()
-        self.close()
+        self.open_main_and_toolbar()
 
 
     def send_values_to_hardware(self):
