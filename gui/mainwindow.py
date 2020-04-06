@@ -9,6 +9,8 @@ from settings.settings import Settings
 from toolbar.toolbar import Toolbar
 from menu.menu import Menu
 from settings.settingsbar import SettingsBar
+from alarms.alarmsbar import AlarmsBar
+from menu.pausebar import PauseBar
 
 from toolsettings.toolsettings import ToolSettings
 from monitor.monitor import Monitor
@@ -59,6 +61,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.frozen_bot  = self.findChild(QtWidgets.QWidget,        "frozenplots_bottom")
         self.settingsbar = self.findChild(QtWidgets.QWidget,        "settingsbar")
         self.blank       = self.findChild(QtWidgets.QWidget,        "blank")
+        self.pausebar    = self.findChild(QtWidgets.QWidget,        "pausebar")
+        self.alarmsbar   = self.findChild(QtWidgets.QWidget,        "alarmsbar")
 
         '''
         Get the stackable bits on the right
@@ -90,13 +94,19 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get menu widgets and connect settings for the menu widget
         '''
-        self.button_back =       self.menu.findChild(QtWidgets.QPushButton, "button_back")
-        self.button_settings =   self.menu.findChild(QtWidgets.QPushButton, "button_settings")
-        self.button_expause =    self.menu.findChild(QtWidgets.QPushButton, "button_expause")
-        self.button_inpause =    self.menu.findChild(QtWidgets.QPushButton, "button_inpause")
-        self.button_freeze =     self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
-        self.button_startstop =  self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
+        self.button_back       = self.menu.findChild(QtWidgets.QPushButton, "button_back")
+        self.button_settings   = self.menu.findChild(QtWidgets.QPushButton, "button_settings")
+        self.button_pause      = self.menu.findChild(QtWidgets.QPushButton, "button_pause")
+        self.button_alarms     = self.menu.findChild(QtWidgets.QPushButton, "button_alarms")
+        self.button_freeze     = self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
+        self.button_startstop  = self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
         self.button_autoassist = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
+
+        self.button_backpause  = self.pausebar.findChild(QtWidgets.QPushButton, "button_backpause")
+        self.button_inspause   = self.pausebar.findChild(QtWidgets.QPushButton, "button_inspause")
+        self.button_expause    = self.pausebar.findChild(QtWidgets.QPushButton, "button_expause")
+
+        self.button_backalarms = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_backalarms")
 
         '''
         Get frozen plots bottom bar widgets and connect
@@ -111,12 +121,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         '''
         Connect back and menu buttons to toolbar and menu
+
+        This effectively defines navigation from the bottombar.
         '''
         self.button_back.pressed.connect(self.open_toolbar)
+        self.button_backpause.pressed.connect(self.open_menu)
+        self.button_backalarms.pressed.connect(self.open_menu)
         self.button_menu.pressed.connect(self.open_menu)
         self.button_freeze.pressed.connect(self.freeze_plots)
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
         self.button_settings.pressed.connect(self.open_settings)
+        self.button_alarms.pressed.connect(self.open_alarms)
+        self.button_pause.pressed.connect(self.open_pausebar)
 
         '''
         Instantiate the DataFiller, which takes
@@ -146,7 +162,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toolsettings = {};
 
         for name in toolsettings_names:
-            toolsettings = self.findChild(QtWidgets.QWidget, name)
+            toolsettings = self.toolbar.findChild(QtWidgets.QWidget, name)
             toolsettings.connect_config(config)
             self.toolsettings[name] = toolsettings
 
@@ -250,6 +266,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def open_main(self):
         self.toppane.setCurrentWidget(self.main)
+
+    def open_pausebar(self):
+        self.bottombar.setCurrentWidget(self.pausebar)
+
+    def open_alarms(self):
+        self.open_alarmsbar()
+
+    def open_alarmsbar(self):
+        self.bottombar.setCurrentWidget(self.alarmsbar)
         
     def freeze_plots(self):
         self.data_filler.freeze()
