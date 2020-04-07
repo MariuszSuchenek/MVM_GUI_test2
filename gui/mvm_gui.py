@@ -27,14 +27,14 @@ def connect_esp32(config):
             err_msg = "Cannot communicate with port %s" % config['port']
             esp32 = ESP32Serial(config['port'])
     except Exception as e:
-        MessageBox().critical("Communication error", 
+        MessageBox().critical("Communication error",
                               err_msg,
                               "Do you want to retry?",
                               {QMessageBox.Retry: lambda: connect_esp32(config),
                                QMessageBox.Abort: exit},
                               QMessageBox.Retry,
                               detail=str(e))
-            
+
     return esp32
 
 if __name__ == "__main__":
