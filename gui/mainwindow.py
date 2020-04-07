@@ -214,7 +214,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.data_filler.connect_plot(name, plot)
 
         self.plots_settings.connect_monitors_and_plots(self)
-        (self.active_monitors, self.active_plots) = self.plots_settings.populate_monitors_and_plots()
+        self.update_monitors_and_plots()
             
         '''
         Set up start/stop auto/min mode buttons.
@@ -240,12 +240,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
         
-        '''
-        Connect buttons on freeze menus
-        '''
+        
+    def update_monitors_and_plots(self):
+        (self.active_monitors, self.active_plots) = self.plots_settings.populate_monitors_and_plots()
+        # Connect buttons on freeze menus
         self.frozen_bot.connect_workers(self.data_filler, self.active_plots)
         self.frozen_right.connect_workers(self.active_plots)
-        
+
 
     def new_patient(self):
         self.show_toolbar()
