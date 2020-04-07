@@ -126,13 +126,6 @@ class Settings(QtWidgets.QMainWindow):
         self.tabWidget.setEnabled(True)
 
 
-    def open_main_and_toolbar(self):
-        '''
-        Switches back to the main window and toolbar
-        '''
-        self.mainparent.open_main()
-        self.mainparent.open_toolbar()
-
     def connect_workers(self):
         '''
         Connects all the buttons, inputs, etc
@@ -221,7 +214,7 @@ class Settings(QtWidgets.QMainWindow):
                 btn.setValue(self._current_values[param])
 
         self.repaint()
-        self.open_main_and_toolbar()
+        self.mainparent.exit_settings()
 
 
     def apply_worker(self):
@@ -230,7 +223,7 @@ class Settings(QtWidgets.QMainWindow):
         '''
         self._current_values = copy.copy(self._current_values_temp)
         self.send_values_to_hardware()
-        self.open_main_and_toolbar()
+        self.mainparent.exit_settings()
 
 
     def send_values_to_hardware(self):

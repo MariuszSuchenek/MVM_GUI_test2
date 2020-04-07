@@ -11,6 +11,3 @@ class Menu(QtWidgets.QWidget):
         """
         super(Menu, self).__init__(*args)
         uic.loadUi("menu/menu.ui", self)
-
-    def connect_parent(self, mainparent):
-        self.mainparent = mainparent

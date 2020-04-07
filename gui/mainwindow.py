@@ -9,6 +9,7 @@ from settings.settings import Settings
 from toolbar.toolbar import Toolbar
 from menu.menu import Menu
 from settings.settingsbar import SettingsBar
+from alarms.alarms import Alarms
 from alarms.alarmsbar import AlarmsBar
 from menu.pausebar import PauseBar
 
@@ -22,15 +23,6 @@ import pyqtgraph as pg
 import sys
 import time
 from pip._internal import self_outdated_check
-
-STOP = -1
-AUTOMATIC = 0
-ASSISTED = 1
-
-DO_RUN = 1
-DONOT_RUN = 0
-
-
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, config, esp32, *args, **kwargs):
@@ -47,10 +39,18 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the toppane and child pages
         '''
-        self.toppane  = self.findChild(QtWidgets.QStackedWidget, "toppane")
-        self.main     = self.findChild(QtWidgets.QWidget,        "main")
-        self.settings = self.findChild(QtWidgets.QWidget,        "settings")
-        self.startup  = self.findChild(QtWidgets.QWidget,        "startup")
+        self.toppane    = self.findChild(QtWidgets.QStackedWidget, "toppane")
+        self.main       = self.findChild(QtWidgets.QWidget,        "main")
+        self.settings   = self.findChild(QtWidgets.QWidget,        "settings")
+        self.startup    = self.findChild(QtWidgets.QWidget,        "startup")
+
+
+        '''
+        Get the center pane (plots) widgets
+        '''
+        self.centerpane      = self.findChild(QtWidgets.QStackedWidget, "centerpane")
+        self.plots_all       = self.findChild(QtWidgets.QWidget,        "plots_all")
+        self.plots_settings  = self.findChild(QtWidgets.QWidget,        "plots_settings")
 
         '''
         Get the bottombar and child pages
@@ -124,15 +124,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         This effectively defines navigation from the bottombar.
         '''
-        self.button_back.pressed.connect(self.open_toolbar)
-        self.button_backpause.pressed.connect(self.open_menu)
-        self.button_backalarms.pressed.connect(self.open_menu)
-        self.button_menu.pressed.connect(self.open_menu)
+        self.button_back.pressed.connect(self.show_toolbar)
+        self.button_backpause.pressed.connect(self.exit_pause)
+        self.button_backalarms.pressed.connect(self.exit_alarms)
+        self.button_menu.pressed.connect(self.show_menu)
         self.button_freeze.pressed.connect(self.freeze_plots)
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
-        self.button_settings.pressed.connect(self.open_settings)
-        self.button_alarms.pressed.connect(self.open_alarms)
-        self.button_pause.pressed.connect(self.open_pausebar)
+        self.button_settings.pressed.connect(self.goto_settings)
+        self.button_alarms.pressed.connect(self.goto_alarms)
+        self.button_pause.pressed.connect(self.goto_pause)
 
         '''
         Instantiate the DataFiller, which takes
@@ -253,27 +253,62 @@ class MainWindow(QtWidgets.QMainWindow):
                 dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
         return monitor
 
-    def open_menu(self):
-        self.bottombar.setCurrentWidget(self.menu)
+    def new_patient(self):
+        self.show_toolbar()
+        self.show_main()
 
-    def open_toolbar(self):
-        self.bottombar.setCurrentWidget(self.toolbar)
+    def resume_patient(self):
+        self.show_toolbar()
+        self.show_main()
 
-    def open_settings(self):
-        self.bottombar.setCurrentWidget(self.settingsbar)
+    def goto_settings(self):
+        self.show_settings()
+        self.show_settingsbar()
+
+    def exit_settings(self):
+        self.show_main()
+        self.show_menu()
+
+    def goto_alarms(self):
+        self.show_alarms()
+        self.show_alarmsbar()
+
+    def exit_alarms(self):
+        self.show_menu()
+        self.show_plots()
+
+    def goto_pause(self):
+        self.show_pausebar()
+
+    def exit_pause(self):
+        self.show_menu()
+
+    def show_settings(self):
         self.toppane.setCurrentWidget(self.settings)
         self.settings.tabWidget.setFocus()
 
-    def open_main(self):
+    def show_menu(self):
+        self.bottombar.setCurrentWidget(self.menu)
+
+    def show_toolbar(self):
+        self.bottombar.setCurrentWidget(self.toolbar)
+
+    def show_settingsbar(self):
+        self.bottombar.setCurrentWidget(self.settingsbar)
+
+    def show_main(self):
         self.toppane.setCurrentWidget(self.main)
 
-    def open_pausebar(self):
+    def show_pausebar(self):
         self.bottombar.setCurrentWidget(self.pausebar)
 
-    def open_alarms(self):
-        self.open_alarmsbar()
+    def show_alarms(self):
+        self.centerpane.setCurrentWidget(self.plots_settings)
 
-    def open_alarmsbar(self):
+    def show_plots(self):
+        self.centerpane.setCurrentWidget(self.plots_all)
+
+    def show_alarmsbar(self):
         self.bottombar.setCurrentWidget(self.alarmsbar)
         
     def freeze_plots(self):
@@ -281,18 +316,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.rightbar.setCurrentWidget(self.frozen_right)
         self.bottombar.setCurrentWidget(self.frozen_bot)
 
-    def new_patient(self):
-        self.open_toolbar()
-        self.open_main()
-
-    def resume_patient(self):
-        self.open_toolbar()
-        self.open_main()
         
     def unfreeze_plots(self):
         self.data_filler.unfreeze()
         self.rightbar.setCurrentWidget(self.monitors_bar)
-        self.open_menu()
+        self.show_menu()
 
     def closeEvent(self, event):
         self._data_h.stop_io()
