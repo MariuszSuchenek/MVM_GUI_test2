@@ -173,26 +173,38 @@ class MainWindow(QtWidgets.QMainWindow):
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
-        monitor_names = {"monitor_top", "monitor_mid", "monitor_bot"}
-        self.monitors = {}
-        monitor_default = {
-                "name": "NoName",
-                "min": 0,
-                "init": 50,
-                "max": 100,
-                "step": None,
-                "units": None,
-                "dec_precision": 2,
-                "color": "black",
-                "alarmcolor": "red"}
+        monitor_slot_names =[ 
+                "monitor_top_slot",
+                "monitor_mid_slot",
+                "monitor_bot_slot"]
 
+        monitor_names = [ 
+                "mon_inspiratory_pressure", 
+                "mon_tidal_volume", 
+                "mon_flow",
+                "mon_oxygen_concentration",
+                "mon_test",
+                "mon_test2",
+                "mon_test3"]
+        self.monitors = {}
+        self.monitor_slots = {} 
+
+        # Get displayed monitor slots
+        for barname in monitor_slot_names:
+            print(barname)
+            self.monitor_slots[barname] = self.rightbar.findChild(QtWidgets.QGridLayout, barname)
+    
+        # Get displayed monitors 
         for name in monitor_names:
-            monitor = self.main.findChild(QtWidgets.QWidget, name)
-            self.monitors[name] = self.init_monitor(monitor, name, config, monitor_default)
+            monitor = Monitor(name, config)
+            self.monitors[name] = monitor
+
+        self.plots_settings.connect_monitors(self.monitors, self.monitor_slots)
+        self.plots_settings.populate_monitors()
             
-        self.data_filler.connect_monitor('monitor_top', self.monitors['monitor_top'])
-        self.data_filler.connect_monitor('monitor_mid', self.monitors['monitor_mid'])
-        self.data_filler.connect_monitor('monitor_bot', self.monitors['monitor_bot'])
+        self.data_filler.connect_monitor(monitor_names[0], self.monitors)
+        self.data_filler.connect_monitor(monitor_names[1], self.monitors)
+        self.data_filler.connect_monitor(monitor_names[2], self.monitors)
 
 
         '''
@@ -204,9 +216,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_top"))
         self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_mid"))
         self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_bot"))
-        self.data_filler.connect_plot('monitor_top', self.plots[0])
-        self.data_filler.connect_plot('monitor_mid', self.plots[1])
-        self.data_filler.connect_plot('monitor_bot', self.plots[2])
+        self.data_filler.connect_plot(monitor_names[0], self.plots[0])
+        self.data_filler.connect_plot(monitor_names[1], self.plots[1])
+        self.data_filler.connect_plot(monitor_names[2], self.plots[2])
 
         '''
         Set up start/stop auto/min mode buttons.
@@ -238,20 +250,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.frozen_bot.connect_workers(self.data_filler, self.plots)
         self.frozen_right.connect_workers(self.plots)
         
-    def init_monitor(self, monitor, name, config, monitor_default):
-        entry = config.get(name, monitor_default)
-        monitor.setup(
-                entry.get("name", monitor_default["name"]),
-                setrange=(
-                    entry.get("min", monitor_default["min"]),
-                    entry.get("init", monitor_default["init"]),
-                    entry.get("max", monitor_default["max"])),
-                units=entry.get("units", monitor_default["units"]),
-                alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
-                color=entry.get("color", monitor_default["color"]),
-                step=entry.get("step", monitor_default["step"]),
-                dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
-        return monitor
 
     def new_patient(self):
         self.show_toolbar()

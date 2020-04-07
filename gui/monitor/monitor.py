@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
 class Monitor(QtWidgets.QWidget):
-    def __init__(self, *args):
+    def __init__(self, name, config, *args):
         """
         Initialize the Monitor widget.
 
@@ -11,7 +11,8 @@ class Monitor(QtWidgets.QWidget):
         """
         super(Monitor, self).__init__(*args)
         uic.loadUi("monitor/monitor.ui", self)
-        self.name = None
+        self.config = config
+
         self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
         self.label_min = self.findChild(QtWidgets.QLabel, "label_min")
@@ -22,6 +23,47 @@ class Monitor(QtWidgets.QWidget):
         self.label_statvalues = [];
         self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue1"))
         self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue2"))
+
+        monitor_default = {
+                "name": "NoName",
+                "min": 0,
+                "init": 50,
+                "max": 100,
+                "step": None,
+                "units": None,
+                "dec_precision": 0,
+                "color": "white",
+                "alarmcolor": "red",
+                "location": None}
+        entry = self.config.get(name, monitor_default)
+        # unpack and assign min, current, and max
+        self.name = entry.get("name", monitor_default["name"])
+        self.value = entry.get("init", monitor_default["init"])
+        self.minimum = entry.get("min", monitor_default["min"])
+        self.maximum = entry.get("max", monitor_default["max"])
+        self.step = entry.get("step", monitor_default["step"])
+        self.dec_precision = entry.get("dec_precision", monitor_default["dec_precision"])
+        self.location = entry.get("location", monitor_default["location"])
+
+        units = entry.get("units", monitor_default["units"])
+        alarmcolor = entry.get("alarmcolor", monitor_default["alarmcolor"])
+        color = entry.get("color", monitor_default["color"])
+
+        self.label_min.setText(str(self.minimum))
+        self.label_max.setText(str(self.maximum))
+
+        # Handle optional units
+        if units is not None:
+            self.label_name.setText(self.name + " " + str(units))
+        else:
+            self.label_name.setText(self.name)
+
+        self.setStyleSheet("QWidget { color: " + str(color) + "; }");
+        self.alarmcolor = alarmcolor
+        self.update(self.value)
+
+        # Handle optional stats
+        # TODO: determine is stats are useful/necessary
 
         # Set up connections
         self.mouseReleaseEvent = self.clear_alarm
@@ -43,29 +85,6 @@ class Monitor(QtWidgets.QWidget):
         step: optional value for nearest rounded value (e.g. step=10 rounds to nearest 10)
         """
 
-        # unpack and assign min, current, and max
-        (low, val, high) = setrange
-        self.name = name
-        self.label_min.setText(str(low))
-        self.label_max.setText(str(high))
-        self.value = val
-        self.minimum = low
-        self.maximum = high
-        self.step = step
-        self.dec_precision = dec_precision
-
-        # Handle optional units
-        if units is not None:
-            name = name + " " + str(units)
-        self.label_name.setText(name)
-
-        self.setStyleSheet("QWidget { color: " + str(color) + "; }");
-
-        self.alarmcolor = alarmcolor
-        self.update(val)
-
-        # Handle optional stats
-        # TODO: determine is stats are useful/necessary
 
     def update(self, value):
         """
