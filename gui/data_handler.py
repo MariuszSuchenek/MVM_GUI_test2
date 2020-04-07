@@ -73,7 +73,7 @@ class DataHandler():
 
         while self._running:
             start = datetime.datetime.now()
-            
+
             # Get all params from ESP
             current_values = self._esp32.get_all()
 
@@ -91,7 +91,7 @@ class DataHandler():
 
             delta_secs = (datetime.datetime.now() - start).total_seconds()
             sleep_secs = max(0, self._config['sampling_interval'] - delta_secs)
-            
+
             # Sleep for some time...
             time.sleep(sleep_secs)
 
@@ -123,7 +123,7 @@ class DataHandler():
             print("\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
             self._n_attempts += 1
             self._running = False
-            
+
             if self._n_attempts > 10:
                 self._n_attempts = 0
                 callbacks = {QMessageBox.Retry: self.start_io_thread,
@@ -133,7 +133,7 @@ class DataHandler():
                                       "Check cable connections then click retry.",
                                       callbacks,
                                       QMessageBox.Retry)
-            
+
             time.sleep(0.05)
             self.start_io_thread()
 
