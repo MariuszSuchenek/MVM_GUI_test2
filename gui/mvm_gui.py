@@ -51,7 +51,7 @@ if __name__ == "__main__":
     esp32 = connect_esp32(config)
 
     if esp32 is None:
-        exit(0)
+        exit(-1)
 
     window = MainWindow(config, esp32)
     window.show()
