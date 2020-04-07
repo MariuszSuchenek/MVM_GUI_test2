@@ -2,14 +2,19 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from toolsettings.toolsettings import ToolSettings
-from toolbar.toolbar import Toolbar
-from monitor.monitor import Monitor
+
+from maindisplay.maindisplay import MainDisplay
 from settings.settings import Settings
+
+from toolbar.toolbar import Toolbar
+from menu.menu import Menu
+from settings.settingsbar import SettingsBar
+
+from toolsettings.toolsettings import ToolSettings
+from monitor.monitor import Monitor
 from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
-from menu.menu import Menu
 
 import pyqtgraph as pg
 import sys, os
@@ -38,19 +43,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.esp32 = esp32
 
         '''
-        Get the toolbar and menu widgets
+        Get the toppane and child pages
         '''
-        self.bottombar =  self.findChild(QtWidgets.QStackedWidget, "bottombar")
-        self.toolbar =    self.findChild(QtWidgets.QWidget, "toolbar")
-        self.menu =       self.findChild(QtWidgets.QWidget, "menu")
-        self.frozen_bot = self.findChild(QtWidgets.QWidget, "frozenplots_bottom")
+        self.toppane =  self.findChild(QtWidgets.QStackedWidget, "toppane")
+        self.main =     self.findChild(QtWidgets.QWidget,        "main")
+        self.settings = self.findChild(QtWidgets.QWidget,        "settings")
+
+        '''
+        Get the bottombar and child pages
+        '''
+        self.bottombar =   self.findChild(QtWidgets.QStackedWidget, "bottombar")
+        self.toolbar =     self.findChild(QtWidgets.QWidget, "toolbar")
+        self.menu =        self.findChild(QtWidgets.QWidget, "menu")
+        self.frozen_bot =  self.findChild(QtWidgets.QWidget, "frozenplots_bottom")
+        self.settingsbar = self.findChild(QtWidgets.QWidget, "settingsbar")
 
         '''
         Get the stackable bits on the right
         '''
-        self.rightbar     =  self.findChild(QtWidgets.QStackedWidget, "rightbar")
-        self.monitors_bar = self.findChild(QtWidgets.QWidget, "three_monitors")
-        self.frozen_right = self.findChild(QtWidgets.QWidget, "frozenplots_right")
+        self.rightbar     = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
+        self.monitors_bar = self.main.findChild(QtWidgets.QWidget, "three_monitors")
+        self.frozen_right = self.main.findChild(QtWidgets.QWidget, "frozenplots_right")
 
         '''
         Get toolbar widgets
@@ -89,6 +102,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_menu.pressed.connect(self.open_menu)
         self.button_freeze.pressed.connect(self.freeze_plots)
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
+        self.button_settings.pressed.connect(self.open_settings)
 
         '''
         Instantiate the DataFiller, which takes
@@ -143,7 +157,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "alarmcolor": "red"}
 
         for name in monitor_names:
-            monitor = self.findChild(QtWidgets.QWidget, name)
+            monitor = self.main.findChild(QtWidgets.QWidget, name)
             self.monitors[name] = self.init_monitor(monitor, name, config, monitor_default)
             
         self.data_filler.connect_monitor('monitor_top', self.monitors['monitor_top'])
@@ -157,9 +171,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plots[..] are the PyQtPlot objects.
         '''
         self.plots = [];
-        self.plots.append(self.findChild(QtWidgets.QWidget, "plot_top"))
-        self.plots.append(self.findChild(QtWidgets.QWidget, "plot_mid"))
-        self.plots.append(self.findChild(QtWidgets.QWidget, "plot_bot"))
+        self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_top"))
+        self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_mid"))
+        self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_bot"))
         self.data_filler.connect_plot('monitor_top', self.plots[0])
         self.data_filler.connect_plot('monitor_mid', self.plots[1])
         self.data_filler.connect_plot('monitor_bot', self.plots[2])
@@ -185,14 +199,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect settings button to Settings overlay.
         '''
-        self.settings = Settings(config, self)
-        self.button_settings.pressed.connect(self.show_settings)
-
-        self.settings.connect_data_handler(self._data_h)
-        self.settings.connect_toolsettings(self.toolsettings)
-        self.settings.connect_start_stop_worker(self._start_stop_worker)
-        self.settings.connect_workers()
-        self.settings.load_presets()
+        self.settings = Settings(self)
+        self.toppane.insertWidget(self.toppane.count(), self.settings)
         
         '''
         Connect buttons on freeze menus
@@ -216,24 +224,27 @@ class MainWindow(QtWidgets.QMainWindow):
         return monitor
 
     def open_menu(self):
-        self.bottombar.setCurrentIndex(1)
+        self.bottombar.setCurrentWidget(self.menu)
 
     def open_toolbar(self):
-        self.bottombar.setCurrentIndex(0)
+        self.bottombar.setCurrentWidget(self.toolbar)
 
-    def show_settings(self):
-        self.open_toolbar()
-        self.settings.show()
+    def open_settings(self):
+        self.bottombar.setCurrentWidget(self.settingsbar)
+        self.toppane.setCurrentWidget(self.settings)
         self.settings.tabWidget.setFocus()
+
+    def open_main(self):
+        self.toppane.setCurrentWidget(self.main)
         
     def freeze_plots(self):
         self.data_filler.freeze()
-        self.rightbar.setCurrentIndex(1)
-        self.bottombar.setCurrentIndex(2)
+        self.rightbar.setCurrentWidget(self.frozen_right)
+        self.bottombar.setCurrentWidget(self.frozen_bot)
         
     def unfreeze_plots(self):
         self.data_filler.unfreeze()
-        self.rightbar.setCurrentIndex(0)
+        self.rightbar.setCurrentWidget(self.monitors_bar)
         self.open_menu()
 
     def closeEvent(self, event):

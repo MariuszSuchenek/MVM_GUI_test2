@@ -1,6 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QRect
-import sys
 
 class MVMToggle(QtWidgets.QPushButton):
     '''
