@@ -34,9 +34,14 @@ class StartStopWorker():
         """
         Opens an error window with 'message'.
         """
-        MessageBox().critical('** COMMUNICATION ERROR **',
-            'COMMUNICATION ERROR',
-            message)
+
+        # TODO: find a good exit point
+        msg = MessageBox()
+        msg.critical('COMMUNICATION ERROR',
+                     'Error communicating with the hardware', message,
+                     '** COMMUNICATION ERROR **', {msg.Ok: lambda:
+                         sys.exit(-1)})()
+
 
     def toggle_mode(self):
         """
@@ -98,8 +103,12 @@ class StartStopWorker():
     def confirm_stop_pressed(self):
         self.button_autoassist.setDown(False)
         currentMode = self.mode_text.upper()
-        ok = MessageBox().confirm('**STOPPING ' + currentMode + ' MODE**',
-                                   "Are you sure you want to STOP " + currentMode + " MODE?")
+        msg = MessageBox()
+        ok = msg.question("**STOPPING %s MODE**" % currentMode,
+                          "Are you sure you want to STOP %s MODE?" %
+                           currentMode,
+                           None, "IMPORTANT", { msg.Yes: lambda: True,
+                           msg.No: lambda: False })()
         return ok
 
 

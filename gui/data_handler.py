@@ -3,7 +3,6 @@ import sys, traceback
 import time
 import datetime
 from PyQt5.QtCore import QThreadPool
-from PyQt5.QtWidgets import QMessageBox
 from communication.threading_utils import Worker
 from messagebox import MessageBox
 
@@ -126,13 +125,18 @@ class DataHandler():
 
             if self._n_attempts > 10:
                 self._n_attempts = 0
-                callbacks = {QMessageBox.Retry: self.start_io_thread,
-                             QMessageBox.Abort: exit}
-                MessageBox().critical('COMMUNICATION ERROR', 
-                                      "CANNOT COMMUNICATE WITH ESP32",
-                                      "Check cable connections then click retry.",
-                                      callbacks,
-                                      QMessageBox.Retry)
+                msg = MessageBox()
+
+                # TODO: find a good exit point
+                callbacks = {msg.Retry: self.start_io_thread,
+                             msg.Abort: lambda: sys.exit(-1)}
+
+                fn = msg.critical("COMMUNICATION ERROR",
+                                  "CANNOT COMMUNICATE WITH THE HARDWARE",
+                                  "Check cable connections then click retry.",
+                                  "COMMUNICATION ERROR",
+                                  callbacks)
+                fn()
 
             time.sleep(0.05)
             self.start_io_thread()
