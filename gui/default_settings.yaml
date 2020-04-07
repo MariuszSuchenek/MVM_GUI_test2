@@ -110,7 +110,7 @@ mon_oxygen_concentration:
     step: 1
     dec_precision: 0
     units: "(%)"
-    color: "rgb(255,131,0)"
+    color: "rgb(255,255,255)"
     alarmcolor: "red"
     plot_var: o2
     location: None 
