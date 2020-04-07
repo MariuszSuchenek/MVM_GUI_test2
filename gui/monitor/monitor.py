@@ -34,6 +34,7 @@ class Monitor(QtWidgets.QWidget):
                 "dec_precision": 0,
                 "color": "white",
                 "alarmcolor": "red",
+                "plot_var": "o2",
                 "location": None}
         entry = self.config.get(name, monitor_default)
         # unpack and assign min, current, and max

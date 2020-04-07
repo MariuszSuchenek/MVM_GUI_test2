@@ -167,13 +167,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.toolsettings[name] = toolsettings
 
         '''
-        Set up data monitor/alarms (side bar)
+        Set up data monitor/alarms (side bar) and plots
 
         self.monitors[..] are the objects that hold monitor values and thresholds for alarm min
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
-        monitor_slot_names =[ 
+        monitor_slot_names = [ 
                 "monitor_top_slot",
                 "monitor_mid_slot",
                 "monitor_bot_slot"]
@@ -182,44 +182,40 @@ class MainWindow(QtWidgets.QMainWindow):
                 "mon_inspiratory_pressure", 
                 "mon_tidal_volume", 
                 "mon_flow",
-                "mon_oxygen_concentration",
-                "mon_test",
-                "mon_test2",
-                "mon_test3"]
+                "mon_oxygen_concentration"]
+
+        plot_slot_names = [
+                "plot_top_slot",
+                "plot_mid_slot",
+                "plot_bot_slot"]
+
         self.monitors = {}
         self.monitor_slots = {} 
+        self.plots = {};
+        self.plot_slots = {}
 
         # Get displayed monitor slots
         for barname in monitor_slot_names:
-            print(barname)
             self.monitor_slots[barname] = self.rightbar.findChild(QtWidgets.QGridLayout, barname)
+
+        # Get displayed plot slots
+        for barname in plot_slot_names:
+            self.plot_slots[barname] = self.main.findChild(QtWidgets.QGridLayout, barname)
     
-        # Get displayed monitors 
+        # Generate monitors and plots
         for name in monitor_names:
             monitor = Monitor(name, config)
             self.monitors[name] = monitor
+            plot = pg.PlotWidget()
+            self.plots[name] = plot
 
-        self.plots_settings.connect_monitors(self.monitors, self.monitor_slots)
-        self.plots_settings.populate_monitors()
+            # Make connections to data filler
+            self.data_filler.connect_monitor(name, monitor)
+            self.data_filler.connect_plot(name, plot)
+
+        self.plots_settings.connect_monitors_and_plots(self)
+        (self.active_monitors, self.active_plots) = self.plots_settings.populate_monitors_and_plots()
             
-        self.data_filler.connect_monitor(monitor_names[0], self.monitors)
-        self.data_filler.connect_monitor(monitor_names[1], self.monitors)
-        self.data_filler.connect_monitor(monitor_names[2], self.monitors)
-
-
-        '''
-        Set up plots (PyQtPlot)
-
-        self.plots[..] are the PyQtPlot objects.
-        '''
-        self.plots = [];
-        self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_top"))
-        self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_mid"))
-        self.plots.append(self.main.findChild(QtWidgets.QWidget, "plot_bot"))
-        self.data_filler.connect_plot(monitor_names[0], self.plots[0])
-        self.data_filler.connect_plot(monitor_names[1], self.plots[1])
-        self.data_filler.connect_plot(monitor_names[2], self.plots[2])
-
         '''
         Set up start/stop auto/min mode buttons.
 
@@ -247,8 +243,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Connect buttons on freeze menus
         '''
-        self.frozen_bot.connect_workers(self.data_filler, self.plots)
-        self.frozen_right.connect_workers(self.plots)
+        self.frozen_bot.connect_workers(self.data_filler, self.active_plots)
+        self.frozen_right.connect_workers(self.active_plots)
         
 
     def new_patient(self):

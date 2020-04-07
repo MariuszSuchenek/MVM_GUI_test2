@@ -14,16 +14,28 @@ class Alarms(QtWidgets.QWidget):
 
         self.layout = self.findChild(QtWidgets.QGridLayout, "monitors_layout")
 
-    def connect_monitors(self, monitors, monitor_slots):
-        self.monitors = monitors
-        self.monitor_slots = monitor_slots
+    def connect_monitors_and_plots(self, mainparent):
+        self.mainparent = mainparent
+        self.monitors = mainparent.monitors
+        self.monitor_slots = mainparent.monitor_slots
+        self.plots = mainparent.plots
+        self.plot_slots = mainparent.plot_slots
 
-    def populate_monitors(self):
+    def populate_monitors_and_plots(self):
+        # Get all active plots and monitors and put the remaining monitors on the alarms page
+        self.active_plots = []
+        self.active_monitors = []
         for (i, name) in enumerate(self.monitors):
             monitor = self.monitors[name]
+            plot = self.plots[name]
             self.layout.addWidget(self.monitors[name], int(i % 3), 10-int(i / 3)) 
-            for barname in self.monitor_slots:
-                monitor_slot = self.monitor_slots[barname]
-                if monitor.location == barname:
-                    self.monitor_slots[barname].addWidget(monitor, 0, 0)
+            for (mon_slotname, plot_slotname) in zip(self.monitor_slots, self.plot_slots):
+                monitor_slot = self.monitor_slots[mon_slotname]
+                if monitor.location == mon_slotname:
+                    self.monitor_slots[mon_slotname].addWidget(monitor, 0, 0)
+                    self.plot_slots[plot_slotname].addWidget(plot, 0, 0)
+                    self.active_monitors.append(monitor)
+                    self.active_plots.append(plot)
                     break
+
+        return (self.active_monitors, self.active_plots)
