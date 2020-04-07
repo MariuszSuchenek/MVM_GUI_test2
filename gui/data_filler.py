@@ -166,13 +166,13 @@ class DataFiller():
 
         plot.addItem(self._looping_lines[name])
 
-    def connect_monitor(self, monitor_name, monitor):
+    def connect_monitor(self, monitor_name, monitors):
         '''
         Connect a monitor to this class by
         storing it in a dictionary
         '''
         name = self._config[monitor_name]['plot_var']
-        self._monitors[name] = monitor
+        self._monitors[name] = monitors[monitor_name]
 
         print('NORMAL: Connected monitor', monitor_name, 'with variable', name)
 
