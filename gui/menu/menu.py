@@ -24,6 +24,7 @@ class Menu(QtWidgets.QWidget):
 
     def connect_datahandler_config(self, data_h, config):
         '''
+        Passes the data handler and the confi dict to this class.
         '''
         self._configured = True
         self._data_h = data_h
@@ -31,6 +32,8 @@ class Menu(QtWidgets.QWidget):
 
     def paused_pressed(self, mode):
         '''
+        Called when either the inspiration ot expiration pause
+        buttons are pressed.
         '''
         if not self._configured:
             raise Exception('Need to call connect_config_esp first.')
@@ -46,6 +49,8 @@ class Menu(QtWidgets.QWidget):
 
     def paused_released(self, mode):
         '''
+        Called when either the inspiration ot expiration pause
+        buttons are released.
         '''
         if not self._configured:
             raise Exception('Need to call connect_config_esp first.')
@@ -58,12 +63,14 @@ class Menu(QtWidgets.QWidget):
 
     def send_signal(self, mode):
         '''
+        Sends signal the appropriate signal the ESP
+        to pause inpiration or expiration. 
         '''
         if not self._data_h.set_data(mode, 1):
             msg = MessageBox()
             fn = msg.critical("Critical",
                               "Severe hardware communication error",
-                              "Cannot pause inspiration/expiration.", 
+                              "Cannot set %s to ESP32." % mode, 
                               "Communication error",
                               { msg.Ok: lambda: self.paused_released(mode) })
             fn()
