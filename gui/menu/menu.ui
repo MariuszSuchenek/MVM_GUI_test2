@@ -471,7 +471,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_settings">
+    <widget class="QPushButton" name="button_settingsfork">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -492,13 +492,12 @@
       </font>
      </property>
      <property name="text">
-      <string>Open
-Settings</string>
+      <string>Settings</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_alarms">
+    <widget class="QPushButton" name="button_inspause">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -519,12 +518,13 @@ Settings</string>
       </font>
      </property>
      <property name="text">
-      <string>Alarms</string>
+      <string>Inspir.
+Pause</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_pause">
+    <widget class="QPushButton" name="button_expause">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -545,7 +545,7 @@ Settings</string>
       </font>
      </property>
      <property name="text">
-      <string>Manual
+      <string>Expir.
 Pause</string>
      </property>
     </widget>

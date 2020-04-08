@@ -11,7 +11,6 @@ from menu.menu import Menu
 from settings.settingsbar import SettingsBar
 from alarms.alarms import Alarms
 from alarms.alarmsbar import AlarmsBar
-from menu.pausebar import PauseBar
 
 from toolsettings.toolsettings import ToolSettings
 from monitor.monitor import Monitor
@@ -56,14 +55,14 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the bottombar and child pages
         '''
-        self.bottombar   = self.findChild(QtWidgets.QStackedWidget, "bottombar")
-        self.toolbar     = self.findChild(QtWidgets.QWidget,        "toolbar")
-        self.menu        = self.findChild(QtWidgets.QWidget,        "menu")
-        self.frozen_bot  = self.findChild(QtWidgets.QWidget,        "frozenplots_bottom")
-        self.settingsbar = self.findChild(QtWidgets.QWidget,        "settingsbar")
-        self.blank       = self.findChild(QtWidgets.QWidget,        "blank")
-        self.pausebar    = self.findChild(QtWidgets.QWidget,        "pausebar")
-        self.alarmsbar   = self.findChild(QtWidgets.QWidget,        "alarmsbar")
+        self.bottombar       = self.findChild(QtWidgets.QStackedWidget, "bottombar")
+        self.toolbar         = self.findChild(QtWidgets.QWidget,        "toolbar")
+        self.menu            = self.findChild(QtWidgets.QWidget,        "menu")
+        self.frozen_bot      = self.findChild(QtWidgets.QWidget,        "frozenplots_bottom")
+        self.settingsbar     = self.findChild(QtWidgets.QWidget,        "settingsbar")
+        self.blank           = self.findChild(QtWidgets.QWidget,        "blank")
+        self.settingsfork    = self.findChild(QtWidgets.QWidget,        "settingsforkbar")
+        self.alarmsbar       = self.findChild(QtWidgets.QWidget,        "alarmsbar")
 
         '''
         Get the stackable bits on the right
@@ -98,17 +97,18 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get menu widgets and connect settings for the menu widget
         '''
-        self.button_back       = self.menu.findChild(QtWidgets.QPushButton, "button_back")
-        self.button_settings   = self.menu.findChild(QtWidgets.QPushButton, "button_settings")
-        self.button_pause      = self.menu.findChild(QtWidgets.QPushButton, "button_pause")
-        self.button_alarms     = self.menu.findChild(QtWidgets.QPushButton, "button_alarms")
-        self.button_freeze     = self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
-        self.button_startstop  = self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
-        self.button_autoassist = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
+        self.button_back         = self.menu.findChild(QtWidgets.QPushButton, "button_back")
+        self.button_settingsfork = self.menu.findChild(QtWidgets.QPushButton, "button_settingsfork")
+        self.button_freeze       = self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
+        self.button_startstop    = self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
+        self.button_autoassist   = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
+        self.button_inspause     = self.menu.findChild(QtWidgets.QPushButton, "button_inspause")
+        self.button_expause      = self.menu.findChild(QtWidgets.QPushButton, "button_expause")
 
-        self.button_backpause  = self.pausebar.findChild(QtWidgets.QPushButton, "button_backpause")
-        self.button_inspause   = self.pausebar.findChild(QtWidgets.QPushButton, "button_inspause")
-        self.button_expause    = self.pausebar.findChild(QtWidgets.QPushButton, "button_expause")
+        self.button_alarms       = self.settingsfork.findChild(QtWidgets.QPushButton, "button_alarms")
+        self.button_settings     = self.settingsfork.findChild(QtWidgets.QPushButton, "button_settings")
+        self.button_backsettings = self.settingsfork.findChild(QtWidgets.QPushButton, "button_backsettings")
+
 
         self.button_backalarms = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_backalarms")
 
@@ -133,14 +133,14 @@ class MainWindow(QtWidgets.QMainWindow):
         This effectively defines navigation from the bottombar.
         '''
         self.button_back.pressed.connect(self.show_toolbar)
-        self.button_backpause.pressed.connect(self.exit_pause)
+        self.button_backsettings.pressed.connect(self.show_menu)
         self.button_backalarms.pressed.connect(self.exit_alarms)
         self.button_menu.pressed.connect(self.show_menu)
         self.button_freeze.pressed.connect(self.freeze_plots)
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
         self.button_settings.pressed.connect(self.goto_settings)
         self.button_alarms.pressed.connect(self.goto_alarms)
-        self.button_pause.pressed.connect(self.goto_pause)
+        self.button_settingsfork.pressed.connect(self.show_settingsfork)
 
         '''
         Instantiate the DataFiller, which takes
@@ -284,12 +284,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_menu()
         self.show_plots()
 
-    def goto_pause(self):
-        self.show_pausebar()
-
-    def exit_pause(self):
-        self.show_menu()
-
     def show_settings(self):
         self.toppane.setCurrentWidget(self.settings)
         self.settings.tabWidget.setFocus()
@@ -309,8 +303,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_main(self):
         self.toppane.setCurrentWidget(self.main)
 
-    def show_pausebar(self):
-        self.bottombar.setCurrentWidget(self.pausebar)
+    def show_settingsfork(self):
+        self.bottombar.setCurrentWidget(self.settingsfork)
 
     def show_alarms(self):
         self.centerpane.setCurrentWidget(self.plots_settings)
