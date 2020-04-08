@@ -492,7 +492,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Mode
+      <string>Open
 Settings</string>
      </property>
     </widget>
@@ -519,8 +519,7 @@ Settings</string>
       </font>
      </property>
      <property name="text">
-      <string>Alarm
-Settings</string>
+      <string>Alarms</string>
      </property>
     </widget>
    </item>
