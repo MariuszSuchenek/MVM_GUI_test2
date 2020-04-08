@@ -21,8 +21,8 @@ void setup()
   Serial.begin(115200);
   Serial.setTimeout(50000);
 
-  random_measures = { "mve", "vti", "vte", "pressure", "bpm",
-                      "flow", "o2" };
+  random_measures = { "pressure", "bpm", "flow", "o2", "tidal", "peep",
+                      "temperature", "power_mode", "battery" };
 }
 
 // this is tricky, didn't had the time to think a better algo
@@ -52,10 +52,15 @@ String get(String const& command)
 
   if (name == "all") {
     return
-        String(random(10, 79)) + ","  // pessure
-      + String(random(3, 21)) + ","   // pressure
-      + String(random(10, 100)) + "," // o2
-      + String(random(12, 20));       // bpm
+        String(random(10, 79))     + "," // pressure
+      + String(random(3, 21))      + "," // flow
+      + String(random(10, 100))    + "," // o2
+      + String(random(12, 20))     + "," // bpm
+      + String(random(1000, 1500)) + "," // tidal
+      + String(random(4, 20))      + "," // peep
+      + String(random(10, 50))     + "," // temperature
+      + String(random(0, 1))       + "," // power_mode
+      + String(random(1, 100));          // battery
   }
 
   auto const it = std::find(

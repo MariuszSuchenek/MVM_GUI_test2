@@ -15,8 +15,9 @@ class FakeESP32Serial:
     def __init__(self):
         self.lock = Lock()
         self.set_params = {}
-        self.random_params = ["mve", "vti", "vte", "pressure", "flow",
-                              "o2", "bpm"]
+        self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
+                              "peep", "temperature", "power_mode",
+                              "battery" ]
 
     def set(self, name, value):
         """
@@ -29,6 +30,8 @@ class FakeESP32Serial:
 
         returns: an "OK" string in case of success.
         """
+
+        print("FakeESP32Serial-DEBUG: set %s %s" % (name, value))
 
         with self.lock:
             self.set_params[name] = value
@@ -43,6 +46,8 @@ class FakeESP32Serial:
 
         returns: the requested value
         """
+
+        print("FakeESP32Serial-DEBUG: get %s" % name)
 
         with self.lock:
             retval = 0
@@ -62,9 +67,15 @@ class FakeESP32Serial:
         strings.
         """
 
-        with self.lock:
-            return {"pressure": self.peep.pressure(),
-                    "flow":     self.peep.flow(),
-                    "o2":       random.uniform(10, 100),
-                    "bpm":      random.uniform(10, 100)}
+        print("FakeESP32Serial-DEBUG: get all")
 
+        with self.lock:
+            return {"pressure":    self.peep.pressure(),
+                    "flow":        self.peep.flow(),
+                    "o2":          random.uniform(10, 100),
+                    "bpm":         random.uniform(10, 100),
+                    "tidal":       random.uniform(1000, 1500),
+                    "peep":        random.uniform(4, 20),
+                    "temperature": random.uniform(10, 50),
+                    "power_mode":  int(random.uniform(0, 1.5)),
+                    "battery":     random.uniform(1, 100)}

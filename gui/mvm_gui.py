@@ -26,12 +26,11 @@ def connect_esp32(config):
         else:
             err_msg = "Cannot communicate with port %s" % config['port']
             esp32 = ESP32Serial(config['port'])
-            stop = False
     except Exception as error:
         msg = MessageBox()
         fn = msg.critical("Do you want to retry?",
                           "Severe hardware communication error",
-                          str(error), "Communication error",
+                          str(error) + err_msg, "Communication error",
                           { msg.Retry: lambda: connect_esp32(config),
                             msg.Abort: lambda: None})
         return fn()
