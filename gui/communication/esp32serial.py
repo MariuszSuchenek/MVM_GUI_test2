@@ -54,12 +54,13 @@ class ESP32Serial:
         - timeout        sets the read() timeout in seconds
         """
 
+        self.lock = Lock()
+
         baudrate = kwargs["baudrate"] if "baudrate" in kwargs else 115200
         timeout = kwargs["timeout"] if "timeout" in kwargs else 1
         self.term = kwargs["terminator"] if "terminator" in kwargs else b'\n'
         self.connection = serial.Serial(port=port, baudrate=baudrate,
                                         timeout=timeout, **kwargs)
-        self.lock = Lock()
 
         while self.connection.read():
             pass
@@ -72,7 +73,8 @@ class ESP32Serial:
         """
 
         with self.lock:
-            self.connection.close()
+            if hasattr(self, "connection"):
+                self.connection.close()
 
     def _parse(self, result):
         """
