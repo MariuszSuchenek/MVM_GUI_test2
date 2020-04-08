@@ -13,7 +13,6 @@ class Menu(QtWidgets.QWidget):
         super(Menu, self).__init__(*args)
         uic.loadUi("menu/menu.ui", self)
 
-        self._configured = False
 
         self.button_expause.pressed.connect(lambda: self.paused_pressed('pause_exhale'))
         self.button_expause.released.connect(lambda: self.paused_released('pause_exhale'))
@@ -26,16 +25,18 @@ class Menu(QtWidgets.QWidget):
         '''
         Passes the data handler and the confi dict to this class.
         '''
-        self._configured = True
         self._data_h = data_h
         self._config = config
+
+    def is_configured(self):
+        return hasattr(self, "_data_h") and hasattr(self, "_config")
 
     def paused_pressed(self, mode):
         '''
         Called when either the inspiration ot expiration pause
         buttons are pressed.
         '''
-        if not self._configured:
+        if not self.is_configured():
             raise Exception('Need to call connect_config_esp first.')
         if mode not in ['pause_exhale', 'pause_inhale']:
             raise Exception('Can only call paused_pressed with pause_exhale or pause_inhale.')
@@ -51,7 +52,7 @@ class Menu(QtWidgets.QWidget):
         Called when either the inspiration ot expiration pause
         buttons are released.
         '''
-        if not self._configured:
+        if not self.is_configured():
             raise Exception('Need to call connect_config_esp first.')
         if mode not in ['pause_exhale', 'pause_inhale']:
             raise Exception('Can only call paused_pressed with pause_exhale or pause_inhale.')
