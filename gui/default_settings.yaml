@@ -84,7 +84,7 @@ monitor_mid:
     units: "(ml)"
     color: "rgb(50,205,50)"
     alarmcolor: "red"
-    plot_var: volume
+    plot_var: tidal
 
 monitor_bot: 
     name: "MVe"

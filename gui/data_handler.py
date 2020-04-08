@@ -71,7 +71,7 @@ class DataHandler():
 
         while self._running:
             start = datetime.datetime.now()
-            
+
             # Get all params from ESP
             current_values = self._esp32.get_all()
 
@@ -79,38 +79,17 @@ class DataHandler():
             for p, v in current_values.items():
                 current_values[p] = float(v)
 
-            # some parameters need to be constructed, as they
-            # are not direclty available from the ESP:
-            self.construct_missing_params(current_values)
-
             # finally, emit for all the values we have:
             for p, v in current_values.items():
                 data_callback.emit(p, v)
 
             delta_secs = (datetime.datetime.now() - start).total_seconds()
             sleep_secs = max(0, self._config['sampling_interval'] - delta_secs)
-            
+
             # Sleep for some time...
             time.sleep(sleep_secs)
 
         return "Done."
-
-    def construct_missing_params(self, values):
-        '''
-        Constructs parameters than can be calculated
-        from those available in the ESP.
-        '''
-
-        # 1) Calculate Tidal Volume
-        # bpm is respiratory rate [1/minute]
-        # flow is respiratory minute volume [L/minute]
-        # we calculate tidal volume as
-        # volume = flow / bpm
-        if 'bpm' in values and 'flow' in values:
-            values['volume'] = values['flow'] / values['bpm'] * 1e3 # mL
-
-        # 2)
-
 
     def thread_complete(self):
         '''
