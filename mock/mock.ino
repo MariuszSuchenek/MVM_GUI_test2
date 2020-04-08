@@ -57,7 +57,7 @@ String get(String const& command)
       + String(random(12, 20))     + "," // bpm
       + String(random(1000, 1500)) + "," // tidal
       + String(random(4, 20))      + "," // peep
-      + String(random(10, 100))    + "," // temperature
+      + String(random(10, 50))     + "," // temperature
       + String(random(0, 1))       + "," // power_mode
       + String(random(1, 100));          // battery
   }
