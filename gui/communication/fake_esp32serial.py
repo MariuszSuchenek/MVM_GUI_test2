@@ -15,8 +15,9 @@ class FakeESP32Serial:
     def __init__(self):
         self.lock = Lock()
         self.set_params = {}
-        self.random_params = ["mve", "vti", "vte", "pressure", "flow",
-                              "o2", "bpm"]
+        self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
+                              "peep", "temperature", "power_mode",
+                              "battery" ]
 
     def set(self, name, value):
         """
