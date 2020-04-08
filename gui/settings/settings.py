@@ -171,8 +171,8 @@ class Settings(QtWidgets.QMainWindow):
             value_config = self._config[param]
 
             if param == 'enable_backup':
-                btn.setChecked(value_config)
-                self._current_values[param] = value_config
+                btn.setChecked(value_config['default'])
+                self._current_values[param] = value_config['default']
             elif param == 'insp_expir_ratio':
                 btn.setValue(1./value_config['default'])
                 btn.setMinimum(1./value_config['max'])
@@ -188,7 +188,7 @@ class Settings(QtWidgets.QMainWindow):
         self.toolsettings_lookup = {}
         self.toolsettings_lookup["respiratory_rate"] = self._toolsettings["toolsettings_1"]
         self.toolsettings_lookup["insp_expir_ratio"] = self._toolsettings["toolsettings_2"]
-        
+
         # setup the toolsettings with preset values
         self.toolsettings_lookup["respiratory_rate"].load_presets("respiratory_rate")
         self.toolsettings_lookup["insp_expir_ratio"].load_presets("insp_expir_ratio")
@@ -231,12 +231,12 @@ class Settings(QtWidgets.QMainWindow):
         Sends the currently set values to the ESP
         '''
         for param, btn in self._all_spinboxes.items():
-
             if param == 'enable_backup':
-                # TODO
-                continue
-
-            value = self._current_values[param]
+                value = int(self._current_values[param])
+            elif param == 'insp_expir_ratio':
+                value = 1. - 1. / self._current_values[param]
+            else:
+                value = self._current_values[param]
 
             if self._debug: print('Setting value of', param, ':', value)
 
@@ -258,7 +258,7 @@ class Settings(QtWidgets.QMainWindow):
             elif param == 'insp_expir_ratio':
                 self.toolsettings_lookup["insp_expir_ratio"].update(1/value)
 
-    
+
 
     def worker(self):
         '''
@@ -269,9 +269,9 @@ class Settings(QtWidgets.QMainWindow):
         for param, btn in self._all_spinboxes.items():
             if self.sender() == btn:
                 if param == 'enable_backup':
-                    self._current_values_temp[param] = btn.isChecked()
+                    self._current_values_temp[param] = int(btn.isChecked())
                 elif param == 'insp_expir_ratio':
-                    self._current_values_temp[param] = 1./btn.value()
+                    self._current_values_temp[param] = 1 - 1./btn.value()
                 else:
                     self._current_values_temp[param] = btn.value()
 
