@@ -64,8 +64,12 @@ class FakeESP32Serial:
         """
 
         with self.lock:
-            return {"pressure": self.peep.pressure(),
-                    "flow":     self.peep.flow(),
-                    "o2":       random.uniform(10, 100),
-                    "bpm":      random.uniform(10, 100)}
-
+            return {"pressure":    self.peep.pressure(),
+                    "flow":        self.peep.flow(),
+                    "o2":          random.uniform(10, 100),
+                    "bpm":         random.uniform(10, 100),
+                    "tidal":       random.uniform(1000, 1500),
+                    "peep":        random.uniform(4, 20),
+                    "temperature": random.uniform(10, 50),
+                    "power_mode":  int(random.uniform(0, 1.5)),
+                    "battery":     random.uniform(1, 100)}
