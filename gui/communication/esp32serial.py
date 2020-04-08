@@ -105,6 +105,8 @@ class ESP32Serial:
         returns: an "OK" string in case of success.
         """
 
+        print("ESP32Serial-DEBUG: set %s %s" % (name, value))
+
         with self.lock:
             # I know about Python 3.7 magic string formatting capability
             # but I don't really remember now the version running on
@@ -133,6 +135,8 @@ class ESP32Serial:
         returns: the requested value
         """
 
+        print("ESP32Serial-DEBUG: get %s" % name)
+
         with self.lock:
             command = 'get ' + name + '\r\n'
             self.connection.write(command.encode())
@@ -155,6 +159,8 @@ class ESP32Serial:
         returns: a dict with member keys as written above and values as
         strings.
         """
+
+        print("ESP32Serial-DEBUG: get all")
 
         with self.lock:
             self.connection.write(b"get all\r\n")

@@ -31,6 +31,8 @@ class FakeESP32Serial:
         returns: an "OK" string in case of success.
         """
 
+        print("FakeESP32Serial-DEBUG: set %s %s" % (name, value))
+
         with self.lock:
             self.set_params[name] = value
             return "OK"
@@ -44,6 +46,8 @@ class FakeESP32Serial:
 
         returns: the requested value
         """
+
+        print("FakeESP32Serial-DEBUG: get %s" % name)
 
         with self.lock:
             retval = 0
@@ -62,6 +66,8 @@ class FakeESP32Serial:
         returns: a dict with member keys as written above and values as
         strings.
         """
+
+        print("FakeESP32Serial-DEBUG: get all")
 
         with self.lock:
             return {"pressure":    self.peep.pressure(),
