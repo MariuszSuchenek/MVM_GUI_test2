@@ -6,7 +6,7 @@ from threading import Lock
 import serial # pySerial
 
 
-__all__ = ("ESP32Serial", "ESP32Exception")
+__all__ = ("ESP32Serial", "ESP32Exception", "ESP32Alarm")
 
 
 class ESP32Exception(Exception):
@@ -30,6 +30,22 @@ class ESP32Exception(Exception):
 
         super(ESP32Exception, self).__init__(
                 "ERROR in %s: line: '%s'; output: %s" % (verb, line, output))
+
+
+class ESP32Alarm:
+
+    def __init__(self, number):
+        self.number = number
+
+    def __bool__(self):
+        return True
+
+    def unpack(self):
+        return
+
+    def strerror(self, n):
+        return 'An error'
+
 
 
 class ESP32Serial:
