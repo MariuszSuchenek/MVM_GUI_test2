@@ -37,6 +37,15 @@ class FakeESP32Serial:
             self.set_params[name] = value
             return "OK"
 
+    def set_watchdog(self):
+        """
+        Set the watchdog polling command
+
+        returns: an "OK" string in case of success.
+        """
+
+        return self.set("watchdog_reset", 1)
+
     def get(self, name):
         """
         Get command wrapper

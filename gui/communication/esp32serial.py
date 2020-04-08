@@ -125,6 +125,15 @@ class ESP32Serial:
                     print("ERROR: set failing: %s %s" % (result.decode(), str(exc)))
             raise ESP32Exception("set", command, result.decode())
 
+    def set_watchdog(self):
+        """
+        Set the watchdog polling command
+
+        returns: an "OK" string in case of success.
+        """
+
+        return self.set("watchdog_reset", 1)
+
     def get(self, name):
         """
         Get command wrapper

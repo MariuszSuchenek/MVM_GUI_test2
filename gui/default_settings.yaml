@@ -1,6 +1,9 @@
 # The serial port to use:
 port: '/dev/cu.usbmodem143301'
 
+# watchdog reset interval time in seconds
+wdinterval: 1
+
 # Number of samples to display in the graphs:
 nsamples: 100
 
