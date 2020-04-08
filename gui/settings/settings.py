@@ -173,11 +173,6 @@ class Settings(QtWidgets.QMainWindow):
             if param == 'enable_backup':
                 btn.setChecked(value_config['default'])
                 self._current_values[param] = value_config['default']
-            elif param == 'insp_expir_ratio':
-                btn.setValue(1./value_config['default'])
-                btn.setMinimum(1./value_config['max'])
-                btn.setMaximum(1./value_config['min'])
-                self._current_values[param] = 1./value_config['default']
             else:
                 btn.setValue(value_config['default'])
                 btn.setMinimum(value_config['min'])
@@ -231,17 +226,20 @@ class Settings(QtWidgets.QMainWindow):
         Sends the currently set values to the ESP
         '''
         for param, btn in self._all_spinboxes.items():
+            # value is the variable to be sent to the hardware,
+            # so possibly converted from the settings
             if param == 'enable_backup':
                 value = int(self._current_values[param])
             elif param == 'insp_expir_ratio':
-                value = 1. - 1. / self._current_values[param]
+                i_over_e = 1. / self._current_values[param]
+                value = 1./(i_over_e + 1)
             else:
                 value = self._current_values[param]
 
             if self._debug: print('Setting value of', param, ':', value)
 
             # Update the value in the config file
-            self._config[param]['current'] = value
+            self._config[param]['current'] = self._current_values[param]
 
             # Set color to red until we know the value has been set.
             btn.setStyleSheet("color: red")
@@ -256,7 +254,7 @@ class Settings(QtWidgets.QMainWindow):
             if param == 'respiratory_rate':
                 self.toolsettings_lookup["respiratory_rate"].update(value)
             elif param == 'insp_expir_ratio':
-                self.toolsettings_lookup["insp_expir_ratio"].update(1/value)
+                self.toolsettings_lookup["insp_expir_ratio"].update(self._current_values[param])
 
 
 
@@ -270,8 +268,6 @@ class Settings(QtWidgets.QMainWindow):
             if self.sender() == btn:
                 if param == 'enable_backup':
                     self._current_values_temp[param] = int(btn.isChecked())
-                elif param == 'insp_expir_ratio':
-                    self._current_values_temp[param] = 1 - 1./btn.value()
                 else:
                     self._current_values_temp[param] = btn.value()
 
