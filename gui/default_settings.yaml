@@ -26,6 +26,10 @@ esp_settable_param:
 # This is the string returned by the ESP in case of success
 return_success_code: 'OK'
 
+# The interval used to send 1 to the ESP if expiration or espiration 
+# paused button is pressed (in seconds)
+expinsp_setinterval: 0.1 
+
 # Thickness of the lines drawn in the plots
 line_width: 1
 
