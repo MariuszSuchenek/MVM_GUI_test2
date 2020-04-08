@@ -14,7 +14,7 @@ class FakeESP32Serial:
     peep = peep()
     def __init__(self):
         self.lock = Lock()
-        self.set_params = {}
+        self.set_params = {"alarm": 0, "warning": 0}
         self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
                               "peep", "temperature", "power_mode",
                               "battery" ]
@@ -88,3 +88,42 @@ class FakeESP32Serial:
                     "temperature": random.uniform(10, 50),
                     "power_mode":  int(random.uniform(0, 1.5)),
                     "battery":     random.uniform(1, 100)}
+
+    def get_alarms(self):
+        """
+        Get the alarms from the ESP32
+
+        returns: a ESP32Alarm instance describing the possible alarms.
+        """
+
+        return ESP32Alarm(int(self.get("alarm")))
+
+    def get_warnings(self):
+        """
+        Get the warnings from the ESP32
+
+        returns: a ESP32Alarm instance describing the possible warnings.
+        """
+
+        return ESP32Alarm(int(self.get("warning")))
+
+    def reset_alarms(self):
+        """
+        Reset all the raised alarms in ESP32
+
+        returns: an "OK" string in case of success.
+        """
+
+        return self.set("alarm", 0)
+
+    def raise_alarm(self, alarm_type):
+        """
+        Raises an alarm in ESP32
+
+        arguments:
+        - alarm_type      an integer representing the alarm type
+
+        returns: an "OK" string in case of success.
+        """
+
+        return self.set("alarm", alarm_type)
