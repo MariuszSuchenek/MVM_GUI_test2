@@ -15,13 +15,12 @@ read_params: ['pressure', 'flow', 'o2', 'bpm', 'all']
 esp_settable_param:
     respiratory_rate:  'rate'
     insp_expir_ratio:  'ratio'
-    insp_pressure:     'TODO'
-    peep_auto:         'TODO'
+    insp_pressure:     'ptarget'
     pressure_trigger:  'assist_ptrigger'
     flow_trigger:      'assist_flow_min'
     support_pressure:  'TODO'
-    peep_assist:       'TODO'
-    minimal_resp_rate: 'TODO'
+    enable_backup:     'backup_enable'
+    minimal_resp_rate: 'backup_min_rate'
 
 
 # This is the string returned by the ESP in case of success
