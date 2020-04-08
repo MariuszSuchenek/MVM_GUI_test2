@@ -23,9 +23,11 @@ def connect_esp32(config):
             print('******* Simulating communication with ESP32')
             err_msg = "Cannot setup FakeESP32Serial"
             esp32 = FakeESP32Serial()
+            esp32.set("wdenable", 1)
         else:
             err_msg = "Cannot communicate with port %s" % config['port']
             esp32 = ESP32Serial(config['port'])
+            esp32.set("wdenable", 1)
     except Exception as error:
         msg = MessageBox()
         fn = msg.critical("Do you want to retry?",
@@ -55,4 +57,5 @@ if __name__ == "__main__":
     window = MainWindow(config, esp32)
     window.show()
     app.exec_()
+    esp32.set("wdenable", 0)
 
