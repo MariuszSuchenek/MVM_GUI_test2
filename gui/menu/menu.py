@@ -42,7 +42,7 @@ class Menu(QtWidgets.QWidget):
 
 
         self._timer = QtCore.QTimer(self)
-        self._timer.timeout.connect(lambda: self.send_signal(mode)) 
+        self._timer.timeout.connect(lambda: self.send_signal(mode=mode, pause=True)) 
         self._timer.start(self._config['expinsp_setinterval'])
 
 
@@ -59,13 +59,15 @@ class Menu(QtWidgets.QWidget):
         if hasattr(self, '_timer'):
             self._timer.stop()
 
+        self.send_signal(mode=mode, pause=False)
 
-    def send_signal(self, mode):
+
+    def send_signal(self, mode, pause):
         '''
         Sends signal the appropriate signal the ESP
         to pause inpiration or expiration. 
         '''
-        if not self._data_h.set_data(mode, 1):
+        if not self._data_h.set_data(mode, int(pause)):
             msg = MessageBox()
             fn = msg.critical("Critical",
                               "Severe hardware communication error",
