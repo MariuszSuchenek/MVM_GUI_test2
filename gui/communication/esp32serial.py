@@ -34,17 +34,57 @@ class ESP32Exception(Exception):
 
 class ESP32Alarm:
 
+    alarm_to_string = {
+        0: "Gas pressure too low",
+        1: "Gas pressure too high",
+        2: "Internal pressure too low (internal leakage)",
+        3: "Internal pressure too high",
+        4: "Out of battery power",
+        5: "Leakage in gas circuit",
+        6: "Obstruction in idraulic circuit",
+        7: "Partial obstruction in idraulic circuit",
+        31: "System failure",
+    }
+
     def __init__(self, number):
         self.number = number
 
     def __bool__(self):
-        return True
+        return self.number != 0
 
     def unpack(self):
-        return
+        bit_pos = 0
+        self.alarms = []
+
+        while self.number:
+            if self.number & 1:
+                self.alarms.append(bit_pos)
+
+            bit_pos += 1
+            self.number >>= 1
+
+        print('Found alarms', self.alarms)
+
+        return self.alarms
 
     def strerror(self, n):
-        return 'An error'
+        if not hasattr(self, 'alarms'):
+            self.unpack()
+
+        if n in self.alarm_to_string:
+            return self.alarm_to_string[n]
+        else:
+            return 'Unknown error'
+
+    def strerror_all(self):
+        if not hasattr(self, 'alarms'):
+            self.unpack()
+
+        str_error = []
+        for n in self.alarms:
+            str_error.append(self.strerror(n))
+
+        return str_error
 
 
 
@@ -80,6 +120,10 @@ class ESP32Serial:
 
         while self.connection.read():
             pass
+
+        a = ESP32Alarm(27)
+        for m in a.strerror_all():
+            print(m)
 
     def __del__(self):
         """
