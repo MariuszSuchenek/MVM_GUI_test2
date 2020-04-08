@@ -45,7 +45,6 @@ class Menu(QtWidgets.QWidget):
         self._timer.timeout.connect(lambda: self.send_signal(mode)) 
         self._timer.start(self._config['expinsp_setinterval'])
 
-        print('hi!')
 
     def paused_released(self, mode):
         '''
