@@ -41,8 +41,9 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.toppane    = self.findChild(QtWidgets.QStackedWidget, "toppane")
         self.main       = self.findChild(QtWidgets.QWidget,        "main")
-        self.settings   = self.findChild(QtWidgets.QWidget,        "settings")
+        self.initial    = self.findChild(QtWidgets.QWidget,        "initial")
         self.startup    = self.findChild(QtWidgets.QWidget,        "startup")
+        self.settings   = self.findChild(QtWidgets.QWidget,        "settings")
 
 
         '''
@@ -72,10 +73,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.frozen_right = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
 
         '''
-        Get startup buttons
+        Get initial and startup buttons
         '''
-        self.button_new_patient    = self.startup.findChild(QtWidgets.QPushButton, "button_new_patient")
-        self.button_resume_patient = self.startup.findChild(QtWidgets.QPushButton, "button_resume_patient")
+        self.button_new_patient    = self.initial.findChild(QtWidgets.QPushButton, "button_new_patient")
+        self.button_resume_patient = self.initial.findChild(QtWidgets.QPushButton, "button_resume_patient")
+        self.button_start_settings = self.startup.findChild(QtWidgets.QPushButton, "button_start_settings")
+        self.button_start_vent     = self.startup.findChild(QtWidgets.QPushButton, "button_start_vent")
+        self.button_start_test     = self.startup.findChild(QtWidgets.QPushButton, "button_start_test")
 
         '''
         Get toolbar widgets
@@ -114,10 +118,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_unfreeze =   self.frozen_bot.findChild(QtWidgets.QPushButton, "button_unfreeze")
 
         '''
-        Connect startup buttons
+        Connect initial startup buttons
         '''
-        self.button_resume_patient.pressed.connect(self.resume_patient)
-        self.button_new_patient.pressed.connect(self.new_patient)
+        self.button_resume_patient.pressed.connect(self.goto_resume_patient)
+        self.button_new_patient.pressed.connect(self.goto_new_patient)
+        self.button_start_vent.pressed.connect(self.goto_main)
+        # TODO: connect to circuit test on ESP
+        # self.button_start_test.pressed.connect()
+        self.button_start_settings.pressed.connect(self.goto_settings)
 
         '''
         Connect back and menu buttons to toolbar and menu
@@ -248,17 +256,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.frozen_right.connect_workers(self.active_plots)
 
 
-    def new_patient(self):
-        self.show_toolbar()
-        self.show_main()
+    def goto_new_patient(self):
+        # TODO : implement start from default_settings
+        self.show_startup()
 
-    def resume_patient(self):
-        self.show_toolbar()
-        self.show_main()
+    def goto_resume_patient(self):
+        # TODO : implement start from current_settings.json
+        self.show_startup()
 
     def goto_settings(self):
         self.show_settings()
         self.show_settingsbar()
+
+    def goto_main(self):
+        self.show_main()
+        self.show_toolbar()
 
     def exit_settings(self):
         self.show_main()
@@ -281,6 +293,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_settings(self):
         self.toppane.setCurrentWidget(self.settings)
         self.settings.tabWidget.setFocus()
+
+    def show_startup(self):
+        self.toppane.setCurrentWidget(self.startup)
 
     def show_menu(self):
         self.bottombar.setCurrentWidget(self.menu)
