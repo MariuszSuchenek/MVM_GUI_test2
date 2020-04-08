@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import yaml
-import copy 
+import copy
 
 from presets.presets import Presets
 
@@ -33,12 +33,10 @@ class Settings(QtWidgets.QMainWindow):
             'respiratory_rate':  self.spinBox_rr,
             'insp_expir_ratio':  self.spinBox_insp_expir_ratio,
             'insp_pressure':     self.spinBox_insp_pressure,
-            'peep_auto':         self.spinBox_peep_auto,
             # Assist
             'pressure_trigger':  self.spinBox_pressure_trigger,
             'flow_trigger':      self.spinBox_flow_trigger,
             'support_pressure':  self.spinBox_support_pressure,
-            'peep_assist':       self.spinBox_peep_assist,
             'minimal_resp_rate': self.spinBox_min_resp_rate,
             'enable_backup':     self.toggle_enable_backup,
         }
@@ -48,12 +46,10 @@ class Settings(QtWidgets.QMainWindow):
             'respiratory_rate': self.fake_btn_rr,
             'insp_expir_ratio': self.fake_btn_ie,
             'insp_pressure':    self.fake_btn_insp_pressure,
-            'peep_auto':        self.fake_btn_peep_auto,
             # Assist
             'pressure_trigger':  self.fake_btn_pr_trigger,
             'flow_trigger':      self.fake_btn_flow_trig,
             'support_pressure':  self.fake_btn_support_pressure,
-            'peep_assist':       self.fake_btn_peep_assist,
             'minimal_resp_rate': self.fake_btn_min_resp_rate,
         }
 
@@ -67,7 +63,6 @@ class Settings(QtWidgets.QMainWindow):
         self.load_presets()
 
     def spawn_presets_window(self, name):
-
         presets = self._config[name]['presets']
 
         self._current_preset_name = name
@@ -152,13 +147,11 @@ class Settings(QtWidgets.QMainWindow):
         self._all_fakebtn['respiratory_rate'].clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
         self._all_fakebtn['insp_expir_ratio'].clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
         self._all_fakebtn['insp_pressure'].clicked.connect(lambda: self.spawn_presets_window('insp_pressure'))
-        self._all_fakebtn['peep_auto'].clicked.connect(lambda: self.spawn_presets_window('peep_auto'))
 
         # Assist
         self._all_fakebtn['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
         self._all_fakebtn['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
         self._all_fakebtn['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
-        self._all_fakebtn['peep_assist'].clicked.connect(lambda: self.spawn_presets_window('peep_assist'))
         self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
 
         for param, btn in self._all_spinboxes.items():
@@ -277,7 +270,6 @@ class Settings(QtWidgets.QMainWindow):
             if self.sender() == btn:
                 if param == 'enable_backup':
                     self._current_values_temp[param] = btn.isChecked()
-                    pass
                 elif param == 'insp_expir_ratio':
                     self._current_values_temp[param] = 1./btn.value()
                 else:
