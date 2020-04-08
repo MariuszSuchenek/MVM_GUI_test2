@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
+
+def clickable(widget):
+    class Filter(QtCore.QObject):
+        clicked = QtCore.pyqtSignal()
+        def eventFilter(self, obj, event):
+            if obj == widget:
+                if event.type() == QtCore.QEvent.MouseButtonRelease:
+                    if obj.rect().contains(event.pos()):
+                        self.clicked.emit()
+                        return True
+            return False
+    filter = Filter(widget)
+    widget.installEventFilter(filter)
+    return filter.clicked
 
 class Alarms(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -22,6 +36,40 @@ class Alarms(QtWidgets.QWidget):
         self.plot_slots = mainparent.plot_slots
         self.plot_hidden_slots = mainparent.plot_hidden_slots
 
+        # connect monitors to selection and alarm clearing slots
+        for name in self.monitors:
+            monitor = self.monitors[name]
+            clickable(monitor).connect(lambda n=name: self.select_monitor(n))
+
+    def select_monitor(self, selected):
+        for name in self.monitors:
+            monitor = self.monitors[name]
+            if name == selected:
+                self.selected = name
+                monitor.clear_alarm()
+                # Show configuration and highlight monitor
+                if monitor.config_mode:
+                    monitor.highlight()
+                    self.show_settings(name)
+            elif monitor.config_mode:
+                monitor.unhighlight()
+
+    def unhighlight_monitors(self):
+        for name in self.monitors:
+            self.monitors[name].unhighlight()
+
+    def show_settings(self, name):
+        print(self.selected)
+
+    def apply_selected(self):
+        print(self.selected)
+
+    def reset_selected(self):
+        print(self.selected)
+
+    def display_selected(self, slotname):
+        print(self.selected + " to " + slotname)
+
     def populate_monitors_and_plots(self):
         # Get all active plots and monitors and put the remaining monitors on the alarms page
         self.active_plots = []
@@ -41,3 +89,14 @@ class Alarms(QtWidgets.QWidget):
                     break
 
         return (self.active_monitors, self.active_plots)
+
+    def config_monitors(self):
+        for name in self.monitors:
+            self.monitors[name].config_mode = True
+
+    def deconfig_monitors(self):
+        for name in self.monitors:
+            self.monitors[name].config_mode = False
+
+
+

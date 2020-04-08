@@ -23,6 +23,7 @@ class Monitor(QtWidgets.QWidget):
         self.label_statvalues = [];
         self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue1"))
         self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue2"))
+        self.frame = self.findChild(QtWidgets.QFrame, "frame")
 
         monitor_default = {
                 "name": "NoName",
@@ -63,11 +64,12 @@ class Monitor(QtWidgets.QWidget):
         self.alarmcolor = alarmcolor
         self.update(self.value)
 
+        # Setup config mode
+        self.config_mode = False
+        self.unhighlight()
+
         # Handle optional stats
         # TODO: determine is stats are useful/necessary
-
-        # Set up connections
-        self.mouseReleaseEvent = self.clear_alarm
 
         self.setAutoFillBackground(True)
 
@@ -106,7 +108,7 @@ class Monitor(QtWidgets.QWidget):
             palette.setColor(role, QtGui.QColor(self.alarmcolor))
             self.setPalette(palette)
 
-    def clear_alarm(self, event):
+    def clear_alarm(self):
         """
         Clears previous out of range alarms by reverting the background color.
         """
@@ -120,3 +122,11 @@ class Monitor(QtWidgets.QWidget):
         Returns true if the monitored value is beyond the min or max threshold (i.e ALARM!).
         """
         return self.value <= self.minimum or self.value >= self.maximum
+
+    def highlight(self):
+        self.frame.setStyleSheet("#frame { border: 5px solid limegreen; }");
+
+    def unhighlight(self):
+        self.frame.setStyleSheet("#frame { border: 1px solid white; }");
+
+        

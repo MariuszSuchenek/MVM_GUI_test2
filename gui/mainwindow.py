@@ -112,6 +112,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         self.button_backalarms = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_backalarms")
+        self.button_applyalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_applyalarm")
+        self.button_resetalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_resetalarm")
+        self.button_topalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_topalarm")
+        self.button_midalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_midalarm")
+        self.button_botalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_botalarm")
 
         '''
         Get frozen plots bottom bar widgets and connect
@@ -134,14 +139,16 @@ class MainWindow(QtWidgets.QMainWindow):
         This effectively defines navigation from the bottombar.
         '''
         self.button_back.pressed.connect(self.show_toolbar)
-        self.button_backsettings.pressed.connect(self.show_menu)
-        self.button_backalarms.pressed.connect(self.exit_alarms)
         self.button_menu.pressed.connect(self.show_menu)
         self.button_freeze.pressed.connect(self.freeze_plots)
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
-        self.button_settings.pressed.connect(self.goto_settings)
         self.button_alarms.pressed.connect(self.goto_alarms)
         self.button_settingsfork.pressed.connect(self.show_settingsfork)
+
+        self.button_settings.pressed.connect(self.goto_settings)
+        self.button_backsettings.pressed.connect(self.show_menu)
+
+        self.button_backalarms.pressed.connect(self.exit_alarms)
 
         '''
         Instantiate the DataFiller, which takes
@@ -227,6 +234,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.plots_settings.connect_monitors_and_plots(self)
         self.update_monitors_and_plots()
+        self.button_applyalarm.pressed.connect(self.plots_settings.apply_selected)
+        self.button_resetalarm.pressed.connect(self.plots_settings.reset_selected)
+        self.button_topalarm.pressed.connect(lambda slotname=plot_slot_names[0]:
+                self.plots_settings.display_selected(slotname))
+        self.button_midalarm.pressed.connect(lambda slotname=plot_slot_names[1]:
+                self.plots_settings.display_selected(slotname))
+        self.button_botalarm.pressed.connect(lambda slotname=plot_slot_names[2]:
+                self.plots_settings.display_selected(slotname))
             
         '''
         Set up start/stop auto/min mode buttons.
@@ -283,10 +298,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def goto_alarms(self):
         self.show_alarms()
         self.show_alarmsbar()
+        self.plots_settings.config_monitors()
 
     def exit_alarms(self):
         self.show_menu()
         self.show_plots()
+        self.plots_settings.deconfig_monitors()
 
     def show_settings(self):
         self.toppane.setCurrentWidget(self.settings)
