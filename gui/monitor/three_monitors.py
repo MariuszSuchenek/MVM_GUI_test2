@@ -13,5 +13,3 @@ class ThreeMonitors(QtWidgets.QWidget):
         super(ThreeMonitors, self).__init__(*args)
         uic.loadUi("monitor/three_monitors.ui", self)
 
-        self.show()
-

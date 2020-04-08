@@ -54,10 +54,11 @@ class ESP32Serial:
         - timeout        sets the read() timeout in seconds
         """
 
+        self.lock = Lock()
+
         baudrate = kwargs["baudrate"] if "baudrate" in kwargs else 115200
         timeout = kwargs["timeout"] if "timeout" in kwargs else 1
         self.term = kwargs["terminator"] if "terminator" in kwargs else b'\n'
-        self.lock = Lock()
         self.connection = serial.Serial(port=port, baudrate=baudrate,
                                         timeout=timeout, **kwargs)
 
@@ -70,8 +71,9 @@ class ESP32Serial:
 
         Closes the connection.
         """
-        if hasattr(self, "connection"):
-            with self.lock:
+
+        with self.lock:
+            if hasattr(self, "connection"):
                 self.connection.close()
 
     def _parse(self, result):
@@ -103,6 +105,8 @@ class ESP32Serial:
         returns: an "OK" string in case of success.
         """
 
+        print("ESP32Serial-DEBUG: set %s %s" % (name, value))
+
         with self.lock:
             # I know about Python 3.7 magic string formatting capability
             # but I don't really remember now the version running on
@@ -131,6 +135,8 @@ class ESP32Serial:
         returns: the requested value
         """
 
+        print("ESP32Serial-DEBUG: get %s" % name)
+
         with self.lock:
             command = 'get ' + name + '\r\n'
             self.connection.write(command.encode())
@@ -154,6 +160,8 @@ class ESP32Serial:
         strings.
         """
 
+        print("ESP32Serial-DEBUG: get all")
+
         with self.lock:
             self.connection.write(b"get all\r\n")
 
@@ -163,9 +171,11 @@ class ESP32Serial:
                 retry -= 1
                 try:
                     result = self.connection.read_until(terminator=self.term)
-                    pressure, flow, o2, bpm = self._parse(result).split(',')
+                    pressure, flow, o2, bpm, tidal, peep, temperature, power_mode, battery = self._parse(result).split(',')
                     return { "pressure": pressure, "flow": flow, "o2": o2,
-                             "bpm": bpm }
+                             "bpm": bpm, "tidal": tidal, "peep": peep,
+                             "temperature": temperature,
+                             "power_mode": power_mode, "battery": battery }
                 except Exception as exc:
                     print("ERROR: get failing: %s %s" % (result.decode(), str(exc)))
             raise ESP32Exception("get", "get all", result.decode())
