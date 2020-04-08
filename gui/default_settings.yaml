@@ -252,4 +252,9 @@ minimal_resp_rate:
 
 
 # Enable backup
-enable_backup: True
+enable_backup: 
+  default: 1
+  current: None
+  presets:
+    - [1, "Enabled"]
+    - [0, "Disabled"]
