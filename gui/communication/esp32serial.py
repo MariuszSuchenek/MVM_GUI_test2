@@ -35,6 +35,7 @@ class ESP32Exception(Exception):
 class ESP32Alarm:
 
     alarm_to_string = {
+        # From the ESP
         0: "Gas pressure too low",
         1: "Gas pressure too high",
         2: "Internal pressure too low (internal leakage)",
@@ -43,6 +44,22 @@ class ESP32Alarm:
         5: "Leakage in gas circuit",
         6: "Obstruction in idraulic circuit",
         7: "Partial obstruction in idraulic circuit",
+        # From the GUI
+        8: "Pressure to patient mouth too low",
+        9: "Pressure to patient mouth too high",
+        10: "Inpiratory flux too low",
+        11: "Inpiratory flux too high",
+        12: "Expiratory flux too low",
+        13: "Expiratory flux too high",
+        14: "Tidal volume too low",
+        15: "Tidal volume too high",
+        16: "O2 too low",
+        17: "O2 too high",
+        18: "PEEP too low",
+        19: "PEEP too high",
+        20: "Respiratory rate too low",
+        21: "Respiratory rate too high",
+        
         31: "System failure",
     }
 
