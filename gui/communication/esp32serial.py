@@ -163,9 +163,11 @@ class ESP32Serial:
                 retry -= 1
                 try:
                     result = self.connection.read_until(terminator=self.term)
-                    pressure, flow, o2, bpm = self._parse(result).split(',')
+                    pressure, flow, o2, bpm, tidal, peep, temperature, power_mode, battery = self._parse(result).split(',')
                     return { "pressure": pressure, "flow": flow, "o2": o2,
-                             "bpm": bpm }
+                             "bpm": bpm, "tidal": tidal, "peep": peep,
+                             "temperature": temperature,
+                             "power_mode": power_mode, "battery": battery }
                 except Exception as exc:
                     print("ERROR: get failing: %s %s" % (result.decode(), str(exc)))
             raise ESP32Exception("get", "get all", result.decode())
