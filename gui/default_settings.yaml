@@ -158,19 +158,19 @@ insp_pressure:
         - [30, '']
 
 # PEEP (auto mode)
-peep_auto:
-    name: "PEEP (Auto)"
-    default:  7.5
-    min: 0
-    max: 20
-    current: None
-    units: "mbar"
-    presets:
-        - [2, '']
-        - [5, '']
-        - [7.5, '']
-        - [10, '']
-        - [15, '']
+#peep_auto:
+#    name: "PEEP (Auto)"
+#    default:  7.5
+#    min: 0
+#    max: 20
+#    current: None
+#    units: "mbar"
+#    presets:
+#        - [2, '']
+#        - [5, '']
+#        - [7.5, '']
+#        - [10, '']
+#        - [15, '']
 
 
 #
@@ -224,19 +224,19 @@ support_pressure:
         - [30, '']
 
 # PEEP Assist
-peep_assist:
-    name: "PEEP (Assist)"
-    default: 7.5
-    min: 0.
-    max: 20.
-    current: None
-    units: "mbar"
-    presets:
-        - [2, '']
-        - [5, '']
-        - [7.5, '']
-        - [10, '']
-        - [15, '']
+#peep_assist:
+#    name: "PEEP (Assist)"
+#    default: 7.5
+#    min: 0.
+#    max: 20.
+#    current: None
+#    units: "mbar"
+#    presets:
+#        - [2, '']
+#        - [5, '']
+#        - [7.5, '']
+#        - [10, '']
+#        - [15, '']
 
 # Minimal Respiratory Rate
 minimal_resp_rate:
