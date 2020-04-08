@@ -54,6 +54,10 @@ if __name__ == "__main__":
     if esp32 is None:
         exit(-1)
 
+    watchdog = QtCore.QTimer()
+    watchdog.timeout.connect(esp32.set_watchdog)
+    watchdog.start(config["wdinterval"] * 1000)
+
     window = MainWindow(config, esp32)
     window.show()
     app.exec_()
