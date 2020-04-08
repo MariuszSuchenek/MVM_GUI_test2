@@ -4,6 +4,7 @@ import time
 import datetime
 from PyQt5.QtCore import QThreadPool
 from communication.threading_utils import Worker
+from messagebox import MessageBox
 
 class DataHandler():
     '''
@@ -71,7 +72,7 @@ class DataHandler():
 
         while self._running:
             start = datetime.datetime.now()
-            
+
             # Get all params from ESP
             current_values = self._esp32.get_all()
 
@@ -89,7 +90,7 @@ class DataHandler():
 
             delta_secs = (datetime.datetime.now() - start).total_seconds()
             sleep_secs = max(0, self._config['sampling_interval'] - delta_secs)
-            
+
             # Sleep for some time...
             time.sleep(sleep_secs)
 
@@ -120,9 +121,24 @@ class DataHandler():
         if self._running:
             print("\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
             self._n_attempts += 1
-            if self._n_attempts > 100:
-                raise Exception('Failed to communicate with ESP after 100 attempts.')
             self._running = False
+
+            if self._n_attempts > 10:
+                self._n_attempts = 0
+                msg = MessageBox()
+
+                # TODO: find a good exit point
+                callbacks = {msg.Retry: self.start_io_thread,
+                             msg.Abort: lambda: sys.exit(-1)}
+
+                fn = msg.critical("COMMUNICATION ERROR",
+                                  "CANNOT COMMUNICATE WITH THE HARDWARE",
+                                  "Check cable connections then click retry.",
+                                  "COMMUNICATION ERROR",
+                                  callbacks)
+                fn()
+
+            time.sleep(0.05)
             self.start_io_thread()
 
     def start_io_thread(self):

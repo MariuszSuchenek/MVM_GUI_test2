@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from messagebox import MessageBox
 
 
 class StartStopWorker():
@@ -34,12 +34,14 @@ class StartStopWorker():
         """
         Opens an error window with 'message'.
         """
-        confirmation = QtWidgets.QMessageBox.critical(
-            self.main_window,
-            '** COMMUNICATION ERROR **',
-            '** COMMUNICATION ERROR **\n' + message,
-            QtWidgets.QMessageBox.Ok,
-            QtWidgets.QMessageBox.Cancel)
+
+        # TODO: find a good exit point
+        msg = MessageBox()
+        msg.critical('COMMUNICATION ERROR',
+                     'Error communicating with the hardware', message,
+                     '** COMMUNICATION ERROR **', {msg.Ok: lambda:
+                         sys.exit(-1)})()
+
 
     def toggle_mode(self):
         """
@@ -101,13 +103,13 @@ class StartStopWorker():
     def confirm_stop_pressed(self):
         self.button_autoassist.setDown(False)
         currentMode = self.mode_text.upper()
-        confirmation = QtWidgets.QMessageBox.warning(
-            self.main_window,
-            '**STOPPING ' + currentMode + ' MODE**',
-            "Are you sure you want to STOP " + currentMode + " MODE?",
-            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
-            QtWidgets.QMessageBox.Cancel)
-        return confirmation == QtWidgets.QMessageBox.Ok
+        msg = MessageBox()
+        ok = msg.question("**STOPPING %s MODE**" % currentMode,
+                          "Are you sure you want to STOP %s MODE?" %
+                           currentMode,
+                           None, "IMPORTANT", { msg.Yes: lambda: True,
+                           msg.No: lambda: False })()
+        return ok
 
 
     def button_timeout(self):
