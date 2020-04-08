@@ -168,4 +168,4 @@ class ESP32Serial:
                              "bpm": bpm }
                 except Exception as exc:
                     print("ERROR: get failing: %s %s" % (result.decode(), str(exc)))
-            raise ESP32Exception("get", command, result.decode())
+            raise ESP32Exception("get", "get all", result.decode())
