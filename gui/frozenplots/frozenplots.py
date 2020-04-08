@@ -23,10 +23,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.button_reset_zoom.pressed.connect(data_filler.reset_zoom)
         
         # X axes are linked, so only need to manipulate 1 plot
-        try:
-            self.xzoom.connect_workers(plots[0].getPlotItem())
-        except:
-            pass
+        self.xzoom.connect_workers(plots[0].getPlotItem())
 
 class FrozenPlotsRightMenu(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -47,12 +44,9 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         Connect Y zoom workers. There are 3 widgets, each controlling
         a separate plot.
         '''
-        try:
-            self.yzoom_top.connect_workers(plots[0].getPlotItem())
-            self.yzoom_mid.connect_workers(plots[1].getPlotItem())
-            self.yzoom_bot.connect_workers(plots[2].getPlotItem())
-        except:
-            pass
+        self.yzoom_top.connect_workers(plots[0].getPlotItem())
+        self.yzoom_mid.connect_workers(plots[1].getPlotItem())
+        self.yzoom_bot.connect_workers(plots[2].getPlotItem())
     
 class YZoom(QtWidgets.QWidget):
     def __init__(self, *args):

@@ -20,6 +20,7 @@ class Alarms(QtWidgets.QWidget):
         self.monitor_slots = mainparent.monitor_slots
         self.plots = mainparent.plots
         self.plot_slots = mainparent.plot_slots
+        self.plot_hidden_slots = mainparent.plot_hidden_slots
 
     def populate_monitors_and_plots(self):
         # Get all active plots and monitors and put the remaining monitors on the alarms page
@@ -28,7 +29,8 @@ class Alarms(QtWidgets.QWidget):
         for (i, name) in enumerate(self.monitors):
             monitor = self.monitors[name]
             plot = self.plots[name]
-            self.layout.addWidget(self.monitors[name], int(i % 3), 10-int(i / 3)) 
+            self.layout.addWidget(monitor, int(i % 3), 10-int(i / 3)) 
+            self.plot_hidden_slots.addWidget(plot, i)
             for (mon_slotname, plot_slotname) in zip(self.monitor_slots, self.plot_slots):
                 monitor_slot = self.monitor_slots[mon_slotname]
                 if monitor.location == mon_slotname:

@@ -25,7 +25,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -38,28 +41,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <property name="horizontalSpacing">
-    <number>0</number>
-   </property>
-   <item row="0" column="1">
-    <widget class="QStackedWidget" name="rightbar">
-     <property name="minimumSize">
-      <size>
-       <width>160</width>
-       <height>390</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>160</width>
-       <height>390</height>
-      </size>
-     </property>
-     <widget class="ThreeMonitors" name="three_monitors"/>
-     <widget class="FrozenPlotsRightMenu" name="frozenplots_right"/>
-    </widget>
-   </item>
-   <item row="0" column="0">
+   <item>
     <widget class="QStackedWidget" name="centerpane">
      <widget class="QWidget" name="plots_all">
       <layout class="QGridLayout" name="gridLayout_5">
@@ -90,6 +72,50 @@
       </layout>
      </widget>
      <widget class="Alarms" name="plots_settings"/>
+     <widget class="QWidget" name="plots_hidden">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" name="plot_hidden_slots">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="rightbar">
+     <property name="minimumSize">
+      <size>
+       <width>160</width>
+       <height>390</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>160</width>
+       <height>390</height>
+      </size>
+     </property>
+     <widget class="ThreeMonitors" name="three_monitors"/>
+     <widget class="FrozenPlotsRightMenu" name="frozenplots_right"/>
     </widget>
    </item>
   </layout>

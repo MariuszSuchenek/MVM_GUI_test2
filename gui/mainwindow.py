@@ -48,9 +48,10 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the center pane (plots) widgets
         '''
-        self.centerpane      = self.findChild(QtWidgets.QStackedWidget, "centerpane")
-        self.plots_all       = self.findChild(QtWidgets.QWidget,        "plots_all")
-        self.plots_settings  = self.findChild(QtWidgets.QWidget,        "plots_settings")
+        self.centerpane         = self.findChild(QtWidgets.QStackedWidget, "centerpane")
+        self.plots_all          = self.findChild(QtWidgets.QWidget,        "plots_all")
+        self.plots_settings     = self.findChild(QtWidgets.QWidget,        "plots_settings")
+        self.plot_hidden_slots  = self.findChild(QtWidgets.QVBoxLayout,    "plot_hidden_slots")
 
         '''
         Get the bottombar and child pages

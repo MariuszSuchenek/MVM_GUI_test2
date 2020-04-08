@@ -82,6 +82,9 @@ class DataFiller():
         if self._looping:
             self.add_looping_lines(name, plot)
 
+        # Fix the x axis range
+        self.set_default_x_range(name)
+
         # Fix the y axis range
         value_min = self._config[monitor_name]['min']
         value_max = self._config[monitor_name]['max']
@@ -102,6 +105,13 @@ class DataFiller():
         specified in the config file.
         '''
         self._qtgraphs[name].setYRange(self._default_ranges[name][0], self._default_ranges[name][1])
+
+    def set_default_x_range(self, name):
+        '''
+        Set the Y axis range of the plot to the defaults 
+        specified in the config file.
+        '''
+        self._qtgraphs[name].setXRange(-10, 0)
 
     def add_x_axis_label(self, plot):
         '''
@@ -241,13 +251,14 @@ class DataFiller():
         plots.
         '''
         self._frozen = False
-        self.reset_zoom()
         
         for name in self._plots.keys():
             self.update_plot(name)
         
         for plot in self._qtgraphs.values():
             plot.setMouseEnabled(x=False, y=False)
+
+        self.reset_zoom()
 
     def reset_zoom(self):
         '''
@@ -256,7 +267,7 @@ class DataFiller():
         custom values used for Y range.
         '''
         for name, plot in self._qtgraphs.items():
-            plot.autoRange()
+            self.set_default_x_range(name)
             self.set_default_y_range(name)
 
     def update_monitor(self, name):
