@@ -21,7 +21,8 @@ void setup()
   Serial.begin(115200);
   Serial.setTimeout(50000);
 
-  random_measures = { "pressure", "bpm", "flow", "o2", "tidal" };
+  random_measures = { "pressure", "bpm", "flow", "o2", "tidal", "peep",
+                      "temperature", "power_mode", "battery" };
 }
 
 // this is tricky, didn't had the time to think a better algo
