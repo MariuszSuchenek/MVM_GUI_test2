@@ -56,8 +56,7 @@ class Menu(QtWidgets.QWidget):
         if mode not in ['pause_exhale', 'pause_inhale']:
             raise Exception('Can only call paused_pressed with pause_exhale or pause_inhale.')
 
-        if hasattr(self, '_timer'):
-            self._timer.stop()
+        self.stop_timer()
 
         self.send_signal(mode=mode, pause=False)
 
@@ -67,12 +66,24 @@ class Menu(QtWidgets.QWidget):
         Sends signal the appropriate signal the ESP
         to pause inpiration or expiration. 
         '''
-        if not self._data_h.set_data(mode, int(pause)):
+        try:
+            if not self._data_h.set_data(mode, int(pause)):
+                raise Exception('Call to set_data failed.')
+        except Exception as error:
             msg = MessageBox()
             fn = msg.critical("Critical",
                               "Severe hardware communication error",
-                              "Cannot set %s to ESP32." % mode, 
+                              str(error), 
                               "Communication error",
-                              { msg.Ok: lambda: self.paused_released(mode) })
+                              { msg.Ok: lambda: self.stop_timer() })
             fn()
+
+    def stop_timer(self):
+        '''
+        Stops the QTimer which sends 
+        signals to the ESP
+        '''
+        if hasattr(self, '_timer'):
+            self._timer.stop()
+
 
