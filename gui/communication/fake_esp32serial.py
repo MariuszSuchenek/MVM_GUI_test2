@@ -9,7 +9,7 @@ as needed.
 from threading import Lock
 import random
 from communication.peep import peep
-from . import ESP32Alarm
+from . import ESP32Alarm, ESP32Warnings
 
 class FakeESP32Serial:
     peep = peep()
@@ -112,7 +112,7 @@ class FakeESP32Serial:
         returns: a ESP32Alarm instance describing the possible warnings.
         """
 
-        return ESP32Alarm(int(self.get("warning")))
+        return ESP32Warnings(int(self.get("warning")))
 
     def reset_alarms(self):
         """

@@ -4,7 +4,7 @@ Library to interface with the ESP32
 
 from threading import Lock
 import serial # pySerial
-from . import ESP32Alarm
+from . import ESP32Alarm, ESP32Warning
 
 __all__ = ("ESP32Serial", "ESP32Exception")
 
@@ -210,7 +210,7 @@ class ESP32Serial:
         returns: a ESP32Alarm instance describing the possible warnings.
         """
 
-        return ESP32Alarm(int(self.get("warning")))
+        return ESP32Warning(int(self.get("warning")))
 
     def reset_alarms(self):
         """
