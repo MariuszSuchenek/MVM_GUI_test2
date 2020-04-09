@@ -99,7 +99,7 @@ class AlarmHandler:
                 self._msg_war.warning("WARNING",
                              " - ".join(errors),
                              "\n".join(errors_full), 
-                             "Alarm received.",
+                             "Warning received.",
                              { self._msg_war.Ok: lambda: self.ok_worker('warning'),
                                self._msg_war.Abort: lambda: None },
                              do_not_block=True)
