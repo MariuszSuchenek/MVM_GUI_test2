@@ -43,6 +43,8 @@ class Monitor(QtWidgets.QWidget):
         self.value = entry.get("init", monitor_default["init"])
         self.minimum = entry.get("min", monitor_default["min"])
         self.maximum = entry.get("max", monitor_default["max"])
+        self.set_minimum = entry.get("setmin", self.minimum)
+        self.set_maximum = entry.get("setmax", self.maximum)
         self.step = entry.get("step", monitor_default["step"])
         self.dec_precision = entry.get("dec_precision", monitor_default["dec_precision"])
         self.location = entry.get("location", monitor_default["location"])
