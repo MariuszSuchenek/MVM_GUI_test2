@@ -163,34 +163,33 @@ class Alarms(QtWidgets.QWidget):
         self.show_settings(self.selected)
 
     def display_selected(self, slotname):
-        print(self.selected + " to " + slotname)
 
         # Assign selected to new spot and remove from old spot
         monitor = self.monitors[self.selected]
         plot = self.plots[self.selected]
-        print(self.monitor_slots)
-        print(self.plot_slots)
-        print(monitor.location)
         if monitor.location == slotname:
             # Plot/monitor is already where it should be on main display
+            print(self.selected + " already at " + slotname)
             return
         elif monitor.location != "None" and monitor.location is not None:
             # Plot/monitor is on main display, but somewhere else
             self.monitor_slots[monitor.location].removeWidget(monitor)
             self.plot_slots[monitor.location].removeWidget(plot)
+            print(self.selected + " from " + monitor.location + " to " + slotname)
         else:
             # Plot/monitor is not on main display
             self.layout.removeWidget(monitor)
             self.plot_hidden_slots.removeWidget(plot)
+            print(self.selected + " from cached to " + slotname)
 
-        # Set the new monitor location
-        monitor.location = slotname
-
+        # Set the new monitor location and swap with old location
         for (active_monitor, active_plot) in zip(self.active_monitors, self.active_plots):
             if active_monitor.location == slotname:
                 self.monitor_slots[slotname].removeWidget(active_monitor)
                 self.plot_slots[slotname].removeWidget(active_plot)
-                active_monitor.location = None
+                active_monitor.location = monitor.location
+                break
+        monitor.location = slotname
 
         self.populate_monitors_and_plots()
 
