@@ -76,10 +76,18 @@ class Alarms(QtWidgets.QWidget):
     def do_alarmmin_moved(self, slidervalue, monitor):
         value = slidervalue * monitor.step + monitor.minimum
         self.alarmmin_value.setText("Alarm min: " + str(value))
+        # Prevent min > max
+        slidervalue = min(self.slider_alarmmax.sliderPosition(), slidervalue)
+        self.slider_alarmmin.setSliderPosition(slidervalue)
+        self.slider_alarmmin.setValue(slidervalue)
 
     def do_alarmmax_moved(self, slidervalue, monitor):
         value = slidervalue * monitor.step + monitor.minimum
         self.alarmmax_value.setText("Alarm max: " + str(value))
+        # Prevent max < min
+        slidervalue = max(self.slider_alarmmin.sliderPosition(), slidervalue)
+        self.slider_alarmmax.setSliderPosition(slidervalue)
+        self.slider_alarmmax.setValue(slidervalue)
 
     def show_settings(self, name):
         monitor = self.monitors[name]
@@ -91,6 +99,7 @@ class Alarms(QtWidgets.QWidget):
                 self.do_alarmmin_moved(value, monitor))
         sliderpos = int((monitor.set_minimum - monitor.minimum) / monitor.step)
         self.slider_alarmmin.setSliderPosition(sliderpos)
+        self.do_alarmmin_moved(sliderpos, monitor)
 
         self.alarmmax_min.setText(str(monitor.minimum))
         self.alarmmax_max.setText(str(monitor.maximum))
@@ -99,9 +108,13 @@ class Alarms(QtWidgets.QWidget):
                 self.do_alarmmax_moved(value, monitor))
         sliderpos = int((monitor.set_maximum - monitor.minimum) / monitor.step)
         self.slider_alarmmax.setSliderPosition(sliderpos)
+        self.do_alarmmax_moved(sliderpos, monitor)
 
     def apply_selected(self):
-        print(self.selected)
+        monitor = self.monitors[self.selected]
+        monitor.set_minimum = self.slider_alarmmin.sliderPosition() * monitor.step + monitor.minimum
+        monitor.set_maximum = self.slider_alarmmax.sliderPosition() * monitor.step + monitor.minimum
+        monitor.refresh()
 
     def reset_selected(self):
         self.show_settings(self.selected)
