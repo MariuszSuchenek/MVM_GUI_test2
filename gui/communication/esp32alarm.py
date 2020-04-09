@@ -19,7 +19,6 @@ class ESP32BaseAlarm:
         self.number = number
 
     def __bool__(self):
-        print('in __bool__:', self.number)
         return self.number != 0
 
     def __str__(self):

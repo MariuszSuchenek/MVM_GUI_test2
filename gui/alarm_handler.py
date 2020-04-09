@@ -52,6 +52,8 @@ class AlarmHandler:
             esp32alarm = self._esp32.get_alarms()
             esp32warning = self._esp32.get_warnings()
         except Exception as error:
+            esp32alarm = None
+            esp32warning = None
             err_msg = "Severe hardware communication error. "
             err_msg += "Cannot retrieve alarm and warning statuses from hardware."
             msg = MessageBox()
