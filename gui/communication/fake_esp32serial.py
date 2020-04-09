@@ -7,7 +7,7 @@ as needed.
 """
 
 from threading import Lock
-import sys, random
+import random
 from communication.peep import peep
 from . import ESP32Alarm, ESP32Warning
 
@@ -64,7 +64,7 @@ class FakeESP32Serial:
 
             if name == 'alarm' or name == 'warning':
                 if random.uniform(0, 1) < 0.1:
-                    retval = int(random.uniform(0, sys.maxsize))
+                    retval = int(random.uniform(0, 2147483647))
                     print(f'**************************************************** {name} SIMULATION, retval', retval)
                 else:
                     retval = 0
