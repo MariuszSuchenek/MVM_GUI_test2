@@ -108,10 +108,10 @@ class DataFiller():
 
     def set_default_x_range(self, name):
         '''
-        Set the Y axis range of the plot to the defaults
+        Set the X axis range of the plot to the defaults
         specified in the config file.
         '''
-        self._qtgraphs[name].setXRange(-10, 0)
+        self._qtgraphs[name].setXRange(-self._n_samples * self._sampling, 0)
 
     def add_x_axis_label(self, plot):
         '''
