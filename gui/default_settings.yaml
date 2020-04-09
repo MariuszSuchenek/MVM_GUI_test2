@@ -1,5 +1,6 @@
 # The serial port to use:
 port: '/dev/cu.usbmodem143301'
+settings_file_path: '/dev/shm/settings.txt'
 
 # watchdog reset interval time in seconds
 wdinterval: 1
