@@ -214,7 +214,6 @@ class Alarms(QtWidgets.QWidget):
                     self.active_plots.append(plot)
                     break
 
-        print(self.active_monitors)
         return (self.active_monitors, self.active_plots)
 
     def config_monitors(self):

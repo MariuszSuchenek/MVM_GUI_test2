@@ -243,6 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.config[name]["alarm_max_code"])
             self.monitors[name] = monitor
             plot = pg.PlotWidget()
+            plot.setFixedHeight(130)
             self.plots[name] = plot
 
             # Make connections to data filler
