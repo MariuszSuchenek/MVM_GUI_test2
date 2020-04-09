@@ -6,10 +6,10 @@ from ast import literal_eval # to convert a string to list
 class DataFiller():
     '''
     This class fills the data for all the
-    displayed plots on the screen, and 
+    displayed plots on the screen, and
     updates the plots accordingly.
     It also passes data to the monitors.
-    
+
     In "frozen" mode, we keep adding new data points to _data,
     but don't update the displayed graph. When we unfreeze, we
     then see the full recent data.
@@ -23,10 +23,10 @@ class DataFiller():
         self._colors = {}
         self._default_ranges = {}
         self._config = config
-        self._n_smaples = self._config['nsamples']
+        self._n_samples = self._config['nsamples']
         self._sampling = self._config['sampling_interval']
-        self._time_window = self._n_smaples * self._sampling # seconds
-        self._xdata = np.linspace(-self._time_window, 0, self._n_smaples)
+        self._time_window = self._n_samples * self._sampling # seconds
+        self._xdata = np.linspace(-self._time_window, 0, self._n_samples)
         self._frozen = False
         self._first_plot = None
         self._looping = self._config['use_looping_plots']
@@ -49,11 +49,11 @@ class DataFiller():
 
         self._qtgraphs[name] = plot
         self._plots[name] = plot.plot()
-        self._data[name] = np.linspace(0, 0, self._n_smaples)
+        self._data[name] = np.linspace(0, 0, self._n_samples)
         self._plots[name].setData(self._xdata, self._data[name])
         self._colors[name] = self._config[monitor_name]['color']
         self._looping_data_idx[name] = 0
-        
+
         # Set the Y axis
         y_axis_label = self._config[monitor_name]['name']
         y_axis_label += ' ['
@@ -82,6 +82,9 @@ class DataFiller():
         if self._looping:
             self.add_looping_lines(name, plot)
 
+        # Fix the x axis range
+        self.set_default_x_range(name)
+
         # Fix the y axis range
         value_min = self._config[monitor_name]['min']
         value_max = self._config[monitor_name]['max']
@@ -93,32 +96,39 @@ class DataFiller():
         # Remove mouse interaction with plots
         plot.setMouseEnabled(x=False, y=False)
         plot.setMenuEnabled(False)
-                    
+
         print('NORMAL: Connected plot', monitor_name, 'with variable', name)
 
     def set_default_y_range(self, name):
         '''
-        Set the Y axis range of the plot to the defaults 
+        Set the Y axis range of the plot to the defaults
         specified in the config file.
         '''
         self._qtgraphs[name].setYRange(self._default_ranges[name][0], self._default_ranges[name][1])
 
+    def set_default_x_range(self, name):
+        '''
+        Set the X axis range of the plot to the defaults
+        specified in the config file.
+        '''
+        self._qtgraphs[name].setXRange(-self._n_samples * self._sampling, 0)
+
     def add_x_axis_label(self, plot):
         '''
         Adds the x axis label 'Time [s]' in the form
-        of a QGraphicsTextItem. This is done because it 
+        of a QGraphicsTextItem. This is done because it
         is hard to customize the PyQtGraph label.
         '''
         self._x_label = QtGui.QGraphicsTextItem()
         self._x_label.setVisible(True)
-        self._x_label.setHtml('<p style="color: %s">Time [s]:</p>' % self._config["axis_line_color"])  
+        self._x_label.setHtml('<p style="color: %s">Time [s]:</p>' % self._config["axis_line_color"])
 
         # Find the position of the label
         br = self._x_label.boundingRect()
         p = QtCore.QPointF(0, 0)
         axis = plot.getAxis('bottom')
         x = plot.size().width()/2. - br.width()/2.
-        y = plot.size().height() - br.height() 
+        y = plot.size().height() - br.height()
         p.setX(0) # Leave it on the left, so it doesn't cover labels.
         p.setY(y)
         self._x_label.setPos(p)
@@ -126,25 +136,25 @@ class DataFiller():
 
     def show_safe_ranges(self, monitor_name, plot):
         '''
-        Adds to lines corresponding to where the 
+        Adds to lines corresponding to where the
         alarm values are
         '''
 
         # Min Line
-        self._line_min = pg.InfiniteLine(pos=self._config[monitor_name]['min'], 
-                                         angle=0, 
+        self._line_min = pg.InfiniteLine(pos=self._config[monitor_name]['min'],
+                                         angle=0,
                                          movable=False,
-                                         pen=pg.mkPen(cosmetic=False, 
-                                                      width=0, 
+                                         pen=pg.mkPen(cosmetic=False,
+                                                      width=0,
                                                       color='r',
                                                       style=QtCore.Qt.DotLine))
 
         # Max Line
-        self._line_max = pg.InfiniteLine(pos=self._config[monitor_name]['max'], 
-                                         angle=0, 
+        self._line_max = pg.InfiniteLine(pos=self._config[monitor_name]['max'],
+                                         angle=0,
                                          movable=False,
-                                         pen=pg.mkPen(cosmetic=False, 
-                                                      width=0, 
+                                         pen=pg.mkPen(cosmetic=False,
+                                                      width=0,
                                                       color='r',
                                                       style=QtCore.Qt.DotLine))
         plot.addItem(self._line_min)
@@ -152,15 +162,15 @@ class DataFiller():
 
     def add_looping_lines(self, name, plot):
         '''
-        Add line corresponding to where the 
+        Add line corresponding to where the
         data is being updated when in "looping" mode.
         '''
 
-        self._looping_lines[name] = pg.InfiniteLine(pos=0, 
-                                         angle=90, 
+        self._looping_lines[name] = pg.InfiniteLine(pos=0,
+                                         angle=90,
                                          movable=False,
-                                         pen=pg.mkPen(cosmetic=False, 
-                                                      width=self._time_window / 25, 
+                                         pen=pg.mkPen(cosmetic=False,
+                                                      width=self._time_window / 25,
                                                       color='k',
                                                       style=QtCore.Qt.SolidLine))
 
@@ -184,19 +194,19 @@ class DataFiller():
         if name not in self._plots:
             # print("\033[91mERROR: Can't set data for plot with name %s.\033[0m" % name)
             return False
-        
+
         if self._looping:
             # Looping plots - update next value
             self._data[name][self._looping_data_idx[name]] = data_point
-            
+
             self._looping_data_idx[name] += 1
-            
-            if self._looping_data_idx[name] == self._n_smaples:
+
+            if self._looping_data_idx[name] == self._n_samples:
                 self._looping_data_idx[name] = 0
         else:
             # Scrolling plots - shift data 1 sample left
             self._data[name][:-1] = self._data[name][1:]
-    
+
             # add the last data point
             self._data[name][-1] = data_point
 
@@ -206,20 +216,20 @@ class DataFiller():
         '''
         Send new data from self._data to the actual pyqtgraph plot.
         '''
-        
+
         if not self._frozen:
             # Update the displayed plot with current data.
             # In frozen mode, we don't update the display.
             color = self._colors[name]
             color = color.replace('rgb', '')
             color = literal_eval(color)
-            self._plots[name].setData(self._xdata, 
+            self._plots[name].setData(self._xdata,
                                       self._data[name],
                                       pen=pg.mkPen(color, width=self._config['line_width']))
-    
+
             self.update_monitor(name)
 
-            if self._looping:            
+            if self._looping:
                 x_val = self._xdata[self._looping_data_idx[name]] - self._sampling * 0.1
                 self._looping_lines[name].setValue(x_val)
 
@@ -231,23 +241,24 @@ class DataFiller():
         interaction is enabled.
         '''
         self._frozen = True
-        
+
         for plot in self._qtgraphs.values():
             plot.setMouseEnabled(x=True, y=True)
-    
+
     def unfreeze(self):
         '''
         Leave "frozen" mode, resetting the zoom and showing self-updating
         plots.
         '''
         self._frozen = False
-        self.reset_zoom()
-        
+
         for name in self._plots.keys():
             self.update_plot(name)
-        
+
         for plot in self._qtgraphs.values():
             plot.setMouseEnabled(x=False, y=False)
+
+        self.reset_zoom()
 
     def reset_zoom(self):
         '''
@@ -256,7 +267,7 @@ class DataFiller():
         custom values used for Y range.
         '''
         for name, plot in self._qtgraphs.items():
-            plot.autoRange()
+            self.set_default_x_range(name)
             self.set_default_y_range(name)
 
     def update_monitor(self, name):

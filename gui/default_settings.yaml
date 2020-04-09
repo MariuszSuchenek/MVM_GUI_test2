@@ -69,7 +69,7 @@ start_mode_timeout: 2000 # [ms] between pressing Start and allowing Stop (max 30
 # Setup monitors (key value monitor_* must match widget name in mainwindow.ui)
 # Variables to display in the graphs are in plot_var 
 # and the must match names in the ESP or an available function
-monitor_top: 
+mon_inspiratory_pressure: 
     name: "Insp. Press."
     min: 10
     init: 30
@@ -80,8 +80,9 @@ monitor_top:
     color: "rgb(255,255,0)"
     alarmcolor: "red"
     plot_var: pressure
+    location: "monitor_top_slot"
 
-monitor_mid: 
+mon_tidal_volume: 
     name: "V<sub>tidal</sub>"
     min: 50
     init: 100
@@ -92,8 +93,9 @@ monitor_mid:
     color: "rgb(50,205,50)"
     alarmcolor: "red"
     plot_var: tidal
+    location: "monitor_mid_slot"
 
-monitor_bot: 
+mon_flow: 
     name: "MVe"
     min: 2 
     init: 10
@@ -104,8 +106,20 @@ monitor_bot:
     color: "rgb(0,255,255)"
     alarmcolor: "red"
     plot_var: flow
+    location: "monitor_bot_slot"
 
-
+mon_oxygen_concentration: 
+    name: "O<sub>2</sub> Conc." 
+    min: 21 
+    init: 40
+    max: 70
+    step: 1
+    dec_precision: 0
+    units: "(%)"
+    color: "rgb(255,255,255)"
+    alarmcolor: "red"
+    plot_var: o2
+    location: None 
 
 
 

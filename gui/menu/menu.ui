@@ -39,7 +39,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>134</width>
+       <width>114</width>
        <height>16777215</height>
       </size>
      </property>
@@ -471,7 +471,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_settings">
+    <widget class="QPushButton" name="button_settingsfork">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -493,6 +493,33 @@
      </property>
      <property name="text">
       <string>Settings</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_inspause">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>134</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Inspir.
+Pause</string>
      </property>
     </widget>
    </item>
@@ -519,33 +546,6 @@
      </property>
      <property name="text">
       <string>Expir.
-Pause</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="button_inspause">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>134</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Insp.
 Pause</string>
      </property>
     </widget>
