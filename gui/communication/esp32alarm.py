@@ -1,3 +1,4 @@
+import copy
 
 class ESP32Alarm:
 
@@ -37,16 +38,21 @@ class ESP32Alarm:
         print('in __bool__:', self.number)
         return self.number != 0
 
+    def __str__(self):
+        return 'All alarms: ' + ' - '.join(self.strerror_all())
+
     def unpack(self):
         bit_pos = 0
         self.alarms = []
 
-        while self.number:
-            if self.number & 1:
+        n = copy.copy(self.number)
+
+        while n:
+            if n & 1:
                 self.alarms.append(bit_pos)
 
             bit_pos += 1
-            self.number >>= 1
+            n >>= 1
 
         print('Found alarms', self.alarms)
 
