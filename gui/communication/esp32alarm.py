@@ -42,13 +42,21 @@ class ESP32BaseAlarm:
         else:
             return 'Unknown error'
 
-    def strerror_all(self):
+    def strerror_all(self, append_err_no=False):
         if not hasattr(self, 'alarms'):
             self.unpack()
 
         str_error = []
         for n in self.alarms:
-            str_error.append(self.strerror(n))
+
+            s = self.strerror(n)
+            
+            if append_err_no:
+                s += ' (code: '
+                s += str(n)
+                s += ')'
+
+            str_error.append(s)
 
         return str_error
 
