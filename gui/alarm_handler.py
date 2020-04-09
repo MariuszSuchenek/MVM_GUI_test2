@@ -31,6 +31,7 @@ class AlarmHandler:
             errors = esp32alarm.strerror_all()
 
             if not self._alarm_raised:
+                self._alarm_raised = True
                 self._msg.critical("ALARM",
                              " - ".join(errors),
                              "\n".join(errors), 
@@ -41,6 +42,7 @@ class AlarmHandler:
                 self._msg.open()
             else:
                 self._msg.setInformativeText(" - ".join(errors))
+                self._msg.setDetailedText("\n".join(errors))
 
     def ok_worker(self, btn):
 
