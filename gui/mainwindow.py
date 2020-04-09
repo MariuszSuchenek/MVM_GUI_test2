@@ -15,6 +15,7 @@ from monitor.monitor import Monitor
 from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
+from alarm_handler import AlarmHandler
 
 import pyqtgraph as pg
 import sys
@@ -41,6 +42,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.config = config
         self.esp32 = esp32
+
+        '''
+        Start the alarm handler, which will check for ESP alarms
+        '''
+        self.alarm_h = AlarmHandler(self.config, self.esp32)
+
 
         '''
         Get the toppane and child pages
@@ -223,7 +230,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 alarmcolor=entry.get("alarmcolor", monitor_default["alarmcolor"]),
                 color=entry.get("color", monitor_default["color"]),
                 step=entry.get("step", monitor_default["step"]),
-                dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]))
+                dec_precision=entry.get("dec_precision", monitor_default["dec_precision"]),
+                alarm_handler=self.alarm_h)
         return monitor
 
     def open_menu(self):

@@ -16,7 +16,6 @@ from mainwindow import MainWindow
 from communication.esp32serial import ESP32Serial
 from communication.fake_esp32serial import FakeESP32Serial
 from messagebox import MessageBox
-from alarm_handler import AlarmHandler
 
 def connect_esp32(config):
     try:
@@ -59,8 +58,6 @@ if __name__ == "__main__":
     watchdog = QtCore.QTimer()
     watchdog.timeout.connect(esp32.set_watchdog)
     watchdog.start(config["wdinterval"] * 1000)
-
-    alarm_h = AlarmHandler(config, esp32)
 
     window = MainWindow(config, esp32)
     window.show()

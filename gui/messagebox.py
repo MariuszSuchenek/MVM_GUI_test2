@@ -90,6 +90,7 @@ class MessageBox(QMessageBox):
         self.setStandardButtons(bitmask)
 
         if do_not_block:
+            # Connect buttons to the appropriate callbacks in this case
             for btn, callback in callbacks.items():
                 self.button(btn).clicked.connect(callback)
             return True
@@ -112,8 +113,8 @@ class MessageBox(QMessageBox):
                             MessageBox.Yes, MessageBox.No, MessageBox.Abort,
                             MessageBox.Retry, and MessageBox.Ignore
                         value is a user-defined function object
-        - do_not_block  bool: By default, a QMessage blocks further
-                        actions until the QMessage is closed. If you don't
+        - do_not_block  bool: By default, a QMessageBox blocks further
+                        actions until the QMessageBox is closed. If you don't
                         want to block further actions, set this to True
 
         returns the function object corresponding to the clicked button.
@@ -137,8 +138,8 @@ class MessageBox(QMessageBox):
                             MessageBox.Yes, MessageBox.No, MessageBox.Abort,
                             MessageBox.Retry, and MessageBox.Ignore
                         value is a user-defined function object
-        - do_not_block  bool: By default, a QMessage blocks further
-                        actions until the QMessage is closed. If you don't
+        - do_not_block  bool: By default, a QMessageBox blocks further
+                        actions until the QMessageBox is closed. If you don't
                         want to block further actions, set this to True
 
         returns the function object corresponding to the clicked button.
@@ -164,8 +165,8 @@ class MessageBox(QMessageBox):
                             MessageBox.Yes, MessageBox.No, MessageBox.Abort,
                             MessageBox.Retry, and MessageBox.Ignore
                         value is a user-defined function object
-        - do_not_block  bool: By default, a QMessage blocks further
-                        actions until the QMessage is closed. If you don't
+        - do_not_block  bool: By default, a QMessageBox blocks further
+                        actions until the QMessageBox is closed. If you don't
                         want to block further actions, set this to True
 
         returns the function object corresponding to the clicked button.

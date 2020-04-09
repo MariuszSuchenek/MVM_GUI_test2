@@ -29,7 +29,7 @@ class Monitor(QtWidgets.QWidget):
         self.setAutoFillBackground(True)
 
     def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red',
-            color='black', step=None, dec_precision=0):
+            color='black', step=None, dec_precision=0, alarm_min_code=-1, alarm_max_code=-1, alarm_handler=None):
         """
         Sets up main values for the Monitor widget, including the name and the values for the
         range as (minimum, initial, maximum). Also optionally set the units and statistical values
@@ -41,6 +41,10 @@ class Monitor(QtWidgets.QWidget):
         alarmcolor: Background color that the monitor will change to on alarm
         color: Text color
         step: optional value for nearest rounded value (e.g. step=10 rounds to nearest 10)
+        dec_precision: 
+        alarm_min_code: the ESP code correponding at the minumum alarm
+        alarm_max_code: the ESP code correponding at the maxmum alarm
+        alarm_handler: the handler to communicate alarms with the ESP
         """
 
         # unpack and assign min, current, and max
@@ -64,6 +68,10 @@ class Monitor(QtWidgets.QWidget):
         self.alarmcolor = alarmcolor
         self.update(val)
 
+        self.alarm_min_code = alarm_min_code
+        self.alarm_max_code = alarm_max_code
+        self.alarm_h = alarm_handler
+
         # Handle optional stats
         # TODO: determine is stats are useful/necessary
 
@@ -85,6 +93,8 @@ class Monitor(QtWidgets.QWidget):
             role = self.backgroundRole() #choose whatever you like
             palette.setColor(role, QtGui.QColor(self.alarmcolor))
             self.setPalette(palette)
+            if self.alarm_h is not None:
+                self.alarm_h.raise_alarm(self.alarm_min_code is self.is_alarm_min() else self.alarm_max_code)
 
     def clear_alarm(self, event):
         """
@@ -94,9 +104,18 @@ class Monitor(QtWidgets.QWidget):
         role = self.backgroundRole() #choose whatever you like
         palette.setColor(role, QtGui.QColor("#000000"))
         self.setPalette(palette)
+        if self.alarm_h is not None:
+            self.alarm_h.stop_alarm(self.name)
+
 
     def is_alarm(self):
         """
         Returns true if the monitored value is beyond the min or max threshold (i.e ALARM!).
         """
         return self.value <= self.minimum or self.value >= self.maximum
+
+    def is_alarm_min(self):
+        """
+        Returns true if the monitored value is below the min threshold (i.e ALARM!).
+        """
+        return self.value <= self.minimum

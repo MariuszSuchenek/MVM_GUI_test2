@@ -16,7 +16,7 @@ class AlarmHandler:
         '''
         Constructor
 
-        parameters:
+        arguments:
         - config: the dictionary storing the configuration
         - esp32: the esp32serial object
         '''
@@ -81,10 +81,10 @@ class AlarmHandler:
                              do_not_block=True)
                 self._msg_err.open()
             else:
+                # If the window is already opened, just change the text
                 self._msg_err.setInformativeText(" - ".join(errors))
                 self._msg_err.setDetailedText("\n".join(errors_full))
                 self._msg_err.raise_()
-                self._msg_err.setActiveWindow()
 
 
         # 
@@ -105,10 +105,11 @@ class AlarmHandler:
                              do_not_block=True)
                 self._msg_war.open()
             else:
+                # If the window is already opened, just change the text
                 self._msg_war.setInformativeText(" - ".join(errors))
                 self._msg_war.setDetailedText("\n".join(errors_full))
                 self._msg_war.raise_()
-                self._msg_war.setActiveWindow()
+
 
     def ok_worker(self, mode):
         '''
@@ -146,4 +147,10 @@ class AlarmHandler:
                                 msg.Abort: lambda: None })
             fn()
         
+
+    def raise_alarm(self, code):
+        self._esp32.raise_alarm(ESP32Alarm().code_to_int(code))
+
+    def stop_alarm(self, code):
+        self._esp32.reset_alarms()
 
