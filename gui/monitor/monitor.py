@@ -94,7 +94,7 @@ class Monitor(QtWidgets.QWidget):
             palette.setColor(role, QtGui.QColor(self.alarmcolor))
             self.setPalette(palette)
             if self.alarm_h is not None:
-                self.alarm_h.raise_alarm(self.alarm_min_code is self.is_alarm_min() else self.alarm_max_code)
+                self.alarm_h.raise_alarm(self.alarm_min_code if self.is_alarm_min() else self.alarm_max_code)
 
     def clear_alarm(self, event):
         """

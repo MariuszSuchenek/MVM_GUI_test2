@@ -147,10 +147,23 @@ class AlarmHandler:
                                 msg.Abort: lambda: None })
             fn()
         
+    def code_to_int(self, code):
+        '''
+        From a code to an integer with 
+        the right bit set
+        TODO
+        '''
+        return 1
 
     def raise_alarm(self, code):
-        self._esp32.raise_alarm(ESP32Alarm().code_to_int(code))
+        '''
+        Raises an alarm in the ESP
+        '''
+        self._esp32.raise_alarm(self.code_to_int(code))
 
     def stop_alarm(self, code):
+        '''
+        Stops an alarm in the ESP
+        '''
         self._esp32.reset_alarms()
 

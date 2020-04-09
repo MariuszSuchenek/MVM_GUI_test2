@@ -65,7 +65,7 @@ class FakeESP32Serial:
             if name == 'alarm' or name == 'warning':
                 if random.uniform(0, 1) < 0.1:
                     retval = int(random.uniform(0, 2147483647))
-                    print(f'**************************************************** {name} SIMULATION, retval', retval)
+                    print('**************************************************** ALARM/WARINING SIMULATION, retval', retval)
                 else:
                     retval = 0
             elif name in self.set_params:

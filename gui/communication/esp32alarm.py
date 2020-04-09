@@ -45,14 +45,6 @@ class ESP32BaseAlarm:
 
         return self.alarms
 
-    def code_to_int(self):
-        '''
-        From a code to an integer with 
-        the right bit set
-        TODO
-        '''
-        return 1
-
 
     def strerror(self, n):
         '''
