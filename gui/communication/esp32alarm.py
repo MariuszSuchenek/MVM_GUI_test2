@@ -1,5 +1,3 @@
-import copy
-
 class ESP32BaseAlarm:
     '''
     The base ESP Alarm Class
@@ -28,17 +26,8 @@ class ESP32BaseAlarm:
         '''
         Unpacks the number obtained from the ESP
         '''
-        self.alarms = []
 
-        n = copy.copy(self.number)
-
-        bit_pos = 0
-        while n:
-            if n & 1:
-                self.alarms.append(bit_pos)
-
-            bit_pos += 1
-            n >>= 1
+        self.alarms = list(filter(lambda x: x, [ self.number & (1<<test) for test in range(32)]))
 
         print('Found alarms', self.alarms)
 
@@ -115,7 +104,7 @@ class ESP32Alarm(ESP32BaseAlarm):
         19: "PEEP too high",
         20: "Respiratory rate too low",
         21: "Respiratory rate too high",
-        
+
         31: "System failure",
     }
 
