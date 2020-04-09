@@ -56,9 +56,8 @@ class DataFiller():
         
         # Set the Y axis
         y_axis_label = self._config[monitor_name]['name']
-        y_axis_label += ' ['
-        y_axis_label += self._config[monitor_name]['units'].get(name, '')
-        y_axis_label += ']'
+        y_axis_label += ' '
+        y_axis_label += self._config[monitor_name]['units']
         plot.setLabel(axis='left', text=y_axis_label)
 
         # Set the X axis
