@@ -39,6 +39,11 @@ class Alarms(QtWidgets.QWidget):
         self.alarmmax_max    = self.findChild(QtWidgets.QLabel,      "alarmmax_max")
 
     def connect_monitors_and_plots(self, mainparent):
+        """
+        Grabs monitors, plots, and their corresponding display slots from the main window.
+
+        mainparent: Reference to the main window.
+        """
         self.mainparent = mainparent
         self.monitors = mainparent.monitors
         self.monitor_slots = mainparent.monitor_slots
@@ -52,6 +57,11 @@ class Alarms(QtWidgets.QWidget):
             clickable(monitor).connect(lambda n=name: self.select_monitor(n))
 
     def select_monitor(self, selected):
+        """
+        Selected a particular monitor widget by config name.
+
+        selected: config name
+        """
         for name in self.monitors:
             monitor = self.monitors[name]
             if name == selected:
@@ -65,15 +75,31 @@ class Alarms(QtWidgets.QWidget):
                 monitor.unhighlight()
 
     def unhighlight_monitors(self):
+        """
+        Removed highlighting from all monitors.
+        """
         for name in self.monitors:
             self.monitors[name].unhighlight()
 
     def set_slider_range(self, slider, monitor):
+        """
+        Sets the range for a slider given the current monitor being used.
+        Range is set to the coarseness of the monitor.step.
+
+        slider: Reference to the slider to be set.
+        monitor: Reference to the monitor to set slider range.
+        """
         slider.setMinimum(0)
         slider.setMaximum((monitor.maximum - monitor.minimum) / monitor.step)
         slider.setSingleStep(monitor.step)
 
     def do_alarmmin_moved(self, slidervalue, monitor):
+        """
+        A slot for when the minimum alarm slider moves.
+
+        slidervalue: The physical value on the slider.
+        monitor: Reference to the monitor to set the slider value.
+        """
         value = slidervalue * monitor.step + monitor.minimum
         self.alarmmin_value.setText("Alarm min: " + str(value))
         # Prevent min > max
@@ -82,6 +108,12 @@ class Alarms(QtWidgets.QWidget):
         self.slider_alarmmin.setValue(slidervalue)
 
     def do_alarmmax_moved(self, slidervalue, monitor):
+        """
+        A slot for when the maximum alarm slider moves.
+
+        slidervalue: The physical value on the slider.
+        monitor: Reference to the monitor to set the slider value.
+        """
         value = slidervalue * monitor.step + monitor.minimum
         self.alarmmax_value.setText("Alarm max: " + str(value))
         # Prevent max < min
@@ -90,6 +122,11 @@ class Alarms(QtWidgets.QWidget):
         self.slider_alarmmax.setValue(slidervalue)
 
     def show_settings(self, name):
+        """
+        Display settins for a given named monitor.
+
+        name: The config name of the monitor.
+        """
         monitor = self.monitors[name]
 
         self.alarmmin_min.setText(str(monitor.minimum))
@@ -111,12 +148,20 @@ class Alarms(QtWidgets.QWidget):
         self.do_alarmmax_moved(sliderpos, monitor)
 
     def apply_selected(self):
+        """
+        Applies the settings on screen for the selected monitor.
+        A monitor is always selected.
+        """
         monitor = self.monitors[self.selected]
         monitor.set_minimum = self.slider_alarmmin.sliderPosition() * monitor.step + monitor.minimum
         monitor.set_maximum = self.slider_alarmmax.sliderPosition() * monitor.step + monitor.minimum
         monitor.refresh()
 
     def reset_selected(self):
+        """
+        Resets the settings on screen for the selected monitor.
+        A monitor is always selected.
+        """
         self.show_settings(self.selected)
 
     def display_selected(self, slotname):
@@ -124,6 +169,10 @@ class Alarms(QtWidgets.QWidget):
         self.populate_monitors_and_plots()
 
     def populate_monitors_and_plots(self):
+        """
+        Populates plots and monitors based on the ones assigned to a particular display slot pair.
+        If the monitor/plot pair is not displayed, it is shown in the alarms page.
+        """
         # Get all active plots and monitors and put the remaining monitors on the alarms page
         self.active_plots = []
         self.active_monitors = []
@@ -144,12 +193,19 @@ class Alarms(QtWidgets.QWidget):
         return (self.active_monitors, self.active_plots)
 
     def config_monitors(self):
+        """
+        Set all monitors into configuration mode.
+        Always selects the last monitor as selected by default.
+        """
         for name in self.monitors:
             self.monitors[name].config_mode = True
             self.selected = name
         self.select_monitor(self.selected)
 
     def deconfig_monitors(self):
+        """
+        Unsets all monitors out of configuration mode.
+        """
         for name in self.monitors:
             self.monitors[name].config_mode = False
 
