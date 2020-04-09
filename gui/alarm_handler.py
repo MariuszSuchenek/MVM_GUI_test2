@@ -47,12 +47,25 @@ class AlarmHandler:
         errors.
         '''
 
+        # Retrieve alarms and warnings from the ESP
+        try:
+            esp32alarm = self._esp32.get_alarms()
+            esp32warning = self._esp32.get_warnings()
+        except Exception as error:
+            err_msg = "Severe hardware communication error. "
+            err_msg += "Cannot retrieve alarm and warning statuses from hardware."
+            msg = MessageBox()
+            fn = msg.critical("Critical",
+                              err_msg,
+                              str(error), 
+                              "Communication error",
+                              { msg.Retry: lambda: None,
+                                msg.Abort: lambda: None })
+            fn()
+
         #
         # ALARMS
         #
-        esp32alarm = self._esp32.get_alarms()
-        print('esp32alarm', esp32alarm)	
-
         if esp32alarm:
             errors = esp32alarm.strerror_all()
             errors_full = esp32alarm.strerror_all(append_err_no=True)
@@ -77,9 +90,6 @@ class AlarmHandler:
         # 
         # WARNINGS
         # 
-        esp32warning = self._esp32.get_warnings()
-        print('esp32warnings', esp32warning) 
-
         if esp32warning:
             errors = esp32warning.strerror_all()
             errors_full = esp32warning.strerror_all(append_err_no=True)
@@ -132,7 +142,8 @@ class AlarmHandler:
                               "Severe hardware communication error",
                               str(error), 
                               "Communication error",
-                              { msg.Ok: lambda: None })
+                              { msg.Retry: lambda: self.ok_worker(mode),
+                                msg.Abort: lambda: None })
             fn()
         
 
