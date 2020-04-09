@@ -29,7 +29,7 @@ class MessageBox(QMessageBox):
         super(MessageBox, self).__init__()
 
 
-    def _wrapper(self, text, long_text, detail_text, title, icon, callbacks):
+    def _wrapper(self, text, long_text, detail_text, title, icon, callbacks, do_not_block=False):
         """
         Wrapper function to implement the message box
 
@@ -48,6 +48,9 @@ class MessageBox(QMessageBox):
                             MessageBox.Yes, MessageBox.No, MessageBox.Abort,
                             MessageBox.Retry, and MessageBox.Ignore
                         value is a user-defined function object
+        - do_not_block  bool: By default, a QMessage blocks further
+                        actions until the QMessage is closed. If you don't
+                        want to block further actions, set this to True
 
         returns the function object corresponding to the clicked button.
         """
@@ -86,7 +89,10 @@ class MessageBox(QMessageBox):
         self.setStyleSheet(button_style);
         self.setStandardButtons(bitmask)
 
-        return callbacks[self.exec()]
+        if do_not_block:
+            return callbacks[self.open()]
+        else:
+            return callbacks[self.exec()]
 
     def question(self, text, long_text, detail_text, title, callbacks):
         """
