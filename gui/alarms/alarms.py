@@ -164,6 +164,34 @@ class Alarms(QtWidgets.QWidget):
 
     def display_selected(self, slotname):
         print(self.selected + " to " + slotname)
+
+        # Assign selected to new spot and remove from old spot
+        monitor = self.monitors[self.selected]
+        plot = self.plots[self.selected]
+        print(self.monitor_slots)
+        print(self.plot_slots)
+        print(monitor.location)
+        if monitor.location == slotname:
+            # Plot/monitor is already where it should be on main display
+            return
+        elif monitor.location != "None" and monitor.location is not None:
+            # Plot/monitor is on main display, but somewhere else
+            self.monitor_slots[monitor.location].removeWidget(monitor)
+            self.plot_slots[monitor.location].removeWidget(plot)
+        else:
+            # Plot/monitor is not on main display
+            self.layout.removeWidget(monitor)
+            self.plot_hidden_slots.removeWidget(plot)
+
+        # Set the new monitor location
+        monitor.location = slotname
+
+        for (active_monitor, active_plot) in zip(self.active_monitors, self.active_plots):
+            if active_monitor.location == slotname:
+                self.monitor_slots[slotname].removeWidget(active_monitor)
+                self.plot_slots[slotname].removeWidget(active_plot)
+                active_monitor.location = None
+
         self.populate_monitors_and_plots()
 
     def populate_monitors_and_plots(self):
@@ -179,15 +207,15 @@ class Alarms(QtWidgets.QWidget):
             plot = self.plots[name]
             self.layout.addWidget(monitor, int(i % 3), 10-int(i / 3)) 
             self.plot_hidden_slots.addWidget(plot, i)
-            for (mon_slotname, plot_slotname) in zip(self.monitor_slots, self.plot_slots):
-                monitor_slot = self.monitor_slots[mon_slotname]
-                if monitor.location == mon_slotname:
-                    self.monitor_slots[mon_slotname].addWidget(monitor, 0, 0)
-                    self.plot_slots[plot_slotname].addWidget(plot, 0, 0)
+            for slotname in self.plot_slots:
+                if monitor.location == slotname:
+                    self.monitor_slots[slotname].addWidget(monitor, 0, 0)
+                    self.plot_slots[slotname].addWidget(plot, 0, 0)
                     self.active_monitors.append(monitor)
                     self.active_plots.append(plot)
                     break
 
+        print(self.active_monitors)
         return (self.active_monitors, self.active_plots)
 
     def config_monitors(self):
