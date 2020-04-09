@@ -211,7 +211,10 @@ class Settings(QtWidgets.QMainWindow):
         '''
 
         for param, btn in self._all_spinboxes.items():
-            value = external_config[param]
+            if param in external_config:
+                value = external_config[param]
+            else:
+                value = self.config[param]["default"]
 
             if param == 'enable_backup':
                 btn.setChecked(value)
