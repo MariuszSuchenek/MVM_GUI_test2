@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from maindisplay.maindisplay import MainDisplay
 from settings.settings import Settings
+from settings.settingsfile import SettingsFile
 
 from toolbar.toolbar import Toolbar
 from menu.menu import Menu
@@ -287,7 +288,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_startup()
 
     def goto_resume_patient(self):
-        # TODO : implement start from current_settings.json
+        settings_file = SettingsFile(self.config["settings_file_path"])
+        settings = settings_file.load()
+        self.settings.update_config(settings)
+
         self.show_startup()
 
     def goto_settings(self):
