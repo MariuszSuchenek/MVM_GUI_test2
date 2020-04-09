@@ -226,11 +226,11 @@ class DataFiller():
                                       self._data[name],
                                       pen=pg.mkPen(color, width=self._config['line_width']))
 
-            self.update_monitor(name)
-
             if self._looping:
                 x_val = self._xdata[self._looping_data_idx[name]] - self._sampling * 0.1
                 self._looping_lines[name].setValue(x_val)
+
+        self.update_monitor(name)
 
         return True
 
