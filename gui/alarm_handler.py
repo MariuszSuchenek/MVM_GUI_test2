@@ -6,8 +6,21 @@ from communication.esp32serial import ESP32Alarm, ESP32Warning
 
 
 class AlarmHandler:
+    '''
+    This class starts a QTimer dedicated
+    to checking is there are any errors
+    or warnings coming from ESP32
+    '''
 
     def __init__(self, config, esp32):
+        '''
+        Constructor
+
+        parameters:
+        - config: the dictionary storing the configuration
+        - esp32: the esp32serial object
+        '''
+
         self._config = config
         self._esp32 = esp32
 
@@ -24,6 +37,15 @@ class AlarmHandler:
 
 
     def handle_alarms(self):
+        '''
+        The callback method which is called periodically
+        to check if the ESP raised any alarm or warning.
+        If an alarm or warning is raised, a pop up
+        window appears, showing the list of alarms and
+        warnings. If more alarms or warnings add up, the 
+        window is updated automatically showing the latest
+        errors.
+        '''
 
         #
         # ALARMS
@@ -69,7 +91,7 @@ class AlarmHandler:
                              "\n".join(errors_full), 
                              "Alarm received.",
                              { self._msg_war.Ok: lambda: self.ok_worker('warning'),
-                               self._msg_war.Abort: lambda: None},
+                               self._msg_war.Abort: lambda: None },
                              do_not_block=True)
                 self._msg_war.open()
             else:
@@ -79,6 +101,14 @@ class AlarmHandler:
                 self._msg_war.setActiveWindow()
 
     def ok_worker(self, mode):
+        '''
+        The callback function called when the alarm 
+        or warning pop up window is closed by clicking
+        on the Ok button.
+
+        arguments:
+        - mode: what this is closing, an 'alarm' or a 'warning'
+        '''
 
         if mode not in ['alarm', 'warning']:
             raise Exception('mode must be alarm or warning.')
@@ -89,6 +119,8 @@ class AlarmHandler:
             self._warning_raised = False
 
         # Reset the alarms/warnings in the ESP
+        # If the ESP connection fails at this 
+        # time, raise an error box
         try:
             if mode == 'alarm':
                 self._esp32.reset_alarms()
