@@ -68,11 +68,17 @@ class SettingsFile:
 
         arguments:
         - data          a JSON-convertible object to store
+
+        returns: True if the store succeeded, False otherwise
         """
 
-        with open(self.path, "w") as configfile:
-            json.dump(data, configfile)
-        self._write_md5()
+        try:
+            with open(self.path, "w") as configfile:
+                json.dump(data, configfile)
+            self._write_md5()
+            return True
+        except:
+            return False
 
     def load(self):
         """
