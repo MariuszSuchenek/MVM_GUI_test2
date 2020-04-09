@@ -93,6 +93,7 @@ class Alarms(QtWidgets.QWidget):
         slider.setMinimum(0)
         slider.setMaximum((monitor.maximum - monitor.minimum) / monitor.step)
         slider.setSingleStep(monitor.step)
+        slider.setPageStep(slider.maximum() / 2)
 
     def do_alarmmin_moved(self, slidervalue, monitor):
         """
