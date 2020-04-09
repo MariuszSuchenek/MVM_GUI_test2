@@ -75,12 +75,6 @@ class Alarms(QtWidgets.QWidget):
             elif monitor.config_mode:
                 monitor.unhighlight()
 
-    def unhighlight_monitors(self):
-        """
-        Removed highlighting from all monitors.
-        """
-        for name in self.monitors:
-            self.monitors[name].unhighlight()
 
     def set_slider_range(self, slider, monitor):
         """
@@ -211,6 +205,7 @@ class Alarms(QtWidgets.QWidget):
         Unsets all monitors out of configuration mode.
         """
         for name in self.monitors:
+            self.monitors[name].unhighlight()
             self.monitors[name].config_mode = False
 
 
