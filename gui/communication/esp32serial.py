@@ -207,7 +207,7 @@ class ESP32Serial:
         """
         Get the warnings from the ESP32
 
-        returns: a ESP32Alarm instance describing the possible warnings.
+        returns: a ESP32Warning instance describing the possible warnings.
         """
 
         return ESP32Warning(int(self.get("warning")))
