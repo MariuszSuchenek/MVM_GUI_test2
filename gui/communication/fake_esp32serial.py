@@ -123,6 +123,15 @@ class FakeESP32Serial:
 
         return self.set("alarm", 0)
 
+    def reset_warnings(self):
+        """
+        Reset all the raised warnings in ESP32
+
+        returns: an "OK" string in case of success.
+        """
+
+        return self.set("warning", 0)
+
     def raise_alarm(self, alarm_type):
         """
         Raises an alarm in ESP32
