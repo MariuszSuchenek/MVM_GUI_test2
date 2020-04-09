@@ -3,15 +3,22 @@ from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
 class Monitor(QtWidgets.QWidget):
-    def __init__(self, name, config, *args):
+    def __init__(self, name, config, alarm_handler, alarm_min_code=-1, alarm_max_code=-1, *args):
         """
         Initialize the Monitor widget.
 
-        Grabs child widgets.
+        Grabs child widgets and sets alarm facility up.
+
+        alarm_min_code: the ESP code correponding at the minumum alarm
+        alarm_max_code: the ESP code correponding at the maxmum alarm
+        alarm_handler: the handler to communicate alarms with the ESP
         """
         super(Monitor, self).__init__(*args)
         uic.loadUi("monitor/monitor.ui", self)
         self.config = config
+        self.alarm_min_code = alarm_min_code
+        self.alarm_max_code = alarm_max_code
+        self.alarm_h = alarm_handler
 
         self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
@@ -95,6 +102,7 @@ class Monitor(QtWidgets.QWidget):
             role = self.backgroundRole() #choose whatever you like
             palette.setColor(role, QtGui.QColor(self.alarmcolor))
             self.setPalette(palette)
+            self.alarm_h.raise_alarm(self.alarm_min_code if self.is_alarm_min() else self.alarm_max_code)
 
     def clear_alarm(self):
         """
@@ -104,6 +112,7 @@ class Monitor(QtWidgets.QWidget):
         role = self.backgroundRole() #choose whatever you like
         palette.setColor(role, QtGui.QColor("#000000"))
         self.setPalette(palette)
+        self.alarm_h.stop_alarm(self.name)
 
     def is_alarm(self):
         """
@@ -111,10 +120,16 @@ class Monitor(QtWidgets.QWidget):
         """
         return self.value <= self.set_minimum or self.value >= self.set_maximum
 
+    def is_alarm_min(self):
+        """
+        Returns true if the monitored value is below the min threshold (i.e ALARM!).
+        """
+        return self.value <= self.minimum
+
     def highlight(self):
         self.frame.setStyleSheet("#frame { border: 5px solid limegreen; }");
 
     def unhighlight(self):
         self.frame.setStyleSheet("#frame { border: 1px solid white; }");
 
-        
+

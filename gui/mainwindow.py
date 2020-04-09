@@ -17,6 +17,7 @@ from monitor.monitor import Monitor
 from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
+from alarm_handler import AlarmHandler
 
 import pyqtgraph as pg
 import sys
@@ -34,6 +35,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.config = config
         self.esp32 = esp32
+
+        '''
+        Start the alarm handler, which will check for ESP alarms
+        '''
+        self.alarm_h = AlarmHandler(self.config, self.esp32)
 
         '''
         Get the toppane and child pages
@@ -155,7 +161,7 @@ class MainWindow(QtWidgets.QMainWindow):
         care of filling plots data
         '''
         self.data_filler = DataFiller(config)
-        
+
         '''
         Instantiate DataHandler, which will start a new
         thread to read data from the ESP32. We also connect
@@ -192,14 +198,14 @@ class MainWindow(QtWidgets.QMainWindow):
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
-        monitor_slot_names = [ 
+        monitor_slot_names = [
                 "monitor_top_slot",
                 "monitor_mid_slot",
                 "monitor_bot_slot"]
 
-        monitor_names = [ 
-                "mon_inspiratory_pressure", 
-                "mon_tidal_volume", 
+        monitor_names = [
+                "mon_inspiratory_pressure",
+                "mon_tidal_volume",
                 "mon_flow",
                 "mon_oxygen_concentration"]
 
@@ -209,7 +215,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "plot_bot_slot"]
 
         self.monitors = {}
-        self.monitor_slots = {} 
+        self.monitor_slots = {}
         self.plots = {};
         self.plot_slots = {}
 
@@ -220,10 +226,12 @@ class MainWindow(QtWidgets.QMainWindow):
         # Get displayed plot slots
         for barname in plot_slot_names:
             self.plot_slots[barname] = self.main.findChild(QtWidgets.QGridLayout, barname)
-    
+
         # Generate monitors and plots
         for name in monitor_names:
-            monitor = Monitor(name, config)
+            monitor = Monitor(name, config, self.alarm_h,
+                    self.config[name]["alarm_min_code"],
+                    self.config[name]["alarm_max_code"])
             self.monitors[name] = monitor
             plot = pg.PlotWidget()
             self.plots[name] = plot
@@ -242,7 +250,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.plots_settings.display_selected(slotname))
         self.button_botalarm.pressed.connect(lambda slotname=plot_slot_names[2]:
                 self.plots_settings.display_selected(slotname))
-            
+
         '''
         Set up start/stop auto/min mode buttons.
 
@@ -266,8 +274,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
-        
-        
+
+
     def update_monitors_and_plots(self):
         (self.active_monitors, self.active_plots) = self.plots_settings.populate_monitors_and_plots()
         # Connect buttons on freeze menus
@@ -335,13 +343,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def show_alarmsbar(self):
         self.bottombar.setCurrentWidget(self.alarmsbar)
-        
+
     def freeze_plots(self):
         self.data_filler.freeze()
         self.rightbar.setCurrentWidget(self.frozen_right)
         self.bottombar.setCurrentWidget(self.frozen_bot)
 
-        
+
     def unfreeze_plots(self):
         self.data_filler.unfreeze()
         self.rightbar.setCurrentWidget(self.monitors_bar)

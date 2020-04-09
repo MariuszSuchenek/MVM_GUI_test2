@@ -39,6 +39,7 @@ def connect_esp32(config):
 
     return esp32
 
+
 if __name__ == "__main__":
     base_dir = os.path.dirname(__file__)
     settings_file = os.path.join(base_dir, 'default_settings.yaml')

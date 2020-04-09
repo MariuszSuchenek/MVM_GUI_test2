@@ -23,6 +23,9 @@ void setup()
 
   random_measures = { "pressure", "bpm", "flow", "o2", "tidal", "peep",
                       "temperature", "power_mode", "battery" };
+
+  parameters["alarm"] = String(0);
+  parameters["warning"] = String(0);
 }
 
 // this is tricky, didn't had the time to think a better algo
