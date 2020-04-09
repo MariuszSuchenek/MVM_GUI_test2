@@ -90,6 +90,8 @@ class MessageBox(QMessageBox):
         self.setStandardButtons(bitmask)
 
         if do_not_block:
+            for btn, callback in callbacks.items():
+                self.button(btn).clicked.connect(callback)
             return True
         else:
             return callbacks[self.exec()]
