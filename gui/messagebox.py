@@ -90,11 +90,11 @@ class MessageBox(QMessageBox):
         self.setStandardButtons(bitmask)
 
         if do_not_block:
-            return callbacks[self.open()]
+            return True
         else:
             return callbacks[self.exec()]
 
-    def question(self, text, long_text, detail_text, title, callbacks):
+    def question(self, text, long_text, detail_text, title, callbacks, do_not_block=False):
         """
         Display a question message window
 
@@ -110,13 +110,16 @@ class MessageBox(QMessageBox):
                             MessageBox.Yes, MessageBox.No, MessageBox.Abort,
                             MessageBox.Retry, and MessageBox.Ignore
                         value is a user-defined function object
+        - do_not_block  bool: By default, a QMessage blocks further
+                        actions until the QMessage is closed. If you don't
+                        want to block further actions, set this to True
 
         returns the function object corresponding to the clicked button.
         """
         return self._wrapper(text, long_text, detail_text, title,
-                             self.Question, callbacks)
+                             self.Question, callbacks, do_not_block)
 
-    def critical(self, text, long_text, detail_text, title, callbacks):
+    def critical(self, text, long_text, detail_text, title, callbacks, do_not_block=False):
         """
         Display a critical error window
 
@@ -132,15 +135,18 @@ class MessageBox(QMessageBox):
                             MessageBox.Yes, MessageBox.No, MessageBox.Abort,
                             MessageBox.Retry, and MessageBox.Ignore
                         value is a user-defined function object
+        - do_not_block  bool: By default, a QMessage blocks further
+                        actions until the QMessage is closed. If you don't
+                        want to block further actions, set this to True
 
         returns the function object corresponding to the clicked button.
         """
 
         text = "<font color='#ff0000'>%s</font>" % text
         return self._wrapper(text, long_text, detail_text, title,
-                             self.Critical, callbacks)
+                             self.Critical, callbacks, do_not_block)
 
-    def warning(self, text, long_text, detail_text, title, callbacks):
+    def warning(self, text, long_text, detail_text, title, callbacks, do_not_block=False):
         """
         Display a warning message window
 
@@ -156,11 +162,14 @@ class MessageBox(QMessageBox):
                             MessageBox.Yes, MessageBox.No, MessageBox.Abort,
                             MessageBox.Retry, and MessageBox.Ignore
                         value is a user-defined function object
+        - do_not_block  bool: By default, a QMessage blocks further
+                        actions until the QMessage is closed. If you don't
+                        want to block further actions, set this to True
 
         returns the function object corresponding to the clicked button.
         """
 
         return self._wrapper(text, long_text, detail_text, title,
-                             self.Warning, callbacks)
+                             self.Warning, callbacks, do_not_block)
 
 
