@@ -4,6 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import yaml
 import copy
+from .settingsfile import SettingsFile
 
 from presets.presets import Presets
 
@@ -218,7 +219,11 @@ class Settings(QtWidgets.QMainWindow):
         '''
         Sends the currently set values to the ESP
         '''
+
+        settings_to_file = {}
         for param, btn in self._all_spinboxes.items():
+            settings_to_file[param] = self._current_values[param]
+
             # value is the variable to be sent to the hardware,
             # so possibly converted from the settings
             if param == 'enable_backup':
@@ -248,6 +253,8 @@ class Settings(QtWidgets.QMainWindow):
                 self.toolsettings_lookup["respiratory_rate"].update(value)
             elif param == 'insp_expir_ratio':
                 self.toolsettings_lookup["insp_expir_ratio"].update(self._current_values[param])
+        settings_file = SettingsFile(self._config["settings_file_path"])
+        settings_file.store(settings_to_file)
 
 
 
