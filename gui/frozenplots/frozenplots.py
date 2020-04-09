@@ -25,6 +25,11 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         # X axes are linked, so only need to manipulate 1 plot
         self.xzoom.connect_workers(plots[0].getPlotItem())
 
+    def disconnect_workers(self):
+        try: self.button_reset_zoom.pressed.disconnect() 
+        except Exception: pass
+        self.xzoom.disconnect_workers()
+
 class FrozenPlotsRightMenu(QtWidgets.QWidget):
     def __init__(self, *args):
         """
@@ -47,6 +52,11 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         self.yzoom_top.connect_workers(plots[0].getPlotItem())
         self.yzoom_mid.connect_workers(plots[1].getPlotItem())
         self.yzoom_bot.connect_workers(plots[2].getPlotItem())
+
+    def disconnect_workers(self):
+        self.yzoom_top.disconnect_workers()
+        self.yzoom_mid.disconnect_workers()
+        self.yzoom_bot.disconnect_workers()
     
 class YZoom(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -66,6 +76,16 @@ class YZoom(QtWidgets.QWidget):
         self.zoom_factor = 1.25
         self.translate_factor = 0.1
         
+    def disconnect_workers(self):
+        try: self.button_plus.pressed.disconnect() 
+        except Exception: pass
+        try: self.button_minus.pressed.disconnect() 
+        except Exception: pass
+        try: self.button_up.pressed.disconnect() 
+        except Exception: pass
+        try: self.button_down.pressed.disconnect() 
+        except Exception: pass
+
     def connect_workers(self, plot):
         self.button_plus.pressed.connect(lambda: self.zoom_in(plot))
         self.button_minus.pressed.connect(lambda: self.zoom_out(plot))
@@ -111,6 +131,16 @@ class XZoom(QtWidgets.QWidget):
         self.button_minus.pressed.connect(lambda: self.zoom_out(plot))
         self.button_left.pressed.connect(lambda: self.shift_left(plot))
         self.button_right.pressed.connect(lambda: self.shift_right(plot))
+
+    def disconnect_workers(self):
+        try: self.button_plus.pressed.disconnect() 
+        except Exception: pass
+        try: self.button_minus.pressed.disconnect() 
+        except Exception: pass
+        try: self.button_left.pressed.disconnect() 
+        except Exception: pass
+        try: self.button_right.pressed.disconnect() 
+        except Exception: pass
         
     def zoom_in(self, plot):
         plot.getViewBox().scaleBy(x=1/self.zoom_factor)
