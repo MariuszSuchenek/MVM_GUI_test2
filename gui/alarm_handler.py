@@ -33,12 +33,13 @@ class AlarmHandler:
 
         if esp32alarm:
             errors = esp32alarm.strerror_all()
+            errors_full = esp32alarm.strerror_all(append_err_no=True)
 
             if not self._alarm_raised:
                 self._alarm_raised = True
                 self._msg_err.critical("ALARM",
                              " - ".join(errors),
-                             "\n".join(errors), 
+                             "\n".join(errors_full), 
                              "Alarm received.",
                              { self._msg_err.Ok: lambda: self.ok_worker('alarm'),
                                self._msg_err.Abort: lambda: None},
@@ -46,23 +47,26 @@ class AlarmHandler:
                 self._msg_err.open()
             else:
                 self._msg_err.setInformativeText(" - ".join(errors))
-                self._msg_err.setDetailedText("\n".join(errors))
+                self._msg_err.setDetailedText("\n".join(errors_full))
+                self._msg_err.raise_()
+                self._msg_err.setActiveWindow()
 
 
-        #
+        # 
         # WARNINGS
-        #
-        esp32warnings = self._esp32.get_warnings()
-        print('esp32warnings', esp32warnings) 
+        # 
+        esp32warning = self._esp32.get_warnings()
+        print('esp32warnings', esp32warning) 
 
-        if esp32warnings:
-            errors = esp32warnings.strerror_all()
+        if esp32warning:
+            errors = esp32warning.strerror_all()
+            errors_full = esp32warning.strerror_all(append_err_no=True)
 
             if not self._warning_raised:
                 self._warning_raised = True
                 self._msg_war.warning("WARNING",
                              " - ".join(errors),
-                             "\n".join(errors), 
+                             "\n".join(errors_full), 
                              "Alarm received.",
                              { self._msg_war.Ok: lambda: self.ok_worker('warning'),
                                self._msg_war.Abort: lambda: None},
@@ -70,7 +74,9 @@ class AlarmHandler:
                 self._msg_war.open()
             else:
                 self._msg_war.setInformativeText(" - ".join(errors))
-                self._msg_war.setDetailedText("\n".join(errors))
+                self._msg_war.setDetailedText("\n".join(errors_full))
+                self._msg_war.raise_()
+                self._msg_war.setActiveWindow()
 
     def ok_worker(self, mode):
 
@@ -82,7 +88,7 @@ class AlarmHandler:
         else:
             self._warning_raised = False
 
-        # Reset the alarms in the ESP
+        # Reset the alarms/warnings in the ESP
         try:
             if mode == 'alarm':
                 self._esp32.reset_alarms()
