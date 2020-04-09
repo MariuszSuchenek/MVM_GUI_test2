@@ -1,12 +1,21 @@
 import copy
 
 class ESP32BaseAlarm:
+    '''
+    The base ESP Alarm Class
+    '''
 
     alarm_to_string = {
         0: "Alarm name",
     }
 
     def __init__(self, number):
+        '''
+        Constructor
+
+        arguments:
+        - the number obtained from the ESP
+        '''
         self.number = number
 
     def __bool__(self):
@@ -17,11 +26,14 @@ class ESP32BaseAlarm:
         return 'All alarms: ' + ' - '.join(self.strerror_all())
 
     def unpack(self):
-        bit_pos = 0
+        '''
+        Unpacks the number obtained from the ESP
+        '''
         self.alarms = []
 
         n = copy.copy(self.number)
 
+        bit_pos = 0
         while n:
             if n & 1:
                 self.alarms.append(bit_pos)
@@ -33,7 +45,23 @@ class ESP32BaseAlarm:
 
         return self.alarms
 
+    def code_to_int(self):
+        '''
+        From a code to an integer with 
+        the right bit set
+        TODO
+        '''
+        return 1
+
+
     def strerror(self, n):
+        '''
+        Returns a string with the error
+        specified by n
+
+        arguments:
+        - n: the error number (unpacked)
+        '''
         if not hasattr(self, 'alarms'):
             self.unpack()
 
@@ -43,6 +71,13 @@ class ESP32BaseAlarm:
             return 'Unknown error'
 
     def strerror_all(self, append_err_no=False):
+        '''
+        Same as strerror, but returns a list
+        in case of multiple errors
+
+        arguments:
+        - append_err_no: if True, also adds the err number
+        '''
         if not hasattr(self, 'alarms'):
             self.unpack()
 
@@ -50,7 +85,7 @@ class ESP32BaseAlarm:
         for n in self.alarms:
 
             s = self.strerror(n)
-            
+
             if append_err_no:
                 s += ' (code: '
                 s += str(n)
