@@ -229,7 +229,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Generate monitors and plots
         for name in monitor_names:
-            monitor = Monitor(name, config, self.alarm_h)
+            monitor = Monitor(name, config, self.alarm_h,
+                    self.config[name]["alarm_min_code"],
+                    self.config[name]["alarm_max_code"])
             self.monitors[name] = monitor
             plot = pg.PlotWidget()
             self.plots[name] = plot
