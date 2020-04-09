@@ -27,6 +27,7 @@ class Alarms(QtWidgets.QWidget):
         uic.loadUi("alarms/alarms.ui", self)
 
         self.layout          = self.findChild(QtWidgets.QGridLayout, "monitors_layout")
+        self.label_alarmname = self.findChild(QtWidgets.QLabel,      "label_alarmname")
 
         self.slider_alarmmin = self.findChild(QtWidgets.QScrollBar,  "slider_alarmmin")
         self.alarmmin_min    = self.findChild(QtWidgets.QLabel,      "alarmmin_min")
@@ -128,6 +129,8 @@ class Alarms(QtWidgets.QWidget):
         name: The config name of the monitor.
         """
         monitor = self.monitors[name]
+        self.label_alarmname.setText(monitor.name)
+        self.label_alarmname.setStyleSheet("QLabel { color: " + monitor.color + "; background-color: black}")
 
         self.alarmmin_min.setText(str(monitor.minimum))
         self.alarmmin_max.setText(str(monitor.maximum))
