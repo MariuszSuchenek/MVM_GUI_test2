@@ -26,7 +26,17 @@ class Alarms(QtWidgets.QWidget):
         super(Alarms, self).__init__(*args)
         uic.loadUi("alarms/alarms.ui", self)
 
-        self.layout = self.findChild(QtWidgets.QGridLayout, "monitors_layout")
+        self.layout          = self.findChild(QtWidgets.QGridLayout, "monitors_layout")
+
+        self.slider_alarmmin = self.findChild(QtWidgets.QScrollBar,  "slider_alarmmin")
+        self.alarmmin_min    = self.findChild(QtWidgets.QLabel,      "alarmmin_min")
+        self.alarmmin_value  = self.findChild(QtWidgets.QLabel,      "alarmmin_value")
+        self.alarmmin_max    = self.findChild(QtWidgets.QLabel,      "alarmmin_max")
+
+        self.slider_alarmmax = self.findChild(QtWidgets.QScrollBar,  "slider_alarmmax")
+        self.alarmmax_min    = self.findChild(QtWidgets.QLabel,      "alarmmax_min")
+        self.alarmmax_value  = self.findChild(QtWidgets.QLabel,      "alarmmax_value")
+        self.alarmmax_max    = self.findChild(QtWidgets.QLabel,      "alarmmax_max")
 
     def connect_monitors_and_plots(self, mainparent):
         self.mainparent = mainparent
@@ -58,17 +68,47 @@ class Alarms(QtWidgets.QWidget):
         for name in self.monitors:
             self.monitors[name].unhighlight()
 
+    def set_slider_range(self, slider, monitor):
+        slider.setMinimum(0)
+        slider.setMaximum((monitor.maximum - monitor.minimum) / monitor.step)
+        slider.setSingleStep(monitor.step)
+
+    def do_alarmmin_moved(self, slidervalue, monitor):
+        value = slidervalue * monitor.step + monitor.minimum
+        self.alarmmin_value.setText("Alarm min: " + str(value))
+
+    def do_alarmmax_moved(self, slidervalue, monitor):
+        value = slidervalue * monitor.step + monitor.minimum
+        self.alarmmax_value.setText("Alarm max: " + str(value))
+
     def show_settings(self, name):
-        print(self.selected)
+        monitor = self.monitors[name]
+
+        self.alarmmin_min.setText(str(monitor.minimum))
+        self.alarmmin_max.setText(str(monitor.maximum))
+        self.set_slider_range(self.slider_alarmmin, monitor)
+        self.slider_alarmmin.valueChanged.connect(lambda value:
+                self.do_alarmmin_moved(value, monitor))
+        sliderpos = int((monitor.set_minimum - monitor.minimum) / monitor.step)
+        self.slider_alarmmin.setSliderPosition(sliderpos)
+
+        self.alarmmax_min.setText(str(monitor.minimum))
+        self.alarmmax_max.setText(str(monitor.maximum))
+        self.set_slider_range(self.slider_alarmmax, monitor)
+        self.slider_alarmmax.valueChanged.connect(lambda value:
+                self.do_alarmmax_moved(value, monitor))
+        sliderpos = int((monitor.set_maximum - monitor.minimum) / monitor.step)
+        self.slider_alarmmax.setSliderPosition(sliderpos)
 
     def apply_selected(self):
         print(self.selected)
 
     def reset_selected(self):
-        print(self.selected)
+        self.show_settings(self.selected)
 
     def display_selected(self, slotname):
         print(self.selected + " to " + slotname)
+        self.populate_monitors_and_plots()
 
     def populate_monitors_and_plots(self):
         # Get all active plots and monitors and put the remaining monitors on the alarms page
@@ -93,6 +133,8 @@ class Alarms(QtWidgets.QWidget):
     def config_monitors(self):
         for name in self.monitors:
             self.monitors[name].config_mode = True
+            self.selected = name
+        self.select_monitor(self.selected)
 
     def deconfig_monitors(self):
         for name in self.monitors:
