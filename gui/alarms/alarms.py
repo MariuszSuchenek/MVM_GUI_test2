@@ -100,12 +100,12 @@ class Alarms(QtWidgets.QWidget):
         slidervalue: The physical value on the slider.
         monitor: Reference to the monitor to set the slider value.
         """
-        value = slidervalue * monitor.step + monitor.minimum
-        self.alarmmin_value.setText("Alarm min: " + str(value))
         # Prevent min > max
         slidervalue = min(self.slider_alarmmax.sliderPosition(), slidervalue)
-        self.slider_alarmmin.setSliderPosition(slidervalue)
+        value = slidervalue * monitor.step + monitor.minimum
+        self.alarmmin_value.setText("Alarm min: " + str(value))
         self.slider_alarmmin.setValue(slidervalue)
+        self.slider_alarmmin.setSliderPosition(slidervalue)
 
     def do_alarmmax_moved(self, slidervalue, monitor):
         """
@@ -114,12 +114,12 @@ class Alarms(QtWidgets.QWidget):
         slidervalue: The physical value on the slider.
         monitor: Reference to the monitor to set the slider value.
         """
-        value = slidervalue * monitor.step + monitor.minimum
-        self.alarmmax_value.setText("Alarm max: " + str(value))
         # Prevent max < min
         slidervalue = max(self.slider_alarmmin.sliderPosition(), slidervalue)
-        self.slider_alarmmax.setSliderPosition(slidervalue)
+        value = slidervalue * monitor.step + monitor.minimum
+        self.alarmmax_value.setText("Alarm max: " + str(value))
         self.slider_alarmmax.setValue(slidervalue)
+        self.slider_alarmmax.setSliderPosition(slidervalue)
 
     def show_settings(self, name):
         """
