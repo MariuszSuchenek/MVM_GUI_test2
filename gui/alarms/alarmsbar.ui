@@ -471,7 +471,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_limitmonitor">
+    <widget class="QPushButton" name="button_applyalarm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -486,12 +486,12 @@
       </font>
      </property>
      <property name="text">
-      <string>Limits</string>
+      <string>Apply</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_statsmonitor">
+    <widget class="QPushButton" name="button_resetalarm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -506,12 +506,12 @@
       </font>
      </property>
      <property name="text">
-      <string>Stats</string>
+      <string>Reset</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_addmonitor">
+    <widget class="QPushButton" name="button_topalarm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -538,8 +538,50 @@
       </font>
      </property>
      <property name="text">
-      <string>Add to
-Display</string>
+      <string>Display
+Top</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_midalarm">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Display
+Middle</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_botalarm">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Display
+Bottom</string>
      </property>
     </widget>
    </item>

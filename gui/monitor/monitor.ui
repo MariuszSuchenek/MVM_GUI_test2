@@ -501,6 +501,12 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="midLineWidth">
+      <number>0</number>
+     </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
        <number>3</number>
