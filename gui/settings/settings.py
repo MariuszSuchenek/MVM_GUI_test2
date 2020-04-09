@@ -205,6 +205,32 @@ class Settings(QtWidgets.QMainWindow):
         self.repaint()
         self.mainparent.exit_settings()
 
+    def update_config(self, external_config):
+        '''
+        Loads the presets from the config file
+        '''
+
+        for param, btn in self._all_spinboxes.items():
+            value = external_config[param]
+
+            if param == 'enable_backup':
+                btn.setChecked(value)
+                self._current_values[param] = value
+            else:
+                btn.setValue(value)
+                self._current_values[param] = value
+
+        # assign an easy lookup for toolsettings
+        self.toolsettings_lookup = {}
+        self.toolsettings_lookup["respiratory_rate"] = self._toolsettings["toolsettings_1"]
+        self.toolsettings_lookup["insp_expir_ratio"] = self._toolsettings["toolsettings_2"]
+
+        # setup the toolsettings with preset values
+        self.toolsettings_lookup["respiratory_rate"].update(external_config["respiratory_rate"])
+        self.toolsettings_lookup["insp_expir_ratio"].update(external_config["insp_expir_ratio"])
+
+        self.send_values_to_hardware()
+
 
     def apply_worker(self):
         '''
