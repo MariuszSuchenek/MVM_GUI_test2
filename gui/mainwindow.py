@@ -22,7 +22,6 @@ from alarm_handler import AlarmHandler
 import pyqtgraph as pg
 import sys
 import time
-from pip._internal import self_outdated_check
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, config, esp32, *args, **kwargs):
