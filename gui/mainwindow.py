@@ -169,9 +169,8 @@ class MainWindow(QtWidgets.QMainWindow):
         data directly to the DataFiller, which will
         then display them.
         '''
-        self._data_h = DataHandler(config, self.esp32)
-        self._data_h.connect_data_filler(self.data_filler)
-        self._data_h.start_io_thread()
+        self._data_h = DataHandler(config, self.esp32, self.data_filler)
+        self._data_h.start_timer()
 
         self.menu.connect_datahandler_config(self._data_h, self.config)
 

@@ -2,8 +2,9 @@
 import sys, traceback
 import time
 import datetime
-from PyQt5.QtCore import QThreadPool
-from communication.threading_utils import Worker
+# from PyQt5.QtCore import QThreadPool
+from PyQt5 import QtCore, QtGui, QtWidgets
+# from communication.threading_utils import Worker
 from messagebox import MessageBox
 
 class DataHandler():
@@ -14,24 +15,29 @@ class DataHandler():
     and this class will fill the data direclty.
     '''
 
-    def __init__(self, config, esp32):
+    def __init__(self, config, esp32, data_filler):
         '''
         Initializes this class by creating a new QThreadPool
         '''
-        self._running = False
-        self._threadpool = QThreadPool()
-        print('Number of available threads:', self._threadpool.maxThreadCount())
+        # self._running = False
+        # self._threadpool = QThreadPool()
+        # print('Number of available threads:', self._threadpool.maxThreadCount())
 
         self._config = config
         self._esp32 = esp32
-
-        self._n_attempts = 0
-
-    def connect_data_filler(self, data_filler):
-        '''
-        Connects a DataFiller to this class
-        '''
         self._data_f = data_filler
+
+        # self._n_attempts = 0
+
+        self._timer = QtCore.QTimer()
+        self._timer.timeout.connect(self.esp32_io)
+        # self._timer.start(config["sampling_interval"] * 1000)
+
+    # def connect_data_filler(self, data_filler):
+    #     '''
+    #     Connects a DataFiller to this class
+    #     '''
+    #     self._data_f = data_filler
 
     def esp32_data_callback(self, parameter, data):
         '''
@@ -46,33 +52,34 @@ class DataHandler():
             # this.
             return
 
-        # print('Got data:', parameter, data)
+        print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
         status = self._data_f.add_data_point(parameter, data)
 
         # if not status:
         #     print("\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
 
-    def stop_io(self):
-        '''
-        Ask the thread to gracefully stop iterating
-        '''
+    # def stop_io(self):
+    #     '''
+    #     Ask the thread to gracefully stop iterating
+    #     '''
 
-        self._running = False
-        self._threadpool.waitForDone()
+    #     self._running = False
+    #     self._threadpool.waitForDone()
 
-    def esp32_io(self, data_callback):
+    def esp32_io(self):
         '''
         This is the main function that runs in the thread.
         '''
 
-        if self._running:
-            return
+        # if self._running:
+        #     return
 
-        self._running = True
+        # self._running = True
 
-        while self._running:
-            start = datetime.datetime.now()
+        # while self._running:
+        # start = datetime.datetime.now()
 
+        try:
             # Get all params from ESP
             current_values = self._esp32.get_all()
 
@@ -82,13 +89,18 @@ class DataHandler():
 
             # finally, emit for all the values we have:
             for p, v in current_values.items():
-                data_callback.emit(p, v)
+                self.esp32_data_callback(p, v)
 
-            delta_secs = (datetime.datetime.now() - start).total_seconds()
-            sleep_secs = max(0, self._config['sampling_interval'] - delta_secs)
+            raise Exception('A test')
 
-            # Sleep for some time...
-            time.sleep(sleep_secs)
+        except Exception as error:
+            print('Error is', str(error))
+
+        # delta_secs = (datetime.datetime.now() - start).total_seconds()
+        # sleep_secs = max(0, self._config['sampling_interval'] - delta_secs)
+
+        # Sleep for some time...
+        # time.sleep(sleep_secs)
 
         return "Done."
 
@@ -120,15 +132,16 @@ class DataHandler():
             time.sleep(0.05)
             self.start_io_thread()
 
-    def start_io_thread(self):
+    def start_timer(self):
         '''
         Starts the thread.
         '''
-        worker = Worker(self.esp32_io)
-        worker.signals.result.connect(self.esp32_data_callback)
-        worker.signals.finished.connect(self.thread_complete)
+        # worker = Worker(self.esp32_io)
+        # worker.signals.result.connect(self.esp32_data_callback)
+        # worker.signals.finished.connect(self.thread_complete)
 
-        self._threadpool.start(worker)
+        # self._threadpool.start(worker)
+        self._timer.start(self._config["sampling_interval"] * 1000)
 
     def set_data(self, param, value):
 
