@@ -28,6 +28,16 @@ class DataHandler():
 
         self._timer = QTimer()
         self._timer.timeout.connect(self.esp32_io)
+        self._start_timer()
+
+
+    def __del__(self):
+        '''
+        Destructor
+        Stops the timer
+        '''
+
+        self._stop_timer()
 
 
     def esp32_io(self):
@@ -63,7 +73,7 @@ class DataHandler():
         msg = MessageBox()
 
         # TODO: find a good exit point
-        callbacks = {msg.Retry: self.restart_timer,
+        callbacks = {msg.Retry: self._restart_timer,
                      msg.Abort: lambda: sys.exit(-1)}
 
         fn = msg.critical("COMMUNICATION ERROR",
@@ -74,27 +84,27 @@ class DataHandler():
         fn()
 
 
-    def start_timer(self):
+    def _start_timer(self):
         '''
         Starts the QTimer.
         '''
         self._timer.start(self._config["sampling_interval"] * 1000)
 
-    def stop_timer(self):
+    def _stop_timer(self):
         '''
         Stops the QTimer.
         '''
         self._timer.stop()
 
-    def restart_timer(self):
+    def _restart_timer(self):
         '''
         Restarts the QTimer if the QTimer is active,
         or simply starts the QTimer
         '''
         if self._timer.isActive():
-            self.stop_timer()
+            self._stop_timer()
 
-        self._timer.start(self._config["sampling_interval"] * 1000)
+        self._start_timer()
 
     def set_data(self, param, value):
         '''
