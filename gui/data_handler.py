@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import datetime
-from PyQt5 import QtCore
+from PyQt5.QtCore import QTimer
 from messagebox import MessageBox
 
 class DataHandler():
@@ -26,7 +26,7 @@ class DataHandler():
         self._data_f = data_filler
         self._alarm = alarm_class
 
-        self._timer = QtCore.QTimer()
+        self._timer = QTimer()
         self._timer.timeout.connect(self.esp32_io)
 
 
