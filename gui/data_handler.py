@@ -10,7 +10,7 @@ class DataHandler():
     is entirey dedicated to read data from the ESP32.
     '''
 
-    def __init__(self, config, esp32, data_filler, alarm_class=None):
+    def __init__(self, config, esp32, data_filler, gui_alarm=None):
         '''
         Initializes this class by creating a new QTimer
 
@@ -18,34 +18,16 @@ class DataHandler():
         - config: the config dictionary
         - esp32: the esp32serial instance
         - data_filler: the instance to the DataFiller class 
-        - alarm_class: 
+        - gui_alarm: the alarm class
         '''
 
         self._config = config
         self._esp32 = esp32
         self._data_f = data_filler
-        self._alarm = alarm_class
+        self._gui_alarm = gui_alarm
 
         self._timer = QTimer()
         self._timer.timeout.connect(self.esp32_io)
-
-
-    def esp32_data_callback(self, parameter, data):
-        '''
-        This method is called everytime there is a new read from
-        the ESP32, and it receives the parameters read, and
-        the data associated to it
-        '''
-
-        if parameter == 'Done.' and data is None and not self._running:
-            # it is the signal that the thread is closing gracefully,
-            # ignore it! TODO: feel free to implement a better way to do
-            # this.
-            return
-
-        # print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
-        status = self._data_f.add_data_point(parameter, data)
-        # self._alarm.set_data(parameter, data)
 
 
     def esp32_io(self):
@@ -62,14 +44,17 @@ class DataHandler():
             for p, v in current_values.items():
                 current_values[p] = float(v)
 
-            # finally, emit for all the values we have:
+            # self._gui_alarm.set_data(current_values)
+
+            # finally, send values to the DataFiller
             for p, v in current_values.items():
-                self.esp32_data_callback(p, v)
+
+                # print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
+                status = self._data_f.add_data_point(p, v)
 
         except Exception as error:
             self.open_comm_error(str(error))
 
-        return "Done."
 
     def open_comm_error(self, error):
         '''
