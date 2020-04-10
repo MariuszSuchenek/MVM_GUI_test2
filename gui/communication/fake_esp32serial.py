@@ -13,12 +13,13 @@ from . import ESP32Alarm, ESP32Warning
 
 class FakeESP32Serial:
     peep = peep()
-    def __init__(self):
+    def __init__(self, alarm_rate=0.1):
         self.lock = Lock()
         self.set_params = {"alarm": 0, "warning": 0}
         self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
                               "peep", "temperature", "power_mode",
                               "battery" ]
+        self.alarm_rate = alarm_rate
 
     def set(self, name, value):
         """
@@ -63,7 +64,7 @@ class FakeESP32Serial:
             retval = 0
 
             if name == 'alarm' or name == 'warning':
-                if random.uniform(0, 1) < 0.1:
+                if random.uniform(0, 1) < self.alarm_rate:
                     retval = int(random.uniform(0, 2147483647))
                     print('**************************************************** ALARM/WARINING SIMULATION, retval', retval)
                 else:
