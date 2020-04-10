@@ -9,21 +9,23 @@ class DataHandler():
     '''
     This class takes care of starting a new QTimer which
     is entirey dedicated to read data from the ESP32.
-
-    arguments:
-    - config: the config dictionary
-    - esp32: the esp32serial instance
-    - data_filler: the instance to the DataFiller class 
     '''
 
-    def __init__(self, config, esp32, data_filler):
+    def __init__(self, config, esp32, data_filler, alarm_class=None):
         '''
         Initializes this class by creating a new QTimer
+
+        arguments:
+        - config: the config dictionary
+        - esp32: the esp32serial instance
+        - data_filler: the instance to the DataFiller class 
+        - alarm_class: 
         '''
 
         self._config = config
         self._esp32 = esp32
         self._data_f = data_filler
+        self._alarm = alarm_class
 
         self._timer = QtCore.QTimer()
         self._timer.timeout.connect(self.esp32_io)
@@ -44,6 +46,7 @@ class DataHandler():
 
         print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
         status = self._data_f.add_data_point(parameter, data)
+        # self._alarm.set_data(parameter, data)
 
 
     def esp32_io(self):
