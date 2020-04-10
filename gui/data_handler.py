@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-import sys, traceback
-import time
+import sys
 import datetime
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
 from messagebox import MessageBox
 
 class DataHandler():
@@ -44,7 +43,7 @@ class DataHandler():
             # this.
             return
 
-        print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
+        # print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
         status = self._data_f.add_data_point(parameter, data)
         # self._alarm.set_data(parameter, data)
 
@@ -96,13 +95,19 @@ class DataHandler():
         '''
         self._timer.start(self._config["sampling_interval"] * 1000)
 
+    def stop_timer(self):
+        '''
+        Stops the QTimer.
+        '''
+        self._timer.stop()
+
     def restart_timer(self):
         '''
         Restarts the QTimer if the QTimer is active,
         or simply starts the QTimer
         '''
         if self._timer.isActive():
-            self._timer.stop()
+            self.stop_timer()
 
         self._timer.start(self._config["sampling_interval"] * 1000)
 

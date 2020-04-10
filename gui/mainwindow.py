@@ -360,5 +360,5 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_menu()
 
     def closeEvent(self, event):
-        self._data_h.stop_io()
+        self._data_h.stop_timer()
 
