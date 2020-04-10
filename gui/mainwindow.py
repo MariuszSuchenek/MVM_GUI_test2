@@ -169,9 +169,7 @@ class MainWindow(QtWidgets.QMainWindow):
         data directly to the DataFiller, which will
         then display them.
         '''
-        self._data_h = DataHandler(config, self.esp32)
-        self._data_h.connect_data_filler(self.data_filler)
-        self._data_h.start_io_thread()
+        self._data_h = DataHandler(config, self.esp32, self.data_filler)
 
         self.menu.connect_datahandler_config(self._data_h, self.config)
 
@@ -359,7 +357,4 @@ class MainWindow(QtWidgets.QMainWindow):
         self.data_filler.unfreeze()
         self.rightbar.setCurrentWidget(self.monitors_bar)
         self.show_menu()
-
-    def closeEvent(self, event):
-        self._data_h.stop_io()
 
