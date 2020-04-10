@@ -198,21 +198,30 @@ class MainWindow(QtWidgets.QMainWindow):
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
+        # Monitor slot widget names
         monitor_slot_names = [
                 "monitor_top_slot",
                 "monitor_mid_slot",
                 "monitor_bot_slot"]
 
+        # plot slot widget names
+        plot_slot_names = [
+                "plot_top_slot",
+                "plot_mid_slot",
+                "plot_bot_slot"]
+        
+        # Reference names that link plot and monitor slots
+        slot_names = [
+                "top_slot",
+                "mid_slot",
+                "bot_slot"]
+
+        # The name of the monitored field in the default_settings.yaml config file
         monitor_names = [
                 "mon_inspiratory_pressure",
                 "mon_tidal_volume",
                 "mon_flow",
                 "mon_oxygen_concentration"]
-
-        plot_slot_names = [
-                "plot_top_slot",
-                "plot_mid_slot",
-                "plot_bot_slot"]
 
         self.monitors = {}
         self.monitor_slots = {}
@@ -220,12 +229,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plot_slots = {}
 
         # Get displayed monitor slots
-        for barname in monitor_slot_names:
-            self.monitor_slots[barname] = self.rightbar.findChild(QtWidgets.QGridLayout, barname)
+        for (slotname, barname) in zip(slot_names, monitor_slot_names):
+            self.monitor_slots[slotname] = self.rightbar.findChild(QtWidgets.QGridLayout, barname)
 
         # Get displayed plot slots
-        for barname in plot_slot_names:
-            self.plot_slots[barname] = self.main.findChild(QtWidgets.QGridLayout, barname)
+        for (slotname, barname) in zip(slot_names, plot_slot_names):
+            self.plot_slots[slotname] = self.main.findChild(QtWidgets.QGridLayout, barname)
 
         # Generate monitors and plots
         for name in monitor_names:
@@ -234,6 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.config[name]["alarm_max_code"])
             self.monitors[name] = monitor
             plot = pg.PlotWidget()
+            plot.setFixedHeight(130)
             self.plots[name] = plot
 
             # Make connections to data filler
@@ -241,14 +251,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.data_filler.connect_plot(name, plot)
 
         self.plots_settings.connect_monitors_and_plots(self)
-        self.update_monitors_and_plots()
+        self.plots_settings.populate_monitors_and_plots()
         self.button_applyalarm.pressed.connect(self.plots_settings.apply_selected)
         self.button_resetalarm.pressed.connect(self.plots_settings.reset_selected)
-        self.button_topalarm.pressed.connect(lambda slotname=plot_slot_names[0]:
+        self.button_topalarm.pressed.connect(lambda slotname=slot_names[0]:
                 self.plots_settings.display_selected(slotname))
-        self.button_midalarm.pressed.connect(lambda slotname=plot_slot_names[1]:
+        self.button_midalarm.pressed.connect(lambda slotname=slot_names[1]:
                 self.plots_settings.display_selected(slotname))
-        self.button_botalarm.pressed.connect(lambda slotname=plot_slot_names[2]:
+        self.button_botalarm.pressed.connect(lambda slotname=slot_names[2]:
                 self.plots_settings.display_selected(slotname))
 
         '''
@@ -274,14 +284,6 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
-
-
-    def update_monitors_and_plots(self):
-        (self.active_monitors, self.active_plots) = self.plots_settings.populate_monitors_and_plots()
-        # Connect buttons on freeze menus
-        self.frozen_bot.connect_workers(self.data_filler, self.active_plots)
-        self.frozen_right.connect_workers(self.active_plots)
-
 
     def goto_new_patient(self):
         # TODO : implement start from default_settings

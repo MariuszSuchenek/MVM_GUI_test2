@@ -163,7 +163,36 @@ class Alarms(QtWidgets.QWidget):
         self.show_settings(self.selected)
 
     def display_selected(self, slotname):
-        print(self.selected + " to " + slotname)
+
+        # Assign selected to new spot and remove from old spot
+        monitor = self.monitors[self.selected]
+        plot = self.plots[self.selected]
+        if monitor.location == slotname:
+            # Plot/monitor is already where it should be on main display
+            print(self.selected + " already at " + slotname)
+            return
+        elif monitor.location != "None" and monitor.location is not None:
+            # Plot/monitor is on main display, but somewhere else
+            self.monitor_slots[monitor.location].removeWidget(monitor)
+            self.plot_slots[monitor.location].removeWidget(plot)
+            print(self.selected + " from " + monitor.location + " to " + slotname)
+        else:
+            # Plot/monitor is not on main display
+            self.layout.removeWidget(monitor)
+            self.plot_hidden_slots.removeWidget(plot)
+            print(self.selected + " from cached to " + slotname)
+
+        # Set the new monitor location and swap with old location
+        for (mon_name, plot_name) in zip(self.active_monitors, self.active_plots):
+            active_monitor = self.active_monitors[mon_name]
+            active_plot = self.active_plots[plot_name]
+            if active_monitor.location == slotname:
+                self.monitor_slots[slotname].removeWidget(active_monitor)
+                self.plot_slots[slotname].removeWidget(active_plot)
+                active_monitor.location = monitor.location
+                break
+        monitor.location = slotname
+
         self.populate_monitors_and_plots()
 
     def populate_monitors_and_plots(self):
@@ -172,23 +201,33 @@ class Alarms(QtWidgets.QWidget):
         If the monitor/plot pair is not displayed, it is shown in the alarms page.
         """
         # Get all active plots and monitors and put the remaining monitors on the alarms page
-        self.active_plots = []
-        self.active_monitors = []
+        self.active_plots = {}
+        self.active_monitors = {}
         for (i, name) in enumerate(self.monitors):
             monitor = self.monitors[name]
             plot = self.plots[name]
             self.layout.addWidget(monitor, int(i % 3), 10-int(i / 3)) 
             self.plot_hidden_slots.addWidget(plot, i)
-            for (mon_slotname, plot_slotname) in zip(self.monitor_slots, self.plot_slots):
-                monitor_slot = self.monitor_slots[mon_slotname]
-                if monitor.location == mon_slotname:
-                    self.monitor_slots[mon_slotname].addWidget(monitor, 0, 0)
-                    self.plot_slots[plot_slotname].addWidget(plot, 0, 0)
-                    self.active_monitors.append(monitor)
-                    self.active_plots.append(plot)
+            for slotname in self.plot_slots:
+                if monitor.location == slotname:
+                    self.monitor_slots[slotname].addWidget(monitor, 0, 0)
+                    self.plot_slots[slotname].addWidget(plot, 0, 0)
+                    self.active_monitors[slotname] = monitor
+                    self.active_plots[slotname] = plot
                     break
 
-        return (self.active_monitors, self.active_plots)
+
+        # Disconnect old connections
+        self.mainparent.frozen_bot.disconnect_workers()
+        self.mainparent.frozen_right.disconnect_workers()
+
+        # Connect the frozen plots
+        # Requires building of an ordered array to associate the correct controls with the plot.
+        active_plots = []
+        for slotname in self.plot_slots:
+            active_plots.append(self.active_plots[slotname])
+        self.mainparent.frozen_bot.connect_workers(self.mainparent.data_filler, active_plots)
+        self.mainparent.frozen_right.connect_workers(active_plots)
 
     def config_monitors(self):
         """
