@@ -2,6 +2,8 @@
 port: '/dev/cu.usbmodem143301'
 settings_file_path: '/dev/shm/settings.txt'
 
+# list of observables to expect from the get_all function call
+# The returned dict will use those as keys. Order matters.
 get_all_fields:
   - pressure
   - flow
@@ -24,9 +26,6 @@ nsamples: 100
 
 # time in seconds between two data retrieval
 sampling_interval: 0.1
-
-# The parameters that will be read from the ESP and stored for possible use
-read_params: ['pressure', 'flow', 'o2', 'bpm', 'all']
 
 # The parameters that can be set on the ESP
 # The values below must match those used in the ESP
