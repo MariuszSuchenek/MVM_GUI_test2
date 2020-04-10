@@ -8,7 +8,7 @@ import os
 
 class FakeESP32Serial(ESP32Serial):
     peep = peep()
-    def __init__(self):
+    def __init__(self, alarm_rate):
         base_dir = os.path.dirname(__file__)
         settings_file = os.path.join(base_dir + '/..', 'default_settings.yaml')
         
@@ -16,6 +16,7 @@ class FakeESP32Serial(ESP32Serial):
             config = yaml.load(f, Loader=yaml.FullLoader)
         self.peep.setConfig(config)
         self.lock = Lock()
+        self.alarm_rate = alarm_rate
 
     def set(self, name, value):
         """
@@ -56,7 +57,7 @@ class FakeESP32Serial(ESP32Serial):
             retval = 0
             
             if name == 'alarm' or name == 'warning':
-                if random.uniform(0, 1) < 0.1:
+                if random.uniform(0, 1) < self.alarm_rate:
                     retval = int(random.uniform(0, 2**31-1))
                     print('**************************************************** ALARM/WARINING SIMULATION, retval', retval)
                 else:
