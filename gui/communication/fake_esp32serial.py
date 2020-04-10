@@ -11,6 +11,9 @@ import random
 from communication.peep import peep
 from . import ESP32Alarm, ESP32Warning
 
+KNOWN_ALARM_CODES = [0] + [1 << bit for bit in (0, 1, 2, 3, 4, 5, 6, 7, 31)]
+KNOWN_WARNING_CODES = [0] + [1 << bit for bit in (0,)]
+
 class FakeESP32Serial:
     peep = peep()
     def __init__(self, alarm_rate=0.1):
@@ -63,10 +66,14 @@ class FakeESP32Serial:
         with self.lock:
             retval = 0
 
-            if name == 'alarm' or name == 'warning':
+            if name == 'alarm':
                 if random.uniform(0, 1) < self.alarm_rate:
-                    retval = int(random.uniform(0, 2147483647))
-                    print('**************************************************** ALARM/WARINING SIMULATION, retval', retval)
+                    retval = random.choice(KNOWN_ALARM_CODES)
+                    print('********** ALARM SIMULATION, retval', retval)
+            elif name == 'warning':
+                if random.uniform(0, 1) < self.alarm_rate:
+                    retval = random.choice(KNOWN_WARNING_CODES)
+                    print('********** WARNING SIMULATION, retval', retval)
                 else:
                     retval = 0
             elif name in self.set_params:
