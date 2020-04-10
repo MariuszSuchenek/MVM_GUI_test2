@@ -2,6 +2,17 @@
 port: '/dev/cu.usbmodem143301'
 settings_file_path: '/dev/shm/settings.txt'
 
+get_all_fields:
+  - pressure
+  - flow
+  - o2
+  - bpm
+  - tidal
+  - peep
+  - temperature
+  - power_mode
+  - battery
+
 # watchdog reset interval time in seconds
 wdinterval: 1
 
