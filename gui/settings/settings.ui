@@ -81,6 +81,22 @@ QDoubleSpinBox::down-button  {
       <property name="focusPolicy">
        <enum>Qt::StrongFocus</enum>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QTabBar::tab {
+    /* make the tab large enough to show the full text */
+    width: 270px;
+}
+
+QTabBar::tab:selected {
+    /* make selected tabs text bold and with white background*/
+    background: #FFFFFF;
+    font: bold;
+}
+
+QTabBar::tab:!selected {
+    margin-top: 2px; /* make non-selected tabs look smaller */
+}</string>
+      </property>
       <property name="tabPosition">
        <enum>QTabWidget::North</enum>
       </property>
@@ -88,7 +104,7 @@ QDoubleSpinBox::down-button  {
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
@@ -97,7 +113,7 @@ QDoubleSpinBox::down-button  {
        </size>
       </property>
       <property name="elideMode">
-       <enum>Qt::ElideRight</enum>
+       <enum>Qt::ElideNone</enum>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
