@@ -30,7 +30,7 @@ def connect_esp32(config):
             esp32.set("wdenable", 1)
         else:
             err_msg = "Cannot communicate with port %s" % config['port']
-            esp32 = ESP32Serial(config['port'])
+            esp32 = ESP32Serial(config)
             esp32.set("wdenable", 1)
     except Exception as error:
         msg = MessageBox()
