@@ -7,15 +7,18 @@ from messagebox import MessageBox
 
 class DataHandler():
     '''
-    This class takes care of starting a new QThread which
+    This class takes care of starting a new QTimer which
     is entirey dedicated to read data from the ESP32.
-    You will need to connect a DataFiller using connect_data_filler(),
-    and this class will fill the data direclty.
+
+    arguments:
+    - config: the config dictionary
+    - esp32: the esp32serial instance
+    - data_filler: the instance to the DataFiller class 
     '''
 
     def __init__(self, config, esp32, data_filler):
         '''
-        Initializes this class by creating a new QThreadPool
+        Initializes this class by creating a new QTimer
         '''
 
         self._config = config
@@ -45,7 +48,8 @@ class DataHandler():
 
     def esp32_io(self):
         '''
-        This is the main function that runs in the thread.
+        This is the main function that runs every time a QTimer times out.
+        It runs the get_all to get the data from the ESP.
         '''
 
         try:
@@ -67,7 +71,7 @@ class DataHandler():
 
     def open_comm_error(self, error):
         '''
-        Called when a thread ends.
+        Opens a message window if there is a communication error.
         '''
         msg = MessageBox()
 
@@ -85,17 +89,24 @@ class DataHandler():
 
     def start_timer(self):
         '''
-        Starts the thread.
+        Starts the QTimer.
         '''
         self._timer.start(self._config["sampling_interval"] * 1000)
 
     def restart_timer(self):
+        '''
+        Restarts the QTimer if the QTimer is active,
+        or simply starts the QTimer
+        '''
         if self._timer.isActive():
             self._timer.stop()
 
         self._timer.start(self._config["sampling_interval"] * 1000)
 
     def set_data(self, param, value):
+        '''
+        Sets data to the ESP
+        '''
 
         result = self._esp32.set(param, value)
 
