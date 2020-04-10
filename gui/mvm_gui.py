@@ -20,9 +20,13 @@ from messagebox import MessageBox
 def connect_esp32(config):
     try:
         if 'fakeESP32' in sys.argv:
+            if 'disableSimAlarms' in sys.argv:
+                alarm_rate = 0
+            else:
+                alarm_rate = 0.1
             print('******* Simulating communication with ESP32')
             err_msg = "Cannot setup FakeESP32Serial"
-            esp32 = FakeESP32Serial()
+            esp32 = FakeESP32Serial(alarm_rate=alarm_rate)
             esp32.set("wdenable", 1)
         else:
             err_msg = "Cannot communicate with port %s" % config['port']

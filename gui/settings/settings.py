@@ -4,6 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import yaml
 import copy
+from .settingsfile import SettingsFile
 
 from presets.presets import Presets
 
@@ -204,6 +205,35 @@ class Settings(QtWidgets.QMainWindow):
         self.repaint()
         self.mainparent.exit_settings()
 
+    def update_config(self, external_config):
+        '''
+        Loads the presets from the config file
+        '''
+
+        for param, btn in self._all_spinboxes.items():
+            if param in external_config:
+                value = external_config[param]
+            else:
+                value = self.config[param]["default"]
+
+            if param == 'enable_backup':
+                btn.setChecked(value)
+                self._current_values[param] = value
+            else:
+                btn.setValue(value)
+                self._current_values[param] = value
+
+        # assign an easy lookup for toolsettings
+        self.toolsettings_lookup = {}
+        self.toolsettings_lookup["respiratory_rate"] = self._toolsettings["toolsettings_1"]
+        self.toolsettings_lookup["insp_expir_ratio"] = self._toolsettings["toolsettings_2"]
+
+        # setup the toolsettings with preset values
+        self.toolsettings_lookup["respiratory_rate"].update(external_config["respiratory_rate"])
+        self.toolsettings_lookup["insp_expir_ratio"].update(external_config["insp_expir_ratio"])
+
+        self.send_values_to_hardware()
+
 
     def apply_worker(self):
         '''
@@ -218,7 +248,11 @@ class Settings(QtWidgets.QMainWindow):
         '''
         Sends the currently set values to the ESP
         '''
+
+        settings_to_file = {}
         for param, btn in self._all_spinboxes.items():
+            settings_to_file[param] = self._current_values[param]
+
             # value is the variable to be sent to the hardware,
             # so possibly converted from the settings
             if param == 'enable_backup':
@@ -248,6 +282,8 @@ class Settings(QtWidgets.QMainWindow):
                 self.toolsettings_lookup["respiratory_rate"].update(value)
             elif param == 'insp_expir_ratio':
                 self.toolsettings_lookup["insp_expir_ratio"].update(self._current_values[param])
+        settings_file = SettingsFile(self._config["settings_file_path"])
+        settings_file.store(settings_to_file)
 
 
 

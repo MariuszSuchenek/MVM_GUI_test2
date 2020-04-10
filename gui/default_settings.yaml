@@ -1,5 +1,6 @@
 # The serial port to use:
 port: '/dev/cu.usbmodem143301'
+settings_file_path: '/dev/shm/settings.txt'
 
 # watchdog reset interval time in seconds
 wdinterval: 1
@@ -79,7 +80,7 @@ mon_inspiratory_pressure:
     plot_var: pressure
     alarm_min_code: 8
     alarm_max_code: 9
-    location: "monitor_top_slot"
+    location: "top_slot"
 
 mon_tidal_volume: 
     name: "V<sub>tidal</sub>"
@@ -94,7 +95,7 @@ mon_tidal_volume:
     plot_var: tidal
     alarm_min_code: 14
     alarm_max_code: 15
-    location: "monitor_mid_slot"
+    location: "mid_slot"
 
 mon_flow: 
     name: "MVe"
@@ -109,7 +110,7 @@ mon_flow:
     plot_var: flow
     alarm_min_code: 11
     alarm_max_code: 12
-    location: "monitor_bot_slot"
+    location: "bot_slot"
 
 mon_oxygen_concentration: 
     name: "O<sub>2</sub> Conc." 
