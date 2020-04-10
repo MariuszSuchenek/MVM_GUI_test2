@@ -60,45 +60,39 @@ class DataHandler():
             for p, v in current_values.items():
                 self.esp32_data_callback(p, v)
 
-            raise Exception('A test')
-
         except Exception as error:
-            print('Error is', str(error))
+            self.open_comm_error(str(error))
 
         return "Done."
 
-    def thread_complete(self):
+    def open_comm_error(self, error):
         '''
         Called when a thread ends.
         '''
+        msg = MessageBox()
 
-        if self._running:
-            print("\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
-            self._n_attempts += 1
-            self._running = False
+        # TODO: find a good exit point
+        callbacks = {msg.Retry: self.restart_timer,
+                     msg.Abort: lambda: sys.exit(-1)}
 
-            if self._n_attempts > 10:
-                self._n_attempts = 0
-                msg = MessageBox()
+        fn = msg.critical("COMMUNICATION ERROR",
+                          "CANNOT COMMUNICATE WITH THE HARDWARE",
+                          "Check cable connections then click retry.\n"+error,
+                          "COMMUNICATION ERROR",
+                          callbacks)
+        fn()
 
-                # TODO: find a good exit point
-                callbacks = {msg.Retry: self.start_io_thread,
-                             msg.Abort: lambda: sys.exit(-1)}
-
-                fn = msg.critical("COMMUNICATION ERROR",
-                                  "CANNOT COMMUNICATE WITH THE HARDWARE",
-                                  "Check cable connections then click retry.",
-                                  "COMMUNICATION ERROR",
-                                  callbacks)
-                fn()
-
-            time.sleep(0.05)
-            self.start_io_thread()
 
     def start_timer(self):
         '''
         Starts the thread.
         '''
+        self._timer.start(self._config["sampling_interval"] * 1000)
+
+    def restart_timer(self):
+        if self._timer.isActive():
+            self._timer.stop()
+
         self._timer.start(self._config["sampling_interval"] * 1000)
 
     def set_data(self, param, value):
