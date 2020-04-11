@@ -104,7 +104,6 @@ class Monitor(QtWidgets.QWidget):
         '''
         if isalarm:
             color = self.alarmcolor
-            print("We alarmed " + self.configname)
         else:
             color = QtGui.QColor("#000000")
         palette = self.palette()
