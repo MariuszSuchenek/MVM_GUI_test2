@@ -56,12 +56,22 @@ class Monitor(QtWidgets.QWidget):
         # TODO: determine is stats are useful/necessary
 
     def name(self):
+        '''
+        Returns the configuration name 
+        for this monitor
+        '''
         return self.configname
 
     def connect_gui_alarm(self, gui_alarm):
+        '''
+        Stores the GuiAlarm class
+        '''
         self.gui_alarm = gui_alarm
 
     def update_thresholds(self, alarm_min, alarm_setmin, alarm_max, alarm_setmax):
+        '''
+        Updates the labes showind the threshold values
+        '''
         self.label_min.hide()
         self.label_max.hide()
         # if self.alarm is not None:
@@ -86,6 +96,11 @@ class Monitor(QtWidgets.QWidget):
         self.setAutoFillBackground(True)
 
     def set_alarm_state(self, isalarm):
+        '''
+        Sets or clears the alarm
+        arguments:
+        - isalarm: True is alarmed state
+        '''
         if isalarm:
             color = self.alarmcolor
             print("We alarmed " + self.configname)
