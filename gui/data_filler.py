@@ -107,7 +107,7 @@ class DataFiller():
         Set the X axis range of the plot to the defaults
         specified in the config file.
         '''
-        self._qtgraphs[name].setXRange(-self._n_samples * self._sampling, 0)
+        self._qtgraphs[name].setXRange(-self._time_window, 0)
 
     def add_x_axis_label(self, plot):
         '''
@@ -153,6 +153,11 @@ class DataFiller():
         '''
         name = monitor.observable 
         self._monitors[name] = monitor
+        
+        self._data[name] = np.linspace(0, 0, self._n_samples)
+        
+        self._looping_data_idx[name] = 0
+
 
         if name not in self._data:
             self._data[name] = np.linspace(0, 0, self._n_samples)
@@ -164,6 +169,9 @@ class DataFiller():
         Adds a data point to the plot with
         name 'name'
         '''
+
+        print('data for monitor', name)
+
         if name in self._data:
             if self._looping:
                 # Looping plots - update next value
@@ -200,6 +208,7 @@ class DataFiller():
             self._plots[name].setData(self._xdata,
                                       self._data[name],
                                       pen=pg.mkPen(color, width=self._config['line_width']))
+            self.set_default_x_range(name)
 
             if self._looping:
                 x_val = self._xdata[self._looping_data_idx[name]] - self._sampling * 0.1

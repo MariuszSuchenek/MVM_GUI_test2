@@ -261,6 +261,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
 
+    def set_colors(self):
+        # Monitors bar background
+        palette = self.monitor_filler.palette()
+        role = self.monitor_filler.backgroundRole()
+        palette.setColor(role, QtGui.QColor(QtGui.QColor("#000000")))
+        self.monitor_filler.setPalette(palette)
+
     def goto_new_patient(self):
         # TODO : implement start from default_settings
         self.show_startup()

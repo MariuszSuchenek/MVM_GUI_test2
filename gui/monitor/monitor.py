@@ -47,6 +47,7 @@ class Monitor(QtWidgets.QWidget):
         self.set_alarm_state(False)
         self.update_value(self.value)
         self.update_thresholds(None, None, None, None)
+
         # self.alarm = None
 
         # Setup config mode
