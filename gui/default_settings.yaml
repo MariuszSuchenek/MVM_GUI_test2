@@ -14,6 +14,31 @@ get_all_fields:
   - temperature
   - battery_powered
   - battery_charge
+alarms:
+  o2:
+    linked_monitor: oxygenmon
+    up_threshold: 98
+    down_threshold: 21
+    under_threshold_code: 65536
+    over_threshold_code: 131072
+  bpm:
+    linked_monitor: bpmmon
+    up_threshold: null
+    down_threshold: null
+    under_threshold_code: null
+    over_threshold_code: null
+  peep:
+    linked_monitor: peepmon
+    up_threshold: null
+    down_threshold: null
+    under_threshold_code: 6778
+    over_threshold_code: null
+  battery_powered :
+    linked_monitor: batterymon
+    up_threshold: null
+    down_threshold: null
+    under_threshold_code: null
+    over_threshold_code: null
 
 # watchdog reset interval time in seconds
 wdinterval: 1
