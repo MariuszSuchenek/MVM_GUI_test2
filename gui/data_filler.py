@@ -180,7 +180,8 @@ class DataFiller():
             # add the last data point
             self._data[name][-1] = data_point
 
-        return self.update_plot(name)
+        self.update_plot(name)
+        self.update_monitor(name)
 
     def update_plot(self, name):
         '''
@@ -201,9 +202,7 @@ class DataFiller():
                 x_val = self._xdata[self._looping_data_idx[name]] - self._sampling * 0.1
                 self._looping_lines[name].setValue(x_val)
 
-        self.update_monitor(name)
 
-        return True
 
     def freeze(self):
         '''

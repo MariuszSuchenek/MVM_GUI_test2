@@ -60,7 +60,7 @@ class DataHandler():
             for p, v in current_values.items():
 
                 # print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
-                status = self._data_f.add_data_point(p, v)
+                self._data_f.add_data_point(p, v)
 
         except Exception as error:
             self.open_comm_error(str(error))
