@@ -223,7 +223,7 @@ plots:
         color: "rgb(255,255,0)"
         observable: pressure
 
-    plot_bot: 
+    plot_mid: 
         name: "v<sub>tidal</sub>"
         min: 50
         max: 1500
@@ -231,7 +231,7 @@ plots:
         color: "rgb(50,205,50)"
         observable: tidal
 
-    plot_mid: 
+    plot_bot: 
         name: "MVe"
         min: 2 
         max: 20
