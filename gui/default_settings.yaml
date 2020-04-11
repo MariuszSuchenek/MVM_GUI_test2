@@ -146,6 +146,26 @@ monitors:
         alarmcolor: "red"
         observable: o2
 
+    temperature: 
+        name: "Temperature" 
+        init: 40
+        step: 1
+        dec_precision: 0
+        units: "(C)"
+        color: "rgb(255,255,255)"
+        alarmcolor: "red"
+        observable: temperature
+
+    peak: 
+        name: "PEAK" 
+        init: 40
+        step: 1
+        dec_precision: 0
+        units: "(cmH2O)"
+        color: "rgb(255,255,255)"
+        alarmcolor: "red"
+        observable: peak
+
 displayed_monitors:
     - inspiratory_pressure
     - tidal_volume
