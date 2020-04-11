@@ -11,7 +11,7 @@ from toolbar.toolbar import Toolbar
 from menu.menu import Menu
 from settings.settingsbar import SettingsBar
 from alarms.alarms import Alarms
-from alarms.guialarms import GuiAlarm
+from alarms.guialarms import GuiAlarms
 from alarms.alarmsbar import AlarmsBar
 
 from toolsettings.toolsettings import ToolSettings
@@ -214,10 +214,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.data_filler.connect_monitor(monitor)
 
         # The alarms are from the default_settings.yaml config file
-        self.alarms = {}
-        for name in config['alarms']:
-            alarm = GuiAlarm(name, config, self.monitors, self.alarm_h)
-            self.alarms[name] = alarm
+        # self.alarms = {}
+        # for name in config['alarms']:
+        #     alarm = GuiAlarm(name, config, self.monitors, self.alarm_h)
+        #     self.alarms[name] = alarm
+        self.alarm_gui = GuiAlarms(config, self.esp32, self.monitors)
 
 
         # Get displayed monitors
