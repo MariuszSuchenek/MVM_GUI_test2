@@ -14,31 +14,6 @@ get_all_fields:
   - temperature
   - battery_powered
   - battery_charge
-alarms:
-  o2:
-    linked_monitor: oxygenmon
-    up_threshold: 98
-    down_threshold: 21
-    under_threshold_code: 65536
-    over_threshold_code: 131072
-  bpm:
-    linked_monitor: bpmmon
-    up_threshold: null
-    down_threshold: null
-    under_threshold_code: null
-    over_threshold_code: null
-  peep:
-    linked_monitor: peepmon
-    up_threshold: null
-    down_threshold: null
-    under_threshold_code: 6778
-    over_threshold_code: null
-  battery_powered :
-    linked_monitor: batterymon
-    up_threshold: null
-    down_threshold: null
-    under_threshold_code: null
-    over_threshold_code: null
 
 # watchdog reset interval time in seconds
 wdinterval: 1
@@ -123,6 +98,34 @@ monitors:
         alarmcolor: "red"
         observable: tidal
 
+    beats_per_minute: 
+        name: "BPM"
+        init: 60
+        step: 1
+        dec_precision: 0
+        color: "rgb(50,205,50)"
+        alarmcolor: "red"
+        observable: bpm
+
+    peep: 
+        name: "PEEP"
+        init: 60
+        step: 1
+        dec_precision: 0
+        color: "rgb(0,255,255)"
+        alarmcolor: "red"
+        observable: peep
+
+    battery: 
+        name: "Battery"
+        init: 100 
+        step: 1
+        units: "(%)"
+        dec_precision: 0
+        color: "rgb(0,255,255)"
+        alarmcolor: "red"
+        observable: battery_powered
+
     flow: 
         name: "MVe"
         init: 10
@@ -141,20 +144,24 @@ monitors:
         units: "(%)"
         color: "rgb(255,255,255)"
         alarmcolor: "red"
-        plotslot: None
         observable: o2
 
 displayed_monitors:
-    inspiratory_pressure:
-    tidal_volume:
-    flow:
+    - inspiratory_pressure
+    - tidal_volume
+    - flow
+    - oxygen_concentration
+    - beats_per_minute
 
 alarms:
     o2:
-        min: 21 
-        max: 70
+        min: 21
+        setmax: 70
+        max: 98 
         alarm_min_code: 17
         alarm_max_code: 18
+        under_threshold_code: 65536
+        over_threshold_code: 131072
         observable: o2
         linked_monitor: oxygen_concentration
     
@@ -183,6 +190,29 @@ alarms:
         alarm_max_code: 15
         observable: tidal
         linked_monitor: tidal_volume
+
+    bpm:
+        min: null
+        max: null
+        under_threshold_code: null
+        over_threshold_code: null
+        observable: bpm
+        linked_monitor: beats_per_minute
+
+    peep:
+        min: null
+        max: null
+        under_threshold_code: 6778
+        over_threshold_code: null
+        observable: peep
+        linked_monitor: peep
+
+    battery_powered :
+        min: null
+        max: null
+        under_threshold_code: null
+        over_threshold_code: null
+        linked_monitor: battery
 
 plots:
     plot_top: 
