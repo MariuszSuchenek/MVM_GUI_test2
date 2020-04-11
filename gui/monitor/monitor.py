@@ -42,13 +42,12 @@ class Monitor(QtWidgets.QWidget):
         self.alarmcolor = entry.get("alarmcolor", monitor_default["alarmcolor"])
         self.step = entry.get("step", monitor_default["step"])
         self.observable = entry.get("observable", monitor_default["observable"])
+        self.gui_alarm = None
 
         self.refresh()
         self.set_alarm_state(False)
         self.update_value(self.value)
         self.update_thresholds(None, None, None, None)
-
-        # self.alarm = None
 
         # Setup config mode
         self.config_mode = False
@@ -107,6 +106,8 @@ class Monitor(QtWidgets.QWidget):
             color = self.alarmcolor
         else:
             color = QtGui.QColor("#000000")
+            if self.gui_alarm is not None: 
+                self.gui_alarm.clear_alarm(self.configname)
         palette = self.palette()
         role = self.backgroundRole()
         palette.setColor(role, QtGui.QColor(color))

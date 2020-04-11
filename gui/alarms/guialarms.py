@@ -72,6 +72,18 @@ class GuiAlarms:
         self._test_over_threshold(item, value)
         self._test_under_threshold(item, value)
 
+    def clear_alarm(self, name):
+        '''
+        Resets all alarms. We might want to reset only
+        a particular bit, this is why name is an argument here.
+        '''
+        self._esp32.reset_alarms()
+        # obs = self._mon_to_obs.get(name, None)
+        # if obs is not None:  
+        #     self._esp32.clear_alarm(self._obs[obs]['under_threshold_code'])
+        #     self._esp32.clear_alarm(self._obs[obs]['over_threshold_code'])
+
+
     def update_thresholds(observable, minimum, maximum):
         '''
         Updated the thresholds
