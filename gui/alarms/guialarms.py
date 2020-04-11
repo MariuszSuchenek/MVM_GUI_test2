@@ -18,21 +18,22 @@ class GuiAlarms:
                                                                   v.get('setmax', v['max']))
 
     def _get_by_observable(self, observable):
-        return self._obs[observable]
+        for v in self._obs.values():
+            if v['observable'] == observable:
+                return v
+        return None
 
     def _test_over_threshold(self, item, value):
-        if "over_threshold" in item:
-            if value > item["over_threshold"]:
+        if "setmax" in item:
+            if value > item["setmax"]:
                 self._esp32.raise_alarm(item["over_threshold_code"])
-                # TODO: find the linked_monitor in self._monitors
-                #linked_monitor.set_alarm()
+                self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
 
     def _test_under_threshold(self, item, value):
-        if "under_threshold" in item:
-            if value < item["under_threshold"]:
+        if "setmin" in item:
+            if value < item["setmin"]:
                 self._esp32.raise_alarm(item["under_threshold_code"])
-                # TODO: find the linked_monitor in self._monitors
-                #linked_monitor.set_alarm()
+                self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
 
     def _test_thresholds(self, item, value):
         self._test_over_threshold(item, value)
@@ -41,11 +42,14 @@ class GuiAlarms:
     def update_thresholds(observable, minimum, maximum):
         assert(observable in self._obs)
 
-        self._obs[observable]["under_threshold"] = minimum
-        self._obs[observable]["over_threshold"] = maximum
+        self._obs[observable]["setmin"] = minimum
+        self._obs[observable]["setmax"] = maximum
 
 
     def set_data(self, data):
         for observable in data:
+            print('setting data for observable', observable)
             item = self._get_by_observable(observable)
-            _test_thresholds(item, data[observable])
+            # print('observable', observable)
+            if item is not None:
+                self._test_thresholds(item, data[observable])

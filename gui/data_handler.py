@@ -10,7 +10,7 @@ class DataHandler():
     is entirey dedicated to read data from the ESP32.
     '''
 
-    def __init__(self, config, esp32, data_filler, gui_alarm=None):
+    def __init__(self, config, esp32, data_filler, gui_alarm):
         '''
         Initializes this class by creating a new QTimer
 
@@ -54,7 +54,7 @@ class DataHandler():
             for p, v in current_values.items():
                 current_values[p] = float(v)
 
-            # self._gui_alarm.set_data(current_values)
+            self._gui_alarm.set_data(current_values)
 
             # finally, send values to the DataFiller
             for p, v in current_values.items():
