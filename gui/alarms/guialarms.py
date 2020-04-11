@@ -21,6 +21,11 @@ class GuiAlarms:
         self._mon_to_obs = {}
         for n, v in self._obs.items():
             self._mon_to_obs[v['linked_monitor']] = n
+            v['min'] = v.get('min', None)
+            v['max'] = v.get('max', None)
+            v['setmin'] = v.get('setmin', v.get('min'))
+            v['setmax'] = v.get('setmax', v.get('max'))
+        
 
         self.update_mon_thresholds()
 
@@ -30,9 +35,9 @@ class GuiAlarms:
         '''
         for n, v in self._obs.items():
             self._monitors[v['linked_monitor']].update_thresholds(v.get('min'),
-                                                                  v.get('setmin', v['min']),
+                                                                  v.get('setmin'),
                                                                   v.get('max'),
-                                                                  v.get('setmax', v['max']))
+                                                                  v.get('setmax'))
 
     def _get_by_observable(self, observable):
         '''
@@ -49,7 +54,7 @@ class GuiAlarms:
         Checks if the current value is above
         threshold (if a threshold exists)
         '''
-        if "setmax" in item:
+        if item['setmax'] is not None:
             if value > item["setmax"]:
                 self._esp32.raise_alarm(item["over_threshold_code"])
                 self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
@@ -59,7 +64,7 @@ class GuiAlarms:
         Checks if the current value is under
         threshold (if a threshold exists)
         '''
-        if "setmin" in item:
+        if item['setmin'] is not None:
             if value < item["setmin"]:
                 self._esp32.raise_alarm(item["under_threshold_code"])
                 self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
