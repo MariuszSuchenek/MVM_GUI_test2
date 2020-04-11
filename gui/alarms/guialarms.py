@@ -10,6 +10,13 @@ class GuiAlarms:
         self._esp32 = esp32
         self._monitors = monitors
 
+        # Send the thresholds to the monitors
+        for v in self._obs.values():
+            self._monitors[v['linked_monitor']].update_thresholds(v.get('min'),
+                                                                  v.get('setmin', v['min']),
+                                                                  v.get('max'),
+                                                                  v.get('setmax', v['max']))
+
     def _get_by_observable(self, observable):
         return self._obs[observable]
 
