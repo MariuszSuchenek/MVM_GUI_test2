@@ -14,7 +14,7 @@ from alarms.alarms import Alarms
 from alarms.alarmsbar import AlarmsBar
 
 from toolsettings.toolsettings import ToolSettings
-from monitor.monitor import Monitor
+from monitor.monitor import Monitor, Alarm
 from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
@@ -56,8 +56,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.centerpane         = self.findChild(QtWidgets.QStackedWidget, "centerpane")
         self.plots_all          = self.findChild(QtWidgets.QWidget,        "plots_all")
-        self.plots_settings     = self.findChild(QtWidgets.QWidget,        "plots_settings")
-        self.plot_hidden_slots  = self.findChild(QtWidgets.QVBoxLayout,    "plot_hidden_slots")
+        self.alarms_settings    = self.findChild(QtWidgets.QWidget,        "alarms_settings")
 
         '''
         Get the bottombar and child pages
@@ -74,9 +73,9 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the stackable bits on the right
         '''
-        self.rightbar     = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
-        self.monitors_bar = self.main.findChild(QtWidgets.QWidget,        "three_monitors")
-        self.frozen_right = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
+        self.rightbar       = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
+        self.monitors_bar   = self.main.findChild(QtWidgets.QWidget,        "monitors_bar")
+        self.frozen_right   = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
 
         '''
         Get initial and startup buttons
@@ -198,69 +197,54 @@ class MainWindow(QtWidgets.QMainWindow):
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
-        # Monitor slot widget names
-        monitor_slot_names = [
-                "monitor_top_slot",
-                "monitor_mid_slot",
-                "monitor_bot_slot"]
-
         # plot slot widget names
-        plot_slot_names = [
-                "plot_top_slot",
-                "plot_mid_slot",
-                "plot_bot_slot"]
-        
-        # Reference names that link plot and monitor slots
-        slot_names = [
-                "top_slot",
-                "mid_slot",
-                "bot_slot"]
-
-        # The name of the monitored field in the default_settings.yaml config file
-        monitor_names = [
-                "mon_inspiratory_pressure",
-                "mon_tidal_volume",
-                "mon_flow",
-                "mon_oxygen_concentration"]
-
-        self.monitors = {}
-        self.monitor_slots = {}
         self.plots = {};
-        self.plot_slots = {}
-
-        # Get displayed monitor slots
-        for (slotname, barname) in zip(slot_names, monitor_slot_names):
-            self.monitor_slots[slotname] = self.rightbar.findChild(QtWidgets.QGridLayout, barname)
-
-        # Get displayed plot slots
-        for (slotname, barname) in zip(slot_names, plot_slot_names):
-            self.plot_slots[slotname] = self.main.findChild(QtWidgets.QGridLayout, barname)
-
-        # Generate monitors and plots
-        for name in monitor_names:
-            monitor = Monitor(name, config, self.alarm_h,
-                    self.config[name]["alarm_min_code"],
-                    self.config[name]["alarm_max_code"])
-            self.monitors[name] = monitor
-            plot = pg.PlotWidget()
+        for name in config['plots']:
+            plot = self.main.findChild(QtWidgets.QWidget, name)
             plot.setFixedHeight(130)
-            self.plots[name] = plot
-
-            # Make connections to data filler
-            self.data_filler.connect_monitor(name, monitor)
             self.data_filler.connect_plot(name, plot)
+            self.plots[name] = plot
+        
+        # The monitored fields from the default_settings.yaml config file
+        self.monitors = {}
+        for name in config['monitors']:
+            monitor = Monitor(name, config)
+            self.monitors[name] = monitor
+            self.data_filler.connect_monitor(monitor)
 
-        self.plots_settings.connect_monitors_and_plots(self)
-        self.plots_settings.populate_monitors_and_plots()
-        self.button_applyalarm.pressed.connect(self.plots_settings.apply_selected)
-        self.button_resetalarm.pressed.connect(self.plots_settings.reset_selected)
+        # The alarms are from the default_settings.yaml config file
+        self.alarms = {}
+        for name in config['alarms']:
+            alarm = Alarm(name, config, self.alarm_h)
+            if alarm.linked_monitor is not None:
+                # Assign the alarm to the given monitored field
+                self.monitors[alarm.linked_monitor].assign_alarm(alarm)
+            self.alarms[name] = alarm
+
+
+        # Get displayed monitors
+        self.monitors_slots = self.main.findChild(QtWidgets.QVBoxLayout, "monitors_slots")
+        self.alarms_settings.connect_monitors(self)
+        self.alarms_settings.populate_monitors()
+        self.button_applyalarm.pressed.connect(self.alarms_settings.apply_selected)
+        self.button_resetalarm.pressed.connect(self.alarms_settings.reset_selected)
+        '''
+        TODO: functionality to add and remove monitors from monitor bar replaces this
         self.button_topalarm.pressed.connect(lambda slotname=slot_names[0]:
-                self.plots_settings.display_selected(slotname))
+                self.alarms_settings.display_selected(slotname))
         self.button_midalarm.pressed.connect(lambda slotname=slot_names[1]:
-                self.plots_settings.display_selected(slotname))
+                self.alarms_settings.display_selected(slotname))
         self.button_botalarm.pressed.connect(lambda slotname=slot_names[2]:
-                self.plots_settings.display_selected(slotname))
+                self.alarms_settings.display_selected(slotname))
+        '''
 
+        # Connect the frozen plots
+        # Requires building of an ordered array to associate the correct controls with the plot.
+        active_plots = []
+        for slotname in self.plots:
+            active_plots.append(self.plots[slotname])
+        self.frozen_bot.connect_workers(self.data_filler, active_plots)
+        self.frozen_right.connect_workers(active_plots)
         '''
         Set up start/stop auto/min mode buttons.
 
@@ -311,12 +295,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def goto_alarms(self):
         self.show_alarms()
         self.show_alarmsbar()
-        self.plots_settings.config_monitors()
+        self.alarms_settings.config_monitors()
 
     def exit_alarms(self):
         self.show_menu()
         self.show_plots()
-        self.plots_settings.deconfig_monitors()
+        self.alarms_settings.deconfig_monitors()
 
     def show_settings(self):
         self.toppane.setCurrentWidget(self.settings)
@@ -341,7 +325,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bottombar.setCurrentWidget(self.settingsfork)
 
     def show_alarms(self):
-        self.centerpane.setCurrentWidget(self.plots_settings)
+        self.centerpane.setCurrentWidget(self.alarms_settings)
 
     def show_plots(self):
         self.centerpane.setCurrentWidget(self.plots_all)

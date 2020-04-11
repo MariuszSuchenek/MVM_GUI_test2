@@ -61,43 +61,23 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <layout class="QGridLayout" name="plot_top_slot"/>
+        <widget class="PlotWidget" name="plot_top" native="true">
+         <layout class="QGridLayout" name="plot_top_slot"/>
+        </widget>
        </item>
        <item row="1" column="0">
-        <layout class="QGridLayout" name="plot_mid_slot"/>
+        <widget class="PlotWidget" name="plot_mid" native="true">
+         <layout class="QGridLayout" name="plot_mid_slot"/>
+        </widget>
        </item>
        <item row="2" column="0">
-        <layout class="QGridLayout" name="plot_bot_slot"/>
+        <widget class="PlotWidget" name="plot_bot" native="true">
+         <layout class="QGridLayout" name="plot_bot_slot"/>
+        </widget>
        </item>
       </layout>
      </widget>
-     <widget class="Alarms" name="plots_settings"/>
-     <widget class="QWidget" name="plots_hidden">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" name="plot_hidden_slots">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-        </layout>
-       </item>
-      </layout>
-     </widget>
+     <widget class="Alarms" name="alarms_settings"/>
     </widget>
    </item>
    <item>
@@ -114,19 +94,41 @@
        <height>390</height>
       </size>
      </property>
-     <widget class="ThreeMonitors" name="three_monitors"/>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="monitors_bar">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" name="monitors_slots">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+        </layout>
+       </item>
+      </layout>
+     </widget>
      <widget class="FrozenPlotsRightMenu" name="frozenplots_right"/>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ThreeMonitors</class>
-   <extends>QWidget</extends>
-   <header>monitor/three_monitors</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>FrozenPlotsRightMenu</class>
    <extends>QWidget</extends>
@@ -137,6 +139,12 @@
    <class>Alarms</class>
    <extends>QWidget</extends>
    <header>alarms/alarms</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqtgraph</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
