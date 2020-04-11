@@ -241,7 +241,7 @@ class Alarms(QtWidgets.QWidget):
                 disp += 1
             else:
                 # Monitor not displayed, so goes on Alarms page
-                self.layout.addWidget(monitor, int(hidd % 4), 10-int(hidd / 3)) 
+                self.layout.addWidget(monitor, int(hidd % 4), 10-int(hidd / 4)) 
                 hidd += 1 
 
 
