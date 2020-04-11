@@ -86,7 +86,6 @@ class Alarms(QtWidgets.QWidget):
         alarm = monitor.gui_alarm
         if alarm.has_valid_minmax(monitor.configname):
             slider.setMinimum(0)
-            print ('---------------------------------------------------------seeting max to ', (alarm.get_max(monitor.configname) - alarm.get_min(monitor.configname)) / monitor.step)
             slider.setMaximum((alarm.get_max(monitor.configname) - alarm.get_min(monitor.configname)) / monitor.step)
             slider.setSingleStep(monitor.step)
             slider.setPageStep(slider.maximum() / 2)
@@ -145,11 +144,7 @@ class Alarms(QtWidgets.QWidget):
                 self.do_alarmmin_moved(value, monitor))
 
         if alarm.has_valid_minmax(name):
-            print(name, 'alarm.get_min(name)', alarm.get_min(name), 'alarm.get_max(name)', alarm.get_max(name))
-            # sliderpos = int((alarm.setmin - alarm.min) / monitor.step)
             sliderpos = int((alarm.get_setmin(name) - alarm.get_min(name)) / monitor.step)
-            print(name, 'alarm.get_setmin(name)', alarm.get_setmin(name), 'alarm.get_setmax(name)', alarm.get_setmax(name))
-            print('sliderpos', sliderpos)
             self.slider_alarmmin.setSliderPosition(sliderpos)
             self.do_alarmmin_moved(sliderpos, monitor)
             self.alarmmin_min.setText(str(alarm.get_min(name)))
