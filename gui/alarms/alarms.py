@@ -66,6 +66,8 @@ class Alarms(QtWidgets.QWidget):
             if name == selected:
                 self.selected = name
                 monitor.set_alarm_state(False)
+                if monitor.alarm is not None:
+                    monitor.alarm.clear_alarm()
                 # Show configuration and highlight monitor
                 if monitor.config_mode:
                     monitor.highlight()
