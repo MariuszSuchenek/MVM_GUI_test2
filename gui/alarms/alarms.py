@@ -225,24 +225,91 @@ class Alarms(QtWidgets.QWidget):
         self.populate_monitors_and_plots()
     '''
 
+    def move_selected_to_index(self, index=None):
+        """
+        Moves the selected monitor to the index location on the monitor bar
+        
+        index: location on the monitor bar
+            If None, monitor is removed from the bar
+            If >= len(displayed_monitors), adds to end
+        """
+
+        if index is not None:
+            index = max(0, min(len(self.displayed_monitors), index))
+            # print("Moving " + self.selected + " to slot " + str(index))
+        else:
+            index = -1
+            # print("Moving " + self.selected + " to alarms page")
+
+        newmons = [] 
+        for (i, name) in enumerate(self.displayed_monitors):
+            if i == index:
+                newmons.append(self.selected)
+            if name != self.selected:
+                newmons.append(name)
+        if index >= len(self.displayed_monitors):
+            newmons.append(self.selected)
+
+        self.clear_monitors()
+        self.displayed_monitors = newmons
+        self.populate_monitors()
+
+    def move_selected_down(self):
+        """
+        Moves a monitor down the monitor bar.
+        If the object is not on the monitor bar, place on the top.
+        """
+        if self.selected in self.displayed_monitors:
+            index = self.monitors_slots.indexOf(self.monitors[self.selected])+2
+        else:
+            index = 0 
+        self.move_selected_to_index(index=index)
+
+    def move_selected_up(self):
+        """
+        Moves a monitor up the monitor bar.
+        If the object is not on the monitor bar, place on the bottom.
+        """
+        if self.selected in self.displayed_monitors:
+            index = self.monitors_slots.indexOf(self.monitors[self.selected])-1
+        else:
+            index = len(self.displayed_monitors) 
+        self.move_selected_to_index(index=index)
+
+    def move_selected_off(self):
+        """
+        Removes a monitor from the monitor bar
+        """
+        self.move_selected_to_index()
+
+    def clear_monitors(self):
+        """
+        Removes all monitors from monitor bar and alarms page.
+        """
+        for name in self.monitors:
+            monitor = self.monitors[name]
+            if name in self.displayed_monitors:
+                self.monitors_slots.removeWidget(self.monitors[name])
+            else:
+                self.layout.removeWidget(self.monitors[name])
+
     def populate_monitors(self):
         """
         Populates monitors based on the ones assigned as displayed.
         If the monitor is not displayed, it is shown in the alarms page.
         """
         # Iterate through all monitors and either display on main bar, or put on alarms page
-        disp = 0
         hidd = 0
         for name in self.monitors:
             monitor = self.monitors[name]
-            if name in self.displayed_monitors:
-                # Monitor displayed, so goes on Monitor Bar
-                self.monitors_slots.insertWidget(disp, self.monitors[name])
-                disp += 1
-            else:
+            if name not in self.displayed_monitors:
                 # Monitor not displayed, so goes on Alarms page
                 self.layout.addWidget(monitor, int(hidd % 4), 10-int(hidd / 4)) 
                 hidd += 1 
+
+        for (disp, name) in enumerate(self.displayed_monitors):
+            # Monitor displayed, so goes on Monitor Bar
+            self.monitors_slots.insertWidget(disp, self.monitors[name])
 
 
     def config_monitors(self):
