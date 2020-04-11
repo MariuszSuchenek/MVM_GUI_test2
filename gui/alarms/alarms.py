@@ -82,13 +82,16 @@ class Alarms(QtWidgets.QWidget):
         monitor: Reference to the monitor to set slider range.
         """
         alarm = monitor.alarm
-        if alarm is not None:
+        if alarm is not None and alarm.valid_minmax():
             slider.setMinimum(0)
             slider.setMaximum((alarm.max - alarm.min) / monitor.step)
             slider.setSingleStep(monitor.step)
             slider.setPageStep(slider.maximum() / 2)
             slider.setEnabled(True)
         else:
+            slider.setMinimum(0)
+            slider.setMaximum(0)
+            slider.setPageStep(slider.maximum())
             slider.setDisabled(True)
 
     def do_alarmmin_moved(self, slidervalue, monitor):
@@ -100,7 +103,7 @@ class Alarms(QtWidgets.QWidget):
         """
         # Prevent min > max
         alarm = monitor.alarm
-        if alarm is not None:
+        if alarm is not None and alarm.valid_minmax():
             slidervalue = min(self.slider_alarmmax.sliderPosition(), slidervalue)
             value = slidervalue * monitor.step + alarm.min
             self.alarmmin_value.setText("Alarm min: " + str(value))
@@ -116,7 +119,7 @@ class Alarms(QtWidgets.QWidget):
         """
         # Prevent max < min
         alarm = monitor.alarm
-        if alarm is not None:
+        if alarm is not None and alarm.valid_minmax():
             slidervalue = max(self.slider_alarmmin.sliderPosition(), slidervalue)
             value = slidervalue * monitor.step + alarm.min
             self.alarmmax_value.setText("Alarm max: " + str(value))
@@ -137,22 +140,30 @@ class Alarms(QtWidgets.QWidget):
         self.set_slider_range(self.slider_alarmmin, monitor)
         self.slider_alarmmin.valueChanged.connect(lambda value:
                 self.do_alarmmin_moved(value, monitor))
-        if alarm is not None:
+        if alarm is not None and alarm.valid_minmax():
             sliderpos = int((alarm.setmin - alarm.min) / monitor.step)
             self.slider_alarmmin.setSliderPosition(sliderpos)
             self.do_alarmmin_moved(sliderpos, monitor)
             self.alarmmin_min.setText(str(alarm.min))
             self.alarmmin_max.setText(str(alarm.max))
+        else:
+            self.alarmmin_value.setText("-")
+            self.alarmmin_min.setText("-")
+            self.alarmmin_max.setText("-")
 
         self.set_slider_range(self.slider_alarmmax, monitor)
         self.slider_alarmmax.valueChanged.connect(lambda value:
                 self.do_alarmmax_moved(value, monitor))
-        if alarm is not None:
+        if alarm is not None and alarm.valid_minmax():
             sliderpos = int((alarm.setmax - alarm.min) / monitor.step)
             self.slider_alarmmax.setSliderPosition(sliderpos)
             self.do_alarmmax_moved(sliderpos, monitor)
             self.alarmmax_min.setText(str(alarm.min))
             self.alarmmax_max.setText(str(alarm.max))
+        else:
+            self.alarmmax_value.setText("-")
+            self.alarmmax_min.setText("-")
+            self.alarmmax_max.setText("-")
 
     def apply_selected(self):
         """
@@ -161,7 +172,7 @@ class Alarms(QtWidgets.QWidget):
         """
         monitor = self.monitors[self.selected]
         alarm = monitor.alarm
-        if alarm is not None:
+        if alarm is not None and alarm.valid_minmax():
             alarm.setmin = self.slider_alarmmin.sliderPosition() * monitor.step + alarm.min
             alarm.setmax = self.slider_alarmmax.sliderPosition() * monitor.step + alarm.min
             monitor.update_thresholds()
@@ -215,14 +226,18 @@ class Alarms(QtWidgets.QWidget):
         If the monitor is not displayed, it is shown in the alarms page.
         """
         # Iterate through all monitors and either display on main bar, or put on alarms page
-        for (i, name) in enumerate(self.monitors):
+        disp = 0
+        hidd = 0
+        for name in self.monitors:
             monitor = self.monitors[name]
             if name in self.displayed_monitors:
                 # Monitor displayed, so goes on Monitor Bar
-                self.monitors_slots.insertWidget(i, self.monitors[name])
+                self.monitors_slots.insertWidget(disp, self.monitors[name])
+                disp += 1
             else:
                 # Monitor not displayed, so goes on Alarms page
-                self.layout.addWidget(monitor, int(i % 3), 10-int(i / 3)) 
+                self.layout.addWidget(monitor, int(hidd % 4), 10-int(hidd / 3)) 
+                hidd += 1 
 
 
     def config_monitors(self):
