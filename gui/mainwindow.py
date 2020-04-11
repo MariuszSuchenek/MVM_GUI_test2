@@ -120,9 +120,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_backalarms = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_backalarms")
         self.button_applyalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_applyalarm")
         self.button_resetalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_resetalarm")
-        self.button_topalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_topalarm")
-        self.button_midalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_midalarm")
-        self.button_botalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_botalarm")
+        self.button_upalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_upalarm")
+        self.button_downalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_downalarm")
+        self.button_offalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_offalarm")
 
         '''
         Get frozen plots bottom bar widgets and connect
@@ -215,15 +215,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.alarms_settings.populate_monitors()
         self.button_applyalarm.pressed.connect(self.alarms_settings.apply_selected)
         self.button_resetalarm.pressed.connect(self.alarms_settings.reset_selected)
-        '''
-        TODO: functionality to add and remove monitors from monitor bar replaces this
-        self.button_topalarm.pressed.connect(lambda slotname=slot_names[0]:
-                self.alarms_settings.display_selected(slotname))
-        self.button_midalarm.pressed.connect(lambda slotname=slot_names[1]:
-                self.alarms_settings.display_selected(slotname))
-        self.button_botalarm.pressed.connect(lambda slotname=slot_names[2]:
-                self.alarms_settings.display_selected(slotname))
-        '''
+        self.button_offalarm.pressed.connect(self.alarms_settings.move_selected_off)
+        self.button_upalarm.pressed.connect(self.alarms_settings.move_selected_up)
+        self.button_downalarm.pressed.connect(self.alarms_settings.move_selected_down)
 
         # Connect the frozen plots
         # Requires building of an ordered array to associate the correct controls with the plot.
