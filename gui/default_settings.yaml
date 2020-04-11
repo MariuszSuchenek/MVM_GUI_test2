@@ -169,7 +169,7 @@ alarms:
         min: 10
         setmin: 15
         max: 80
-        setmax: 75
+        setmax: 60 #75
         alarm_min_code: 8
         alarm_max_code: 9
         observable: pressure
@@ -207,11 +207,12 @@ alarms:
         observable: peep
         linked_monitor: peep
 
-    battery_powered :
+    battery_powered:
         min: null
         max: null
         under_threshold_code: null
         over_threshold_code: null
+        observable: battery_powered
         linked_monitor: battery
 
 plots:

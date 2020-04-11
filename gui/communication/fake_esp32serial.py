@@ -98,7 +98,7 @@ class FakeESP32Serial:
                     "flow":                   self.peep.flow(),
                     "o2":                     random.uniform(10, 100),
                     "bpm":                    random.uniform(10, 100),
-                    "tidal_volume":           random.uniform(1000, 1500),
+                    "tidal":                  random.uniform(1000, 1500),
                     "peep":                   random.uniform(4, 20),
                     "temperature":            random.uniform(10, 50),
                     "battery_powered":        int(random.uniform(0, 1.5)),
