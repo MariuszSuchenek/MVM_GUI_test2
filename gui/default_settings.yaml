@@ -12,8 +12,8 @@ get_all_fields:
   - tidal
   - peep
   - temperature
-  - power_mode
-  - battery
+  - battery_powered
+  - battery_charge
 
 # watchdog reset interval time in seconds
 wdinterval: 1
