@@ -134,7 +134,7 @@ monitors:
         units: "(slpm)"
         color: "rgb(0,255,255)"
         alarmcolor: "red"
-        observabl3e: flow
+        observable: flow
 
     oxygen_concentration: 
         name: "O<sub>2</sub> Conc." 
@@ -145,6 +145,26 @@ monitors:
         color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: o2
+
+    temperature: 
+        name: "Temperature" 
+        init: 40
+        step: 1
+        dec_precision: 0
+        units: "(C)"
+        color: "rgb(255,255,255)"
+        alarmcolor: "red"
+        observable: temperature
+
+    peak: 
+        name: "PEAK" 
+        init: 40
+        step: 1
+        dec_precision: 0
+        units: "(cmH2O)"
+        color: "rgb(255,255,255)"
+        alarmcolor: "red"
+        observable: peak
 
 displayed_monitors:
     - inspiratory_pressure
@@ -172,6 +192,8 @@ alarms:
         setmax: 75
         alarm_min_code: 8
         alarm_max_code: 9
+        under_threshold_code: null
+        over_threshold_code: null
         observable: pressure
         linked_monitor: inspiratory_pressure
 
@@ -180,6 +202,8 @@ alarms:
         max: 20
         alarm_min_code: 11
         alarm_max_code: 12
+        under_threshold_code: null
+        over_threshold_code: null
         observable: flow
         linked_monitor: flow
 
@@ -188,6 +212,8 @@ alarms:
         max: 1500
         alarm_min_code: 14
         alarm_max_code: 15
+        under_threshold_code: null
+        over_threshold_code: null
         observable: tidal
         linked_monitor: tidal_volume
 
@@ -207,11 +233,12 @@ alarms:
         observable: peep
         linked_monitor: peep
 
-    battery_powered :
+    battery_powered:
         min: null
         max: null
         under_threshold_code: null
         over_threshold_code: null
+        observable: battery_powered
         linked_monitor: battery
 
 plots:

@@ -4,70 +4,159 @@ Alarm facility.
 
 from copy import copy
 
-class GuiAlarm():
-    def __init__(self, name, config, monitors, alarm_handler):
-        self._config = config
-        self.name = name
-        self.alarm_h = alarm_handler
+class GuiAlarms:
+    def __init__(self, config, esp32, monitors):
+        '''
+        Constructor
 
-        alarm_default = {
-                "min": 0,
-                "value": 0,
-                "max": 100,
-                "alarm_min_code": -1,
-                "alarm_max_code": -1,
-                "under_threshold_code": None,
-                "over_threshold_code": None,
-                "observable": "o2",
-                "linked_monitor": None}
-        entry = self._config['alarms'].get(name, alarm_default)
+        arguments:
+        - config: the dict config
+        - esp32: instance of the esp32serial
+        - monitors: a dict name->Monitor
+        '''
+        self._obs = copy(config["alarms"])
+        self._esp32 = esp32
+        self._monitors = monitors
 
-        self.entry = entry
-        self.min = entry.get("min", alarm_default["min"])
-        self.setmin = entry.get("setmin", self.min)
-        self.value = entry.get("value", alarm_default["value"])
-        self.max = entry.get("max", alarm_default["max"])
-        self.setmax = entry.get("setmax", self.max)
-        self.alarm_min_code = entry.get("alarm_min_code", alarm_default["alarm_min_code"])
-        self.alarm_max_code = entry.get("alarm_max_code", alarm_default["alarm_max_code"])
-        self.under_threshold_code = entry.get("under_threshold_code", alarm_default["under_threshold_code"])
-        self.over_threshold_code = entry.get("over_threshold_code", alarm_default["over_threshold_code"])
-        self.observable = entry.get("observable", alarm_default["observable"])
-        self.linked_monitor = entry.get("linked_monitor", alarm_default["linked_monitor"])
+        self._mon_to_obs = {}
+        for n, v in self._obs.items():
+            self._mon_to_obs[v['linked_monitor']] = n
 
-        # Link monitor, if specified
-        if self.linked_monitor is not None:
-            # Assign the alarm to the given monitored field
-            self.linked_monitor = monitors[self.linked_monitor]
-            print("Linking " + self.name + " to " + self.linked_monitor.configname)
-            self.linked_monitor.assign_alarm(self)
+        self.update_mon_thresholds()
 
-    def update(self, value):
-        """
-        Updates the value in the monitored field
+    def update_mon_thresholds(self):
+        '''
+        Send the thresholds to the monitors
+        '''
+        for n, v in self._obs.items():
+            self._monitors[v['linked_monitor']].update_thresholds(v.get('min'),
+                                                                  v.get('setmin', v['min']),
+                                                                  v.get('max'),
+                                                                  v.get('setmax', v['max']))
 
-        value: The value that the monitor will display.
-        """
-        self.value = value
-        # Handle potential over/under threshold
-        alarm_raised = False
-        if self.setmin is not None and value < self.setmin and self.under_threshold_code is not None:
-            self.alarm_h.raise_alarm(self.under_threshold_code)
-            alarm_raised = True
-        if self.setmax is not None and value > self.setmax and self.over_threshold_code is not None:
-            alarm_raised = True
-            self.alarm_h.raise_alarm(self.over_threshold_code)
+    def _get_by_observable(self, observable):
+        '''
+        Gets the dict consiguration for a 
+        particular observable
+        '''
+        for v in self._obs.values():
+            if v['observable'] == observable:
+                return v
+        return None
 
-        # Handle sending alarm to monitor
-        if self.linked_monitor is not None and alarm_raised:
-            self.linked_monitor.set_alarm_state(True)
+    def _test_over_threshold(self, item, value):
+        '''
+        Checks if the current value is above
+        threshold (if a threshold exists)
+        '''
+        if "setmax" in item:
+            if value > item["setmax"]:
+                self._esp32.raise_alarm(item["over_threshold_code"])
+                self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
 
-    def valid_minmax(self):
-        return self.max is not None and self.min is not None
+    def _test_under_threshold(self, item, value):
+        '''
+        Checks if the current value is under
+        threshold (if a threshold exists)
+        '''
+        if "setmin" in item:
+            if value < item["setmin"]:
+                self._esp32.raise_alarm(item["under_threshold_code"])
+                self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
 
-    def clear_alarm(self):
-        """
-        Clears previous out of range alarms by reverting the background color.
-        """
-        self.alarm_h.stop_alarm(self.name)
+    def _test_thresholds(self, item, value):
+        '''
+        Checks if the current value is above or under
+        threshold (if a threshold exists)
+        '''
+        self._test_over_threshold(item, value)
+        self._test_under_threshold(item, value)
+
+    def update_thresholds(observable, minimum, maximum):
+        '''
+        Updated the thresholds
+        '''
+        assert(observable in self._obs)
+
+        self._obs[observable]["setmin"] = minimum
+        self._obs[observable]["setmax"] = maximum
+
+
+    def set_data(self, data):
+        '''
+        Sets the data. This is called by the 
+        DataHandler
+        '''
+        for observable in data:
+            item = self._get_by_observable(observable)
+            if item is not None:
+                self._test_thresholds(item, data[observable])
+
+    def has_valid_minmax(self, name):
+        '''
+        Checks if max and min are not None
+        '''
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        value_max = self._obs[obs]['max']
+        value_min = self._obs[obs]['min']
+        return value_max is not None and value_min is not None
+
+    def get_setmin(self, name):
+        '''
+        Returns the setmin for monitor 
+        with name
+        '''
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        else: return self._obs[obs].get('setmin', self._obs[obs]['min'])
+
+    def get_setmax(self, name):
+        '''
+        Returns the setmax for monitor 
+        with name
+        '''
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        else: return self._obs[obs].get('setmax', self._obs[obs]['max'])
+
+    def get_min(self, name):
+        '''
+        Returns the min for monitor 
+        with name
+        '''
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        else: return self._obs[obs]['min']
+
+    def get_max(self, name):
+        '''
+        Returns the max for monitor 
+        with name
+        '''
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        else: return self._obs[obs]['max']
+
+    def update_min(self, name, minvalue):
+        '''
+        Updates the min for monitor 
+        with name
+        '''
+        obs = self._mon_to_obs.get(name, None)
+        if obs is not None: 
+            self._obs[obs]['setmin'] = minvalue
+            self.update_mon_thresholds()
+
+    def update_max(self, name, maxvalue):
+        '''
+        Updates the max for monitor 
+        with name
+        '''
+        obs = self._mon_to_obs.get(name, None)
+        if obs is not None:  
+            self._obs[obs]['setmax'] = maxvalue
+            self.update_mon_thresholds()
+
+
 
