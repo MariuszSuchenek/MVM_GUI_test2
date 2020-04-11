@@ -164,17 +164,6 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.data_filler = DataFiller(config)
 
-        '''
-        Instantiate DataHandler, which will start a new
-        thread to read data from the ESP32. We also connect
-        the DataFiller to it, so the thread will pass the
-        data directly to the DataFiller, which will
-        then display them.
-        '''
-        self._data_h = DataHandler(config, self.esp32, self.data_filler)
-
-        self.menu.connect_datahandler_config(self._data_h, self.config)
-
 
 
         '''
@@ -267,6 +256,17 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
+
+        '''
+        Instantiate DataHandler, which will start a new
+        thread to read data from the ESP32. We also connect
+        the DataFiller to it, so the thread will pass the
+        data directly to the DataFiller, which will
+        then display them.
+        '''
+        self._data_h = DataHandler(config, self.esp32, self.data_filler)
+
+        self.menu.connect_datahandler_config(self._data_h, self.config)
 
     def set_colors(self):
         # Monitors bar background
