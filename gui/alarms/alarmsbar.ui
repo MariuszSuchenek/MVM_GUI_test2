@@ -511,7 +511,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_topalarm">
+    <widget class="QPushButton" name="button_offalarm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -538,13 +538,13 @@
       </font>
      </property>
      <property name="text">
-      <string>Display
-Top</string>
+      <string>Move
+Off</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_midalarm">
+    <widget class="QPushButton" name="button_upalarm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -559,13 +559,13 @@ Top</string>
       </font>
      </property>
      <property name="text">
-      <string>Display
-Middle</string>
+      <string>Move
+Up</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_botalarm">
+    <widget class="QPushButton" name="button_downalarm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -580,8 +580,8 @@ Middle</string>
       </font>
      </property>
      <property name="text">
-      <string>Display
-Bottom</string>
+      <string>Move
+Down</string>
      </property>
     </widget>
    </item>
