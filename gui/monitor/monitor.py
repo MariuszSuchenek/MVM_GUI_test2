@@ -62,15 +62,15 @@ class Monitor(QtWidgets.QWidget):
     def update_thresholds(self):
         self.label_min.hide()
         self.label_max.hide()
-        self.label_min.setText(str(self.alarm.setmin))
-        self.label_max.setText(str(self.alarm.setmax))
         if self.alarm is not None:
             print("Updating thresholds for " + self.configname)
 
             if self.alarm.min is not None:
+                self.label_min.setText(str(self.alarm.setmin))
                 self.label_min.show()
 
             if self.alarm.max is not None:
+                self.label_max.setText(str(self.alarm.setmax))
                 self.label_max.show()
 
     def refresh(self):
