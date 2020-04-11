@@ -46,7 +46,7 @@ class Monitor(QtWidgets.QWidget):
         self.refresh()
         self.set_alarm_state(False)
         self.update_value(self.value)
-        self.alarm = None
+        # self.alarm = None
 
         # Setup config mode
         self.config_mode = False
@@ -55,23 +55,35 @@ class Monitor(QtWidgets.QWidget):
         # Handle optional stats
         # TODO: determine is stats are useful/necessary
 
-    def assign_alarm(self, alarm):
-        self.alarm = alarm
-        self.update_thresholds()
+    def name(self):
+        '''
+        Returns the configuration name 
+        for this monitor
+        '''
+        return self.configname
 
-    def update_thresholds(self):
+    def connect_gui_alarm(self, gui_alarm):
+        '''
+        Stores the GuiAlarm class
+        '''
+        self.gui_alarm = gui_alarm
+
+    def update_thresholds(self, alarm_min, alarm_setmin, alarm_max, alarm_setmax):
+        '''
+        Updates the labes showind the threshold values
+        '''
         self.label_min.hide()
         self.label_max.hide()
-        if self.alarm is not None:
-            print("Updating thresholds for " + self.configname)
+        # if self.alarm is not None:
+        print("Updating thresholds for " + self.configname)
 
-            if self.alarm.min is not None:
-                self.label_min.setText(str(self.alarm.setmin))
-                self.label_min.show()
+        if alarm_min is not None:
+            self.label_min.setText(str(alarm_setmin))
+            self.label_min.show()
 
-            if self.alarm.max is not None:
-                self.label_max.setText(str(self.alarm.setmax))
-                self.label_max.show()
+        if alarm_max is not None:
+            self.label_max.setText(str(alarm_setmax))
+            self.label_max.show()
 
     def refresh(self):
         # Handle optional units
@@ -84,6 +96,11 @@ class Monitor(QtWidgets.QWidget):
         self.setAutoFillBackground(True)
 
     def set_alarm_state(self, isalarm):
+        '''
+        Sets or clears the alarm
+        arguments:
+        - isalarm: True is alarmed state
+        '''
         if isalarm:
             color = self.alarmcolor
             print("We alarmed " + self.configname)

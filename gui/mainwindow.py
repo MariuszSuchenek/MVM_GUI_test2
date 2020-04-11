@@ -11,7 +11,7 @@ from toolbar.toolbar import Toolbar
 from menu.menu import Menu
 from settings.settingsbar import SettingsBar
 from alarms.alarms import Alarms
-from alarms.guialarms import GuiAlarm
+from alarms.guialarms import GuiAlarms
 from alarms.alarmsbar import AlarmsBar
 
 from toolsettings.toolsettings import ToolSettings
@@ -164,17 +164,6 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.data_filler = DataFiller(config)
 
-        '''
-        Instantiate DataHandler, which will start a new
-        thread to read data from the ESP32. We also connect
-        the DataFiller to it, so the thread will pass the
-        data directly to the DataFiller, which will
-        then display them.
-        '''
-        self._data_h = DataHandler(config, self.esp32, self.data_filler)
-
-        self.menu.connect_datahandler_config(self._data_h, self.config)
-
 
 
         '''
@@ -214,10 +203,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.data_filler.connect_monitor(monitor)
 
         # The alarms are from the default_settings.yaml config file
-        self.alarms = {}
-        for name in config['alarms']:
-            alarm = GuiAlarm(name, config, self.monitors, self.alarm_h)
-            self.alarms[name] = alarm
+        # self.alarms = {}
+        # for name in config['alarms']:
+        #     alarm = GuiAlarm(name, config, self.monitors, self.alarm_h)
+        #     self.alarms[name] = alarm
+        self.gui_alarm = GuiAlarms(config, self.esp32, self.monitors)
+        for m in self.monitors.values(): m.connect_gui_alarm(self.gui_alarm)
 
 
         # Get displayed monitors
@@ -262,10 +253,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
 
         '''
+        Instantiate DataHandler, which will start a new
+        thread to read data from the ESP32. We also connect
+        the DataFiller to it, so the thread will pass the
+        data directly to the DataFiller, which will
+        then display them.
+        '''
+        self._data_h = DataHandler(config, self.esp32, self.data_filler, self.gui_alarm)
+
+        self.menu.connect_datahandler_config(self._data_h, self.config)
+
+        '''
         Connect settings button to Settings overlay.
         '''
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
+
+        
 
     def set_colors(self):
         # Monitors bar background
