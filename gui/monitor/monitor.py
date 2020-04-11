@@ -2,65 +2,6 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
-class Alarm():
-    def __init__(self, name, config, alarm_handler, *args):
-        self.config = config
-        self.name = name
-        self.alarm_h = alarm_handler
-
-        alarm_default = {
-                "min": 0,
-                "setmin": 0,
-                "value": 0,
-                "max": 100,
-                "setmax": 0,
-                "alarm_min_code": -1,
-                "alarm_max_code": -1,
-                "observable": "o2",
-                "linked_monitor": None}
-        entry = self.config['alarms'].get(name, alarm_default)
-
-        self.entry = entry
-        self.min = entry.get("min", alarm_default["min"])
-        self.setmin = entry.get("setmin", alarm_default["setmin"])
-        self.value = entry.get("value", alarm_default["value"])
-        self.max = entry.get("max", alarm_default["max"])
-        self.setmax = entry.get("setmax", alarm_default["setmax"])
-        self.alarm_min_code = entry.get("alarm_min_code", alarm_default["alarm_min_code"])
-        self.alarm_max_code = entry.get("alarm_max_code", alarm_default["alarm_max_code"])
-        self.observable = entry.get("observable", alarm_default["observable"])
-        self.linked_monitor = entry.get("linked_monitor", alarm_default["linked_monitor"])
-
-    def update(self, value):
-        """
-        Updates the value in the monitored field
-
-        value: The value that the monitor will display.
-        """
-        self.value = value
-        # handle palette changes due to alarm
-        if self.is_alarm():
-            self.alarm_h.raise_alarm(self.alarm_min_code if self.is_alarm_min() else self.alarm_max_code)
-
-    def clear_alarm(self):
-        """
-        Clears previous out of range alarms by reverting the background color.
-        """
-        self.alarm_h.stop_alarm(self.name)
-
-    def is_alarm(self):
-        """
-        Returns true if the monitored value is beyond the min or max threshold (i.e ALARM!).
-        """
-        return self.value <= self.setmin or self.value >= self.setmax
-
-    def is_alarm_min(self):
-        """
-        Returns true if the monitored value is below the min threshold (i.e ALARM!).
-        """
-        return self.value <= self.setmin
-        
-
 class Monitor(QtWidgets.QWidget):
     def __init__(self, name, config, *args):
         """
@@ -68,9 +9,6 @@ class Monitor(QtWidgets.QWidget):
 
         Grabs child widgets and sets alarm facility up.
 
-        alarm_min_code: the ESP code correponding at the minumum alarm
-        alarm_max_code: the ESP code correponding at the maxmum alarm
-        alarm_handler: the handler to communicate alarms with the ESP
         """
         super(Monitor, self).__init__(*args)
         uic.loadUi("monitor/monitor.ui", self)
@@ -122,14 +60,18 @@ class Monitor(QtWidgets.QWidget):
         self.update_thresholds()
 
     def update_thresholds(self):
+        self.label_min.hide()
+        self.label_max.hide()
         if self.alarm is not None:
-            self.label_min.setText(str(self.alarm.setmin))
-            self.label_max.setText(str(self.alarm.setmax))
-            self.label_min.show()
-            self.label_max.show()
-        else:
-            self.label_min.hide()
-            self.label_max.hide()
+            print("Updating thresholds for " + self.configname)
+
+            if self.alarm.min is not None:
+                self.label_min.setText(str(self.alarm.setmin))
+                self.label_min.show()
+
+            if self.alarm.max is not None:
+                self.label_max.setText(str(self.alarm.setmax))
+                self.label_max.show()
 
     def refresh(self):
         # Handle optional units
@@ -144,6 +86,7 @@ class Monitor(QtWidgets.QWidget):
     def set_alarm_state(self, isalarm):
         if isalarm:
             color = self.alarmcolor
+            print("We alarmed " + self.configname)
         else:
             color = QtGui.QColor("#000000")
         palette = self.palette()
@@ -155,7 +98,7 @@ class Monitor(QtWidgets.QWidget):
         self.frame.setStyleSheet("#frame { border: 5px solid limegreen; }");
 
     def unhighlight(self):
-        self.frame.setStyleSheet("#frame { border: 1px solid white; }");
+        self.frame.setStyleSheet("#frame { border: 0.5px solid white; }");
 
     def update_value(self, value):
         if self.step is not None:
