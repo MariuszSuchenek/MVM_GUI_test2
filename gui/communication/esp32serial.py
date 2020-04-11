@@ -38,14 +38,15 @@ class ESP32Serial:
     Main class for interfacing with the ESP32 via a serial connection.
     """
 
-    def __init__(self, port, **kwargs):
+    def __init__(self, config, **kwargs):
         """
         Contructor
 
         Opens a serial connection to the MVM ESP32
 
         arguments:
-        - port           the port device (e.g. "/dev/ttyUSB0")
+        - config         the configuration object containing at least the
+                         "port" and "get_all_fields" keys
 
         named arguments:
         - any argument available for the serial.Serial pySerial class
@@ -60,15 +61,14 @@ class ESP32Serial:
         baudrate = kwargs["baudrate"] if "baudrate" in kwargs else 115200
         timeout = kwargs["timeout"] if "timeout" in kwargs else 1
         self.term = kwargs["terminator"] if "terminator" in kwargs else b'\n'
-        self.connection = serial.Serial(port=port, baudrate=baudrate,
-                                        timeout=timeout, **kwargs)
+        self.connection = serial.Serial(port=config["port"],
+                                        baudrate=baudrate, timeout=timeout,
+                                        **kwargs)
+
+        self.get_all_fields = config["get_all_fields"]
 
         while self.connection.read():
             pass
-
-        a = ESP32Alarm(27)
-        for m in a.strerror_all():
-            print(m)
 
     def __del__(self):
         """
@@ -168,7 +168,8 @@ class ESP32Serial:
 
     def get_all(self):
         """
-        Get the pressure, flow, o2, and bpm at once and in this order.
+        Get the observables as listed in the get_all_fields internal
+        object.
 
         returns: a dict with member keys as written above and values as
         strings.
@@ -185,11 +186,12 @@ class ESP32Serial:
                 retry -= 1
                 try:
                     result = self.connection.read_until(terminator=self.term)
-                    pressure, flow, o2, bpm, tidal, peep, temperature, power_mode, battery = self._parse(result).split(',')
-                    return { "pressure": pressure, "flow": flow, "o2": o2,
-                             "bpm": bpm, "tidal": tidal, "peep": peep,
-                             "temperature": temperature,
-                             "power_mode": power_mode, "battery": battery }
+                    values = self._parse(result).split(',')
+
+                    if len(values) != len(self.get_all_fields):
+                        raise Exception("get_all answer mismatch: expected: %s, got %s" % (self.get_all_fields, values))
+
+                    return dict(zip(self.get_all_fields, values))
                 except Exception as exc:
                     print("ERROR: get failing: %s %s" % (result.decode(), str(exc)))
             raise ESP32Exception("get", "get all", result.decode())
