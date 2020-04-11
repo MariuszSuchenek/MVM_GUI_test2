@@ -164,8 +164,6 @@ class DataFiller():
         Adds a data point to the plot with
         name 'name'
         '''
-        print('data for monitor', name)
-
         if name in self._data:
             if self._looping:
                 # Looping plots - update next value
