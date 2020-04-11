@@ -19,10 +19,15 @@ class GuiAlarms:
         self._monitors = monitors
 
         self._mon_to_obs = {}
+        for n, v in self._obs.items():
+            self._mon_to_obs[v['linked_monitor']] = n
+
+        self.update_mon_thresholds()
+
+    def update_mon_thresholds(self):
 
         # Send the thresholds to the monitors
         for n, v in self._obs.items():
-            self._mon_to_obs[v['linked_monitor']] = n
             self._monitors[v['linked_monitor']].update_thresholds(v.get('min'),
                                                                   v.get('setmin', v['min']),
                                                                   v.get('max'),
@@ -120,11 +125,13 @@ class GuiAlarms:
         obs = self._mon_to_obs.get(name, None)
         if obs is not None: 
             self._obs[obs]['setmin'] = minvalue
+            self.update_mon_thresholds()
 
     def update_max(self, name, maxvalue):
         obs = self._mon_to_obs.get(name, None)
         if obs is not None:  
             self._obs[obs]['setmax'] = maxvalue
+            self.update_mon_thresholds()
 
 
 
