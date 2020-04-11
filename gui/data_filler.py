@@ -170,7 +170,7 @@ class DataFiller():
         name 'name'
         '''
 
-        print('data for monitor', name)
+        # print('NORMAL: Received data for monitor', name)
 
         if name in self._data:
             if self._looping:
