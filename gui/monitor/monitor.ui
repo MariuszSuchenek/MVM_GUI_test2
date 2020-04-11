@@ -523,24 +523,6 @@
       <property name="spacing">
        <number>0</number>
       </property>
-      <item row="1" column="2">
-       <widget class="QLabel" name="label_max">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-          <stylestrategy>PreferAntialias</stylestrategy>
-         </font>
-        </property>
-        <property name="text">
-         <string>100</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="2">
        <widget class="QLabel" name="label_min">
         <property name="font">
@@ -556,32 +538,6 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_statname1">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <stylestrategy>PreferAntialias</stylestrategy>
-         </font>
-        </property>
-        <property name="text">
-         <string>Mean</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_statname2">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <stylestrategy>PreferAntialias</stylestrategy>
-         </font>
-        </property>
-        <property name="text">
-         <string>Max</string>
         </property>
        </widget>
       </item>
@@ -618,39 +574,30 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1" colspan="2">
-       <widget class="QLabel" name="label_statvalue1">
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_max">
         <property name="font">
          <font>
-          <family>Noto Mono</family>
-          <pointsize>12</pointsize>
+          <pointsize>8</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
           <stylestrategy>PreferAntialias</stylestrategy>
          </font>
         </property>
         <property name="text">
-         <string>0</string>
+         <string>100</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="4" column="1" colspan="2">
-       <widget class="QLabel" name="label_statvalue2">
-        <property name="font">
-         <font>
-          <family>Noto Mono</family>
-          <pointsize>12</pointsize>
-          <stylestrategy>PreferAntialias</stylestrategy>
-         </font>
+      <item row="3" column="0" colspan="3">
+       <layout class="QGridLayout" name="stats_slots">
+        <property name="spacing">
+         <number>3</number>
         </property>
-        <property name="text">
-         <string>0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
+       </layout>
       </item>
      </layout>
     </widget>
