@@ -169,9 +169,11 @@ alarms:
         min: 10
         setmin: 15
         max: 80
-        setmax: 60 #75
+        setmax: 75
         alarm_min_code: 8
         alarm_max_code: 9
+        under_threshold_code: null
+        over_threshold_code: null
         observable: pressure
         linked_monitor: inspiratory_pressure
 
@@ -180,6 +182,8 @@ alarms:
         max: 20
         alarm_min_code: 11
         alarm_max_code: 12
+        under_threshold_code: null
+        over_threshold_code: null
         observable: flow
         linked_monitor: flow
 
@@ -188,6 +192,8 @@ alarms:
         max: 1500
         alarm_min_code: 14
         alarm_max_code: 15
+        under_threshold_code: null
+        over_threshold_code: null
         observable: tidal
         linked_monitor: tidal_volume
 
