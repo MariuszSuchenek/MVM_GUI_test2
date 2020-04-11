@@ -77,8 +77,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.rightbar       = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
         self.monitors_bar   = self.main.findChild(QtWidgets.QWidget,        "monitors_bar")
         self.frozen_right   = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
-        self.monitor_filler = self.main.findChild(QtWidgets.QWidget,        "monitor_filler")
-        self.set_colors()
 
         '''
         Get initial and startup buttons
@@ -266,13 +264,6 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
-
-    def set_colors(self):
-        # Monitors bar background
-        palette = self.monitor_filler.palette()
-        role = self.monitor_filler.backgroundRole()
-        palette.setColor(role, QtGui.QColor(QtGui.QColor("#000000")))
-        self.monitor_filler.setPalette(palette)
 
     def goto_new_patient(self):
         # TODO : implement start from default_settings
