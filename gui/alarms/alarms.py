@@ -66,8 +66,8 @@ class Alarms(QtWidgets.QWidget):
             if name == selected:
                 self.selected = name
                 monitor.set_alarm_state(False)
-                if monitor.alarm is not None:
-                    monitor.alarm.clear_alarm()
+                # if monitor.alarm is not None:
+                #     monitor.alarm.clear_alarm()
                 # Show configuration and highlight monitor
                 if monitor.config_mode:
                     monitor.highlight()
@@ -83,10 +83,11 @@ class Alarms(QtWidgets.QWidget):
         slider: Reference to the slider to be set.
         monitor: Reference to the monitor to set slider range.
         """
-        alarm = monitor.alarm
-        if alarm is not None and alarm.valid_minmax():
+        alarm = monitor.gui_alarm
+        if alarm.has_valid_minmax(monitor.configname):
             slider.setMinimum(0)
-            slider.setMaximum((alarm.max - alarm.min) / monitor.step)
+            print ('---------------------------------------------------------seeting max to ', (alarm.get_max(monitor.configname) - alarm.get_min(monitor.configname)) / monitor.step)
+            slider.setMaximum((alarm.get_max(monitor.configname) - alarm.get_min(monitor.configname)) / monitor.step)
             slider.setSingleStep(monitor.step)
             slider.setPageStep(slider.maximum() / 2)
             slider.setEnabled(True)
@@ -104,10 +105,10 @@ class Alarms(QtWidgets.QWidget):
         monitor: Reference to the monitor to set the slider value.
         """
         # Prevent min > max
-        alarm = monitor.alarm
-        if alarm is not None and alarm.valid_minmax():
+        alarm = monitor.gui_alarm
+        if alarm.has_valid_minmax(monitor.configname):
             slidervalue = min(self.slider_alarmmax.sliderPosition(), slidervalue)
-            value = slidervalue * monitor.step + alarm.min
+            value = slidervalue * monitor.step + alarm.get_min(monitor.configname)
             self.alarmmin_value.setText("Alarm min: " + str(value))
             self.slider_alarmmin.setValue(slidervalue)
             self.slider_alarmmin.setSliderPosition(slidervalue)
@@ -120,10 +121,10 @@ class Alarms(QtWidgets.QWidget):
         monitor: Reference to the monitor to set the slider value.
         """
         # Prevent max < min
-        alarm = monitor.alarm
-        if alarm is not None and alarm.valid_minmax():
+        alarm = monitor.gui_alarm
+        if alarm.has_valid_minmax(monitor.configname):
             slidervalue = max(self.slider_alarmmin.sliderPosition(), slidervalue)
-            value = slidervalue * monitor.step + alarm.min
+            value = slidervalue * monitor.step + alarm.get_min(monitor.configname)
             self.alarmmax_value.setText("Alarm max: " + str(value))
             self.slider_alarmmax.setValue(slidervalue)
             self.slider_alarmmax.setSliderPosition(slidervalue)
@@ -135,19 +136,24 @@ class Alarms(QtWidgets.QWidget):
         name: The config name of the monitor.
         """
         monitor = self.monitors[name]
-        alarm = monitor.alarm
+        alarm = monitor.gui_alarm
         self.label_alarmname.setText(monitor.name)
         self.label_alarmname.setStyleSheet("QLabel { color: " + monitor.color + "; background-color: black}")
 
         self.set_slider_range(self.slider_alarmmin, monitor)
         self.slider_alarmmin.valueChanged.connect(lambda value:
                 self.do_alarmmin_moved(value, monitor))
-        if alarm is not None and alarm.valid_minmax():
-            sliderpos = int((alarm.setmin - alarm.min) / monitor.step)
+
+        if alarm.has_valid_minmax(name):
+            print(name, 'alarm.get_min(name)', alarm.get_min(name), 'alarm.get_max(name)', alarm.get_max(name))
+            # sliderpos = int((alarm.setmin - alarm.min) / monitor.step)
+            sliderpos = int((alarm.get_setmin(name) - alarm.get_min(name)) / monitor.step)
+            print(name, 'alarm.get_setmin(name)', alarm.get_setmin(name), 'alarm.get_setmax(name)', alarm.get_setmax(name))
+            print('sliderpos', sliderpos)
             self.slider_alarmmin.setSliderPosition(sliderpos)
             self.do_alarmmin_moved(sliderpos, monitor)
-            self.alarmmin_min.setText(str(alarm.min))
-            self.alarmmin_max.setText(str(alarm.max))
+            self.alarmmin_min.setText(str(alarm.get_min(name)))
+            self.alarmmin_max.setText(str(alarm.get_max(name)))
         else:
             self.alarmmin_value.setText("-")
             self.alarmmin_min.setText("-")
@@ -156,12 +162,12 @@ class Alarms(QtWidgets.QWidget):
         self.set_slider_range(self.slider_alarmmax, monitor)
         self.slider_alarmmax.valueChanged.connect(lambda value:
                 self.do_alarmmax_moved(value, monitor))
-        if alarm is not None and alarm.valid_minmax():
-            sliderpos = int((alarm.setmax - alarm.min) / monitor.step)
+        if alarm.has_valid_minmax(name):
+            sliderpos = int((alarm.get_setmax(name) - alarm.get_min(name)) / monitor.step)
             self.slider_alarmmax.setSliderPosition(sliderpos)
             self.do_alarmmax_moved(sliderpos, monitor)
-            self.alarmmax_min.setText(str(alarm.min))
-            self.alarmmax_max.setText(str(alarm.max))
+            self.alarmmax_min.setText(str(alarm.get_min(name)))
+            self.alarmmax_max.setText(str(alarm.get_max(name)))
         else:
             self.alarmmax_value.setText("-")
             self.alarmmax_min.setText("-")
@@ -173,11 +179,13 @@ class Alarms(QtWidgets.QWidget):
         A monitor is always selected.
         """
         monitor = self.monitors[self.selected]
-        alarm = monitor.alarm
-        if alarm is not None and alarm.valid_minmax():
-            alarm.setmin = self.slider_alarmmin.sliderPosition() * monitor.step + alarm.min
-            alarm.setmax = self.slider_alarmmax.sliderPosition() * monitor.step + alarm.min
-            monitor.update_thresholds()
+        alarm = monitor.gui_alarm
+        if alarm.has_valid_minmax(monitor.configname):
+            alarm.update_min(monitor.configname,
+                             self.slider_alarmmin.sliderPosition() * monitor.step + alarm.get_min(monitor.configname))
+            alarm.update_max(monitor.configname,
+                             self.slider_alarmmax.sliderPosition() * monitor.step + alarm.get_min(monitor.configname))
+            # monitor.update_thresholds()
 
     def reset_selected(self):
         """

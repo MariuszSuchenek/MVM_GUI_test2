@@ -18,8 +18,11 @@ class GuiAlarms:
         self._esp32 = esp32
         self._monitors = monitors
 
+        self._mon_to_obs = {}
+
         # Send the thresholds to the monitors
-        for v in self._obs.values():
+        for n, v in self._obs.items():
+            self._mon_to_obs[v['linked_monitor']] = n
             self._monitors[v['linked_monitor']].update_thresholds(v.get('min'),
                                                                   v.get('setmin', v['min']),
                                                                   v.get('max'),
@@ -82,3 +85,46 @@ class GuiAlarms:
             item = self._get_by_observable(observable)
             if item is not None:
                 self._test_thresholds(item, data[observable])
+
+    def has_valid_minmax(self, name):
+        '''
+        Checks if max and min are not None
+        '''
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        value_max = self._obs[obs]['max']
+        value_min = self._obs[obs]['min']
+        return value_max is not None and value_min is not None
+
+    def get_setmin(self, name):
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        else: return self._obs[obs].get('setmin', self._obs[obs]['min'])
+
+    def get_setmax(self, name):
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        else: return self._obs[obs].get('setmax', self._obs[obs]['max'])
+
+    def get_min(self, name):
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        else: return self._obs[obs]['min']
+
+    def get_max(self, name):
+        obs = self._mon_to_obs.get(name, None)
+        if obs is None: return False
+        else: return self._obs[obs]['max']
+
+    def update_min(self, name, minvalue):
+        obs = self._mon_to_obs.get(name, None)
+        if obs is not None: 
+            self._obs[obs]['setmin'] = minvalue
+
+    def update_max(self, name, maxvalue):
+        obs = self._mon_to_obs.get(name, None)
+        if obs is not None:  
+            self._obs[obs]['setmax'] = maxvalue
+
+
+

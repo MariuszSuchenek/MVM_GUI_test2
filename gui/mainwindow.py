@@ -207,7 +207,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # for name in config['alarms']:
         #     alarm = GuiAlarm(name, config, self.monitors, self.alarm_h)
         #     self.alarms[name] = alarm
-        self.alarm_gui = GuiAlarms(config, self.esp32, self.monitors)
+        self.gui_alarm = GuiAlarms(config, self.esp32, self.monitors)
+        for m in self.monitors.values(): m.connect_gui_alarm(self.gui_alarm)
 
 
         # Get displayed monitors
@@ -258,7 +259,7 @@ class MainWindow(QtWidgets.QMainWindow):
         data directly to the DataFiller, which will
         then display them.
         '''
-        self._data_h = DataHandler(config, self.esp32, self.data_filler, self.alarm_gui)
+        self._data_h = DataHandler(config, self.esp32, self.data_filler, self.gui_alarm)
 
         self.menu.connect_datahandler_config(self._data_h, self.config)
 

@@ -46,7 +46,7 @@ class Monitor(QtWidgets.QWidget):
         self.refresh()
         self.set_alarm_state(False)
         self.update_value(self.value)
-        self.alarm = None
+        # self.alarm = None
 
         # Setup config mode
         self.config_mode = False
@@ -55,9 +55,11 @@ class Monitor(QtWidgets.QWidget):
         # Handle optional stats
         # TODO: determine is stats are useful/necessary
 
-    def assign_alarm(self, alarm):
-        self.alarm = alarm
-        self.update_thresholds()
+    def name(self):
+        return self.configname
+
+    def connect_gui_alarm(self, gui_alarm):
+        self.gui_alarm = gui_alarm
 
     def update_thresholds(self, alarm_min, alarm_setmin, alarm_max, alarm_setmax):
         self.label_min.hide()
