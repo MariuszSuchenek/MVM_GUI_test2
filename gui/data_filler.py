@@ -18,8 +18,8 @@ class DataFiller():
     def __init__(self, config):
         self._qtgraphs = {}
         self._plots = {}
-        self._monitors = {}
         self._data = {}
+        self._monitors = {}
         self._colors = {}
         self._default_ranges = {}
         self._config = config
@@ -154,6 +154,9 @@ class DataFiller():
         name = monitor.observable 
         self._monitors[name] = monitor
 
+        if name not in self._data:
+            self._data[name] = np.linspace(0, 0, self._n_samples)
+
         print('NORMAL: Connected monitor', monitor.configname , 'with variable', name)
 
     def add_data_point(self, name, data_point):
@@ -161,27 +164,29 @@ class DataFiller():
         Adds a data point to the plot with
         name 'name'
         '''
-        if name not in self._plots:
-            # print("\033[91mERROR: Can't set data for plot with name %s.\033[0m" % name)
-            return False
+        print('data for monitor', name)
 
-        if self._looping:
-            # Looping plots - update next value
-            self._data[name][self._looping_data_idx[name]] = data_point
+        if name in self._data:
+            if self._looping:
+                # Looping plots - update next value
+                self._data[name][self._looping_data_idx[name]] = data_point
 
-            self._looping_data_idx[name] += 1
+                self._looping_data_idx[name] += 1
 
-            if self._looping_data_idx[name] == self._n_samples:
-                self._looping_data_idx[name] = 0
-        else:
-            # Scrolling plots - shift data 1 sample left
-            self._data[name][:-1] = self._data[name][1:]
+                if self._looping_data_idx[name] == self._n_samples:
+                    self._looping_data_idx[name] = 0
+            else:
+                # Scrolling plots - shift data 1 sample left
+                self._data[name][:-1] = self._data[name][1:]
 
-            # add the last data point
-            self._data[name][-1] = data_point
+                # add the last data point
+                self._data[name][-1] = data_point
 
-        self.update_plot(name)
-        self.update_monitor(name)
+        if name in self._plots:
+            self.update_plot(name)
+
+        if name in self._monitors:
+            self.update_monitor(name)
 
     def update_plot(self, name):
         '''
