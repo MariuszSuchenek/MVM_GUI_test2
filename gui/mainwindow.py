@@ -192,7 +192,7 @@ class MainWindow(QtWidgets.QMainWindow):
             plot.setFixedHeight(130)
             self.data_filler.connect_plot(name, plot)
             self.plots[name] = plot
-        
+
         # The monitored fields from the default_settings.yaml config file
         self.monitors = {}
         for name in config['monitors']:
@@ -265,7 +265,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Monitors bar background
         palette = self.monitor_filler.palette()
         role = self.monitor_filler.backgroundRole()
-        palette.setColor(role, QtGui.QColor(QtGui.QColor("#000000")))
+        palette.setColor(role, QtGui.QColor("#000000"))
         self.monitor_filler.setPalette(palette)
 
     def goto_new_patient(self):
