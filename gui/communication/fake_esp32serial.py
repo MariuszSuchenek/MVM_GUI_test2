@@ -16,8 +16,11 @@ KNOWN_WARNING_CODES = [0] + [1 << bit for bit in (0,)]
 
 class FakeESP32Serial:
     peep = peep()
-    def __init__(self, alarm_rate=0.1):
+    def __init__(self, config, alarm_rate=0.1):
         self.lock = Lock()
+        self.get_all_fields = config["get_all_fields"]
+        self.observables = {config["monitors"][item]["observable"]: None
+                                      for item in config["monitors"]}
         self.set_params = {"alarm": 0, "warning": 0}
         self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
                               "peep", "temperature", "power_mode",
