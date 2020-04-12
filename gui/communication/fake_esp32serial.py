@@ -50,7 +50,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
         self._arrange_fields()
         self.alarms_checkboxes = {}
-        self._connect_alarm_widgets()
+        self.warning_checkboxes = {}
+        self._connect_alarm_and_warning_widgets()
 
         self.set_params = {"alarm": 0, "warning": 0, "temperature": 40}
         self.alarm_rate = alarm_rate
@@ -114,13 +115,22 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
                 number += item
         self.set("alarm", number)
 
-    def _connect_alarm_widgets(self):
+    def _compute_and_raise_warnings(self):
+        number = 0
+        for item in self.warning_checkboxes:
+            if self.warning_checkboxes[item].isChecked():
+                number += item
+        self.set("warning", number)
+
+    def _connect_alarm_and_warning_widgets(self):
         def get_checkbox(wname, alarm_code):
             return (1 << alarm_code, self.findChild(QtWidgets.QCheckBox, wname))
 
         # for simplicity here the bit number is used. It will be converted
         # few lines below.
-        known_check_boxes = {
+
+        # HW alarms
+        alarm_check_boxes = {
                 "low_input_pressure_alarm": 0,
                 "high_input_pressure_alarm": 1,
                 "low_inner_pressure_alarm": 2,
@@ -131,8 +141,13 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
                 "partial_gas_occlusion_alarm": 7,
                 "system_failure_alarm": 31}
 
-        for name in known_check_boxes:
-            code, widget = get_checkbox(name, known_check_boxes[name])
+        # HW warnings
+        warning_check_boxes = {
+                "o2_warning": 0,
+                "power_warning": 1}
+
+        for name in alarm_check_boxes:
+            code, widget = get_checkbox(name, alarm_check_boxes[name])
             self.alarms_checkboxes[code] = widget
 
         self.raise_alarms_button = self.findChild(
@@ -140,6 +155,16 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
                 "raise_alarm_btn")
 
         self.raise_alarms_button.pressed.connect(self._compute_and_raise_alarms)
+
+        for name in warning_check_boxes:
+            code, widget = get_checkbox(name, warning_check_boxes[name])
+            self.warning_checkboxes[code] = widget
+
+        self.raise_warnings_button = self.findChild(
+                QtWidgets.QPushButton,
+                "raise_warning_btn")
+
+        self.raise_warnings_button.pressed.connect(self._compute_and_raise_warnings)
 
     def log(self, message):
         self.event_log.appendPlainText(message)
