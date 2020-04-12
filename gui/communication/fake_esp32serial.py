@@ -76,25 +76,25 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
                 generator = self.peep.flow
             elif name == "battery_charge":
                 generator = lambda: int(random.uniform(0, 100))
-            elif name ==  "tidal":
+            elif name == "tidal":
                 generator = lambda: random.uniform(1000, 1500)
-            elif name ==  "peep":
+            elif name == "peep":
                 generator = lambda: random.uniform(4, 20)
-            elif name ==  "temperature":
+            elif name == "temperature":
                 generator = lambda: random.uniform(10, 50)
-            elif name ==  "battery_powered":
+            elif name == "battery_powered":
                 generator = lambda: int(random.uniform(0, 1.5))
-            elif name ==  "bpm":
+            elif name == "bpm":
                 generator = lambda: random.uniform(10, 100)
-            elif name ==  "o2":
+            elif name == "o2":
                 generator = lambda: random.uniform(10, 100)
-            elif name ==  "peak":
+            elif name == "peak":
                 generator = lambda: random.uniform(10, 100)
-            elif name ==  "total_inspired_volume":
+            elif name == "total_inspired_volume":
                 generator = lambda: random.uniform(10, 100)
-            elif name ==  "total_expired_volume":
+            elif name == "total_expired_volume":
                 generator = lambda: random.uniform(10, 100)
-            elif name ==  "volume_minute":
+            elif name == "volume_minute":
                 generator = lambda: random.uniform(10, 100)
             else:
                 generator = lambda: random.uniform(10, 100)
