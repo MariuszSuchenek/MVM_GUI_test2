@@ -54,10 +54,59 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
                               "peep", "temperature", "power_mode",
                               "battery" ]
+        self._arrange_fields()
         self.set_params = {"temperature": 40}
         self.alarm_rate = alarm_rate
 
         self.show()
+
+    def _arrange_fields(self):
+        max_colums = 3 # you eventually need to edit the
+                       # input_monitor_widget.ui file to put more
+
+        monitors_grid = self.findChild(QtWidgets.QGridLayout, "monitors_grid")
+
+        row = 0
+        column = 0
+        for name in self.observables:
+            if name == "pressure":
+                generator = self.peep.pressure
+            elif name == "flow":
+                generator = self.peep.flow
+            elif name == "battery_charge":
+                generator = lambda: int(random.uniform(0, 100))
+            elif name ==  "tidal":
+                generator = lambda: random.uniform(1000, 1500)
+            elif name ==  "peep":
+                generator = lambda: random.uniform(4, 20)
+            elif name ==  "temperature":
+                generator = lambda: random.uniform(10, 50)
+            elif name ==  "battery_powered":
+                generator = lambda: int(random.uniform(0, 1.5))
+            elif name ==  "bpm":
+                generator = lambda: random.uniform(10, 100)
+            elif name ==  "o2":
+                generator = lambda: random.uniform(10, 100)
+            elif name ==  "peak":
+                generator = lambda: random.uniform(10, 100)
+            elif name ==  "total_inspired_volume":
+                generator = lambda: random.uniform(10, 100)
+            elif name ==  "total_expired_volume":
+                generator = lambda: random.uniform(10, 100)
+            elif name ==  "volume_minute":
+                generator = lambda: random.uniform(10, 100)
+            else:
+                generator = lambda: random.uniform(10, 100)
+
+            fake_mon = FakeMonitored(name, generator)
+            self.observables[name] = fake_mon
+
+            monitors_grid.addWidget(fake_mon, row, column)
+
+            column += 1
+            if column == max_colums:
+                column = 0
+                row += 1
 
     def set(self, name, value):
         """
