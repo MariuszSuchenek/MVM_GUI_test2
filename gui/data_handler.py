@@ -54,6 +54,8 @@ class DataHandler():
             for p, v in current_values.items():
                 current_values[p] = float(v)
 
+            current_values = self._convert_values(current_values)
+
             self._gui_alarm.set_data(current_values)
 
             # finally, send values to the DataFiller
@@ -64,6 +66,16 @@ class DataHandler():
 
         except Exception as error:
             self.open_comm_error(str(error))
+
+    def _convert_values(self, values):
+        '''
+        '''
+
+        conv = self._config['conversions']
+        return {k:v * conv.get(k, 1.) for (k, v) in values.items()}
+        # for n, v in values.items():
+        #     values[n] = v * conv['pressure'] if 'pressure' in conv else v
+
 
 
     def open_comm_error(self, error):

@@ -263,6 +263,11 @@ class Settings(QtWidgets.QMainWindow):
             else:
                 value = self._current_values[param]
 
+            if 'conversion' in self._config[param]:
+                value = value * self._config[param]['conversion']
+                if self._debug: print('Converting value for', param, 
+                    'from', value/self._config[param].get('conversion', 1.), 'to', value)
+                
             if self._debug: print('Setting value of', param, ':', value)
 
             # Update the value in the config file
