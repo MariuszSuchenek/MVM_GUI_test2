@@ -184,8 +184,6 @@ alarms:
         max: 98 
         setmin: 21
         setmax: 100
-        alarm_min_code: 17
-        alarm_max_code: 18
         under_threshold_code: 65536
         over_threshold_code: 131072
         observable: o2
@@ -196,8 +194,6 @@ alarms:
         setmin: 15
         max: 80
         setmax: 75
-        alarm_min_code: 8
-        alarm_max_code: 9
         under_threshold_code: null
         over_threshold_code: null
         observable: pressure
@@ -206,8 +202,6 @@ alarms:
     flow:
         min: 2 
         max: 20
-        alarm_min_code: 11
-        alarm_max_code: 12
         under_threshold_code: null
         over_threshold_code: null
         observable: flow
@@ -216,8 +210,6 @@ alarms:
     tidal_volume:
         min: 50
         max: 1500
-        alarm_min_code: 14
-        alarm_max_code: 15
         under_threshold_code: null
         over_threshold_code: null
         observable: tidal
