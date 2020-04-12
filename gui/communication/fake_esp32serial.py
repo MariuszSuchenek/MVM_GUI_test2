@@ -255,4 +255,6 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         returns: an "OK" string in case of success.
         """
 
-        return self.set("alarm", alarm_type)
+        self.log("GUI Alarm! %d" % alarm_type)
+
+        return "OK"
