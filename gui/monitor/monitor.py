@@ -47,6 +47,7 @@ class Monitor(QtWidgets.QWidget):
         self.set_alarm_state(False)
         self.update_value(self.value)
         self.update_thresholds(None, None, None, None)
+        self.label_value.resizeEvent = lambda event: self.handle_resize(event)
 
         # Setup config mode
         self.config_mode = False
@@ -94,15 +95,14 @@ class Monitor(QtWidgets.QWidget):
 
         self.setStyleSheet("QWidget { color: " + str(self.color) + "; }");
         self.setAutoFillBackground(True)
-        self.handle_label_resize(self.label_value, min(self.height()-23, 50))
 
-    def handle_label_resize(self, label, size):
+    def handle_resize(self, event):
         # Handle font resize
-        f = label.font()
-        br = QtGui.QFontMetrics(f).boundingRect(label.text())
+        f = self.label_value.font()
+        br = QtGui.QFontMetrics(f).boundingRect(self.label_value.text())
 
-        f.setPixelSize(max(size, 1))
-        label.setFont(f)
+        f.setPixelSize(max(min(self.height()-23, 50), 10))
+        self.label_value.setFont(f)
 
     def set_alarm_state(self, isalarm):
         '''
