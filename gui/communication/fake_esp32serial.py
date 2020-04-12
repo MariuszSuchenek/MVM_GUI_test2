@@ -15,6 +15,32 @@ from . import ESP32Alarm, ESP32Warning
 KNOWN_ALARM_CODES = [0] + [1 << bit for bit in (0, 1, 2, 3, 4, 5, 6, 7, 31)]
 KNOWN_WARNING_CODES = [0] + [1 << bit for bit in (0,)]
 
+class FakeMonitored(QtWidgets.QWidget):
+    def __init__(self, name, generator, value=0, random=True):
+        super(FakeMonitored, self).__init__()
+        uic.loadUi('communication/input_monitor_widget.ui', self)
+
+        self.generator = generator
+
+        self.findChild(QtWidgets.QLabel, "label").setText(name)
+
+        self.value_ib = self.findChild(QtWidgets.QDoubleSpinBox, "value")
+        self.value_ib.setValue(value)
+
+        self.random_cb = self.findChild(QtWidgets.QCheckBox, "random_checkbox")
+        self.random_cb.setChecked(random)
+        self.random_cb.toggled.connect(self._random_checkbox_fn)
+        self._random_checkbox_fn()
+
+    def _random_checkbox_fn(self):
+        self.value_ib.setEnabled(not self.random_cb.isChecked())
+
+    def generate(self):
+        if self.random_cb.isChecked():
+            return self.generator()
+        else:
+            return self.value_ib.value()
+
 class FakeESP32Serial(QtWidgets.QMainWindow):
     peep = peep()
     def __init__(self, config, alarm_rate=0.1):
