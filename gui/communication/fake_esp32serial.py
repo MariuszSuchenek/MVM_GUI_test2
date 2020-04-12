@@ -57,6 +57,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.set_params = {"temperature": 40}
         self.alarm_rate = alarm_rate
 
+        self.event_log = self.findChild(QtWidgets.QPlainTextEdit, "event_log")
+        self.event_log.setReadOnly(True)
         self.show()
 
     def _arrange_fields(self):
@@ -140,6 +142,9 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
                 "raise_alarm_btn")
 
         self.raise_alarms_button.pressed.connect(self._compute_and_raise_alarms)
+
+    def log(self, message):
+        self.event_log.appendPlainText(message)
 
     def set(self, name, value):
         """
