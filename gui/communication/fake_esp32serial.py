@@ -8,6 +8,7 @@ as needed.
 
 import random
 from PyQt5 import QtWidgets, uic
+from PyQt5.QtGui import QTextCursor
 from communication.peep import peep
 from . import ESP32Alarm, ESP32Warning
 
@@ -145,6 +146,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
     def log(self, message):
         self.event_log.appendPlainText(message)
+        c = self.event_log.textCursor();
+        c.movePosition(QTextCursor.End);
 
     def set(self, name, value):
         """
