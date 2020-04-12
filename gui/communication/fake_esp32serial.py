@@ -185,17 +185,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
             retval = self._compute_and_raise_alarms()
         if name == 'warnings':
             retval = 0
-        #if name == 'alarm':
-        #    if random.uniform(0, 1) < self.alarm_rate:
-        #        retval = random.choice(KNOWN_ALARM_CODES)
-        #        print('********** ALARM SIMULATION, retval', retval)
-        #if name == 'warning':
-        #    if random.uniform(0, 1) < self.alarm_rate:
-        #        retval = random.choice(KNOWN_WARNING_CODES)
-        #        print('********** WARNING SIMULATION, retval', retval)
-        #    else:
-        #        retval = 0
-        elif name in self.observables:
+       elif name in self.observables:
             retval = self.observables[name].generate()
         elif name in self.set_params:
             retval = self.set_params[name]
