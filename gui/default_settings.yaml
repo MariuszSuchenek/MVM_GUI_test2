@@ -129,7 +129,7 @@ monitors:
         dec_precision: 0
         color: "rgb(0,255,255)"
         alarmcolor: "red"
-        observable: battery_powered
+        observable: battery_charge
 
     flow: 
         name: "MVe"
