@@ -54,7 +54,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.alarms_checkboxes = {}
         self._connect_alarm_widgets()
 
-        self.set_params = {"temperature": 40}
+        self.set_params = {"alarm": 0, "warning": 0, "temperature": 40}
         self.alarm_rate = alarm_rate
 
         self.event_log = self.findChild(QtWidgets.QPlainTextEdit, "event_log")
@@ -186,11 +186,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
         retval = 0
 
-        if name == 'alarm':
-            retval = self._compute_and_raise_alarms()
-        if name == 'warnings':
-            retval = 0
-       elif name in self.observables:
+        if name in self.observables:
             retval = self.observables[name].generate()
         elif name in self.set_params:
             retval = self.set_params[name]
