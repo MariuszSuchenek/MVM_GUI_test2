@@ -6,7 +6,6 @@ Currently just reports fixed values. Can be made more intelligent
 as needed.
 """
 
-from threading import Lock
 import random
 from PyQt5 import QtWidgets, uic
 from communication.peep import peep
@@ -46,7 +45,6 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
     def __init__(self, config, alarm_rate=0.1):
         super(FakeESP32Serial, self).__init__()
 
-        self.lock = Lock()
         uic.loadUi('communication/fakeesp32.ui', self)
         self.get_all_fields = config["get_all_fields"]
         self.observables = {config["monitors"][item]["observable"]: None
@@ -159,9 +157,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
         print("FakeESP32Serial-DEBUG: set %s %s" % (name, value))
 
-        with self.lock:
-            self.set_params[name] = value
-            return "OK"
+        self.set_params[name] = value
+        return "OK"
 
     def set_watchdog(self):
         """
@@ -184,25 +181,30 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
         print("FakeESP32Serial-DEBUG: get %s" % name)
 
-        with self.lock:
+        retval = 0
+
+        if name == 'alarm':
+            retval = self._compute_and_raise_alarms()
+        if name == 'warnings':
             retval = 0
+        #if name == 'alarm':
+        #    if random.uniform(0, 1) < self.alarm_rate:
+        #        retval = random.choice(KNOWN_ALARM_CODES)
+        #        print('********** ALARM SIMULATION, retval', retval)
+        #if name == 'warning':
+        #    if random.uniform(0, 1) < self.alarm_rate:
+        #        retval = random.choice(KNOWN_WARNING_CODES)
+        #        print('********** WARNING SIMULATION, retval', retval)
+        #    else:
+        #        retval = 0
+        elif name in self.observables:
+            retval = self.observables[name].generate()
+        elif name in self.set_params:
+            retval = self.set_params[name]
+        else:
+            retval = int(random.uniform(10, 100))
 
-            if name == 'alarm':
-                if random.uniform(0, 1) < self.alarm_rate:
-                    retval = random.choice(KNOWN_ALARM_CODES)
-                    print('********** ALARM SIMULATION, retval', retval)
-            elif name == 'warning':
-                if random.uniform(0, 1) < self.alarm_rate:
-                    retval = random.choice(KNOWN_WARNING_CODES)
-                    print('********** WARNING SIMULATION, retval', retval)
-                else:
-                    retval = 0
-            elif name in self.set_params:
-                retval = self.set_params[name]
-            elif name in self.random_params:
-                retval = random.uniform(10, 100)
-
-            return str(retval)
+        return str(retval)
 
     def get_all(self):
         """
