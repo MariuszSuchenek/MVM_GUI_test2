@@ -8,16 +8,20 @@ as needed.
 
 from threading import Lock
 import random
+from PyQt5 import QtWidgets, uic
 from communication.peep import peep
 from . import ESP32Alarm, ESP32Warning
 
 KNOWN_ALARM_CODES = [0] + [1 << bit for bit in (0, 1, 2, 3, 4, 5, 6, 7, 31)]
 KNOWN_WARNING_CODES = [0] + [1 << bit for bit in (0,)]
 
-class FakeESP32Serial:
+class FakeESP32Serial(QtWidgets.QMainWindow):
     peep = peep()
     def __init__(self, config, alarm_rate=0.1):
+        super(FakeESP32Serial, self).__init__()
+
         self.lock = Lock()
+        uic.loadUi('communication/fakeesp32.ui', self)
         self.get_all_fields = config["get_all_fields"]
         self.observables = {config["monitors"][item]["observable"]: None
                                       for item in config["monitors"]}
@@ -26,6 +30,8 @@ class FakeESP32Serial:
                               "peep", "temperature", "power_mode",
                               "battery" ]
         self.alarm_rate = alarm_rate
+
+        self.show()
 
     def set(self, name, value):
         """
