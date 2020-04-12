@@ -49,9 +49,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.get_all_fields = config["get_all_fields"]
         self.observables = {config["monitors"][item]["observable"]: None
                                       for item in config["monitors"]}
-        self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
-                              "peep", "temperature", "power_mode",
-                              "battery" ]
+
         self._arrange_fields()
         self.alarms_checkboxes = {}
         self._connect_alarm_widgets()
