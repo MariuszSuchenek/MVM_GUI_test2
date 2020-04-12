@@ -14,29 +14,6 @@
    <string>FakeESP32 panel</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QScrollArea" name="event_box">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>370</y>
-      <width>781</width>
-      <height>221</height>
-     </rect>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>779</width>
-       <height>219</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
@@ -257,6 +234,19 @@
     </property>
     <property name="text">
      <string>Monitor data</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="event_log">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>370</y>
+      <width>781</width>
+      <height>221</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string/>
     </property>
    </widget>
   </widget>
