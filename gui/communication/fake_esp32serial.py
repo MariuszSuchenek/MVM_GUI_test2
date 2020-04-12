@@ -12,9 +12,6 @@ from PyQt5.QtGui import QTextCursor
 from communication.peep import peep
 from . import ESP32Alarm, ESP32Warning
 
-KNOWN_ALARM_CODES = [0] + [1 << bit for bit in (0, 1, 2, 3, 4, 5, 6, 7, 31)]
-KNOWN_WARNING_CODES = [0] + [1 << bit for bit in (0,)]
-
 class FakeMonitored(QtWidgets.QWidget):
     def __init__(self, name, generator, value=0, random=True):
         super(FakeMonitored, self).__init__()
