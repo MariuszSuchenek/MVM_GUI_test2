@@ -77,8 +77,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.rightbar       = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
         self.monitors_bar   = self.main.findChild(QtWidgets.QWidget,        "monitors_bar")
         self.frozen_right   = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
-        self.monitor_filler = self.main.findChild(QtWidgets.QWidget,        "monitor_filler")
-        self.set_colors()
 
         '''
         Get initial and startup buttons
@@ -122,9 +120,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_backalarms = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_backalarms")
         self.button_applyalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_applyalarm")
         self.button_resetalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_resetalarm")
-        self.button_topalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_topalarm")
-        self.button_midalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_midalarm")
-        self.button_botalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_botalarm")
+        self.button_upalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_upalarm")
+        self.button_downalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_downalarm")
+        self.button_offalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_offalarm")
 
         '''
         Get frozen plots bottom bar widgets and connect
@@ -194,7 +192,7 @@ class MainWindow(QtWidgets.QMainWindow):
             plot.setFixedHeight(130)
             self.data_filler.connect_plot(name, plot)
             self.plots[name] = plot
-        
+
         # The monitored fields from the default_settings.yaml config file
         self.monitors = {}
         for name in config['monitors']:
@@ -217,15 +215,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.alarms_settings.populate_monitors()
         self.button_applyalarm.pressed.connect(self.alarms_settings.apply_selected)
         self.button_resetalarm.pressed.connect(self.alarms_settings.reset_selected)
-        '''
-        TODO: functionality to add and remove monitors from monitor bar replaces this
-        self.button_topalarm.pressed.connect(lambda slotname=slot_names[0]:
-                self.alarms_settings.display_selected(slotname))
-        self.button_midalarm.pressed.connect(lambda slotname=slot_names[1]:
-                self.alarms_settings.display_selected(slotname))
-        self.button_botalarm.pressed.connect(lambda slotname=slot_names[2]:
-                self.alarms_settings.display_selected(slotname))
-        '''
+        self.button_offalarm.pressed.connect(self.alarms_settings.move_selected_off)
+        self.button_upalarm.pressed.connect(self.alarms_settings.move_selected_up)
+        self.button_downalarm.pressed.connect(self.alarms_settings.move_selected_down)
 
         # Connect the frozen plots
         # Requires building of an ordered array to associate the correct controls with the plot.
@@ -269,13 +261,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
 
-        
-
     def set_colors(self):
         # Monitors bar background
         palette = self.monitor_filler.palette()
         role = self.monitor_filler.backgroundRole()
-        palette.setColor(role, QtGui.QColor(QtGui.QColor("#000000")))
+        palette.setColor(role, QtGui.QColor("#000000"))
         self.monitor_filler.setPalette(palette)
 
     def goto_new_patient(self):

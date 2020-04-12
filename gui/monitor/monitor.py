@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
-
 class Monitor(QtWidgets.QWidget):
     def __init__(self, name, config, *args):
         """
@@ -42,11 +41,13 @@ class Monitor(QtWidgets.QWidget):
         self.alarmcolor = entry.get("alarmcolor", monitor_default["alarmcolor"])
         self.step = entry.get("step", monitor_default["step"])
         self.observable = entry.get("observable", monitor_default["observable"])
+        self.gui_alarm = None
 
         self.refresh()
         self.set_alarm_state(False)
         self.update_value(self.value)
-        # self.alarm = None
+        self.update_thresholds(None, None, None, None)
+        self.label_value.resizeEvent = lambda event: self.handle_resize(event)
 
         # Setup config mode
         self.config_mode = False
@@ -95,6 +96,14 @@ class Monitor(QtWidgets.QWidget):
         self.setStyleSheet("QWidget { color: " + str(self.color) + "; }");
         self.setAutoFillBackground(True)
 
+    def handle_resize(self, event):
+        # Handle font resize
+        f = self.label_value.font()
+        br = QtGui.QFontMetrics(f).boundingRect(self.label_value.text())
+
+        f.setPixelSize(max(min(self.height()-23, 50), 10))
+        self.label_value.setFont(f)
+
     def set_alarm_state(self, isalarm):
         '''
         Sets or clears the alarm
@@ -103,9 +112,10 @@ class Monitor(QtWidgets.QWidget):
         '''
         if isalarm:
             color = self.alarmcolor
-            print("We alarmed " + self.configname)
         else:
             color = QtGui.QColor("#000000")
+            if self.gui_alarm is not None: 
+                self.gui_alarm.clear_alarm(self.configname)
         palette = self.palette()
         role = self.backgroundRole()
         palette.setColor(role, QtGui.QColor(color))

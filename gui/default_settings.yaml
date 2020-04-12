@@ -15,6 +15,11 @@ get_all_fields:
   - battery_powered
   - battery_charge
 
+# Conversion factors to apply to the values from the get_all
+conversions:
+    pressure: 1.01972 # mbar to cmH2O
+    peak: 1.01972 # mbar to cmH2O
+
 # watchdog reset interval time in seconds
 wdinterval: 1
 
@@ -83,7 +88,7 @@ monitors:
         init: 30
         step: 1
         dec_precision: 0
-        units: "(mbar)"
+        units: "(cmH<sub>2</sub>O)"
         color: "rgb(255,255,0)"
         alarmcolor: "red"
         observable: pressure
@@ -161,7 +166,7 @@ monitors:
         init: 40
         step: 1
         dec_precision: 0
-        units: "(cmH2O)"
+        units: "(cmH<sub>2</sub>O)"
         color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: peak
@@ -246,7 +251,7 @@ plots:
         name: "Insp. Press."
         min: 10
         max: 80
-        units: "(mbar)"
+        units: "(cmH<sub>2</sub>O)"
         color: "rgb(255,255,0)"
         observable: pressure
 
@@ -310,7 +315,8 @@ insp_pressure:
     min: 0
     max: 40
     current: None
-    units: "mbar"
+    units: "(cmH<sub>2</sub>O)"
+    conversion: 0.980665 # From cmH2O to mbar
     presets:
         - [5, '']
         - [10, '']
@@ -327,6 +333,7 @@ insp_pressure:
 #    max: 20
 #    current: None
 #    units: "mbar"
+#    conversion: 0.980665 # From cmH2O to mbar
 #    presets:
 #        - [2, '']
 #        - [5, '']
@@ -376,7 +383,8 @@ support_pressure:
     min: 0.
     max: 40.
     current: None
-    units: "mbar"
+    units: "(cmH<sub>2</sub>O)"
+    conversion: 0.980665 # From cmH2O to mbar
     presets:
         - [5, '']
         - [10, '']

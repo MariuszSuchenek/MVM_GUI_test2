@@ -159,6 +159,9 @@ class DataFiller():
         self._looping_data_idx[name] = 0
 
 
+        if name not in self._data:
+            self._data[name] = np.linspace(0, 0, self._n_samples)
+
         print('NORMAL: Connected monitor', monitor.configname , 'with variable', name)
 
     def add_data_point(self, name, data_point):
@@ -166,7 +169,8 @@ class DataFiller():
         Adds a data point to the plot with
         name 'name'
         '''
-        print('data for monitor', name)
+
+        # print('NORMAL: Received data for monitor', name)
 
         if name in self._data:
             if self._looping:

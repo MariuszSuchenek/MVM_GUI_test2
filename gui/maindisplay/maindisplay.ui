@@ -117,16 +117,6 @@
        <item>
         <layout class="QVBoxLayout" name="monitors_slots"/>
        </item>
-       <item>
-        <widget class="QWidget" name="monitor_filler" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="FrozenPlotsRightMenu" name="frozenplots_right"/>
