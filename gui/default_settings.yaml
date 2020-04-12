@@ -180,9 +180,10 @@ displayed_monitors:
 
 alarms:
     o2:
-        min: 21
-        setmax: 70
+        min: 17
         max: 98 
+        setmin: 21
+        setmax: 100
         alarm_min_code: 17
         alarm_max_code: 18
         under_threshold_code: 65536
