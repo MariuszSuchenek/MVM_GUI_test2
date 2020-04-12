@@ -231,12 +231,12 @@ alarms:
         observable: peep
         linked_monitor: peep
 
-    battery_powered:
-        min: null
+    battery_charge:
+        min: 10
         max: null
-        under_threshold_code: null
+        under_threshold_code: 16
         over_threshold_code: null
-        observable: battery_powered
+        observable: battery_charge
         linked_monitor: battery
 
 plots:
