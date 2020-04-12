@@ -55,6 +55,9 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
                               "peep", "temperature", "power_mode",
                               "battery" ]
         self._arrange_fields()
+        self.alarms_checkboxes = {}
+        self._connect_alarm_widgets()
+
         self.set_params = {"temperature": 40}
         self.alarm_rate = alarm_rate
 
@@ -107,6 +110,40 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
             if column == max_colums:
                 column = 0
                 row += 1
+
+    def _compute_and_raise_alarms(self):
+        number = 0
+        for item in self.alarms_checkboxes:
+            if self.alarms_checkboxes[item].isChecked():
+                number += item
+        self.set("alarm", number)
+
+    def _connect_alarm_widgets(self):
+        def get_checkbox(wname, alarm_code):
+            return (1 << alarm_code, self.findChild(QtWidgets.QCheckBox, wname))
+
+        # for simplicity here the bit number is used. It will be converted
+        # few lines below.
+        known_check_boxes = {
+                "low_input_pressure_alarm": 0,
+                "high_input_pressure_alarm": 1,
+                "low_inner_pressure_alarm": 2,
+                "high_inner_pressure_alarm": 3,
+                "battery_low_alarm": 4,
+                "gas_leakage_alarm": 5,
+                "gas_occlusion_alarm": 6,
+                "partial_gas_occlusion_alarm": 7,
+                "system_failure_alarm": 31}
+
+        for name in known_check_boxes:
+            code, widget = get_checkbox(name, known_check_boxes[name])
+            self.alarms_checkboxes[code] = widget
+
+        self.raise_alarms_button = self.findChild(
+                QtWidgets.QPushButton,
+                "raise_alarm_btn")
+
+        self.raise_alarms_button.pressed.connect(self._compute_and_raise_alarms)
 
     def set(self, name, value):
         """
