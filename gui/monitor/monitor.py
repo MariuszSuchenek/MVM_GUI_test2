@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
-
 class Monitor(QtWidgets.QWidget):
     def __init__(self, name, config, *args):
         """
@@ -95,6 +94,15 @@ class Monitor(QtWidgets.QWidget):
 
         self.setStyleSheet("QWidget { color: " + str(self.color) + "; }");
         self.setAutoFillBackground(True)
+        self.handle_label_resize(self.label_value, min(self.height()-23, 50))
+
+    def handle_label_resize(self, label, size):
+        # Handle font resize
+        f = label.font()
+        br = QtGui.QFontMetrics(f).boundingRect(label.text())
+
+        f.setPixelSize(max(size, 1))
+        label.setFont(f)
 
     def set_alarm_state(self, isalarm):
         '''
