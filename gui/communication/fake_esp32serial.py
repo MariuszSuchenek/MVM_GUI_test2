@@ -51,10 +51,10 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.get_all_fields = config["get_all_fields"]
         self.observables = {config["monitors"][item]["observable"]: None
                                       for item in config["monitors"]}
-        self.set_params = {"alarm": 0, "warning": 0}
         self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
                               "peep", "temperature", "power_mode",
                               "battery" ]
+        self.set_params = {"temperature": 40}
         self.alarm_rate = alarm_rate
 
         self.show()
