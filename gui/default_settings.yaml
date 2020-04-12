@@ -194,40 +194,40 @@ alarms:
         setmin: 15
         max: 80
         setmax: 75
-        under_threshold_code: null
-        over_threshold_code: null
+        under_threshold_code: 256
+        over_threshold_code: 512
         observable: pressure
         linked_monitor: inspiratory_pressure
 
     flow:
         min: 2 
         max: 20
-        under_threshold_code: null
-        over_threshold_code: null
+        under_threshold_code: 1024
+        over_threshold_code: 2048
         observable: flow
         linked_monitor: flow
 
     tidal_volume:
         min: 50
         max: 1500
-        under_threshold_code: null
-        over_threshold_code: null
+        under_threshold_code: 16384
+        over_threshold_code: 32768
         observable: tidal
         linked_monitor: tidal_volume
 
     bpm:
         min: null
         max: null
-        under_threshold_code: null
-        over_threshold_code: null
+        under_threshold_code: 1048576
+        over_threshold_code: 2097152
         observable: bpm
         linked_monitor: beats_per_minute
 
     peep:
         min: null
         max: null
-        under_threshold_code: 6778
-        over_threshold_code: null
+        under_threshold_code: 262144
+        over_threshold_code: 524288
         observable: peep
         linked_monitor: peep
 
