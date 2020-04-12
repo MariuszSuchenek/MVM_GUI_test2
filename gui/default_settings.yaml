@@ -216,8 +216,8 @@ alarms:
         linked_monitor: tidal_volume
 
     bpm:
-        min: null
-        max: null
+        min: 5
+        max: 10
         under_threshold_code: 1048576
         over_threshold_code: 2097152
         observable: bpm
