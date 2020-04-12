@@ -237,6 +237,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         returns: an "OK" string in case of success.
         """
 
+        self.log("alarms lowered")
         return self.set("alarm", 0)
 
     def reset_warnings(self):
