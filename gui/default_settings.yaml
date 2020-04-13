@@ -158,7 +158,7 @@ monitors:
         alarmcolor: "red"
         observable: peep
 
-    battery: 
+    battery_charge: 
         name: "Battery"
         init: 100 
         step: 1
@@ -168,6 +168,16 @@ monitors:
         alarmcolor: "red"
         observable: battery_charge
         disp_type: "bar 0 100"
+
+    battery_powered: 
+        name: "Battery Power"
+        init: 100 
+        step: 1
+        units: null
+        dec_precision: 0
+        color: "rgb(255,255,255)"
+        alarmcolor: "red"
+        observable: battery_powered
 
     flow: 
         name: "MVe"
@@ -210,7 +220,7 @@ monitors:
         observable: peak
 
 displayed_monitors:
-    - battery
+    - battery_charge
     - peak
     - peep
     - total_inspired_volume
@@ -276,7 +286,7 @@ alarms:
         under_threshold_code: 16
         over_threshold_code: null
         observable: battery_charge
-        linked_monitor: battery
+        linked_monitor: battery_charge
 
 plots:
     plot_top: 
