@@ -70,8 +70,8 @@ String get(String const& command)
       + String(random(0, 1))       + "," // power_mode
       + String(random(1, 100))     + "," // battery
       + String(random(70, 80))     + "," // peak
-      + String(random(1000, 2000)  + "," // total_inspired_volume
-      + String(random(1000, 2000)  + "," // total_expired_volume
+      + String(random(1000, 2000)) + "," // total_inspired_volume
+      + String(random(1000, 2000)) + "," // total_expired_volume
       + String(random(10, 100));         // volume_minute
   }
 
@@ -108,7 +108,7 @@ void serial_loop(Stream& connection)
   }
 }
 
-void serial()
+void loop()
 {
   serial_loop(Serial);
   serial_loop(Debug);
