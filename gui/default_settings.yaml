@@ -86,6 +86,19 @@ start_mode_timeout: 2000 # [ms] between pressing Start and allowing Stop (max 30
 # and the must match names in the ESP or an available function
 #
 #
+# Monitors are defined by the following parameters:
+#
+# name: The displayed, labelled name of the monitor.
+# init: The initial value of the monitor before updated.
+# step: (Optional, default 1) The minimum change measured by the monitor.
+# dec_precision: (Optional, default 0) The number of decimal positions to display.
+# units: (Optional) The displayed units
+# observable: Reference to the data type that the monitor is displayed (ref. "get_all_fields" above")
+# alarmcolor: (Optional, default red) The color that the monitor will turn on alarm.
+# color: (Optional, default white) The text color of the monitor.
+# disp_type: (Optional) The alternate display type of the monitor.
+#       None: Display auto scaling text.
+#       bar [low] [high]: Show a progress bar with minimum [low] and maximum [high].
 monitors:
     inspiratory_pressure: 
         name: "Insp. Press."
@@ -149,11 +162,12 @@ monitors:
         name: "Battery"
         init: 100 
         step: 1
-        units: "(%)"
+        units: "%"
         dec_precision: 0
-        color: "rgb(0,255,255)"
+        color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: battery_charge
+        disp_type: "bar 0 100"
 
     flow: 
         name: "MVe"
