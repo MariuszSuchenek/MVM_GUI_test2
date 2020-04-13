@@ -32,6 +32,10 @@ void setup()
   parameters["alarm"] = String(0);
   parameters["warning"] = String(0);
 
+  parameters["run"]    = String(0);
+  parameters["mode"]   = String(0);
+  parameters["backup"] = String(0);
+
   parameters["rate"]             = String(12);
   parameters["ratio"]            = String(2);
   parameters["ptarget"]          = String(15);
