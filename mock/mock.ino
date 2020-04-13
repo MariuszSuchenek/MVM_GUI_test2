@@ -68,7 +68,11 @@ String get(String const& command)
       + String(random(4, 20))      + "," // peep
       + String(random(10, 50))     + "," // temperature
       + String(random(0, 1))       + "," // power_mode
-      + String(random(1, 100));          // battery
+      + String(random(1, 100))     + "," // battery
+      + String(random(70, 80))     + "," // peak
+      + String(random(1000, 2000)  + "," // total_inspired_volume
+      + String(random(1000, 2000)  + "," // total_expired_volume
+      + String(random(10, 100));         // volume_minute
   }
 
   auto const it = std::find(
