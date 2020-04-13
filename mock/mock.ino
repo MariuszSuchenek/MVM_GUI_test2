@@ -19,6 +19,7 @@ std::vector<String> random_measures;
 void setup()
 {
   Serial.begin(115200);
+  while (!Serial);
   Serial.setTimeout(50000);
 
   random_measures = { "pressure", "bpm", "flow", "o2", "tidal", "peep",
