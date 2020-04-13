@@ -456,7 +456,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>Insp. Pressure (mbar)</string>
+         <string>Insp. Pressure (cmH&lt;sub&gt;2&lt;/sub&gt;O)</string>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="spinBox_insp_pressure">
@@ -1241,7 +1241,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>Support pressure (mbar)</string>
+         <string>Support pressure (cmH&lt;sub&gt;2&lt;/sub&gt;O)</string>
         </property>
        </widget>
        <widget class="MVMToggle" name="toggle_enable_backup" native="true">

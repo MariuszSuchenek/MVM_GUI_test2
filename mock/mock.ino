@@ -7,6 +7,9 @@
 #include <map>
 #include <vector>
 #include <algorithm> // std::find
+#include <SoftwareSerial.h>
+
+SoftwareSerial Debug(2, 3); // RX, TX
 
 // change it to \n in case of line termination is not \n\r
 auto const terminator = '\r';
@@ -19,7 +22,9 @@ std::vector<String> random_measures;
 void setup()
 {
   Serial.begin(115200);
+  while (!Serial);
   Serial.setTimeout(50000);
+  Debug.begin(115200);
 
   random_measures = { "pressure", "bpm", "flow", "o2", "tidal", "peep",
                       "temperature", "power_mode", "battery" };
@@ -63,7 +68,11 @@ String get(String const& command)
       + String(random(4, 20))      + "," // peep
       + String(random(10, 50))     + "," // temperature
       + String(random(0, 1))       + "," // power_mode
-      + String(random(1, 100));          // battery
+      + String(random(1, 100))     + "," // battery
+      + String(random(70, 80))     + "," // peak
+      + String(random(1000, 2000)  + "," // total_inspired_volume
+      + String(random(1000, 2000)  + "," // total_expired_volume
+      + String(random(10, 100));         // volume_minute
   }
 
   auto const it = std::find(
@@ -81,20 +90,26 @@ String get(String const& command)
   }
 }
 
-void loop()
+void serial_loop(Stream& connection)
 {
-  if (Serial.available() > 0) {
-    String command = Serial.readStringUntil(terminator);
+  if (connection.available() > 0) {
+    String command = connection.readStringUntil(terminator);
     command.trim();
     auto const command_type = command.substring(0, 3);
 
     if (command.length() == 0) {
     } else if (command_type == "get") {
-      Serial.println("valore=" + get(command));
+      connection.println("valore=" + get(command));
     } else if (command_type == "set") {
-      Serial.println("valore=" + set(command));
+      connection.println("valore=" + set(command));
     } else {
-      Serial.println("valore=notok");
+      connection.println("valore=notok");
     }
   }
+}
+
+void serial()
+{
+  serial_loop(Serial);
+  serial_loop(Debug);
 }

@@ -78,6 +78,10 @@ class ESP32BaseAlarm:
 
 
 class ESP32Alarm(ESP32BaseAlarm):
+    def __init__(self, number):
+        if number & (1 << 29):
+            number = number ^ (1 << 29)
+        super(ESP32Alarm, self).__init__(number)
 
     alarm_to_string = {
         # From the ESP
@@ -105,6 +109,9 @@ class ESP32Alarm(ESP32BaseAlarm):
         1 << 20: "Respiratory rate too low",
         1 << 21: "Respiratory rate too high",
 
+        # from the ESP
+        1 << 29: "GUI alarm raised",
+        1 << 30: "GUI watchdog not reset",
         1 << 31: "System failure",
     }
 

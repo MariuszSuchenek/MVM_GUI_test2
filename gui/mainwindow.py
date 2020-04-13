@@ -11,6 +11,7 @@ from toolbar.toolbar import Toolbar
 from menu.menu import Menu
 from settings.settingsbar import SettingsBar
 from alarms.alarms import Alarms
+from alarms.guialarms import GuiAlarms
 from alarms.alarmsbar import AlarmsBar
 
 from toolsettings.toolsettings import ToolSettings
@@ -56,8 +57,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.centerpane         = self.findChild(QtWidgets.QStackedWidget, "centerpane")
         self.plots_all          = self.findChild(QtWidgets.QWidget,        "plots_all")
-        self.plots_settings     = self.findChild(QtWidgets.QWidget,        "plots_settings")
-        self.plot_hidden_slots  = self.findChild(QtWidgets.QVBoxLayout,    "plot_hidden_slots")
+        self.alarms_settings    = self.findChild(QtWidgets.QWidget,        "alarms_settings")
 
         '''
         Get the bottombar and child pages
@@ -74,9 +74,9 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the stackable bits on the right
         '''
-        self.rightbar     = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
-        self.monitors_bar = self.main.findChild(QtWidgets.QWidget,        "three_monitors")
-        self.frozen_right = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
+        self.rightbar       = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
+        self.monitors_bar   = self.main.findChild(QtWidgets.QWidget,        "monitors_bar")
+        self.frozen_right   = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
 
         '''
         Get initial and startup buttons
@@ -120,9 +120,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_backalarms = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_backalarms")
         self.button_applyalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_applyalarm")
         self.button_resetalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_resetalarm")
-        self.button_topalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_topalarm")
-        self.button_midalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_midalarm")
-        self.button_botalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_botalarm")
+        self.button_upalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_upalarm")
+        self.button_downalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_downalarm")
+        self.button_offalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_offalarm")
 
         '''
         Get frozen plots bottom bar widgets and connect
@@ -162,19 +162,6 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.data_filler = DataFiller(config)
 
-        '''
-        Instantiate DataHandler, which will start a new
-        thread to read data from the ESP32. We also connect
-        the DataFiller to it, so the thread will pass the
-        data directly to the DataFiller, which will
-        then display them.
-        '''
-        self._data_h = DataHandler(config, self.esp32)
-        self._data_h.connect_data_filler(self.data_filler)
-        self._data_h.start_io_thread()
-
-        self.menu.connect_datahandler_config(self._data_h, self.config)
-
 
 
         '''
@@ -198,69 +185,47 @@ class MainWindow(QtWidgets.QMainWindow):
         and max. The current value and optional stats for the monitored value (mean, max) are set
         here.
         '''
-        # Monitor slot widget names
-        monitor_slot_names = [
-                "monitor_top_slot",
-                "monitor_mid_slot",
-                "monitor_bot_slot"]
-
         # plot slot widget names
-        plot_slot_names = [
-                "plot_top_slot",
-                "plot_mid_slot",
-                "plot_bot_slot"]
-        
-        # Reference names that link plot and monitor slots
-        slot_names = [
-                "top_slot",
-                "mid_slot",
-                "bot_slot"]
-
-        # The name of the monitored field in the default_settings.yaml config file
-        monitor_names = [
-                "mon_inspiratory_pressure",
-                "mon_tidal_volume",
-                "mon_flow",
-                "mon_oxygen_concentration"]
-
-        self.monitors = {}
-        self.monitor_slots = {}
         self.plots = {};
-        self.plot_slots = {}
-
-        # Get displayed monitor slots
-        for (slotname, barname) in zip(slot_names, monitor_slot_names):
-            self.monitor_slots[slotname] = self.rightbar.findChild(QtWidgets.QGridLayout, barname)
-
-        # Get displayed plot slots
-        for (slotname, barname) in zip(slot_names, plot_slot_names):
-            self.plot_slots[slotname] = self.main.findChild(QtWidgets.QGridLayout, barname)
-
-        # Generate monitors and plots
-        for name in monitor_names:
-            monitor = Monitor(name, config, self.alarm_h,
-                    self.config[name]["alarm_min_code"],
-                    self.config[name]["alarm_max_code"])
-            self.monitors[name] = monitor
-            plot = pg.PlotWidget()
+        for name in config['plots']:
+            plot = self.main.findChild(QtWidgets.QWidget, name)
             plot.setFixedHeight(130)
+            self.data_filler.connect_plot(name, plot)
             self.plots[name] = plot
 
-            # Make connections to data filler
-            self.data_filler.connect_monitor(name, monitor)
-            self.data_filler.connect_plot(name, plot)
+        # The monitored fields from the default_settings.yaml config file
+        self.monitors = {}
+        for name in config['monitors']:
+            monitor = Monitor(name, config)
+            self.monitors[name] = monitor
+            self.data_filler.connect_monitor(monitor)
 
-        self.plots_settings.connect_monitors_and_plots(self)
-        self.plots_settings.populate_monitors_and_plots()
-        self.button_applyalarm.pressed.connect(self.plots_settings.apply_selected)
-        self.button_resetalarm.pressed.connect(self.plots_settings.reset_selected)
-        self.button_topalarm.pressed.connect(lambda slotname=slot_names[0]:
-                self.plots_settings.display_selected(slotname))
-        self.button_midalarm.pressed.connect(lambda slotname=slot_names[1]:
-                self.plots_settings.display_selected(slotname))
-        self.button_botalarm.pressed.connect(lambda slotname=slot_names[2]:
-                self.plots_settings.display_selected(slotname))
+        # The alarms are from the default_settings.yaml config file
+        # self.alarms = {}
+        # for name in config['alarms']:
+        #     alarm = GuiAlarm(name, config, self.monitors, self.alarm_h)
+        #     self.alarms[name] = alarm
+        self.gui_alarm = GuiAlarms(config, self.esp32, self.monitors)
+        for m in self.monitors.values(): m.connect_gui_alarm(self.gui_alarm)
 
+
+        # Get displayed monitors
+        self.monitors_slots = self.main.findChild(QtWidgets.QVBoxLayout, "monitors_slots")
+        self.alarms_settings.connect_monitors(self)
+        self.alarms_settings.populate_monitors()
+        self.button_applyalarm.pressed.connect(self.alarms_settings.apply_selected)
+        self.button_resetalarm.pressed.connect(self.alarms_settings.reset_selected)
+        self.button_offalarm.pressed.connect(self.alarms_settings.move_selected_off)
+        self.button_upalarm.pressed.connect(self.alarms_settings.move_selected_up)
+        self.button_downalarm.pressed.connect(self.alarms_settings.move_selected_down)
+
+        # Connect the frozen plots
+        # Requires building of an ordered array to associate the correct controls with the plot.
+        active_plots = []
+        for slotname in self.plots:
+            active_plots.append(self.plots[slotname])
+        self.frozen_bot.connect_workers(self.data_filler, active_plots)
+        self.frozen_right.connect_workers(active_plots)
         '''
         Set up start/stop auto/min mode buttons.
 
@@ -280,10 +245,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
 
         '''
+        Instantiate DataHandler, which will start a new
+        thread to read data from the ESP32. We also connect
+        the DataFiller to it, so the thread will pass the
+        data directly to the DataFiller, which will
+        then display them.
+        '''
+        self._data_h = DataHandler(config, self.esp32, self.data_filler, self.gui_alarm)
+
+        self.menu.connect_datahandler_config(self._data_h, self.config)
+
+        '''
         Connect settings button to Settings overlay.
         '''
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
+
+    def set_colors(self):
+        # Monitors bar background
+        palette = self.monitor_filler.palette()
+        role = self.monitor_filler.backgroundRole()
+        palette.setColor(role, QtGui.QColor("#000000"))
+        self.monitor_filler.setPalette(palette)
 
     def goto_new_patient(self):
         # TODO : implement start from default_settings
@@ -311,12 +294,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def goto_alarms(self):
         self.show_alarms()
         self.show_alarmsbar()
-        self.plots_settings.config_monitors()
+        self.alarms_settings.config_monitors()
 
     def exit_alarms(self):
         self.show_menu()
         self.show_plots()
-        self.plots_settings.deconfig_monitors()
+        self.alarms_settings.deconfig_monitors()
 
     def show_settings(self):
         self.toppane.setCurrentWidget(self.settings)
@@ -341,7 +324,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bottombar.setCurrentWidget(self.settingsfork)
 
     def show_alarms(self):
-        self.centerpane.setCurrentWidget(self.plots_settings)
+        self.centerpane.setCurrentWidget(self.alarms_settings)
 
     def show_plots(self):
         self.centerpane.setCurrentWidget(self.plots_all)
@@ -359,7 +342,4 @@ class MainWindow(QtWidgets.QMainWindow):
         self.data_filler.unfreeze()
         self.rightbar.setCurrentWidget(self.monitors_bar)
         self.show_menu()
-
-    def closeEvent(self, event):
-        self._data_h.stop_io()
 
