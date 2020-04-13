@@ -51,9 +51,14 @@ class Monitor(QtWidgets.QWidget):
         self.update_thresholds(None, None, None, None)
         self.label_value.resizeEvent = lambda event: self.handle_resize(event)
 
-        # Handle optional custom display type
+        # Get handles for display type
         self.display_opts = self.findChild(QtWidgets.QStackedWidget, "display_opts")
         self.shown_widget = self.findChild(QtWidgets.QWidget, "default_text")
+
+        # bar type
+        self.progress_bar = self.findChild(QtWidgets.QProgressBar, "bar_value")
+
+        # Handle optional custom display type
         if self.disp_type is not None:
             if "bar" in self.disp_type:
                 self.setup_bar_disp_type()
@@ -69,7 +74,6 @@ class Monitor(QtWidgets.QWidget):
     def setup_bar_disp_type(self):
         (text, low, high) = self.disp_type.split(" ") 
         self.shown_widget = self.findChild(QtWidgets.QWidget, "progress_bar")
-        self.progress_bar = self.findChild(QtWidgets.QProgressBar, "bar_value")
         self.shown_widget.setStyleSheet(
                 "QProgressBar {"
                 "   background-color: rgba(0,0,0,0);"
@@ -78,8 +82,8 @@ class Monitor(QtWidgets.QWidget):
                 "QProgressBar::chunk {"
                 "    background-color: #888888;"
                 "}")
-        if self.units is None: showformat = "%p"
-        else: showformat = "%p "+ self.units
+        showformat = "%p"
+        if self.units is not None: showformat += " " + self.units
         self.progress_bar.setFormat(showformat)
         self.progress_bar.setMinimum(int(low))
         self.progress_bar.setMaximum(int(high))
@@ -126,11 +130,13 @@ class Monitor(QtWidgets.QWidget):
 
     def handle_resize(self, event):
         # Handle font resize
-        f = self.label_value.font()
-        br = QtGui.QFontMetrics(f).boundingRect(self.label_value.text())
+        self.resize_font(self.label_value, minpx=10, maxpx=50, offset=23)
+        self.resize_font(self.progress_bar, minpx=10, maxpx=16, offset=0)
 
-        f.setPixelSize(max(min(self.height()-23, 50), 10))
-        self.label_value.setFont(f)
+    def resize_font(self, label, minpx=10, maxpx=50, offset=0):
+        f = label.font()
+        f.setPixelSize(max(min(self.height()-offset, maxpx), minpx))
+        label.setFont(f)
 
     def set_alarm_state(self, isalarm):
         '''
@@ -160,10 +166,8 @@ class Monitor(QtWidgets.QWidget):
             self.value = round(value / self.step) * self.step
         else:
             self.value = value;
-        if self.disp_type is not None:
-            if "bar" in self.disp_type:
-                self.bar_value.setValue(self.value)
         self.label_value.setText("%.*f" % (self.dec_precision, self.value))
+        self.bar_value.setValue(self.value)
 
 
 
