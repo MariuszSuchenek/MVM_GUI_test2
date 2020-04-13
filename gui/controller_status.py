@@ -46,12 +46,12 @@ class ControllerStatus:
         and leave the default behaviour.
         '''
         
-        if not self._esp32.get('run'):
+        if not int(self._esp32.get('run')):
             return
 
         for param, esp_name in self._config['esp_settable_param'].items():
             print('Reading Settings parameters from ESP:', param, self._esp32.get(esp_name))
-            self._settings.update_spinbox_value(param, self._esp32.get(esp_name))
+            self._settings.update_spinbox_value(param, int(self._esp32.get(esp_name)))
 
 
     def _esp32_io(self):
