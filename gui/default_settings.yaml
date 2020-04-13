@@ -14,6 +14,10 @@ get_all_fields:
   - temperature
   - battery_powered
   - battery_charge
+  - peak
+  - total_inspired_volume
+  - total_expired_volume
+  - volume_minute
 
 # Conversion factors to apply to the values from the get_all
 conversions:
