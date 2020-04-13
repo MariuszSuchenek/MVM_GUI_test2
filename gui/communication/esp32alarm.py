@@ -78,6 +78,10 @@ class ESP32BaseAlarm:
 
 
 class ESP32Alarm(ESP32BaseAlarm):
+    def __init__(self, number):
+        if number & (1 << 29):
+            number = number ^ (1 << 29)
+        super(ESP32Alarm, self).__init__(number)
 
     alarm_to_string = {
         # From the ESP
