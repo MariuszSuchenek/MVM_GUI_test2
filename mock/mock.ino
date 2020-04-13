@@ -60,15 +60,15 @@ String get(String const& command)
 
   if (name == "all") {
     return
-        String(random(10, 79))     + "," // pressure
+        String(random(20, 70))     + "," // pressure
       + String(random(3, 21))      + "," // flow
-      + String(random(10, 100))    + "," // o2
-      + String(random(12, 20))     + "," // bpm
+      + String(random(30, 100))    + "," // o2
+      + String(random(6, 8))       + "," // bpm
       + String(random(1000, 1500)) + "," // tidal
       + String(random(4, 20))      + "," // peep
       + String(random(10, 50))     + "," // temperature
       + String(random(0, 1))       + "," // power_mode
-      + String(random(1, 100))     + "," // battery
+      + String(random(20, 100))    + "," // battery
       + String(random(70, 80))     + "," // peak
       + String(random(1000, 2000)) + "," // total_inspired_volume
       + String(random(1000, 2000)) + "," // total_expired_volume
