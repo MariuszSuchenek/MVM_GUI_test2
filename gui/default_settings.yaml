@@ -107,6 +107,26 @@ monitors:
         alarmcolor: "red"
         observable: tidal
 
+    total_inspired_volume: 
+        name: "v<sub>total</sub>"
+        init: 100
+        step: 100
+        dec_precision: 0
+        units: "(ml)"
+        color: "rgb(50,205,50)"
+        alarmcolor: "red"
+        observable: total_inspired_volume
+
+    volume_minute: 
+        name: "v<sub>rate</sub>"
+        init: 100
+        step: 100
+        dec_precision: 0
+        units: "(ml/s)"
+        color: "rgb(50,205,50)"
+        alarmcolor: "red"
+        observable: volume_minute
+
     beats_per_minute: 
         name: "BPM"
         init: 60
@@ -176,11 +196,12 @@ monitors:
         observable: peak
 
 displayed_monitors:
-    - inspiratory_pressure
-    - tidal_volume
-    - flow
+    - battery
+    - peak
+    - peep
+    - total_inspired_volume
+    - volume_minute
     - oxygen_concentration
-    - beats_per_minute
 
 alarms:
     o2:
