@@ -265,8 +265,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Instantiate ControllerStatus
         '''
-        self._ctr_status = ControllerStatus(config, self.esp32)
-        
+        self._ctr_status = ControllerStatus(config, self.esp32, self.settings)
+
 
     def set_colors(self):
         # Monitors bar background

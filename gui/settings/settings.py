@@ -54,6 +54,8 @@ class Settings(QtWidgets.QMainWindow):
             'minimal_resp_rate': self.fake_btn_min_resp_rate,
         }
 
+        self.toolsettings_lookup = None
+
         # Connect all widgets
         self.connect_workers()
 
@@ -204,6 +206,23 @@ class Settings(QtWidgets.QMainWindow):
 
         self.repaint()
         self.mainparent.exit_settings()
+
+    def update_spinbox_value(self, param, value):
+        '''
+        '''
+        if param in self._all_spinboxes:
+            self._all_spinboxes[param].setValue(value)
+            self._current_values[param] = value
+        else:
+            raise Exception('Cannot set value to SpinBox with name', param)
+
+        if self.toolsettings_lookup is None:
+            raise Exception('Trying to update SpinBox values but toolsettings_lookup was not set!')
+
+        if param in self.toolsettings_lookup:
+            self.toolsettings_lookup[param].update(value)
+
+
 
     def update_config(self, external_config):
         '''
