@@ -32,9 +32,9 @@
     <widget class="QPushButton" name="raise_alarm_btn">
      <property name="geometry">
       <rect>
-       <x>310</x>
+       <x>290</x>
        <y>120</y>
-       <width>111</width>
+       <width>131</width>
        <height>23</height>
       </rect>
      </property>
@@ -146,9 +146,9 @@
     <widget class="QPushButton" name="raise_warning_btn">
      <property name="geometry">
       <rect>
-       <x>660</x>
+       <x>640</x>
        <y>120</y>
-       <width>111</width>
+       <width>131</width>
        <height>23</height>
       </rect>
      </property>
@@ -175,8 +175,8 @@
      <rect>
       <x>10</x>
       <y>350</y>
-      <width>53</width>
-      <height>15</height>
+      <width>131</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
@@ -188,7 +188,7 @@
      <rect>
       <x>10</x>
       <y>170</y>
-      <width>151</width>
+      <width>221</width>
       <height>16</height>
      </rect>
     </property>
@@ -228,7 +228,7 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>81</width>
+      <width>111</width>
       <height>16</height>
      </rect>
     </property>
