@@ -17,6 +17,7 @@ def clickable(widget):
     return filter.clicked
 
 class Alarms(QtWidgets.QWidget):
+    STORED_PER_COL = 7
     def __init__(self, *args):
         """
         Initialize the Alarms widget.
@@ -264,7 +265,7 @@ class Alarms(QtWidgets.QWidget):
         for name, monitor in self.monitors.items():
             if name not in self.displayed_monitors:
                 # Monitor not displayed, so goes on Alarms page
-                self.layout.addWidget(monitor, int(hidd % 4), 10-int(hidd / 4)) 
+                self.layout.addWidget(monitor, int(hidd % self.STORED_PER_COL), 10-int(hidd / self.STORED_PER_COL)) 
                 hidd += 1 
 
         for (disp, name) in enumerate(self.displayed_monitors):
