@@ -31,6 +31,15 @@ void setup()
 
   parameters["alarm"] = String(0);
   parameters["warning"] = String(0);
+
+  parameters["rate"]             = String(12);
+  parameters["ratio"]            = String(2);
+  parameters["ptarget"]          = String(15);
+  parameters["assist_ptrigger"]  = String(1);
+  parameters["assist_flow_min"]  = String(20);
+  parameters["pressure_support"] = String(10);
+  parameters["backup_enable"]    = String(1);
+  parameters["backup_min_rate"]  = String(10);
 }
 
 // this is tricky, didn't had the time to think a better algo
