@@ -303,6 +303,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
         pos = bitmap[alarm_type]
 
+        self.log("Snooze HW alarm %d" % alarm_type)
         current_alarm = self.set_params["alarm"]
         if current_alarm & alarm_type:
             self.set_params["alarm"] = current_alarm ^ alarm_type
@@ -319,4 +320,5 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         returns: an "OK" string in case of success.
         """
 
+        self.log("Snooze gui alarms")
         return self.snooze_hw_alarm(1 << 29)
