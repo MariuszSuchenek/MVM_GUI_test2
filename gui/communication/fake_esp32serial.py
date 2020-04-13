@@ -287,3 +287,34 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.set_params["alarm"] = self.set_params["alarm"] | 1 << 29
 
         return "OK"
+
+    def snooze_hw_alarm(self, alarm_type):
+        """
+        Function to snooze the corresponding alarm in ESP32
+
+        arguments:
+        - alarm_type      an integer representing the alarm type. One and
+                          only one
+
+        returns: an "OK" string in case of success.
+        """
+
+        bitmap = { 1 << x: x for x in range(32)}
+
+        pos = bitmap[alarm_type]
+
+        self.set_params["alarm"] = self.set_params["alarm"] ^ alarm_type
+        return "OK"
+
+    def snooze_gui_alarm(self):
+        """
+        Function to snooze the corresponding alarm in ESP32
+
+        arguments:
+        - alarm_type      an integer representing the alarm type. One and
+                          only one
+
+        returns: an "OK" string in case of success.
+        """
+
+        return self.snooze_hw_alarm(1 << 29)
