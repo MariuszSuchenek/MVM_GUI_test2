@@ -27,6 +27,7 @@ class GuiAlarms:
             v['setmax'] = v.get('setmax', v.get('max'))
 
 
+        self._alarmed_monitors = set()
         self.update_mon_thresholds()
 
     def update_mon_thresholds(self):
@@ -57,7 +58,9 @@ class GuiAlarms:
         if item['setmax'] is not None:
             if value > item["setmax"]:
                 self._esp32.raise_gui_alarm()
-                self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
+                linked_monitor = self._monitors[item['linked_monitor']]
+                linked_monitor.set_alarm_state(isalarm=True)
+                self._alarmed_monitors.add(linked_monitor.configname)
 
     def _test_under_threshold(self, item, value):
         '''
@@ -67,7 +70,9 @@ class GuiAlarms:
         if item['setmin'] is not None:
             if value < item["setmin"]:
                 self._esp32.raise_gui_alarm()
-                self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
+                linked_monitor = self._monitors[item['linked_monitor']]
+                linked_monitor.set_alarm_state(isalarm=True)
+                self._alarmed_monitors.add(linked_monitor.configname)
 
     def _test_thresholds(self, item, value):
         '''
@@ -82,11 +87,21 @@ class GuiAlarms:
         Resets all alarms. We might want to reset only
         a particular bit, this is why name is an argument here.
         '''
-        self._esp32.reset_alarms()
-        # obs = self._mon_to_obs.get(name, None)
-        # if obs is not None:
-        #     self._esp32.clear_alarm(self._obs[obs]['under_threshold_code'])
-        #     self._esp32.clear_alarm(self._obs[obs]['over_threshold_code'])
+
+        if name in self._alarmed_monitors:
+            self._alarmed_monitors.remove(name)
+            if len(self._alarmed_monitors) == 0:
+                self._esp32.snooze_gui_alarm()
+
+        #self._esp32.reset_alarms()
+        #obs = self._mon_to_obs.get(name, None)
+        #if obs is not None:
+        #    under_code = self._obs[obs]['under_threshold_code']
+        #    over_code = self._obs[obs]['over_threshold_code']
+        #    if under_code is not None:
+        #        self._esp32.snooze_hw_alarm(under_code)
+        #    if over_code is not None:
+        #        self._esp32.snooze_hw_alarm(over_code)
 
 
     def update_thresholds(observable, minimum, maximum):
