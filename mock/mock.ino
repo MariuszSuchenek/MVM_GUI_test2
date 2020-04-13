@@ -7,6 +7,9 @@
 #include <map>
 #include <vector>
 #include <algorithm> // std::find
+#include <SoftwareSerial.h>
+
+SoftwareSerial Debug(2, 3); // RX, TX
 
 // change it to \n in case of line termination is not \n\r
 auto const terminator = '\r';
@@ -21,6 +24,7 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.setTimeout(50000);
+  Debug.begin(115200);
 
   random_measures = { "pressure", "bpm", "flow", "o2", "tidal", "peep",
                       "temperature", "power_mode", "battery" };
@@ -103,4 +107,5 @@ void serial_loop(Stream& connection)
 void serial()
 {
   serial_loop(Serial);
+  serial_loop(Debug);
 }
