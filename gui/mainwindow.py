@@ -20,7 +20,7 @@ from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
 from alarm_handler import AlarmHandler
-from controller_status import ContollerStatus
+from controller_status import ControllerStatus
 
 import pyqtgraph as pg
 import sys
@@ -263,9 +263,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toppane.insertWidget(self.toppane.count(), self.settings)
 
         '''
-        Instantiate ContollerStatus
+        Instantiate ControllerStatus
         '''
-        self._ctr_status = ContollerStatus(config, self.esp32)
+        self._ctr_status = ControllerStatus(config, self.esp32)
         
 
     def set_colors(self):

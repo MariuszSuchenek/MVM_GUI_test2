@@ -40,6 +40,9 @@ class ControllerStatus:
     def _esp32_io(self):
         return
 
+    def _start_timer(self):
+        self._timer.start()
+
 
 
 
