@@ -232,7 +232,7 @@ class ESP32Serial:
 
         return self.set("warning", 0)
 
-    def raise_alarm(self, alarm_type):
+    def raise_gui_alarm(self):
         """
         Raises an alarm in ESP32
 
@@ -242,4 +242,5 @@ class ESP32Serial:
         returns: an "OK" string in case of success.
         """
 
-        return self.set("alarm", alarm_type)
+        return self.set("alarm", 1)
+

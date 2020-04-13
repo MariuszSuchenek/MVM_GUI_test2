@@ -272,7 +272,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.log("warnings lowered")
         return self.set("warning", 0)
 
-    def raise_alarm(self, alarm_type):
+    def raise_gui_alarm(self):
         """
         Raises an alarm in ESP32
 
@@ -282,6 +282,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         returns: an "OK" string in case of success.
         """
 
-        self.log("GUI Alarm! %d" % alarm_type)
+        self.log("GUI Alarm!")
+
+        self.set_params["alarm"] = self.set_params["alarm"] | 1 << 29
 
         return "OK"

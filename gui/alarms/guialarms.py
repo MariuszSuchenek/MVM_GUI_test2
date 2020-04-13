@@ -56,7 +56,7 @@ class GuiAlarms:
         '''
         if item['setmax'] is not None:
             if value > item["setmax"]:
-                self._esp32.raise_alarm(item["over_threshold_code"])
+                self._esp32.raise_gui_alarm()
                 self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
 
     def _test_under_threshold(self, item, value):
@@ -66,7 +66,7 @@ class GuiAlarms:
         '''
         if item['setmin'] is not None:
             if value < item["setmin"]:
-                self._esp32.raise_alarm(item["under_threshold_code"])
+                self._esp32.raise_gui_alarm()
                 self._monitors[item['linked_monitor']].set_alarm_state(isalarm=True)
 
     def _test_thresholds(self, item, value):
