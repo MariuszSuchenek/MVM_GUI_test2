@@ -82,20 +82,25 @@ String get(String const& command)
   }
 }
 
-void loop()
+void serial_loop(Stream& connection)
 {
-  if (Serial.available() > 0) {
-    String command = Serial.readStringUntil(terminator);
+  if (connection.available() > 0) {
+    String command = connection.readStringUntil(terminator);
     command.trim();
     auto const command_type = command.substring(0, 3);
 
     if (command.length() == 0) {
     } else if (command_type == "get") {
-      Serial.println("valore=" + get(command));
+      connection.println("valore=" + get(command));
     } else if (command_type == "set") {
-      Serial.println("valore=" + set(command));
+      connection.println("valore=" + set(command));
     } else {
-      Serial.println("valore=notok");
+      connection.println("valore=notok");
     }
   }
+}
+
+void serial()
+{
+  serial_loop(Serial);
 }
