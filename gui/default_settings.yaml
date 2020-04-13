@@ -14,6 +14,10 @@ get_all_fields:
   - temperature
   - battery_powered
   - battery_charge
+  - peak
+  - total_inspired_volume
+  - total_expired_volume
+  - volume_minute
 
 # Conversion factors to apply to the values from the get_all
 conversions:
@@ -40,7 +44,7 @@ esp_settable_param:
     insp_pressure:     'ptarget'
     pressure_trigger:  'assist_ptrigger'
     flow_trigger:      'assist_flow_min'
-    support_pressure:  'TODO'
+    support_pressure:  'pressure_support'
     enable_backup:     'backup_enable'
     minimal_resp_rate: 'backup_min_rate'
 
@@ -129,7 +133,7 @@ monitors:
         dec_precision: 0
         color: "rgb(0,255,255)"
         alarmcolor: "red"
-        observable: battery_powered
+        observable: battery_charge
 
     flow: 
         name: "MVe"
@@ -180,11 +184,10 @@ displayed_monitors:
 
 alarms:
     o2:
-        min: 21
-        setmax: 70
+        min: 17
         max: 98 
-        alarm_min_code: 17
-        alarm_max_code: 18
+        setmin: 21
+        setmax: 100
         under_threshold_code: 65536
         over_threshold_code: 131072
         observable: o2
@@ -195,55 +198,49 @@ alarms:
         setmin: 15
         max: 80
         setmax: 75
-        alarm_min_code: 8
-        alarm_max_code: 9
-        under_threshold_code: null
-        over_threshold_code: null
+        under_threshold_code: 256
+        over_threshold_code: 512
         observable: pressure
         linked_monitor: inspiratory_pressure
 
     flow:
         min: 2 
         max: 20
-        alarm_min_code: 11
-        alarm_max_code: 12
-        under_threshold_code: null
-        over_threshold_code: null
+        under_threshold_code: 1024
+        over_threshold_code: 2048
         observable: flow
         linked_monitor: flow
 
     tidal_volume:
         min: 50
         max: 1500
-        alarm_min_code: 14
-        alarm_max_code: 15
-        under_threshold_code: null
-        over_threshold_code: null
+        under_threshold_code: 16384
+        over_threshold_code: 32768
         observable: tidal
         linked_monitor: tidal_volume
 
     bpm:
-        min: null
-        max: null
-        under_threshold_code: null
-        over_threshold_code: null
+        min: 5
+        max: 10
+        under_threshold_code: 1048576
+        over_threshold_code: 2097152
         observable: bpm
         linked_monitor: beats_per_minute
 
     peep:
         min: null
         max: null
-        under_threshold_code: 6778
-        over_threshold_code: null
+        under_threshold_code: 262144
+        over_threshold_code: 524288
         observable: peep
         linked_monitor: peep
 
-    battery_powered:
-        min: null
+    battery_charge:
+        min: 10
         max: null
-        under_threshold_code: null
+        under_threshold_code: 16
         over_threshold_code: null
-        observable: battery_powered
+        observable: battery_charge
         linked_monitor: battery
 
 plots:

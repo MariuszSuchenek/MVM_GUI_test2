@@ -42,7 +42,7 @@ class AlarmHandler:
         to check if the ESP raised any alarm or warning.
         If an alarm or warning is raised, a pop up
         window appears, showing the list of alarms and
-        warnings. If more alarms or warnings add up, the 
+        warnings. If more alarms or warnings add up, the
         window is updated automatically showing the latest
         errors.
         '''
@@ -59,7 +59,7 @@ class AlarmHandler:
             msg = MessageBox()
             fn = msg.critical("Critical",
                               err_msg,
-                              str(error), 
+                              str(error),
                               "Communication error",
                               { msg.Retry: lambda: None,
                                 msg.Abort: lambda: None })
@@ -76,7 +76,7 @@ class AlarmHandler:
                 self._alarm_raised = True
                 self._msg_err.critical("ALARM",
                              " - ".join(errors),
-                             "\n".join(errors_full), 
+                             "\n".join(errors_full),
                              "Alarm received.",
                              { self._msg_err.Ok: lambda: self.ok_worker('alarm'),
                                self._msg_err.Abort: lambda: None},
@@ -89,9 +89,9 @@ class AlarmHandler:
                 self._msg_err.raise_()
 
 
-        # 
+        #
         # WARNINGS
-        # 
+        #
         if esp32warning:
             errors = esp32warning.strerror_all()
             errors_full = esp32warning.strerror_all(append_err_no=True)
@@ -100,7 +100,7 @@ class AlarmHandler:
                 self._warning_raised = True
                 self._msg_war.warning("WARNING",
                              " - ".join(errors),
-                             "\n".join(errors_full), 
+                             "\n".join(errors_full),
                              "Warning received.",
                              { self._msg_war.Ok: lambda: self.ok_worker('warning'),
                                self._msg_war.Abort: lambda: None },
@@ -115,7 +115,7 @@ class AlarmHandler:
 
     def ok_worker(self, mode):
         '''
-        The callback function called when the alarm 
+        The callback function called when the alarm
         or warning pop up window is closed by clicking
         on the Ok button.
 
@@ -132,7 +132,7 @@ class AlarmHandler:
             self._warning_raised = False
 
         # Reset the alarms/warnings in the ESP
-        # If the ESP connection fails at this 
+        # If the ESP connection fails at this
         # time, raise an error box
         try:
             if mode == 'alarm':
@@ -143,25 +143,17 @@ class AlarmHandler:
             msg = MessageBox()
             fn = msg.critical("Critical",
                               "Severe hardware communication error",
-                              str(error), 
+                              str(error),
                               "Communication error",
                               { msg.Retry: lambda: self.ok_worker(mode),
                                 msg.Abort: lambda: None })
             fn()
-        
-    def code_to_int(self, code):
-        '''
-        From a code to an integer with 
-        the right bit set
-        TODO
-        '''
-        return 1
 
-    def raise_alarm(self, code):
+    def raise_alarm(self):
         '''
         Raises an alarm in the ESP
         '''
-        self._esp32.raise_alarm(self.code_to_int(code))
+        self._esp32.raise_gui_alarm()
 
     def stop_alarm(self, code):
         '''

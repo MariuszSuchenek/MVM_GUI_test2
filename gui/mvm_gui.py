@@ -26,7 +26,7 @@ def connect_esp32(config):
                 alarm_rate = 0.1
             print('******* Simulating communication with ESP32')
             err_msg = "Cannot setup FakeESP32Serial"
-            esp32 = FakeESP32Serial(alarm_rate=alarm_rate)
+            esp32 = FakeESP32Serial(config, alarm_rate=alarm_rate)
             esp32.set("wdenable", 1)
         else:
             err_msg = "Cannot communicate with port %s" % config['port']

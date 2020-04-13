@@ -6,23 +6,170 @@ Currently just reports fixed values. Can be made more intelligent
 as needed.
 """
 
-from threading import Lock
 import random
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtGui import QTextCursor
 from communication.peep import peep
 from . import ESP32Alarm, ESP32Warning
 
-KNOWN_ALARM_CODES = [0] + [1 << bit for bit in (0, 1, 2, 3, 4, 5, 6, 7, 31)]
-KNOWN_WARNING_CODES = [0] + [1 << bit for bit in (0,)]
+class FakeMonitored(QtWidgets.QWidget):
+    def __init__(self, name, generator, value=0, random=True):
+        super(FakeMonitored, self).__init__()
+        uic.loadUi('communication/input_monitor_widget.ui', self)
 
-class FakeESP32Serial:
+        self.generator = generator
+
+        self.findChild(QtWidgets.QLabel, "label").setText(name)
+
+        self.value_ib = self.findChild(QtWidgets.QDoubleSpinBox, "value")
+        self.value_ib.setValue(value)
+
+        self.random_cb = self.findChild(QtWidgets.QCheckBox, "random_checkbox")
+        self.random_cb.setChecked(random)
+        self.random_cb.toggled.connect(self._random_checkbox_fn)
+        self._random_checkbox_fn()
+
+    def _random_checkbox_fn(self):
+        self.value_ib.setEnabled(not self.random_cb.isChecked())
+
+    def generate(self):
+        if self.random_cb.isChecked():
+            return self.generator()
+        else:
+            return self.value_ib.value()
+
+class FakeESP32Serial(QtWidgets.QMainWindow):
     peep = peep()
-    def __init__(self, alarm_rate=0.1):
-        self.lock = Lock()
-        self.set_params = {"alarm": 0, "warning": 0}
-        self.random_params = ["pressure", "flow", "o2", "bpm", "tidal",
-                              "peep", "temperature", "power_mode",
-                              "battery" ]
+    def __init__(self, config, alarm_rate=0.1):
+        super(FakeESP32Serial, self).__init__()
+
+        uic.loadUi('communication/fakeesp32.ui', self)
+        self.get_all_fields = config["get_all_fields"]
+        self.observables = {config["monitors"][item]["observable"]: None
+                                      for item in config["monitors"]}
+
+        self._arrange_fields()
+        self.alarms_checkboxes = {}
+        self.warning_checkboxes = {}
+        self._connect_alarm_and_warning_widgets()
+
+        self.set_params = {"alarm": 0, "warning": 0, "temperature": 40}
         self.alarm_rate = alarm_rate
+
+        self.event_log = self.findChild(QtWidgets.QPlainTextEdit, "event_log")
+        self.event_log.setReadOnly(True)
+        self.show()
+
+    def _arrange_fields(self):
+        max_colums = 3 # you eventually need to edit the
+                       # input_monitor_widget.ui file to put more
+
+        monitors_grid = self.findChild(QtWidgets.QGridLayout, "monitors_grid")
+
+        row = 0
+        column = 0
+        for name in self.observables:
+            if name == "pressure":
+                generator = self.peep.pressure
+            elif name == "flow":
+                generator = self.peep.flow
+            elif name == "battery_charge":
+                generator = lambda: int(random.uniform(0, 100))
+            elif name == "tidal":
+                generator = lambda: random.uniform(1000, 1500)
+            elif name == "peep":
+                generator = lambda: random.uniform(4, 20)
+            elif name == "temperature":
+                generator = lambda: random.uniform(10, 50)
+            elif name == "battery_powered":
+                generator = lambda: int(random.uniform(0, 1.5))
+            elif name == "bpm":
+                generator = lambda: random.uniform(10, 100)
+            elif name == "o2":
+                generator = lambda: random.uniform(10, 100)
+            elif name == "peak":
+                generator = lambda: random.uniform(10, 100)
+            elif name == "total_inspired_volume":
+                generator = lambda: random.uniform(10, 100)
+            elif name == "total_expired_volume":
+                generator = lambda: random.uniform(10, 100)
+            elif name == "volume_minute":
+                generator = lambda: random.uniform(10, 100)
+            else:
+                generator = lambda: random.uniform(10, 100)
+
+            fake_mon = FakeMonitored(name, generator)
+            self.observables[name] = fake_mon
+
+            monitors_grid.addWidget(fake_mon, row, column)
+
+            column += 1
+            if column == max_colums:
+                column = 0
+                row += 1
+
+    def _compute_and_raise_alarms(self):
+        number = 0
+        for item in self.alarms_checkboxes:
+            if self.alarms_checkboxes[item].isChecked():
+                number += item
+        self.set("alarm", number)
+
+    def _compute_and_raise_warnings(self):
+        number = 0
+        for item in self.warning_checkboxes:
+            if self.warning_checkboxes[item].isChecked():
+                number += item
+        self.set("warning", number)
+
+    def _connect_alarm_and_warning_widgets(self):
+        def get_checkbox(wname, alarm_code):
+            return (1 << alarm_code, self.findChild(QtWidgets.QCheckBox, wname))
+
+        # for simplicity here the bit number is used. It will be converted
+        # few lines below.
+
+        # HW alarms
+        alarm_check_boxes = {
+                "low_input_pressure_alarm": 0,
+                "high_input_pressure_alarm": 1,
+                "low_inner_pressure_alarm": 2,
+                "high_inner_pressure_alarm": 3,
+                "battery_low_alarm": 4,
+                "gas_leakage_alarm": 5,
+                "gas_occlusion_alarm": 6,
+                "partial_gas_occlusion_alarm": 7,
+                "system_failure_alarm": 31}
+
+        # HW warnings
+        warning_check_boxes = {
+                "o2_warning": 0,
+                "power_warning": 1}
+
+        for name in alarm_check_boxes:
+            code, widget = get_checkbox(name, alarm_check_boxes[name])
+            self.alarms_checkboxes[code] = widget
+
+        self.raise_alarms_button = self.findChild(
+                QtWidgets.QPushButton,
+                "raise_alarm_btn")
+
+        self.raise_alarms_button.pressed.connect(self._compute_and_raise_alarms)
+
+        for name in warning_check_boxes:
+            code, widget = get_checkbox(name, warning_check_boxes[name])
+            self.warning_checkboxes[code] = widget
+
+        self.raise_warnings_button = self.findChild(
+                QtWidgets.QPushButton,
+                "raise_warning_btn")
+
+        self.raise_warnings_button.pressed.connect(self._compute_and_raise_warnings)
+
+    def log(self, message):
+        self.event_log.appendPlainText(message)
+        c = self.event_log.textCursor();
+        c.movePosition(QTextCursor.End);
 
     def set(self, name, value):
         """
@@ -38,9 +185,8 @@ class FakeESP32Serial:
 
         print("FakeESP32Serial-DEBUG: set %s %s" % (name, value))
 
-        with self.lock:
-            self.set_params[name] = value
-            return "OK"
+        self.set_params[name] = value
+        return "OK"
 
     def set_watchdog(self):
         """
@@ -63,25 +209,16 @@ class FakeESP32Serial:
 
         print("FakeESP32Serial-DEBUG: get %s" % name)
 
-        with self.lock:
-            retval = 0
+        retval = 0
 
-            if name == 'alarm':
-                if random.uniform(0, 1) < self.alarm_rate:
-                    retval = random.choice(KNOWN_ALARM_CODES)
-                    print('********** ALARM SIMULATION, retval', retval)
-            elif name == 'warning':
-                if random.uniform(0, 1) < self.alarm_rate:
-                    retval = random.choice(KNOWN_WARNING_CODES)
-                    print('********** WARNING SIMULATION, retval', retval)
-                else:
-                    retval = 0
-            elif name in self.set_params:
-                retval = self.set_params[name]
-            elif name in self.random_params:
-                retval = random.uniform(10, 100)
+        if name in self.observables:
+            retval = self.observables[name].generate()
+        elif name in self.set_params:
+            retval = self.set_params[name]
+        else:
+            retval = int(random.uniform(10, 100))
 
-            return str(retval)
+        return str(retval)
 
     def get_all(self):
         """
@@ -93,20 +230,9 @@ class FakeESP32Serial:
 
         print("FakeESP32Serial-DEBUG: get all")
 
-        with self.lock:
-            return {"pressure":               self.peep.pressure(),
-                    "flow":                   self.peep.flow(),
-                    "o2":                     random.uniform(10, 100),
-                    "bpm":                    random.uniform(10, 100),
-                    "tidal":                  random.uniform(1000, 1500),
-                    "peep":                   random.uniform(4, 20),
-                    "temperature":            random.uniform(10, 50),
-                    "battery_powered":        int(random.uniform(0, 1.5)),
-                    "battery_charge":         int(random.uniform(0, 100)),
-                    "peak":                   random.uniform(10, 100),
-                    "total_inspired_volume":  random.uniform(10, 100),
-                    "total_expired_volume":   random.uniform(10, 100),
-                    "volume_minute":          random.uniform(10, 100)}
+        values = [self.get(field) for field in self.get_all_fields]
+
+        return dict(zip(self.get_all_fields, values))
 
     def get_alarms(self):
         """
@@ -133,6 +259,7 @@ class FakeESP32Serial:
         returns: an "OK" string in case of success.
         """
 
+        self.log("alarms lowered")
         return self.set("alarm", 0)
 
     def reset_warnings(self):
@@ -142,9 +269,10 @@ class FakeESP32Serial:
         returns: an "OK" string in case of success.
         """
 
+        self.log("warnings lowered")
         return self.set("warning", 0)
 
-    def raise_alarm(self, alarm_type):
+    def raise_gui_alarm(self):
         """
         Raises an alarm in ESP32
 
@@ -154,4 +282,43 @@ class FakeESP32Serial:
         returns: an "OK" string in case of success.
         """
 
-        return self.set("alarm", alarm_type)
+        self.log("GUI Alarm!")
+
+        self.set_params["alarm"] = self.set_params["alarm"] | 1 << 29
+
+        return "OK"
+
+    def snooze_hw_alarm(self, alarm_type):
+        """
+        Function to snooze the corresponding alarm in ESP32
+
+        arguments:
+        - alarm_type      an integer representing the alarm type. One and
+                          only one
+
+        returns: an "OK" string in case of success.
+        """
+
+        bitmap = { 1 << x: x for x in range(32)}
+
+        pos = bitmap[alarm_type]
+
+        self.log("Snooze HW alarm %d" % alarm_type)
+        current_alarm = self.set_params["alarm"]
+        if current_alarm & alarm_type:
+            self.set_params["alarm"] = current_alarm ^ alarm_type
+        return "OK"
+
+    def snooze_gui_alarm(self):
+        """
+        Function to snooze the corresponding alarm in ESP32
+
+        arguments:
+        - alarm_type      an integer representing the alarm type. One and
+                          only one
+
+        returns: an "OK" string in case of success.
+        """
+
+        self.log("Snooze gui alarms")
+        return self.snooze_hw_alarm(1 << 29)

@@ -232,7 +232,7 @@ class ESP32Serial:
 
         return self.set("warning", 0)
 
-    def raise_alarm(self, alarm_type):
+    def raise_gui_alarm(self):
         """
         Raises an alarm in ESP32
 
@@ -242,4 +242,31 @@ class ESP32Serial:
         returns: an "OK" string in case of success.
         """
 
-        return self.set("alarm", alarm_type)
+        return self.set("alarm", 1)
+
+    def snooze_hw_alarm(self, alarm_type):
+        """
+        Function to snooze the corresponding alarm in ESP32
+
+        arguments:
+        - alarm_type      an integer representing the alarm type. One and
+                          only one.
+
+        returns: an "OK" string in case of success.
+        """
+
+        # yes, the ESP sends alarms as binary-coded struct, but the snooze
+        # happens by means of the exponent
+        bitmap = { 1 << x: x for x in range(32)}
+
+        pos = bitmap[alarm_type]
+        return self.set("alarm_snooze", pos)
+
+    def snooze_gui_alarm(self):
+        """
+        Function to snooze the GUI alarm in ESP32
+
+        returns: an "OK" string in case of success.
+        """
+
+        return self.set("alarm_snooze", 29)
