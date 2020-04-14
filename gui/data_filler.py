@@ -19,11 +19,13 @@ class DataFiller():
         self._qtgraphs = {}
         self._plots = {}
         self._data = {}
+        self._historic_data = {}
         self._monitors = {}
         self._colors = {}
         self._default_ranges = {}
         self._config = config
         self._n_samples = self._config['nsamples']
+        self._n_historic_samples = self._config['historic_nsamples']
         self._sampling = self._config['sampling_interval']
         self._time_window = self._n_samples * self._sampling # seconds
         self._xdata = np.linspace(-self._time_window, 0, self._n_samples)
@@ -51,6 +53,7 @@ class DataFiller():
         self._qtgraphs[name] = plot
         self._plots[name] = plot.plot()
         self._data[name] = np.linspace(0, 0, self._n_samples)
+        self._historic_data[name] = np.linspace(0, 0, self._n_historic_samples)
         self._plots[name].setData(self._xdata, self._data[name])
         self._colors[name] = plot_config['color'] 
         self._looping_data_idx[name] = 0
@@ -100,7 +103,28 @@ class DataFiller():
         Set the Y axis range of the plot to the defaults
         specified in the config file.
         '''
+        if name not in self._qtgraphs:
+            raise Exception('Cannot set y range for graph', name, 'as it doesn\t exist.')
+
         self._qtgraphs[name].setYRange(self._default_ranges[name][0], self._default_ranges[name][1])
+
+    def set_y_range(self, name):
+        '''
+        Set the Y axis range of the plot to the max and min
+        from the historic data set.
+        '''
+        if name not in self._historic_data or name not in self._qtgraphs:
+            raise Exception('Cannot set y range for graph', name, 'as it doesn\t exist.')
+
+        # Calculate the max and min using the larger historical data sample
+        ymax = np.max(self._historic_data[name])
+        ymin = np.min(self._historic_data[name])
+
+        ymax += (ymax - ymin) * 0.1
+        ymin -= (ymax - ymin) * 0.1
+
+        self._qtgraphs[name].setYRange(ymin, ymax)
+
 
     def set_default_x_range(self, name):
         '''
@@ -172,6 +196,11 @@ class DataFiller():
 
         # print('NORMAL: Received data for monitor', name)
 
+        if name in self._historic_data:
+            # Save to the historic data dict
+            self._historic_data[name][:-1] = self._historic_data[name][1:]
+            self._historic_data[name][-1] = data_point
+
         if name in self._data:
             if self._looping:
                 # Looping plots - update next value
@@ -209,6 +238,7 @@ class DataFiller():
                                       self._data[name],
                                       pen=pg.mkPen(color, width=self._config['line_width']))
             self.set_default_x_range(name)
+            self.set_y_range(name)
 
             if self._looping:
                 x_val = self._xdata[self._looping_data_idx[name]] - self._sampling * 0.1

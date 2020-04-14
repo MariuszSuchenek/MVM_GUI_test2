@@ -50,7 +50,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main       = self.findChild(QtWidgets.QWidget,        "main")
         self.initial    = self.findChild(QtWidgets.QWidget,        "initial")
         self.startup    = self.findChild(QtWidgets.QWidget,        "startup")
-        self.settings   = self.findChild(QtWidgets.QWidget,        "settings")
 
 
         '''
@@ -227,23 +226,6 @@ class MainWindow(QtWidgets.QMainWindow):
             active_plots.append(self.plots[slotname])
         self.frozen_bot.connect_workers(self.data_filler, active_plots)
         self.frozen_right.connect_workers(active_plots)
-        '''
-        Set up start/stop auto/min mode buttons.
-
-        Connect each to their respective mode toggle functions.
-        The StartStopWorker class takes care of starting and stopping a run
-        '''
-
-        self._start_stop_worker = StartStopWorker(
-                self,
-                self.config,
-                self.esp32,
-                self.button_startstop,
-                self.button_autoassist,
-                self.toolbar)
-
-        self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
-        self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
 
         '''
         Instantiate DataHandler, which will start a new
@@ -266,6 +248,25 @@ class MainWindow(QtWidgets.QMainWindow):
         Instantiate ControllerStatus
         '''
         self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
+
+        '''
+        Set up start/stop auto/min mode buttons.
+
+        Connect each to their respective mode toggle functions.
+        The StartStopWorker class takes care of starting and stopping a run
+        '''
+
+        self._start_stop_worker = StartStopWorker(
+                self,
+                self.config,
+                self.esp32,
+                self.button_startstop,
+                self.button_autoassist,
+                self.toolbar,
+                self.settings)
+
+        self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
+        self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
 
 
     def set_colors(self):
