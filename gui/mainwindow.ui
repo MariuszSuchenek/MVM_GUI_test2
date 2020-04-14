@@ -1152,7 +1152,8 @@
            </font>
           </property>
           <property name="text">
-           <string>Mode Settings</string>
+           <string>Mode
+Settings</string>
           </property>
          </widget>
         </item>
@@ -1184,7 +1185,29 @@
            </font>
           </property>
           <property name="text">
-           <string>Alarm Settings</string>
+           <string>	Alarm
+Settings</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QPushButton" name="button_lockscreen">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>LOCK
+Screen</string>
           </property>
          </widget>
         </item>
