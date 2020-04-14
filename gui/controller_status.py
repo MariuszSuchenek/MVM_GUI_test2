@@ -2,9 +2,8 @@
 Constanty checks the status of the ESP controller.
 '''
 
-# from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QTimer
-
+import sys
 from messagebox import MessageBox
 
 
@@ -33,6 +32,8 @@ class ControllerStatus:
         self._settings = settings
         self._start_stop_worker = start_stop_worker
 
+        self._backup_ackowledged = False
+
         self._init_settings_panel()
 
         self._timer = QTimer()
@@ -59,16 +60,79 @@ class ControllerStatus:
 
     def _esp32_io(self):
 
-        # run    = int(self._esp32.get('run'))
-        # mode   = int(self._esp32.get('mode'))
-        backup = int(self._esp32.get('backup'))
+        try:
+            self._call_esp32()
+        except Exception as error:
+            self._open_comm_error(str(error))
+
+
+    def _call_esp32(self):
 
         self._start_stop_worker.set_run(int(self._esp32.get('run')))
         self._start_stop_worker.set_mode(int(self._esp32.get('mode')))
-        return
+
+        if int(self._esp32.get('backup')):
+            if not self._backup_ackowledged:
+                self._open_backup_warning()
+        else:
+            self._backup_ackowledged = False
+
+
+    def _open_backup_warning(self):
+        msg = MessageBox()
+
+        callbacks = {msg.Ok: self._acknowlege_backup}
+
+        fn = msg.warning("CHANGE OF MODE",
+                         "The ventilator changed from assisted to automatic mode.",
+                         "The microcontroller raised the backup flag.",
+                         "",
+                         callbacks)
+        fn()
+
+
+    def _open_comm_error(self, error):
+        '''
+        Opens a message window if there is a communication error.
+        '''
+        msg = MessageBox()
+
+        # TODO: find a good exit point
+        callbacks = {msg.Retry: self._restart_timer,
+                     msg.Abort: lambda: sys.exit(-1)}
+
+        fn = msg.critical("COMMUNICATION ERROR",
+                          "CANNOT COMMUNICATE WITH THE HARDWARE",
+                          "Check cable connections then click retry.\n"+error,
+                          "COMMUNICATION ERROR",
+                          callbacks)
+        fn()
+
+
+    def _acknowlege_backup(self):
+        self._backup_ackowledged = True
+
 
     def _start_timer(self):
-        self._timer.start()
+        self._timer.start(self._config["status_sampling_interval"] * 1000)
+
+
+    def _stop_timer(self):
+        '''
+        Stops the QTimer.
+        '''
+        self._timer.stop()
+
+
+    def _restart_timer(self):
+        '''
+        Restarts the QTimer if the QTimer is active,
+        or simply starts the QTimer
+        '''
+        if self._timer.isActive():
+            self._stop_timer()
+
+        self._start_timer()
 
 
 
