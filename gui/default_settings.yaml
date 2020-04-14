@@ -226,7 +226,7 @@ displayed_monitors:
 alarms:
     o2:
         min: 17
-        max: 98 
+        max: 100 
         setmin: 21
         setmax: 100
         under_threshold_code: 65536
@@ -235,18 +235,18 @@ alarms:
         linked_monitor: oxygen_concentration
     
     pressure:
-        min: -0.3
-        setmin: -0.3
+        min: -10
+        setmin: -10
         max: 80
-        setmax: 75
+        setmax: 40
         under_threshold_code: 256
         over_threshold_code: 512
         observable: pressure
         linked_monitor: inspiratory_pressure
 
     flow:
-        min: -1
-        max: 500
+        min: -300
+        max: 300
         under_threshold_code: 1024
         over_threshold_code: 2048
         observable: flow
@@ -261,7 +261,7 @@ alarms:
         linked_monitor: total_inspired_volume
 
     bpm:
-        min: 5
+        min: 0
         max: 17
         under_threshold_code: 1048576
         over_threshold_code: 2097152
@@ -269,8 +269,8 @@ alarms:
         linked_monitor: beats_per_minute
 
     peep:
-        min: null
-        max: null
+        min: -30
+        max: 30
         under_threshold_code: 262144
         over_threshold_code: 524288
         observable: peep
@@ -318,7 +318,7 @@ respiratory_rate:
     name: "Resp. Rate"
     default: 12
     min: 4
-    max: 50
+    max: 60
     step: 1
     current: None
     units: "b/min"
