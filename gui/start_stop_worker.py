@@ -172,13 +172,29 @@ class StartStopWorker():
                 else:
                     self.raise_comm_error('Cannot stop ventilator.')
 
+
+    def _stop_abruptly(self):
+        self.run = self.DONOT_RUN
+        self.stop_button_pressed()
+
     def set_run(self, run):
         '''
         Sets the run variable directly.
         Usually called at start up, when reading
         the run value from the ESP.
         '''
-        if self.run != run:
+        if self.run == run:
+            return
+
+        if self.run == self.DO_RUN:
+            msg = MessageBox()
+            msg.critical('STOPPING VENTILATION',
+                         'The hardware has stopped the ventilation.', 
+                         'The microcontroller has stopped the ventilation by sending run = '+str(run),
+                         'The microcontroller has stopped the ventilation by sending run = '+str(run), 
+                         {msg.Ok: self._stop_abruptly})()
+
+        else:
             self.toggle_start_stop()
 
     def set_mode(self, mode):
