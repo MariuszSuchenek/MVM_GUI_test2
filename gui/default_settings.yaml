@@ -336,8 +336,8 @@ insp_expir_ratio:
     name: "Insp./Expir."
     default: 2
     min: 1
-    max: 3
-    step: 0.01
+    max: 4
+    step: 0.1
     current: None
     units: "ratio"
     show_fraction: True
@@ -345,12 +345,13 @@ insp_expir_ratio:
       - [1, '1:1'] # 1:1
       - [2, '1:2'] # 1:2
       - [3, '1:3'] # 1:3
+      - [4, '1:4'] # 1:4
 
 # Inspiratory Pressure
 insp_pressure:
     name: "Insp. Pressure"
     default:  15
-    min: 0
+    min: 2
     max: 40
     current: None
     units: "(cmH<sub>2</sub>O)"
@@ -390,21 +391,21 @@ pressure_trigger:
     name: "Pressure Trigger"
     default: 1.
     min: 0.
-    max: 90.
+    max: 10.
     current: None
     presets:
-        - [80, 'Hard']
-        - [60, 'Medium']
-        - [30, 'Normal']
-        - [10, 'Soft']
+        - [8, 'Hard']
+        - [6, 'Medium']
+        - [3, 'Normal']
+        - [1, 'Soft']
 
 
 # Flow Trigger
 flow_trigger: 
     name: "Flow Trigger"
-    default: 20.
+    default: 30.
     min: 0.
-    max: 40.
+    max: 50.
     current: None
     presets:
         - [10, '']
@@ -418,7 +419,7 @@ flow_trigger:
 support_pressure:
     name: "Support Pressure"
     default: 10.
-    min: 0.
+    min: 2.
     max: 40.
     current: None
     units: "(cmH<sub>2</sub>O)"
@@ -450,7 +451,7 @@ support_pressure:
 minimal_resp_rate:
     default: 10.
     min: 0.
-    max: 20.
+    max: 60.
     current: None
     presets:
         - [3, '']
