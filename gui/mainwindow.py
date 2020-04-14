@@ -114,6 +114,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.button_alarms       = self.settingsfork.findChild(QtWidgets.QPushButton, "button_alarms")
         self.button_settings     = self.settingsfork.findChild(QtWidgets.QPushButton, "button_settings")
+        self.button_lockscreen   = self.settingsfork.findChild(QtWidgets.QPushButton, "button_lockscreen")
         self.button_backsettings = self.settingsfork.findChild(QtWidgets.QPushButton, "button_backsettings")
 
 
@@ -145,14 +146,20 @@ class MainWindow(QtWidgets.QMainWindow):
         This effectively defines navigation from the bottombar.
         '''
         self.button_back.pressed.connect(self.show_toolbar)
-        self.button_menu.pressed.connect(self.show_menu)
         self.button_freeze.pressed.connect(self.freeze_plots)
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
         self.button_alarms.pressed.connect(self.goto_alarms)
         self.button_settingsfork.pressed.connect(self.show_settingsfork)
+        self.button_menu.pressed.connect(self.show_menu)
 
         self.button_settings.pressed.connect(self.goto_settings)
+        self.button_lockscreen.pressed.connect(self.lock_screen)
         self.button_backsettings.pressed.connect(self.show_menu)
+
+        # Assign unlock screen button and setup state
+        self.button_unlockscreen = self.button_menu
+        self.button_unlockscreen._state = 0
+        self.unlockscreen_interval = self.config['unlockscreen_interval']
 
         self.button_backalarms.pressed.connect(self.exit_alarms)
 
@@ -260,6 +267,35 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
+
+    def set_screenlock_state(self, islocked):
+        if islocked:
+            self.button_unlockscreen.setAutoRepeat(True)
+            self.button_unlockscreen.setAutoRepeatDelay(self.unlockscreen_interval)
+            self.button_unlockscreen.setAutoRepeatInterval(self.unlockscreen_interval)
+            self.button_unlockscreen.setText("HOLD TO\nUNLOCK")
+            self.button_unlockscreen.pressed.disconnect()
+            self.button_unlockscreen.clicked.connect(self.unlock_screen)
+        else:
+            self.button_menu.clicked.disconnect()
+            self.button_menu.pressed.connect(self.show_menu)
+            self.button_menu.setText("Menu")
+
+    def lock_screen(self):
+        self.set_screenlock_state(True)
+        self.show_toolbar()
+
+    def unlock_screen(self):
+        button = self.button_unlockscreen
+        if button.isDown():
+            if button._state == 0:
+                button._state = 1
+                button.setAutoRepeatInterval(50)
+        elif button._state == 1:
+            button._state = 0
+            button.setAutoRepeatInterval(self.unlockscreen_interval)
+            self.show_settingsfork()
+            self.set_screenlock_state(False)
 
     def set_colors(self):
         # Monitors bar background
