@@ -113,7 +113,7 @@ class AlarmHandler:
                 self._msg_war.raise_()
 
 
-    def ok_worker(self, mode):
+    def ok_worker(self, mode, raised_ones):
         '''
         The callback function called when the alarm
         or warning pop up window is closed by clicking
@@ -136,7 +136,8 @@ class AlarmHandler:
         # time, raise an error box
         try:
             if mode == 'alarm':
-                self._esp32.reset_alarms()
+                for alarm_code in raised_ones.unpack():
+                    self._esp32.snooze_hw_alarm(alarm_code)
             else:
                 self._esp32.reset_warnings()
         except Exception as error:
