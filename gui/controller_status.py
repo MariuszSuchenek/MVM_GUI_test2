@@ -9,7 +9,7 @@ from messagebox import MessageBox
 
 class ControllerStatus:
     '''
-    This class constanty checks 
+    This class constanty checks
     the status of the ESP controller.
     Is it running? In which mode?
     Has it entered backup mode?
@@ -23,7 +23,7 @@ class ControllerStatus:
         - config: the dictionary storing the configuration
         - esp32: the esp32serial object
         - settings: the Settings panel
-        - start_stop_worker: the StartStopWorker class 
+        - start_stop_worker: the StartStopWorker class
                              that takes care of start/stop operations
         '''
 
@@ -45,22 +45,22 @@ class ControllerStatus:
         '''
         Initializes the settings values.
         If the ESP if running, read the current parameters
-        and set them in the Setting panel. 
+        and set them in the Setting panel.
         If the ESP is not running, don't do anything here,
         and leave the default behaviour.
         '''
-        
+
         if not int(self._esp32.get('run')):
             return
 
         for param, esp_name in self._config['esp_settable_param'].items():
             print('Reading Settings parameters from ESP:', param, self._esp32.get(esp_name))
-            self._settings.update_spinbox_value(param, int(self._esp32.get(esp_name)))
+            self._settings.update_spinbox_value(param, float(self._esp32.get(esp_name)))
 
 
     def _esp32_io(self):
         '''
-        The callback function called every time the 
+        The callback function called every time the
         QTimer times out.
         '''
 
@@ -73,7 +73,7 @@ class ControllerStatus:
     def _call_esp32(self):
         '''
         Gets the run, mode and backup vairables
-        from the ESP, and passes them to the 
+        from the ESP, and passes them to the
         StartStopWorker class.
         '''
 
@@ -153,7 +153,3 @@ class ControllerStatus:
 
         self._start_timer()
 
-
-
-
- 
