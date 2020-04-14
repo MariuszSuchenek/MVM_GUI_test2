@@ -257,7 +257,7 @@ alarms:
         max: 1500
         under_threshold_code: 16384
         over_threshold_code: 32768
-        observable: tidal
+        observable: total_inspired_volume
         linked_monitor: total_inspired_volume
 
     bpm:
