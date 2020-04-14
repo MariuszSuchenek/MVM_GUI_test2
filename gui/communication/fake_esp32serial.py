@@ -1,9 +1,6 @@
 """
 A dummy class that can be used for testing the GUI when a real
 ESP32 chip isn't available.
-
-Currently just reports fixed values. Can be made more intelligent
-as needed.
 """
 
 import random
@@ -59,8 +56,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
             "run": 0,
             "mode": 0,
             "backup": 0,
-            "alarm": 0, 
-            "warning": 0, 
+            "alarm": 0,
+            "warning": 0,
             "temperature": 40}
         self.alarm_rate = alarm_rate
 
