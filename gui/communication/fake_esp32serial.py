@@ -52,8 +52,16 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.alarms_checkboxes = {}
         self.warning_checkboxes = {}
         self._connect_alarm_and_warning_widgets()
+        self._connect_status_widgets()
 
-        self.set_params = {"alarm": 0, "warning": 0, "temperature": 40}
+
+        self.set_params = {
+            "run": 0,
+            "mode": 0,
+            "backup": 0,
+            "alarm": 0, 
+            "warning": 0, 
+            "temperature": 40}
         self.alarm_rate = alarm_rate
 
         self.event_log = self.findChild(QtWidgets.QPlainTextEdit, "event_log")
@@ -165,6 +173,15 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
                 "raise_warning_btn")
 
         self.raise_warnings_button.pressed.connect(self._compute_and_raise_warnings)
+
+    def _connect_status_widgets(self):
+
+        self.btn_change_status.clicked.connect(self._update_status)
+
+    def _update_status(self):
+        self.set('run',    int(self.status_run.isChecked()))
+        self.set('mode',   int(self.status_mode.isChecked()))
+        self.set('backup', int(self.status_backup.isChecked()))
 
     def log(self, message):
         self.event_log.appendPlainText(message)
