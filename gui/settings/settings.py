@@ -166,14 +166,12 @@ class Settings(QtWidgets.QMainWindow):
         for param, btn in self._all_spinboxes.items():
             value_config = self._config[param]
 
-            if param == 'enable_backup':
-                btn.setChecked(value_config['default'])
-                self._current_values[param] = value_config['default']
-            else:
-                btn.setValue(value_config['default'])
+            btn.setValue(value_config['default'])
+            self._current_values[param] = value_config['default']
+
+            if param != 'enable_backup':
                 btn.setMinimum(value_config['min'])
                 btn.setMaximum(value_config['max'])
-                self._current_values[param] = value_config['default']
 
         # assign an easy lookup for toolsettings
         self.toolsettings_lookup = {}
@@ -198,11 +196,8 @@ class Settings(QtWidgets.QMainWindow):
 
         # Restore to previous values
         for param, btn in self._all_spinboxes.items():
-            if param == 'enable_backup':
-                btn.setChecked(self._current_values[param])
-            else:
-                print('resetting', param, 'to ', self._current_values[param])
-                btn.setValue(self._current_values[param])
+            print('Resetting', param, 'to ', self._current_values[param])
+            btn.setValue(self._current_values[param])
 
         self.repaint()
         self.mainparent.exit_settings()
@@ -235,12 +230,8 @@ class Settings(QtWidgets.QMainWindow):
             else:
                 value = self.config[param]["default"]
 
-            if param == 'enable_backup':
-                btn.setChecked(value)
-                self._current_values[param] = value
-            else:
-                btn.setValue(value)
-                self._current_values[param] = value
+            btn.setValue(value)
+            self._current_values[param] = value
 
         # assign an easy lookup for toolsettings
         self.toolsettings_lookup = {}
@@ -319,8 +310,5 @@ class Settings(QtWidgets.QMainWindow):
         '''
         for param, btn in self._all_spinboxes.items():
             if self.sender() == btn:
-                if param == 'enable_backup':
-                    self._current_values_temp[param] = int(btn.isChecked())
-                else:
-                    self._current_values_temp[param] = btn.value()
+                self._current_values_temp[param] = btn.value()
 
