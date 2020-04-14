@@ -265,7 +265,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Instantiate ControllerStatus
         '''
-        self._ctr_status = ControllerStatus(config, self.esp32, self.settings)
+        self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
 
 
     def set_colors(self):

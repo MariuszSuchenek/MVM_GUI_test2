@@ -151,4 +151,12 @@ class StartStopWorker():
                 else:
                     self.raise_comm_error('Cannot stop ventilator.')
 
+    def set_run(self, run):
+        if self.run != run:
+            self.toggle_start_stop()
+
+    def set_mode(self, mode):
+        if self.mode != mode:
+            self.toggle_mode()
+
 

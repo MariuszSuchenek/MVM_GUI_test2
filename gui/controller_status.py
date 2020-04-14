@@ -16,7 +16,7 @@ class ControllerStatus:
     Has it entered backup mode?
     '''
 
-    def __init__(self, config, esp32, settings):
+    def __init__(self, config, esp32, settings, start_stop_worker):
         '''
         Constructor
 
@@ -24,11 +24,14 @@ class ControllerStatus:
         - config: the dictionary storing the configuration
         - esp32: the esp32serial object
         - settings: the Settings panel
+        - start_stop_worker: the StartStopWorker class 
+                             that takes care of start/stop operations
         '''
 
         self._config = config
         self._esp32 = esp32
         self._settings = settings
+        self._start_stop_worker = start_stop_worker
 
         self._init_settings_panel()
 
@@ -55,6 +58,13 @@ class ControllerStatus:
 
 
     def _esp32_io(self):
+
+        # run    = int(self._esp32.get('run'))
+        # mode   = int(self._esp32.get('mode'))
+        backup = int(self._esp32.get('backup'))
+
+        self._start_stop_worker.set_run(int(self._esp32.get('run')))
+        self._start_stop_worker.set_mode(int(self._esp32.get('mode')))
         return
 
     def _start_timer(self):
