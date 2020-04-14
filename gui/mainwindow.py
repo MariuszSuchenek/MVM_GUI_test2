@@ -21,6 +21,7 @@ from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
 from alarm_handler import AlarmHandler
 from controller_status import ControllerStatus
+from numpad.numpad import NumPad
 
 import pyqtgraph as pg
 import sys
@@ -70,6 +71,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.blank           = self.findChild(QtWidgets.QWidget,        "blank")
         self.settingsfork    = self.findChild(QtWidgets.QWidget,        "settingsforkbar")
         self.alarmsbar       = self.findChild(QtWidgets.QWidget,        "alarmsbar")
+        self.numpadbar       = self.findChild(QtWidgets.QHBoxLayout,        "numpad_slots")
 
         '''
         Get the stackable bits on the right
@@ -160,6 +162,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_unlockscreen = self.button_menu
         self.button_unlockscreen._state = 0
         self.unlockscreen_interval = self.config['unlockscreen_interval']
+        self.numpad = NumPad(self.numpadbar)
 
         self.button_backalarms.pressed.connect(self.exit_alarms)
 
