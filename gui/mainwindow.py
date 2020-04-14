@@ -244,10 +244,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
 
-        '''
-        Instantiate ControllerStatus
-        '''
-        self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
 
         '''
         Set up start/stop auto/min mode buttons.
@@ -267,6 +263,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
         self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
+
+        '''
+        Instantiate ControllerStatus
+        '''
+        self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
+
 
 
     def set_colors(self):
