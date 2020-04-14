@@ -49,7 +49,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main       = self.findChild(QtWidgets.QWidget,        "main")
         self.initial    = self.findChild(QtWidgets.QWidget,        "initial")
         self.startup    = self.findChild(QtWidgets.QWidget,        "startup")
-        # self.settings   = self.findChild(QtWidgets.QWidget,        "settings")
 
 
         '''
