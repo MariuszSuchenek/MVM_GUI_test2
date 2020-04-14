@@ -23,7 +23,7 @@ class Settings(QtWidgets.QMainWindow):
         self._config = self.mainparent.config
         self._data_h = self.mainparent._data_h
         self._toolsettings = self.mainparent.toolsettings
-        self._start_stop_worker = self.mainparent._start_stop_worker
+        # self._start_stop_worker = self.mainparent._start_stop_worker
 
         # This contains all the default params
         self._current_values = {}
@@ -53,6 +53,8 @@ class Settings(QtWidgets.QMainWindow):
             'support_pressure':  self.fake_btn_support_pressure,
             'minimal_resp_rate': self.fake_btn_min_resp_rate,
         }
+
+        self.toolsettings_lookup = None
 
         # Connect all widgets
         self.connect_workers()
@@ -154,6 +156,13 @@ class Settings(QtWidgets.QMainWindow):
             else:
                 btn.valueChanged.connect(self.worker)
 
+        # Special operations
+        # TODO
+        self.label_warning.setVisible(False)
+        self.btn_sw_update.clicked.connect(lambda: print('Sw update button clicked, but not implemented.'))
+        self.btn_restart_os.clicked.connect(lambda: print('OS restart button clicked, but not implemented.'))
+        self.btn_shut_down_os.clicked.connect(lambda: print('OS shut down button clicked, but not implemented.'))
+
 
 
     def load_presets(self):
@@ -164,14 +173,12 @@ class Settings(QtWidgets.QMainWindow):
         for param, btn in self._all_spinboxes.items():
             value_config = self._config[param]
 
-            if param == 'enable_backup':
-                btn.setChecked(value_config['default'])
-                self._current_values[param] = value_config['default']
-            else:
-                btn.setValue(value_config['default'])
+            btn.setValue(value_config['default'])
+            self._current_values[param] = value_config['default']
+
+            if param != 'enable_backup':
                 btn.setMinimum(value_config['min'])
                 btn.setMaximum(value_config['max'])
-                self._current_values[param] = value_config['default']
 
         # assign an easy lookup for toolsettings
         self.toolsettings_lookup = {}
@@ -196,14 +203,28 @@ class Settings(QtWidgets.QMainWindow):
 
         # Restore to previous values
         for param, btn in self._all_spinboxes.items():
-            if param == 'enable_backup':
-                btn.setChecked(self._current_values[param])
-            else:
-                print('resetting', param, 'to ', self._current_values[param])
-                btn.setValue(self._current_values[param])
+            print('Resetting', param, 'to ', self._current_values[param])
+            btn.setValue(self._current_values[param])
 
         self.repaint()
         self.mainparent.exit_settings()
+
+    def update_spinbox_value(self, param, value):
+        '''
+        '''
+        if param in self._all_spinboxes:
+            self._all_spinboxes[param].setValue(value)
+            self._current_values[param] = value
+        else:
+            raise Exception('Cannot set value to SpinBox with name', param)
+
+        if self.toolsettings_lookup is None:
+            raise Exception('Trying to update SpinBox values but toolsettings_lookup was not set!')
+
+        if param in self.toolsettings_lookup:
+            self.toolsettings_lookup[param].update(value)
+
+
 
     def update_config(self, external_config):
         '''
@@ -216,12 +237,8 @@ class Settings(QtWidgets.QMainWindow):
             else:
                 value = self.config[param]["default"]
 
-            if param == 'enable_backup':
-                btn.setChecked(value)
-                self._current_values[param] = value
-            else:
-                btn.setValue(value)
-                self._current_values[param] = value
+            btn.setValue(value)
+            self._current_values[param] = value
 
         # assign an easy lookup for toolsettings
         self.toolsettings_lookup = {}
@@ -300,8 +317,18 @@ class Settings(QtWidgets.QMainWindow):
         '''
         for param, btn in self._all_spinboxes.items():
             if self.sender() == btn:
-                if param == 'enable_backup':
-                    self._current_values_temp[param] = int(btn.isChecked())
-                else:
-                    self._current_values_temp[param] = btn.value()
+                self._current_values_temp[param] = btn.value()
+
+    def disable_special_ops_tab(self):
+        '''
+        Disables the content of the special operations tab
+        '''
+        self.tab_special_ops.setDisabled(True)
+        self.label_warning.setVisible(True)
+
+    def enable_special_ops_tab(self):
+        '''
+        Enables the content of the special operations tab
+        '''
+        self.tab_special_ops.setEnabled(True)
 

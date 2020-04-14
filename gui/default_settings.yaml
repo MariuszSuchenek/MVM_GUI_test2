@@ -1,6 +1,6 @@
 # The serial port to use:
-port: '/dev/cu.usbmodem143301'
-settings_file_path: '/dev/shm/settings.txt'
+port: '/dev/ttyUSB0'
+settings_file_path: '/home/pi/settings.txt'
 
 # list of observables to expect from the get_all function call
 # The returned dict will use those as keys. Order matters.
@@ -39,6 +39,12 @@ nsamples: 100
 # time in seconds between two data retrieval
 sampling_interval: 0.1
 
+# time in seconds between two status checks
+status_sampling_interval: 0.5
+
+# number of samples used for the y-axes plot autoscale feature (default:
+# 200)
+historic_nsamples: 200
 # The parameters that can be set on the ESP
 # The values below must match those used in the ESP
 esp_settable_param:
@@ -78,7 +84,7 @@ show_x_axis_labels: True
 show_x_axis_ticks: True
 
 # Toggles between scrolling plots and looping plots
-use_looping_plots: False
+use_looping_plots: True
 
 # Control Start/Stop Auto/Man behavior
 start_mode_timeout: 2000 # [ms] between pressing Start and allowing Stop (max 3000)
@@ -89,6 +95,19 @@ start_mode_timeout: 2000 # [ms] between pressing Start and allowing Stop (max 30
 # and the must match names in the ESP or an available function
 #
 #
+# Monitors are defined by the following parameters:
+#
+# name: The displayed, labelled name of the monitor.
+# init: The initial value of the monitor before updated.
+# step: (Optional, default 1) The minimum change measured by the monitor.
+# dec_precision: (Optional, default 0) The number of decimal positions to display.
+# units: (Optional) The displayed units
+# observable: Reference to the data type that the monitor is displayed (ref. "get_all_fields" above")
+# alarmcolor: (Optional, default red) The color that the monitor will turn on alarm.
+# color: (Optional, default white) The text color of the monitor.
+# disp_type: (Optional) The alternate display type of the monitor.
+#       None: Display auto scaling text.
+#       bar [low] [high]: Show a progress bar with minimum [low] and maximum [high].
 monitors:
     inspiratory_pressure: 
         name: "Insp. Press."
@@ -100,20 +119,10 @@ monitors:
         alarmcolor: "red"
         observable: pressure
 
-    tidal_volume: 
+    total_inspired_volume: 
         name: "v<sub>tidal</sub>"
         init: 100
-        step: 100
-        dec_precision: 0
-        units: "(ml)"
-        color: "rgb(50,205,50)"
-        alarmcolor: "red"
-        observable: tidal
-
-    total_inspired_volume: 
-        name: "v<sub>total</sub>"
-        init: 100
-        step: 100
+        step: 1
         dec_precision: 0
         units: "(ml)"
         color: "rgb(50,205,50)"
@@ -123,9 +132,9 @@ monitors:
     volume_minute: 
         name: "v<sub>rate</sub>"
         init: 100
-        step: 100
+        step: 1
         dec_precision: 0
-        units: "(ml/s)"
+        units: "(litres/min)"
         color: "rgb(50,205,50)"
         alarmcolor: "red"
         observable: volume_minute
@@ -148,15 +157,26 @@ monitors:
         alarmcolor: "red"
         observable: peep
 
-    battery: 
+    battery_charge: 
         name: "Battery"
         init: 100 
         step: 1
-        units: "(%)"
+        units: "%"
         dec_precision: 0
-        color: "rgb(0,255,255)"
+        color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: battery_charge
+        disp_type: "bar 0 100"
+
+    battery_powered: 
+        name: "Battery Power"
+        init: 100 
+        step: 1
+        units: null
+        dec_precision: 0
+        color: "rgb(255,255,255)"
+        alarmcolor: "red"
+        observable: battery_powered
 
     flow: 
         name: "MVe"
@@ -199,7 +219,7 @@ monitors:
         observable: peak
 
 displayed_monitors:
-    - battery
+    - battery_charge
     - peak
     - peep
     - total_inspired_volume
@@ -209,7 +229,7 @@ displayed_monitors:
 alarms:
     o2:
         min: 17
-        max: 98 
+        max: 100 
         setmin: 21
         setmax: 100
         under_threshold_code: 65536
@@ -218,42 +238,42 @@ alarms:
         linked_monitor: oxygen_concentration
     
     pressure:
-        min: 10
-        setmin: 15
+        min: -10
+        setmin: -10
         max: 80
-        setmax: 75
+        setmax: 40
         under_threshold_code: 256
         over_threshold_code: 512
         observable: pressure
         linked_monitor: inspiratory_pressure
 
     flow:
-        min: 2 
-        max: 20
+        min: -300
+        max: 300
         under_threshold_code: 1024
         over_threshold_code: 2048
         observable: flow
         linked_monitor: flow
 
     tidal_volume:
-        min: 50
+        min: -10
         max: 1500
         under_threshold_code: 16384
         over_threshold_code: 32768
-        observable: tidal
-        linked_monitor: tidal_volume
+        observable: total_inspired_volume
+        linked_monitor: total_inspired_volume
 
     bpm:
-        min: 5
-        max: 10
+        min: 0
+        max: 17
         under_threshold_code: 1048576
         over_threshold_code: 2097152
         observable: bpm
         linked_monitor: beats_per_minute
 
     peep:
-        min: null
-        max: null
+        min: -30
+        max: 30
         under_threshold_code: 262144
         over_threshold_code: 524288
         observable: peep
@@ -265,7 +285,7 @@ alarms:
         under_threshold_code: 16
         over_threshold_code: null
         observable: battery_charge
-        linked_monitor: battery
+        linked_monitor: battery_charge
 
 plots:
     plot_top: 
@@ -301,7 +321,7 @@ respiratory_rate:
     name: "Resp. Rate"
     default: 12
     min: 4
-    max: 50
+    max: 60
     step: 1
     current: None
     units: "b/min"
@@ -319,8 +339,8 @@ insp_expir_ratio:
     name: "Insp./Expir."
     default: 2
     min: 1
-    max: 3
-    step: 0.01
+    max: 4
+    step: 0.1
     current: None
     units: "ratio"
     show_fraction: True
@@ -328,12 +348,13 @@ insp_expir_ratio:
       - [1, '1:1'] # 1:1
       - [2, '1:2'] # 1:2
       - [3, '1:3'] # 1:3
+      - [4, '1:4'] # 1:4
 
 # Inspiratory Pressure
 insp_pressure:
     name: "Insp. Pressure"
     default:  15
-    min: 0
+    min: 2
     max: 40
     current: None
     units: "(cmH<sub>2</sub>O)"
@@ -373,21 +394,21 @@ pressure_trigger:
     name: "Pressure Trigger"
     default: 1.
     min: 0.
-    max: 90.
+    max: 10.
     current: None
     presets:
-        - [80, 'Hard']
-        - [60, 'Medium']
-        - [30, 'Normal']
-        - [10, 'Soft']
+        - [8, 'Hard']
+        - [6, 'Medium']
+        - [3, 'Normal']
+        - [1, 'Soft']
 
 
 # Flow Trigger
 flow_trigger: 
     name: "Flow Trigger"
-    default: 20.
+    default: 30.
     min: 0.
-    max: 40.
+    max: 50.
     current: None
     presets:
         - [10, '']
@@ -401,7 +422,7 @@ flow_trigger:
 support_pressure:
     name: "Support Pressure"
     default: 10.
-    min: 0.
+    min: 2.
     max: 40.
     current: None
     units: "(cmH<sub>2</sub>O)"
@@ -433,7 +454,7 @@ support_pressure:
 minimal_resp_rate:
     default: 10.
     min: 0.
-    max: 20.
+    max: 60.
     current: None
     presets:
         - [3, '']
