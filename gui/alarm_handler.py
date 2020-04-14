@@ -78,8 +78,8 @@ class AlarmHandler:
                              " - ".join(errors),
                              "\n".join(errors_full),
                              "Alarm received.",
-                             { self._msg_err.Ok: lambda: self.ok_worker('alarm'),
-                               self._msg_err.Abort: lambda: None},
+                             { self._msg_err.Ignore: lambda:
+                                 self.ok_worker('alarm', esp32alarm) },
                              do_not_block=True)
                 self._msg_err.open()
             else:
@@ -102,8 +102,8 @@ class AlarmHandler:
                              " - ".join(errors),
                              "\n".join(errors_full),
                              "Warning received.",
-                             { self._msg_war.Ok: lambda: self.ok_worker('warning'),
-                               self._msg_war.Abort: lambda: None },
+                             { self._msg_war.Ok: lambda:
+                                 self.ok_worker('warning', esp32warning) },
                              do_not_block=True)
                 self._msg_war.open()
             else:
