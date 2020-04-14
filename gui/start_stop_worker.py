@@ -177,6 +177,10 @@ class StartStopWorker():
 
 
     def _stop_abruptly(self):
+        '''
+        If the hardware stops running, this 
+        changes the test in the bottons and status.
+        '''
         self.run = self.DONOT_RUN
         self.stop_button_pressed()
 

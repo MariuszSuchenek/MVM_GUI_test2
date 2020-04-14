@@ -175,10 +175,16 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.raise_warnings_button.pressed.connect(self._compute_and_raise_warnings)
 
     def _connect_status_widgets(self):
-
+        '''
+        Connects the Change Status button to the
+        appropriate callback
+        '''
         self.btn_change_status.clicked.connect(self._update_status)
 
     def _update_status(self):
+        '''
+        Changes the run,mode,backup variables in the ESP
+        '''
         self.set('run',    int(self.status_run.isChecked()))
         self.set('mode',   int(self.status_mode.isChecked()))
         self.set('backup', int(self.status_backup.isChecked()))
