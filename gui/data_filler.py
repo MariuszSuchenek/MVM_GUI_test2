@@ -55,13 +55,13 @@ class DataFiller():
         self._data[name] = np.linspace(0, 0, self._n_samples)
         self._historic_data[name] = np.linspace(0, 0, self._n_historic_samples)
         self._plots[name].setData(self._xdata, self._data[name])
-        self._colors[name] = plot_config['color'] 
+        self._colors[name] = plot_config['color']
         self._looping_data_idx[name] = 0
 
         # Set the Y axis
-        y_axis_label = plot_config['name'] 
+        y_axis_label = plot_config['name']
         y_axis_label += ' '
-        y_axis_label += plot_config['units'] 
+        y_axis_label += plot_config['units']
         plot.setLabel(axis='left', text=y_axis_label)
 
         # Set the X axis
@@ -175,11 +175,11 @@ class DataFiller():
         Connect a monitor to this class by
         storing it in a dictionary
         '''
-        name = monitor.observable 
+        name = monitor.observable
         self._monitors[name] = monitor
-        
+
         self._data[name] = np.linspace(0, 0, self._n_samples)
-        
+
         self._looping_data_idx[name] = 0
 
 
