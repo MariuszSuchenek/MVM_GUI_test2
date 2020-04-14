@@ -120,9 +120,10 @@ class DataFiller():
         # Calculate the max and min using the larger historical data sample
         ymax = np.max(self._historic_data[name])
         ymin = np.min(self._historic_data[name])
+        span = ymax - ymin
 
-        ymax += (ymax - ymin) * 0.1
-        ymin -= (ymax - ymin) * 0.1
+        ymax += span * 0.1
+        ymin -= span * 0.1
 
         self._qtgraphs[name].setYRange(ymin, ymax)
 
