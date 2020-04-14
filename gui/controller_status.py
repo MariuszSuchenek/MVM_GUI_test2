@@ -55,7 +55,7 @@ class ControllerStatus:
 
         for param, esp_name in self._config['esp_settable_param'].items():
             print('Reading Settings parameters from ESP:', param, self._esp32.get(esp_name))
-            self._settings.update_spinbox_value(param, int(self._esp32.get(esp_name)))
+            self._settings.update_spinbox_value(param, float(self._esp32.get(esp_name)))
 
 
     def _esp32_io(self):
