@@ -30,6 +30,9 @@ wdinterval: 1
 # Time interval used to check for alarms
 alarminterval: 1
 
+# Time [ms] required to hold down UNLOCK before screen is unlocked
+unlockscreen_interval: 2000
+
 # Number of samples to display in the graphs:
 nsamples: 100
 
