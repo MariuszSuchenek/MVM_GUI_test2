@@ -23,7 +23,7 @@ class Settings(QtWidgets.QMainWindow):
         self._config = self.mainparent.config
         self._data_h = self.mainparent._data_h
         self._toolsettings = self.mainparent.toolsettings
-        self._start_stop_worker = self.mainparent._start_stop_worker
+        # self._start_stop_worker = self.mainparent._start_stop_worker
 
         # This contains all the default params
         self._current_values = {}
@@ -153,6 +153,13 @@ class Settings(QtWidgets.QMainWindow):
                 btn.clicked.connect(self.worker)
             else:
                 btn.valueChanged.connect(self.worker)
+
+        # Special operations
+        # TODO
+        self.label_warning.setVisible(False)
+        self.btn_sw_update.clicked.connect(lambda: print('Sw update button clicked, but not implemented.'))
+        self.btn_restart_os.clicked.connect(lambda: print('OS restart button clicked, but not implemented.'))
+        self.btn_shut_down_os.clicked.connect(lambda: print('OS shut down button clicked, but not implemented.'))
 
 
 
@@ -304,4 +311,11 @@ class Settings(QtWidgets.QMainWindow):
                     self._current_values_temp[param] = int(btn.isChecked())
                 else:
                     self._current_values_temp[param] = btn.value()
+
+    def disable_special_ops_tab(self):
+        self.tab_special_ops.setDisabled(True)
+        self.label_warning.setVisible(True)
+
+    def enable_special_ops_tab(self):
+        self.tab_special_ops.setEnabled(True)
 

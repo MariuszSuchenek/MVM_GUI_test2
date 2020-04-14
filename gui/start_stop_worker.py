@@ -17,13 +17,15 @@ class StartStopWorker():
     DONOT_RUN = 0
 
     def __init__(self, main_window, config, esp32, button_startstop,
-            button_autoassist, toolbar):
+            button_autoassist, toolbar, settings):
         self.main_window = main_window
         self.config = config
         self.esp32 = esp32
         self.button_startstop = button_startstop
         self.button_autoassist = button_autoassist
         self.toolbar = toolbar
+        self.settings = settings
+
         self.mode_text = "Automatic"
 
         self.mode = self.MODE_AUTO
@@ -82,6 +84,8 @@ class StartStopWorker():
         self.button_autoassist.repaint()
         self.update_startstop_text()
 
+        self.settings.disable_special_ops_tab()
+
         QtCore.QTimer.singleShot(self.button_timeout(), lambda: (
                  self.update_startstop_text(),
                  self.button_startstop.setEnabled(True),
@@ -99,6 +103,7 @@ class StartStopWorker():
         self.button_autoassist.repaint()
 
         self.toolbar.set_stopped(self.mode_text)
+        self.settings.enable_special_ops_tab()
 
     def confirm_stop_pressed(self):
         self.button_autoassist.setDown(False)
