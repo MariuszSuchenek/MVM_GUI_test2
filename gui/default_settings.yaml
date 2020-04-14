@@ -36,6 +36,12 @@ nsamples: 100
 # time in seconds between two data retrieval
 sampling_interval: 0.1
 
+# time in seconds between two status checks
+status_sampling_interval: 0.5
+
+# number of samples used for the y-axes plot autoscale feature (default:
+# 200)
+historic_nsamples: 200
 # The parameters that can be set on the ESP
 # The values below must match those used in the ESP
 esp_settable_param:
