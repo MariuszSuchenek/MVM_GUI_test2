@@ -1,6 +1,6 @@
 # The serial port to use:
-port: '/dev/cu.usbmodem143301'
-settings_file_path: '/dev/shm/settings.txt'
+port: '/dev/ttyUSB0'
+settings_file_path: '/home/pi/settings.txt'
 
 # list of observables to expect from the get_all function call
 # The returned dict will use those as keys. Order matters.
@@ -118,18 +118,18 @@ monitors:
 
     tidal_volume: 
         name: "v<sub>tidal</sub>"
-        init: 100
-        step: 100
+        init: 0
+        step: 1
         dec_precision: 0
         units: "(ml)"
         color: "rgb(50,205,50)"
         alarmcolor: "red"
-        observable: tidal
+        observable: total_inspired_volume
 
     total_inspired_volume: 
         name: "v<sub>total</sub>"
         init: 100
-        step: 100
+        step: 1
         dec_precision: 0
         units: "(ml)"
         color: "rgb(50,205,50)"
@@ -139,9 +139,9 @@ monitors:
     volume_minute: 
         name: "v<sub>rate</sub>"
         init: 100
-        step: 100
+        step: 1
         dec_precision: 0
-        units: "(ml/s)"
+        units: "(ml/min)"
         color: "rgb(50,205,50)"
         alarmcolor: "red"
         observable: volume_minute
@@ -245,8 +245,8 @@ alarms:
         linked_monitor: oxygen_concentration
     
     pressure:
-        min: 10
-        setmin: 15
+        min: -0.3
+        setmin: -0.3
         max: 80
         setmax: 75
         under_threshold_code: 256
@@ -255,15 +255,15 @@ alarms:
         linked_monitor: inspiratory_pressure
 
     flow:
-        min: 2 
-        max: 20
+        min: -1
+        max: 500
         under_threshold_code: 1024
         over_threshold_code: 2048
         observable: flow
         linked_monitor: flow
 
     tidal_volume:
-        min: 50
+        min: -10
         max: 1500
         under_threshold_code: 16384
         over_threshold_code: 32768
@@ -272,7 +272,7 @@ alarms:
 
     bpm:
         min: 5
-        max: 10
+        max: 17
         under_threshold_code: 1048576
         over_threshold_code: 2097152
         observable: bpm
