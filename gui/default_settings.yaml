@@ -116,18 +116,8 @@ monitors:
         alarmcolor: "red"
         observable: pressure
 
-    tidal_volume: 
-        name: "v<sub>tidal</sub>"
-        init: 0
-        step: 1
-        dec_precision: 0
-        units: "(ml)"
-        color: "rgb(50,205,50)"
-        alarmcolor: "red"
-        observable: total_inspired_volume
-
     total_inspired_volume: 
-        name: "v<sub>total</sub>"
+        name: "v<sub>tidal</sub>"
         init: 100
         step: 1
         dec_precision: 0
@@ -268,7 +258,7 @@ alarms:
         under_threshold_code: 16384
         over_threshold_code: 32768
         observable: tidal
-        linked_monitor: tidal_volume
+        linked_monitor: total_inspired_volume
 
     bpm:
         min: 5
