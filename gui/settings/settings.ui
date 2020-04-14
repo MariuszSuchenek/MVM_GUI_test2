@@ -84,7 +84,7 @@ QDoubleSpinBox::down-button  {
       <property name="styleSheet">
        <string notr="true">QTabBar::tab {
     /* make the tab large enough to show the full text */
-    width: 270px;
+    width: 260px;
 }
 
 QTabBar::tab:selected {
@@ -1303,13 +1303,13 @@ QTabBar::tab:!selected {
       </widget>
       <widget class="QWidget" name="tab_special_ops">
        <attribute name="title">
-        <string>Special Operations</string>
+        <string>Maintenance</string>
        </attribute>
        <widget class="QWidget" name="horizontalLayoutWidget">
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>50</y>
+          <y>70</y>
           <width>761</width>
           <height>81</height>
          </rect>
@@ -1331,7 +1331,8 @@ QTabBar::tab:!selected {
            </property>
            <property name="font">
             <font>
-             <family>.SF NS Text Condensed</family>
+             <family>Cantarell</family>
+             <pointsize>13</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -1351,12 +1352,13 @@ QTabBar::tab:!selected {
            </property>
            <property name="font">
             <font>
+             <pointsize>13</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>Restart
+            <string>Reboot
 Operative System</string>
            </property>
           </widget>
@@ -1371,6 +1373,7 @@ Operative System</string>
            </property>
            <property name="font">
             <font>
+             <pointsize>13</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -1386,14 +1389,15 @@ Operative System</string>
        <widget class="QLabel" name="label_warning">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>80</x>
           <y>20</y>
-          <width>441</width>
-          <height>16</height>
+          <width>621</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="font">
          <font>
+          <pointsize>15</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
