@@ -79,8 +79,11 @@ class StartStopWorker():
         '''
         if self.run == self.DONOT_RUN:
             self.button_startstop.setText("Start\n" + self.mode_text)
+            self.toolbar.set_stopped(self.mode_text)
         else:
             self.button_startstop.setText("Stop\n" + self.mode_text)
+            self.toolbar.set_running(self.mode_text)
+
 
     def start_button_pressed(self):
         '''
