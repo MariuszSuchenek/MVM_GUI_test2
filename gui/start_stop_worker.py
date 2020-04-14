@@ -1,3 +1,7 @@
+'''
+A file from class StartStopWorker
+'''
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from messagebox import MessageBox
 
@@ -70,12 +74,18 @@ class StartStopWorker():
                 self.raise_comm_error('Cannot set automatic mode.')
 
     def update_startstop_text(self):
+        '''
+        Updates the text in the Start/Stop button
+        '''
         if self.run == self.DONOT_RUN:
             self.button_startstop.setText("Start\n" + self.mode_text)
         else:
             self.button_startstop.setText("Stop\n" + self.mode_text)
 
     def start_button_pressed(self):
+        '''
+        Callback for when the Start button is pressed
+        '''
         self.button_startstop.setDisabled(True)
         self.button_autoassist.setDisabled(True)
         self.button_startstop.repaint()
@@ -89,6 +99,9 @@ class StartStopWorker():
                  self.toolbar.set_running(self.mode_text)))
 
     def stop_button_pressed(self):
+        '''
+        Callback for when the Stop button is pressed
+        '''
         self.button_startstop.setEnabled(True)
         self.button_autoassist.setEnabled(True)
 
@@ -101,6 +114,10 @@ class StartStopWorker():
         self.toolbar.set_stopped(self.mode_text)
 
     def confirm_stop_pressed(self):
+        '''
+        Opens a window which asks for confirmation
+        when the Stop button is pressed.
+        '''
         self.button_autoassist.setDown(False)
         currentMode = self.mode_text.upper()
         msg = MessageBox()
@@ -113,6 +130,10 @@ class StartStopWorker():
 
 
     def button_timeout(self):
+        '''
+        Waits for some time before making 
+        the Stop button visible
+        '''
         timeout = 1000
         # Set timeout for being able to stop this mode
         if 'start_mode_timeout' in self.config:
@@ -152,10 +173,20 @@ class StartStopWorker():
                     self.raise_comm_error('Cannot stop ventilator.')
 
     def set_run(self, run):
+        '''
+        Sets the run variable directly.
+        Usually called at start up, when reading
+        the run value from the ESP.
+        '''
         if self.run != run:
             self.toggle_start_stop()
 
     def set_mode(self, mode):
+        '''
+        Sets the mode variable directly.
+        Usually called at start up, when reading
+        the mode value from the ESP.
+        '''
         if self.mode != mode:
             self.toggle_mode()
 
