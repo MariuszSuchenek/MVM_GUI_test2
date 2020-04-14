@@ -313,9 +313,15 @@ class Settings(QtWidgets.QMainWindow):
                     self._current_values_temp[param] = btn.value()
 
     def disable_special_ops_tab(self):
+        '''
+        Disables the content of the special operations tab
+        '''
         self.tab_special_ops.setDisabled(True)
         self.label_warning.setVisible(True)
 
     def enable_special_ops_tab(self):
+        '''
+        Enables the content of the special operations tab
+        '''
         self.tab_special_ops.setEnabled(True)
 
