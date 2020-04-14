@@ -59,6 +59,10 @@ class ControllerStatus:
 
 
     def _esp32_io(self):
+        '''
+        The callback function called every time the 
+        QTimer times out.
+        '''
 
         try:
             self._call_esp32()
@@ -67,6 +71,11 @@ class ControllerStatus:
 
 
     def _call_esp32(self):
+        '''
+        Gets the run, mode and backup vairables
+        from the ESP, and passes them to the 
+        StartStopWorker class.
+        '''
 
         self._start_stop_worker.set_run(int(self._esp32.get('run')))
         self._start_stop_worker.set_mode(int(self._esp32.get('mode')))
@@ -79,6 +88,10 @@ class ControllerStatus:
 
 
     def _open_backup_warning(self):
+        '''
+        Opens a warning message if the ventilator
+        changed from assisted to automatic ventilation.
+        '''
         msg = MessageBox()
 
         callbacks = {msg.Ok: self._acknowlege_backup}
@@ -110,10 +123,16 @@ class ControllerStatus:
 
 
     def _acknowlege_backup(self):
+        '''
+        Sets _backup_ackowledged to True
+        '''
         self._backup_ackowledged = True
 
 
     def _start_timer(self):
+        '''
+        Starts the QTimer.
+        '''
         self._timer.start(self._config["status_sampling_interval"] * 1000)
 
 
