@@ -29,7 +29,8 @@ class Monitor(QtWidgets.QWidget):
                 "dec_precision": 0,
                 "color": "white",
                 "alarmcolor": "red",
-                "observable": "o2"}
+                "observable": "o2",
+                "disp_type": None}
         entry = self.config['monitors'].get(name, monitor_default)
 
         self.entry = entry
@@ -41,6 +42,7 @@ class Monitor(QtWidgets.QWidget):
         self.alarmcolor = entry.get("alarmcolor", monitor_default["alarmcolor"])
         self.step = entry.get("step", monitor_default["step"])
         self.observable = entry.get("observable", monitor_default["observable"])
+        self.disp_type = entry.get("disp_type", monitor_default["disp_type"])
         self.gui_alarm = None
 
         self.refresh()
@@ -49,12 +51,42 @@ class Monitor(QtWidgets.QWidget):
         self.update_thresholds(None, None, None, None)
         self.label_value.resizeEvent = lambda event: self.handle_resize(event)
 
+        # Get handles for display type
+        self.display_opts = self.findChild(QtWidgets.QStackedWidget, "display_opts")
+        self.shown_widget = self.findChild(QtWidgets.QWidget, "default_text")
+
+        # bar type
+        self.progress_bar = self.findChild(QtWidgets.QProgressBar, "bar_value")
+
+        # Handle optional custom display type
+        if self.disp_type is not None:
+            if "bar" in self.disp_type:
+                self.setup_bar_disp_type()
+        self.display_opts.setCurrentWidget(self.shown_widget)
+
         # Setup config mode
         self.config_mode = False
         self.unhighlight()
 
         # Handle optional stats
         # TODO: determine is stats are useful/necessary
+
+    def setup_bar_disp_type(self):
+        (text, low, high) = self.disp_type.split(" ") 
+        self.shown_widget = self.findChild(QtWidgets.QWidget, "progress_bar")
+        self.shown_widget.setStyleSheet(
+                "QProgressBar {"
+                "   background-color: rgba(0,0,0,0);"
+                "   text-align: center;"
+                "}"
+                "QProgressBar::chunk {"
+                "    background-color: #888888;"
+                "}")
+        showformat = "%p"
+        if self.units is not None: showformat += " " + self.units
+        self.progress_bar.setFormat(showformat)
+        self.progress_bar.setMinimum(int(low))
+        self.progress_bar.setMaximum(int(high))
 
     def name(self):
         '''
@@ -98,11 +130,13 @@ class Monitor(QtWidgets.QWidget):
 
     def handle_resize(self, event):
         # Handle font resize
-        f = self.label_value.font()
-        br = QtGui.QFontMetrics(f).boundingRect(self.label_value.text())
+        self.resize_font(self.label_value, minpx=10, maxpx=50, offset=23)
+        self.resize_font(self.progress_bar, minpx=10, maxpx=16, offset=0)
 
-        f.setPixelSize(max(min(self.height()-23, 50), 10))
-        self.label_value.setFont(f)
+    def resize_font(self, label, minpx=10, maxpx=50, offset=0):
+        f = label.font()
+        f.setPixelSize(max(min(self.height()-offset, maxpx), minpx))
+        label.setFont(f)
 
     def set_alarm_state(self, isalarm):
         '''
@@ -133,6 +167,7 @@ class Monitor(QtWidgets.QWidget):
         else:
             self.value = value;
         self.label_value.setText("%.*f" % (self.dec_precision, self.value))
+        self.bar_value.setValue(self.value)
 
 
 
