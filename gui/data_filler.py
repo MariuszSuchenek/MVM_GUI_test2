@@ -25,7 +25,8 @@ class DataFiller():
         self._default_ranges = {}
         self._config = config
         self._n_samples = self._config['nsamples']
-        self._n_historic_samples = self._config['historic_nsamples']
+        self._n_historic_samples = self._config.get('historic_nsamples',
+                200)
         self._sampling = self._config['sampling_interval']
         self._time_window = self._n_samples * self._sampling # seconds
         self._xdata = np.linspace(-self._time_window, 0, self._n_samples)
