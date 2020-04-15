@@ -1686,7 +1686,7 @@ Screen</string>
              </font>
             </property>
             <property name="text">
-             <string>0 - 1</string>
+             <string>1</string>
             </property>
            </widget>
           </item>
@@ -1706,7 +1706,7 @@ Screen</string>
              </font>
             </property>
             <property name="text">
-             <string>2 - 3</string>
+             <string>2</string>
             </property>
            </widget>
           </item>
@@ -1726,7 +1726,7 @@ Screen</string>
              </font>
             </property>
             <property name="text">
-             <string>4 - 5</string>
+             <string>3</string>
             </property>
            </widget>
           </item>
@@ -1746,7 +1746,7 @@ Screen</string>
              </font>
             </property>
             <property name="text">
-             <string>6 - 7</string>
+             <string>4</string>
             </property>
            </widget>
           </item>
@@ -1766,7 +1766,7 @@ Screen</string>
              </font>
             </property>
             <property name="text">
-             <string>8 - 9</string>
+             <string>5</string>
             </property>
            </widget>
           </item>
