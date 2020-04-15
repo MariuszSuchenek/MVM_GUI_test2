@@ -42,8 +42,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
         uic.loadUi('communication/fakeesp32.ui', self)
         self.get_all_fields = config["get_all_fields"]
-        self.observables = {config["monitors"][item]["observable"]: None
-                                      for item in config["monitors"]}
+        self.observables = {name: None for name in self.get_all_fields}
 
         self._arrange_fields()
         self.alarms_checkboxes = {}
