@@ -295,10 +295,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def lock_screen(self):
         self.toppane.setDisabled(True)
         self.show_toolbar(locked_state=True)
+        self.alarms_settings.set_enabled_state(False)
 
     def unlock_screen(self):
         self.toppane.setEnabled(True)
         self.show_settingsfork()
+        self.alarms_settings.set_enabled_state(True)
 
     def handle_unlock(self):
         button = self.button_unlockscreen
