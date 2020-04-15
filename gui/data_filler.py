@@ -108,6 +108,9 @@ class DataFiller():
             raise Exception('Cannot set y range for graph', name, 'as it doesn\'t exist.')
 
         self._qtgraphs[name].setYRange(self._default_ranges[name][0], self._default_ranges[name][1])
+        
+        # Also set the width (space) on the left of the Y axis (for the label and ticks)
+        self._qtgraphs[name].getAxis('left').setWidth(self._config['left_ax_label_space'])
 
     def set_y_range(self, name):
         '''
