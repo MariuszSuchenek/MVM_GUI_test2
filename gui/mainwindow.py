@@ -293,7 +293,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
 
     def lock_screen(self):
+        self.toppane.setDisabled(True)
         self.show_toolbar(locked_state=True)
+
+    def unlock_screen(self):
+        self.toppane.setEnabled(True)
+        self.show_settingsfork()
 
     def handle_unlock(self):
         button = self.button_unlockscreen
@@ -301,13 +306,10 @@ class MainWindow(QtWidgets.QMainWindow):
             if button._state == 0:
                 button._state = 1
                 button.setAutoRepeatInterval(50)
-        elif button._state == 1:
-            button._state = 0
-            button.setAutoRepeatInterval(self.unlockscreen_interval)
-            self.show_numpadbar()
-
-    def unlock_screen(self):
-        self.show_settingsfork()
+            else:
+                self.show_numpadbar()
+                button._state = 0
+                button.setAutoRepeatInterval(self.unlockscreen_interval)
 
     def set_colors(self):
         # Monitors bar background
