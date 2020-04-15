@@ -172,6 +172,35 @@ class DataFiller():
 
         plot.addItem(self._looping_lines[name])
 
+    def add_cursor_line(self, pos=5):
+        self.l = pg.InfiniteLine(pos=-5,
+                            angle=90,
+                            movable=False,
+                            pen=pg.mkPen('r', width=2))
+
+        self._cursor_lines = {}
+        for name, plot in self._qtgraphs.items():
+            self._cursor_lines[name] = pg.InfiniteLine(pos=-5,
+                                                       angle=90,
+                                                       movable=False,
+                                                       pen=pg.mkPen('r', width=2))
+            plot.addItem(self._cursor_lines[name])
+
+            # self._label = QtGui.QLabel('Test')
+            # self._label.setStyleSheet("QLabel { background-color : red; color : blue; }");
+            
+            # self._txt = pg.TextItem('MyTest', (255, 255, 255), anchor=(0, 0))
+            # self._txt.setPos(-5, 10)
+            
+            # # self.label = pg.LabelItem(justify='right')
+
+            # self.plot_item = plot.getPlotItem()
+            # self.vb = self.plot_item.getViewBox()
+            # self.vb.addItem(self._txt)
+            # self.label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (50, 100, 11))
+            # break
+
+
     def connect_monitor(self, monitor):
         '''
         Connect a monitor to this class by
@@ -257,6 +286,9 @@ class DataFiller():
 
         for plot in self._qtgraphs.values():
             plot.setMouseEnabled(x=True, y=True)
+
+        print('------------------------------------------------------------------')
+        self.add_cursor_line()
 
     def unfreeze(self):
         '''

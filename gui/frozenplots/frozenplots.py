@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
+import pyqtgraph as pg
 
 class FrozenPlotsBottomMenu(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -14,6 +15,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
 
         self.button_reset_zoom = self.findChild(QtWidgets.QPushButton, "button_reset_zoom")
         self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
+        self.cursor = self.findChild(QtWidgets.QWidget, "cursor")
         
     def connect_workers(self, data_filler, plots):
         '''
@@ -25,10 +27,16 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         # X axes are linked, so only need to manipulate 1 plot
         self.xzoom.connect_workers(plots[0].getPlotItem())
 
+        self.cursor.connect_workers(plots)
+
     def disconnect_workers(self):
         try: self.button_reset_zoom.pressed.disconnect() 
         except Exception: pass
         self.xzoom.disconnect_workers()
+
+    def connect_main_window(self, main_w):
+        self._main_w = main_w
+        self.cursor.pass_main_w(main_w)
 
 class FrozenPlotsRightMenu(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -57,7 +65,30 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         self.yzoom_top.disconnect_workers()
         self.yzoom_mid.disconnect_workers()
         self.yzoom_bot.disconnect_workers()
-    
+
+class LineCursor(QtWidgets.QWidget):
+    def __init__(self, *args):
+        """
+        Initialize the YZoom widget.
+
+        Grabs child widgets.
+        """
+        super(LineCursor, self).__init__(*args)
+        uic.loadUi("frozenplots/linecursor.ui", self)
+
+    def connect_workers(self, plots):
+        self._txt = pg.TextItem('MyTest', (255, 255, 255), anchor=(0, 0))
+        self._txt.setPos(-5, 10)
+
+        plots[0].getPlotItem().getViewBox().addItem(self._txt)
+        # self.vb = self.plot_item.getViewBox()
+        # self.vb.addItem(self._txt)
+
+    def pass_main_w(self, w):
+        self.main_w = w
+        # label = QtGui.QLabel('TEST')
+        # self.main_w.scene().addItem(label)
+
 class YZoom(QtWidgets.QWidget):
     def __init__(self, *args):
         """

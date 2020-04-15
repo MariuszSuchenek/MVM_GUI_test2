@@ -71,6 +71,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settingsfork    = self.findChild(QtWidgets.QWidget,        "settingsforkbar")
         self.alarmsbar       = self.findChild(QtWidgets.QWidget,        "alarmsbar")
 
+        self.frozen_bot.connect_main_window(self.main)
+
         '''
         Get the stackable bits on the right
         '''
