@@ -312,13 +312,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 button._state = 0
                 button.setAutoRepeatInterval(self.unlockscreen_interval)
 
-    def set_colors(self):
-        # Monitors bar background
-        palette = self.monitor_filler.palette()
-        role = self.monitor_filler.backgroundRole()
-        palette.setColor(role, QtGui.QColor("#000000"))
-        self.monitor_filler.setPalette(palette)
-
     def goto_new_patient(self):
         self.show_startup()
 
