@@ -37,6 +37,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.config = config
         self.esp32 = esp32
+        settings_file = SettingsFile(self.config["settings_file_path"])
+        self.user_settings = settings_file.load()
 
         '''
         Start the alarm handler, which will check for ESP alarms
@@ -83,6 +85,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.button_new_patient    = self.initial.findChild(QtWidgets.QPushButton, "button_new_patient")
         self.button_resume_patient = self.initial.findChild(QtWidgets.QPushButton, "button_resume_patient")
+        self.button_resume_patient.setEnabled(self.user_settings != {})
+
         self.button_start_settings = self.startup.findChild(QtWidgets.QPushButton, "button_start_settings")
         self.button_start_vent     = self.startup.findChild(QtWidgets.QPushButton, "button_start_vent")
         self.button_start_test     = self.startup.findChild(QtWidgets.QPushButton, "button_start_test")
@@ -283,9 +287,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_startup()
 
     def goto_resume_patient(self):
-        settings_file = SettingsFile(self.config["settings_file_path"])
-        settings = settings_file.load()
-        self.settings.update_config(settings)
+        self.settings.update_config(self.user_settings)
 
         self.show_startup()
 
