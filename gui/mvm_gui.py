@@ -20,13 +20,9 @@ from messagebox import MessageBox
 def connect_esp32(config):
     try:
         if 'fakeESP32' in sys.argv:
-            if 'disableSimAlarms' in sys.argv:
-                alarm_rate = 0
-            else:
-                alarm_rate = 0.1
             print('******* Simulating communication with ESP32')
             err_msg = "Cannot setup FakeESP32Serial"
-            esp32 = FakeESP32Serial(config, alarm_rate=alarm_rate)
+            esp32 = FakeESP32Serial(config)
             esp32.set("wdenable", 1)
         else:
             err_msg = "Cannot communicate with port %s" % config['port']
@@ -50,7 +46,7 @@ if __name__ == "__main__":
 
     with open(settings_file) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
-    print ('Config:', yaml.dump(config), sep='\n')
+    print('Config:', yaml.dump(config), sep='\n')
 
     app = QtWidgets.QApplication(sys.argv)
 

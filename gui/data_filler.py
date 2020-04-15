@@ -105,9 +105,12 @@ class DataFiller():
         specified in the config file.
         '''
         if name not in self._qtgraphs:
-            raise Exception('Cannot set y range for graph', name, 'as it doesn\t exist.')
+            raise Exception('Cannot set y range for graph', name, 'as it doesn\'t exist.')
 
         self._qtgraphs[name].setYRange(self._default_ranges[name][0], self._default_ranges[name][1])
+        
+        # Also set the width (space) on the left of the Y axis (for the label and ticks)
+        self._qtgraphs[name].getAxis('left').setWidth(self._config['left_ax_label_space'])
 
     def set_y_range(self, name):
         '''
@@ -115,17 +118,49 @@ class DataFiller():
         from the historic data set.
         '''
         if name not in self._historic_data or name not in self._qtgraphs:
-            raise Exception('Cannot set y range for graph', name, 'as it doesn\t exist.')
+            raise Exception('Cannot set y range for graph', name, 'as it doesn\'t exist.')
 
         # Calculate the max and min using the larger historical data sample
         ymax = np.max(self._historic_data[name])
         ymin = np.min(self._historic_data[name])
+
+        if ymax == ymin:
+            return
         span = ymax - ymin
 
         ymax += span * 0.1
         ymin -= span * 0.1
 
         self._qtgraphs[name].setYRange(ymin, ymax)
+
+        self.updateTicks(name, ymax - ymin)
+
+    def updateTicks(self, name, yrange=None):
+        '''
+        Updates the major and minor ticks
+        in the graphs 
+        '''
+
+        if name not in self._qtgraphs:
+            raise Exception('Cannot set ticks for graph', name, 'as it doesn\'t exist.')
+
+        ax = self._qtgraphs[name].getAxis('left')
+
+        if yrange is None:  
+            ax.setTickSpacing()
+        else:
+            # Sligthly reduce the yrange so 
+            # the tick labels don't get 
+            # cropped on the top
+            yrange -= yrange * 0.2
+
+            major_step = yrange / (self._config['n_major_ticks'] - 1)
+            minor_step = major_step / (self._config['n_minor_ticks'] - 1)
+
+            if major_step == 0 or minor_step == 0:
+                ax.setTickSpacing()
+            else:
+                ax.setTickSpacing(major=major_step, minor=minor_step)
 
 
     def set_default_x_range(self, name):

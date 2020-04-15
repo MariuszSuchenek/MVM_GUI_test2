@@ -37,13 +37,12 @@ class FakeMonitored(QtWidgets.QWidget):
 
 class FakeESP32Serial(QtWidgets.QMainWindow):
     peep = peep()
-    def __init__(self, config, alarm_rate=0.1):
+    def __init__(self, config):
         super(FakeESP32Serial, self).__init__()
 
         uic.loadUi('communication/fakeesp32.ui', self)
         self.get_all_fields = config["get_all_fields"]
-        self.observables = {config["monitors"][item]["observable"]: None
-                                      for item in config["monitors"]}
+        self.observables = {name: None for name in self.get_all_fields}
 
         self._arrange_fields()
         self.alarms_checkboxes = {}
@@ -59,7 +58,6 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
             "alarm": 0,
             "warning": 0,
             "temperature": 40}
-        self.alarm_rate = alarm_rate
 
         self.event_log = self.findChild(QtWidgets.QPlainTextEdit, "event_log")
         self.event_log.setReadOnly(True)

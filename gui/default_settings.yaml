@@ -74,6 +74,15 @@ axis_line_width: 1
 # The color used to draw the axes
 axis_line_color: "rgb(255,228,181)"
 
+# Minimum number of Y axis major (labeled) ticks
+n_major_ticks: 4
+
+# Minimum number of minor (unlabeled) ticks
+n_minor_ticks: 5
+
+# The width where the Y axis lable and ticks are
+left_ax_label_space: 60
+
 # Shows the values that will trigger the alarms directly on the plots
 show_safe_ranges_on_graphs: True
 
