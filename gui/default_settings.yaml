@@ -71,6 +71,10 @@ axis_line_width: 1
 # The color used to draw the axes
 axis_line_color: "rgb(255,228,181)"
 
+n_major_ticks: 4
+
+n_minor_ticks: 5
+
 # Shows the values that will trigger the alarms directly on the plots
 show_safe_ranges_on_graphs: True
 
