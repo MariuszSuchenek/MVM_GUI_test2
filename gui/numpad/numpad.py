@@ -7,8 +7,7 @@ class NumPad():
         """
         Creates the numpad menu.
 
-        numpad: The layout into which the numpad will be generated.
-
+        mainparent: Reference to the main window.
         """
         self.mainparent = mainparent
         self.button_back = self.mainparent.findChild(QtWidgets.QPushButton, "numpad_back")
@@ -19,20 +18,46 @@ class NumPad():
             name = "numpad_" + str(i) + str(i+1)
             button = self.mainparent.findChild(QtWidgets.QPushButton, name)
             button.pressed.connect(lambda num=i: self.input_number(num))
-            self.buttons.append(button)
+            self.buttons_num.append(button)
 
-        self.assign_code("0000")
-        self.input_values = []
+        self.assign_code("0000", None)
 
+    def assign_code(self, code, func):
+        """
+        Assigns a code to the NumPad. When the correct cdoe is entered, the given function will be
+        executed.
 
-    def assign_code(self, code):
-        self.code = [int(d/2)*2 for d in str(code) if d.isdigit()]
-        self.input_values = [0] * len(self.code)
-
+        code: String code of digits.
+        func: Function to be executed when correct code is input.
+        """
+        self.code = [int(int(d)/2)*2 for d in str(code) if d.isdigit()]
+        self.input_values = [-1] * len(self.code)
+        self.func = func
 
     def input_number(self, num):
-        self.input_values = self.input_values[:-2].append(num)
-        print(input_values)
+        """
+        Add a number to the input values and compare with the assigned code.
+        Input values are stored in a circular buffer so only the latest N digits (N = len(code))
+        need to be correct for the code to be valid.
+
+        num: Number to be added to the input values
+        """
+        self.input_values[:-1] = self.input_values[1:]
+        self.input_values[-1] = num
+        self.check_code()
+    
+    def check_code(self):
+        """
+        Check the code against the input values.
+        If they match, execute the assigned function reassign the code and function to reset.
+        """
+        if self.input_values == self.code:
+            # Execute the code locked function
+            if self.func is not None:
+                print("**** Code accepted ****")
+                self.func()
+            # Reassign the code to reset
+            self.assign_code(self.code, self.func)
 
     
     
