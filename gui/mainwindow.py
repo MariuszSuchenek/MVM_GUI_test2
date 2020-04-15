@@ -298,7 +298,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def unlock_screen(self):
         self.toppane.setEnabled(True)
-        self.show_settingsfork()
+        self.show_toolbar(locked_state=False)
         self.alarms_settings.set_enabled_state(True)
 
     def handle_unlock(self):
