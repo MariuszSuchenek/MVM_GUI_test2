@@ -170,7 +170,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.unlockscreen_interval = self.config['unlockscreen_interval']
         self.button_unlockscreen._state = 0
         self.button_unlockscreen.setAutoRepeat(True)
-        self.button_unlockscreen.setAutoRepeatDelay(self.unlockscreen_interval)
         self.button_unlockscreen.setAutoRepeatInterval(self.unlockscreen_interval)
         self.button_unlockscreen.clicked.connect(self.handle_unlock)
 
