@@ -32,6 +32,7 @@ alarminterval: 1
 
 # Time [ms] required to hold down UNLOCK before screen is unlocked
 unlockscreen_interval: 2000
+# Unlock code: must use digits from 1-5
 unlockscreen_code: "32115"
 
 # Number of samples to display in the graphs:
