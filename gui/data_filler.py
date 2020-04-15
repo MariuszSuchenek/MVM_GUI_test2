@@ -120,6 +120,9 @@ class DataFiller():
         # Calculate the max and min using the larger historical data sample
         ymax = np.max(self._historic_data[name])
         ymin = np.min(self._historic_data[name])
+
+        if ymax == ymin:
+            return
         span = ymax - ymin
 
         ymax += span * 0.1
