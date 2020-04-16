@@ -498,32 +498,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_settingsfork">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>170</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Settings</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QPushButton" name="button_inspause">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -533,7 +507,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>170</width>
+       <width>172</width>
        <height>16777215</height>
       </size>
      </property>
@@ -545,74 +519,87 @@
       </font>
      </property>
      <property name="text">
-      <string>Special
-Operations</string>
+      <string>Inspiratory
+Pause</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_autoassist">
+    <widget class="QPushButton" name="button_expause">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>113</width>
-       <height>0</height>
-      </size>
-     </property>
      <property name="maximumSize">
       <size>
-       <width>170</width>
+       <width>172</width>
        <height>16777215</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <pointsize>15</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>Set
-Assisted</string>
+      <string>Expiratory
+Pause</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_startstop">
+    <widget class="QPushButton" name="button_freeze">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>110</width>
-       <height>0</height>
-      </size>
-     </property>
      <property name="maximumSize">
       <size>
-       <width>180</width>
+       <width>172</width>
        <height>16777215</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>16</pointsize>
+       <pointsize>15</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>Start
-PCV</string>
+      <string>Freeze</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_lung_recruit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>172</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Lung Recruitment</string>
      </property>
     </widget>
    </item>
