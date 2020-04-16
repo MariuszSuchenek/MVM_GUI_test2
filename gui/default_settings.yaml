@@ -298,6 +298,22 @@ alarms:
         observable: battery_charge
         linked_monitor: battery_charge
 
+    peak:
+      min: 5
+      max: 70
+      under_threshold_code: 1
+      over_threshold_code: 1
+      observable: peak
+      linked_monitor: peak
+
+    vrate:
+      min: 2
+      max: 40
+      under_threshold_code: 1
+      over_threshold_code: 1
+      observable: volume_minute
+      linked_monitor: volume_minute
+
 plots:
     plot_top: 
         name: "Insp. Press."
