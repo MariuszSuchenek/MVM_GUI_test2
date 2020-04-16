@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
+from messagebox import MessageBox
 
 class SpecialBar(QtWidgets.QWidget):
     def __init__(self, *args):
