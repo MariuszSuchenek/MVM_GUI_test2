@@ -23,7 +23,7 @@ class Toolbar(QtWidgets.QWidget):
         self.blinktimer.setInterval(500) #.5 seconds
         self.blinktimer.timeout.connect(self.blink_unlock)
         self.blinktimer.start()
-        self.set_stopped("Automatic")
+        self.set_stopped("PCV")
 
     def set_stopped(self, mode_text=""):
         self.label_status.setText("Status: Stopped\n" + mode_text)

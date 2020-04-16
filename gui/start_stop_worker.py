@@ -30,7 +30,7 @@ class StartStopWorker():
         self.toolbar = toolbar
         self.settings = settings
 
-        self.mode_text = "Automatic"
+        self.mode_text = "PCV"
 
         self.mode = self.MODE_AUTO
         self.run  = self.DONOT_RUN
@@ -58,7 +58,7 @@ class StartStopWorker():
 
             if result:
                 self.mode_text = "Assisted"
-                self.button_autoassist.setText("Set\nAutomatic")
+                self.button_autoassist.setText("Set\nPCV")
                 self.update_startstop_text()
                 self.mode = self.MODE_ASSIST
             else:
@@ -68,7 +68,7 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_AUTO)
 
             if result:
-                self.mode_text = "Automatic"
+                self.mode_text = "PCV"
                 self.button_autoassist.setText("Set\nAssisted")
                 self.update_startstop_text()
                 self.mode = self.MODE_AUTO
@@ -139,7 +139,7 @@ class StartStopWorker():
 
     def button_timeout(self):
         '''
-        Waits for some time before making 
+        Waits for some time before making
         the Stop button visible
         '''
         timeout = 1000
@@ -183,7 +183,7 @@ class StartStopWorker():
 
     def _stop_abruptly(self):
         '''
-        If the hardware stops running, this 
+        If the hardware stops running, this
         changes the test in the bottons and status.
         '''
         self.run = self.DONOT_RUN
@@ -201,9 +201,9 @@ class StartStopWorker():
         if self.run == self.DO_RUN:
             msg = MessageBox()
             msg.critical('STOPPING VENTILATION',
-                         'The hardware has stopped the ventilation.', 
+                         'The hardware has stopped the ventilation.',
                          'The microcontroller has stopped the ventilation by sending run = '+str(run),
-                         'The microcontroller has stopped the ventilation by sending run = '+str(run), 
+                         'The microcontroller has stopped the ventilation by sending run = '+str(run),
                          {msg.Ok: self._stop_abruptly})()
 
         else:

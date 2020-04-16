@@ -339,7 +339,7 @@ plots:
         color: "rgb(0,255,255)"
         observable: flow
 #
-# Automatic Mode
+# PCV Mode
 #
 # Note: can only have max 6 presets for now.
 
