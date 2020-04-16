@@ -21,6 +21,7 @@ from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
 from alarm_handler import AlarmHandler
 from controller_status import ControllerStatus
+from numpad.numpad import NumPad
 
 import pyqtgraph as pg
 import sys
@@ -72,6 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.blank           = self.findChild(QtWidgets.QWidget,        "blank")
         self.settingsfork    = self.findChild(QtWidgets.QWidget,        "settingsforkbar")
         self.alarmsbar       = self.findChild(QtWidgets.QWidget,        "alarmsbar")
+        self.numpadbar       = self.findChild(QtWidgets.QWidget,        "numpadbar")
 
         '''
         Get the stackable bits on the right
@@ -95,7 +97,11 @@ class MainWindow(QtWidgets.QMainWindow):
         Get toolbar widgets
         '''
         self.button_menu  = self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
-        self.label_status = self.toolbar.findChild(QtWidgets.QLabel,      "label_status")
+        self.button_unlockscreen  = self.toolbar.findChild(QtWidgets.QPushButton, "button_unlockscreen")
+        self.home_button  = self.toolbar.findChild(QtWidgets.QWidget, "home_button")
+        self.goto_menu    = self.toolbar.findChild(QtWidgets.QWidget, "goto_menu")
+        self.goto_unlock  = self.toolbar.findChild(QtWidgets.QWidget, "goto_unlock")
+        self.label_status = self.toolbar.findChild(QtWidgets.QLabel,  "label_status")
 
         toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
         self.toolsettings = {};
@@ -118,6 +124,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.button_alarms       = self.settingsfork.findChild(QtWidgets.QPushButton, "button_alarms")
         self.button_settings     = self.settingsfork.findChild(QtWidgets.QPushButton, "button_settings")
+        self.button_lockscreen   = self.settingsfork.findChild(QtWidgets.QPushButton, "button_lockscreen")
         self.button_backsettings = self.settingsfork.findChild(QtWidgets.QPushButton, "button_backsettings")
 
 
@@ -149,15 +156,27 @@ class MainWindow(QtWidgets.QMainWindow):
         This effectively defines navigation from the bottombar.
         '''
         self.button_back.pressed.connect(self.show_toolbar)
-        self.button_menu.pressed.connect(self.show_menu)
         self.button_freeze.pressed.connect(self.freeze_plots)
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
         self.button_alarms.pressed.connect(self.goto_alarms)
         self.button_settingsfork.pressed.connect(self.show_settingsfork)
+        self.button_menu.pressed.connect(self.show_menu)
 
         self.button_settings.pressed.connect(self.goto_settings)
+        self.button_lockscreen.pressed.connect(self.lock_screen)
         self.button_backsettings.pressed.connect(self.show_menu)
 
+        # Assign unlock screen button and setup state
+        self.unlockscreen_interval = self.config['unlockscreen_interval']
+        self.button_unlockscreen._state = 0
+        self.button_unlockscreen.setAutoRepeat(True)
+        self.button_unlockscreen.setAutoRepeatInterval(self.unlockscreen_interval)
+        self.button_unlockscreen.clicked.connect(self.handle_unlock)
+
+        self.numpad = NumPad(self)
+        self.numpad.assign_code(self.config['unlockscreen_code'], self.unlock_screen)
+
+        self.numpad.button_back.pressed.connect(self.lock_screen)
         self.button_backalarms.pressed.connect(self.exit_alarms)
 
         '''
@@ -165,7 +184,6 @@ class MainWindow(QtWidgets.QMainWindow):
         care of filling plots data
         '''
         self.data_filler = DataFiller(config)
-
 
 
         '''
@@ -273,17 +291,28 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
 
+    def lock_screen(self):
+        self.toppane.setDisabled(True)
+        self.show_toolbar(locked_state=True)
+        self.alarms_settings.set_enabled_state(False)
 
+    def unlock_screen(self):
+        self.toppane.setEnabled(True)
+        self.show_toolbar(locked_state=False)
+        self.alarms_settings.set_enabled_state(True)
 
-    def set_colors(self):
-        # Monitors bar background
-        palette = self.monitor_filler.palette()
-        role = self.monitor_filler.backgroundRole()
-        palette.setColor(role, QtGui.QColor("#000000"))
-        self.monitor_filler.setPalette(palette)
+    def handle_unlock(self):
+        button = self.button_unlockscreen
+        if button.isDown():
+            if button._state == 0:
+                button._state = 1
+                button.setAutoRepeatInterval(50)
+            else:
+                self.show_numpadbar()
+                button._state = 0
+                button.setAutoRepeatInterval(self.unlockscreen_interval)
 
     def goto_new_patient(self):
-        # TODO : implement start from default_settings
         self.show_startup()
 
     def goto_resume_patient(self):
@@ -323,8 +352,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_menu(self):
         self.bottombar.setCurrentWidget(self.menu)
 
-    def show_toolbar(self):
+    def show_numpadbar(self):
+        self.bottombar.setCurrentWidget(self.numpadbar)
+
+    def show_toolbar(self, locked_state = False):
+        """
+        Shows the toolbar in the bottom bar.
+
+        locked_state: If true, shows the unlock button. Otherwise shows the menu button.
+        """
         self.bottombar.setCurrentWidget(self.toolbar)
+        if locked_state:
+            self.home_button.setCurrentWidget(self.goto_unlock)
+        else:
+            self.home_button.setCurrentWidget(self.goto_menu)
+
 
     def show_settingsbar(self):
         self.bottombar.setCurrentWidget(self.settingsbar)

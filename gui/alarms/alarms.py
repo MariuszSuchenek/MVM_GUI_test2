@@ -40,6 +40,8 @@ class Alarms(QtWidgets.QWidget):
         self.alarmmax_value  = self.findChild(QtWidgets.QLabel,      "alarmmax_value")
         self.alarmmax_max    = self.findChild(QtWidgets.QLabel,      "alarmmax_max")
 
+        self.enabled = True
+
     def connect_monitors(self, mainparent):
         """
         Grabs monitors and their corresponding display slots from the main window.
@@ -55,12 +57,17 @@ class Alarms(QtWidgets.QWidget):
         for name, monitor in self.monitors.items():
             clickable(monitor).connect(lambda n=name: self.select_monitor(n))
 
+    def set_enabled_state(self, isenabled):
+        self.enabled = isenabled
+
     def select_monitor(self, selected):
         """
         Selected a particular monitor widget by config name.
 
         selected: config name
         """
+        if not self.enabled: return
+
         for name, monitor in self.monitors.items():
             if name == selected:
                 self.selected = name
