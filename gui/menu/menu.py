@@ -13,12 +13,6 @@ class Menu(QtWidgets.QWidget):
         super(Menu, self).__init__(*args)
         uic.loadUi("menu/menu.ui", self)
 
-        self.button_expause.pressed.connect(lambda: self.paused_pressed('pause_exhale'))
-        self.button_expause.released.connect(lambda: self.paused_released('pause_exhale'))
-
-        self.button_inspause.pressed.connect(lambda: self.paused_pressed('pause_inhale'))
-        self.button_inspause.released.connect(lambda: self.paused_released('pause_inhale'))
-
 
     def connect_datahandler_config(self, data_h, config):
         '''
