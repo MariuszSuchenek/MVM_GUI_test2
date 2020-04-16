@@ -367,6 +367,7 @@ insp_pressure:
     default:  15
     min: 2
     max: 40
+    step: 1
     current: None
     units: "(cmH<sub>2</sub>O)"
     conversion: 0.980665 # From cmH2O to mbar
@@ -406,6 +407,7 @@ pressure_trigger:
     default: 1.
     min: 0.
     max: 10.
+    step: 1
     current: None
     presets:
         - [8, 'Hard']
@@ -420,6 +422,7 @@ flow_trigger:
     default: 30.
     min: 0.
     max: 50.
+    step: 1
     current: None
     presets:
         - [10, '']
@@ -435,6 +438,7 @@ support_pressure:
     default: 10.
     min: 2.
     max: 40.
+    step: 1
     current: None
     units: "(cmH<sub>2</sub>O)"
     conversion: 0.980665 # From cmH2O to mbar
@@ -466,6 +470,7 @@ minimal_resp_rate:
     default: 10.
     min: 0.
     max: 60.
+    step: 1
     current: None
     presets:
         - [3, '']
