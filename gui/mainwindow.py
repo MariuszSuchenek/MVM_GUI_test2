@@ -23,6 +23,7 @@ from start_stop_worker import StartStopWorker
 from alarm_handler import AlarmHandler
 from controller_status import ControllerStatus
 from numpad.numpad import NumPad
+from frozenplots.frozenplots import Cursor
 
 import pyqtgraph as pg
 import sys
@@ -257,8 +258,9 @@ class MainWindow(QtWidgets.QMainWindow):
         active_plots = []
         for slotname in self.plots:
             active_plots.append(self.plots[slotname])
-        self.frozen_bot.connect_workers(self.data_filler, active_plots)
-        self.frozen_right.connect_workers(active_plots)
+        self.cursor = Cursor(active_plots)
+        self.frozen_bot.connect_workers(self.data_filler, active_plots, self.cursor)
+        self.frozen_right.connect_workers(active_plots, self.cursor)
 
         '''
         Instantiate DataHandler, which will start a new

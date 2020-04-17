@@ -1,21 +1,11 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 import numpy as np
 
-class FrozenPlotsBottomMenu(QtWidgets.QWidget):
-    def __init__(self, *args):
-        """
-        Initialize the FrozenPlotsBottomMenu widget.
-
-        Grabs child widgets.
-        """
-        super(FrozenPlotsBottomMenu, self).__init__(*args)
-        uic.loadUi("frozenplots/frozenplots_bottom.ui", self)
-
-        self.button_reset_zoom = self.findChild(QtWidgets.QPushButton, "button_reset_zoom")
-        self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
+class Cursor:
+    def __init__(self, plots):
 
         self.cursor_x = [None] * 3
         self.cursor_y = [None] * 3
@@ -24,15 +14,6 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.plots = [None] * 3
         self.plot_data_items = [None] * 3
 
-    def connect_workers(self, data_filler, plots):
-        '''
-        Connect workers for bottom "freeze" menu.
-        The unfreeze button is handled by mainwindow.
-        '''
-        self.button_reset_zoom.pressed.connect(data_filler.reset_zoom)
-
-        # X axes are linked, so only need to manipulate 1 plot
-        self.xzoom.connect_workers(plots[0].getPlotItem())
 
         self.plots = plots
 
@@ -44,7 +25,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
             self.signal_proxy[num] = SignalProxy(plot.scene().sigMouseMoved,
                     rateLimit=60, slot=self.update_cursor)
 
-            self.cursor_label[num] = TextItem('MyTest', (255, 255, 255), anchor=(0, 0))
+            self.cursor_label[num] = TextItem('', (255, 255, 255), anchor=(0, 0))
             self.cursor_label[num].setPos(-10.4, 10)
             plot.addItem(self.cursor_label[num])
 
@@ -114,6 +95,120 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
                     self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], y)
 
 
+
+class FrozenPlotsBottomMenu(QtWidgets.QWidget):
+
+    def __init__(self, *args):
+        """
+        Initialize the FrozenPlotsBottomMenu widget.
+
+        Grabs child widgets.
+        """
+        super(FrozenPlotsBottomMenu, self).__init__(*args)
+        uic.loadUi("frozenplots/frozenplots_bottom.ui", self)
+
+        self.button_reset_zoom = self.findChild(QtWidgets.QPushButton, "button_reset_zoom")
+        self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
+
+        # self.cursor_x = [None] * 3
+        # self.cursor_y = [None] * 3
+        # self.cursor_label = [None] * 3 
+        # self.signal_proxy = [None] * 3
+        # self.plots = [None] * 3
+        # self.plot_data_items = [None] * 3
+
+    def connect_workers(self, data_filler, plots, cursor):
+        '''
+        Connect workers for bottom "freeze" menu.
+        The unfreeze button is handled by mainwindow.
+        '''
+        self.button_reset_zoom.pressed.connect(data_filler.reset_zoom)
+
+        # X axes are linked, so only need to manipulate 1 plot
+        self.xzoom.connect_workers(plots[0].getPlotItem())
+
+        self._cursor = cursor
+
+        # self.plots = plots
+
+        # for num, plot in enumerate(plots):
+        #     self.cursor_x[num] = InfiniteLine(angle=90, movable=False)
+        #     self.cursor_y[num] = InfiniteLine(angle=0, movable=False)
+        #     plot.addItem(self.cursor_x[num], ignoreBounds=True)
+        #     plot.addItem(self.cursor_y[num], ignoreBounds=True)
+        #     self.signal_proxy[num] = SignalProxy(plot.scene().sigMouseMoved,
+        #             rateLimit=60, slot=self.update_cursor)
+
+        #     self.cursor_label[num] = TextItem('MyTest', (255, 255, 255), anchor=(0, 0))
+        #     self.cursor_label[num].setPos(-10.4, 10)
+        #     plot.addItem(self.cursor_label[num])
+
+        #     # Find the PlotDataItem displaying data
+        #     for item in plot.getPlotItem().items:
+        #         if isinstance(item, PlotDataItem):
+        #             self.plot_data_items[num] = item
+
+        # self.hide_cursors()
+
+    # def show_cursors(self):
+    #     '''
+    #     Shows all the cursor lines and labels 
+    #     on the 3 plots
+    #     '''
+    #     for c in self.cursor_x:     c.setVisible(True)
+    #     for c in self.cursor_y:     c.setVisible(True)
+    #     for c in self.cursor_label: c.setVisible(True)
+
+    # def hide_cursors(self):
+    #     '''
+    #     Hides all the cursor lines and labels 
+    #     on the 3 plots
+    #     '''
+    #     for c in self.cursor_x:     c.setVisible(False)
+    #     for c in self.cursor_y:     c.setVisible(False)
+    #     for c in self.cursor_label: c.setVisible(False)
+
+
+
+    # def update_cursor(self, evt):
+    #     '''
+    #     Update the cursor lines and labels.
+    #     If this menu is not shown (we are not in Freeze)
+    #     simply return and don't waste time.
+    #     '''
+
+    #     if not self.isVisible():
+    #         self.hide_cursors()
+    #         return
+        
+    #     self.show_cursors()
+
+    #     pos = evt[0]
+    #     for num, plot in enumerate(self.plots):
+    #         vb = plot.getViewBox()
+    #         if plot.sceneBoundingRect().contains(pos):
+    #             mousePoint = vb.mapSceneToView(pos)
+                
+    #             # Get the x and y data from the plot
+    #             data_x = self.plot_data_items[num].xData
+    #             data_y = self.plot_data_items[num].yData
+
+    #             # Find the x index closest to where the mouse if pointing
+    #             index = (np.abs(data_x - mousePoint.x())).argmin()
+
+    #             if index > 0 and index < len(data_y):
+    #                 x = mousePoint.x()
+    #                 y = data_y[index]
+
+    #                 # Set the cursor x and y positions
+    #                 self.cursor_x[num].setPos(x)
+    #                 self.cursor_y[num].setPos(y)
+
+    #                 # Set the cursor label
+    #                 self.cursor_label[num].setText("{:.2f}".format(y))
+    #                 self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], y)
+
+
     def disconnect_workers(self):
         try: self.button_reset_zoom.pressed.disconnect()
         except Exception: pass
@@ -133,7 +228,7 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         self.yzoom_mid = self.findChild(QtWidgets.QWidget, "yzoom_mid")
         self.yzoom_bot = self.findChild(QtWidgets.QWidget, "yzoom_bot")
 
-    def connect_workers(self, plots):
+    def connect_workers(self, plots, cursor):
         '''
         Connect Y zoom workers. There are 3 widgets, each controlling
         a separate plot.
@@ -141,6 +236,8 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         self.yzoom_top.connect_workers(plots[0].getPlotItem())
         self.yzoom_mid.connect_workers(plots[1].getPlotItem())
         self.yzoom_bot.connect_workers(plots[2].getPlotItem())
+
+        self._cursor = cursor
 
     def disconnect_workers(self):
         self.yzoom_top.disconnect_workers()
