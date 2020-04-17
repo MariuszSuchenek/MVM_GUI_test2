@@ -511,7 +511,7 @@ lung_recruit_pres:
   min: 0
   max: 40
   step: 1
-  current: None
+  current: 20
   conversion: 0.980665 # From cmH2O to mbar
   presets:
     - [0, 'None']
@@ -523,7 +523,7 @@ lung_recruit_time:
   min: 1
   max: 20
   step: 1
-  current: None
+  current: 10
   presets:
     - [1, 'min']
     - [10, 'default']
