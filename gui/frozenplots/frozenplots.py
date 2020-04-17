@@ -41,7 +41,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         pos = evt[0]
         # TODO: make sure that self.plots points to a valid array
         for num, plot in enumerate(self.plots):
-            vb = plot.vb
+            vb = plot.getViewBox()
             if plot.sceneBoundingRect().contains(pos):
                 mousePoint = vb.mapSceneToView(pos)
                 index = int(mousePoint.x())
