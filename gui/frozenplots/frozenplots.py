@@ -56,12 +56,20 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.hide_cursors()
 
     def show_cursors(self):
+        '''
+        Shows all the cursor lines and labels 
+        on the 3 plots
+        '''
 
         for c in self.cursor_x:     c.setVisible(True)
         for c in self.cursor_y:     c.setVisible(True)
         for c in self.cursor_label: c.setVisible(True)
 
     def hide_cursors(self):
+        '''
+        Hides all the cursor lines and labels 
+        on the 3 plots
+        '''
 
         for c in self.cursor_x:     c.setVisible(False)
         for c in self.cursor_y:     c.setVisible(False)
@@ -70,6 +78,11 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
 
 
     def update_cursor(self, evt):
+        '''
+        Update the cursor lines and labels.
+        If this menu is not shown (we are not in Freeze)
+        simply return and don't waste time.
+        '''
 
         if not self.isVisible():
             self.hide_cursors()
