@@ -241,9 +241,11 @@ class YZoom(QtWidgets.QWidget):
 
     def shift_up(self, plot):
         plot.getViewBox().translateBy(y=self.compute_translation(plot))
+        self._cursor.draw_label()
 
     def shift_down(self, plot):
         plot.getViewBox().translateBy(y=-self.compute_translation(plot))
+        self._cursor.draw_label()
 
 class XZoom(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -295,7 +297,9 @@ class XZoom(QtWidgets.QWidget):
 
     def shift_left(self, plot):
         plot.getViewBox().translateBy(x=-self.compute_translation(plot))
+        self._cursor.draw_label()
 
     def shift_right(self, plot):
         plot.getViewBox().translateBy(x=self.compute_translation(plot))
+        self._cursor.draw_label()
 
