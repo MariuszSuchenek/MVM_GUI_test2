@@ -16,7 +16,9 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.button_reset_zoom = self.findChild(QtWidgets.QPushButton, "button_reset_zoom")
         self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
 
-        self.cursor = [None] * 3
+        self.cursor_x = [None] * 3
+        self.cursor_y = [None] * 3
+        self.cursor_label = [None] * 3 
         self.signal_proxy = [None] * 3
         self.plots = None
         self.plot_data_items = None
@@ -34,18 +36,25 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.plots = plots
 
         for num, plot in enumerate(plots):
-            self.cursor[num] = InfiniteLine(angle=90, movable=False)
-            plot.addItem(self.cursor[num], ignoreBounds=True)
+            self.cursor_x[num] = InfiniteLine(angle=90, movable=False)
+            self.cursor_y[num] = InfiniteLine(angle=0, movable=False)
+            plot.addItem(self.cursor_x[num], ignoreBounds=True)
+            plot.addItem(self.cursor_y[num], ignoreBounds=True)
             self.signal_proxy[num] = SignalProxy(plot.scene().sigMouseMoved,
                     rateLimit=60, slot=self.update_cursor)
+
+            self.cursor_label[num] = TextItem('MyTest', (255, 255, 255), anchor=(0, 0))
+            self.cursor_label[num].setPos(-10, 10)
+            plot.addItem(self.cursor_label[num])
 
             # Find the PlotDataItem displaying data
             for item in plot.getPlotItem().items:
                 if isinstance(item, PlotDataItem):
                     self.plot_data_items.append(item)
+
+
     def update_cursor(self, evt):
         pos = evt[0]
-        # TODO: make sure that self.plots points to a valid array
         for num, plot in enumerate(self.plots):
             vb = plot.getViewBox()
             if plot.sceneBoundingRect().contains(pos):
@@ -57,7 +66,10 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
                     x = mousePoint.x()
                     y = 0 # TODO: assign it to the value in the plot corresponding to x
                     #TODO show x and y in some way
-            self.cursor[num].setPos(mousePoint.x())
+            self.cursor_x[num].setPos(mousePoint.x())
+
+            self.cursor_y[num].setPos(mousePoint.y())
+            self.cursor_label[num].setPos(-10, mousePoint.y())
 
     def disconnect_workers(self):
         try: self.button_reset_zoom.pressed.disconnect()
