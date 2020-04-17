@@ -5,17 +5,29 @@ from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 import numpy as np
 
 class Cursor:
+    '''
+    Handles the cursor lines and cursor labels
+    '''
+
     def __init__(self, plots):
+        '''
+        Constructor
+
+        arguments:
+
+        -plots: the plots
+        '''
+
+        self.plots = plots
+
 
         self.cursor_x = [None] * 3
         self.cursor_y = [None] * 3
         self.cursor_label = [None] * 3 
         self.signal_proxy = [None] * 3
-        self.plots = [None] * 3
         self.plot_data_items = [None] * 3
-
-
-        self.plots = plots
+        self._x = [None] * 3
+        self._y = [None] * 3
 
         for num, plot in enumerate(plots):
             self.cursor_x[num] = InfiniteLine(angle=90, movable=False)
@@ -54,15 +66,15 @@ class Cursor:
         for c in self.cursor_y:     c.setVisible(False)
         for c in self.cursor_label: c.setVisible(False)
 
-    def relabel(self):
-
-        if self._y is None:
+    def draw_label(self):
+        '''
+        Draw the cursor label
+        '''
+        if self._y[0] is None:
             return
         for num, plot in enumerate(self.plots):
-            self.cursor_label[num].setText("{:.2f}".format(self._y))
-            self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], self._y)
-
-
+            self.cursor_label[num].setText("{:.2f}".format(self._y[num]))
+            self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], self._y[num])
 
     def update_cursor(self, evt):
         '''
@@ -85,16 +97,15 @@ class Cursor:
                 index = (np.abs(data_x - mousePoint.x())).argmin()
 
                 if index > 0 and index < len(data_y):
-                    self._x = mousePoint.x()
-                    self._y = data_y[index]
+                    self._x[num] = mousePoint.x()
+                    self._y[num] = data_y[index]
 
                     # Set the cursor x and y positions
-                    self.cursor_x[num].setPos(self._x)
-                    self.cursor_y[num].setPos(self._y)
+                    self.cursor_x[num].setPos(self._x[num])
+                    self.cursor_y[num].setPos(self._y[num])
 
-                    # Set the cursor label
-                    self.cursor_label[num].setText("{:.2f}".format(self._y))
-                    self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], self._y)
+                    self.cursor_label[num].setText("{:.2f}".format(self._y[num]))
+                    self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], self._y[num])
 
 
 
@@ -169,9 +180,9 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         Connect Y zoom workers. There are 3 widgets, each controlling
         a separate plot.
         '''
-        self.yzoom_top.connect_workers(plots[0].getPlotItem())
-        self.yzoom_mid.connect_workers(plots[1].getPlotItem())
-        self.yzoom_bot.connect_workers(plots[2].getPlotItem())
+        self.yzoom_top.connect_workers(plots[0].getPlotItem(), cursor)
+        self.yzoom_mid.connect_workers(plots[1].getPlotItem(), cursor)
+        self.yzoom_bot.connect_workers(plots[2].getPlotItem(), cursor)
 
         self._cursor = cursor
 
@@ -208,17 +219,21 @@ class YZoom(QtWidgets.QWidget):
         try: self.button_down.pressed.disconnect()
         except Exception: pass
 
-    def connect_workers(self, plot):
+    def connect_workers(self, plot, cursor):
         self.button_plus.pressed.connect(lambda: self.zoom_in(plot))
         self.button_minus.pressed.connect(lambda: self.zoom_out(plot))
         self.button_up.pressed.connect(lambda: self.shift_up(plot))
         self.button_down.pressed.connect(lambda: self.shift_down(plot))
 
+        self._cursor = cursor
+
     def zoom_in(self, plot):
         plot.getViewBox().scaleBy(y=1/self.zoom_factor)
+        self._cursor.draw_label()
 
     def zoom_out(self, plot):
         plot.getViewBox().scaleBy(y=self.zoom_factor)
+        self._cursor.draw_label()
 
     def compute_translation(self, plot):
         [[xmin, xmax], [ymin, ymax]] = plot.viewRange()
@@ -268,11 +283,11 @@ class XZoom(QtWidgets.QWidget):
 
     def zoom_in(self, plot):
         plot.getViewBox().scaleBy(x=1/self.zoom_factor)
-        self._cursor.relabel()
+        self._cursor.draw_label()
 
     def zoom_out(self, plot):
         plot.getViewBox().scaleBy(x=self.zoom_factor)
-        self._cursor.relabel()
+        self._cursor.draw_label()
 
     def compute_translation(self, plot):
         [[xmin, xmax], [ymin, ymax]] = plot.viewRange()
