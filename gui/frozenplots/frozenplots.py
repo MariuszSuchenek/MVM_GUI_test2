@@ -60,7 +60,6 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         Shows all the cursor lines and labels 
         on the 3 plots
         '''
-
         for c in self.cursor_x:     c.setVisible(True)
         for c in self.cursor_y:     c.setVisible(True)
         for c in self.cursor_label: c.setVisible(True)
@@ -70,7 +69,6 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         Hides all the cursor lines and labels 
         on the 3 plots
         '''
-
         for c in self.cursor_x:     c.setVisible(False)
         for c in self.cursor_y:     c.setVisible(False)
         for c in self.cursor_label: c.setVisible(False)
@@ -87,8 +85,8 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         if not self.isVisible():
             self.hide_cursors()
             return
-        else:
-            self.show_cursors()
+        
+        self.show_cursors()
 
         pos = evt[0]
         for num, plot in enumerate(self.plots):
@@ -96,18 +94,22 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
             if plot.sceneBoundingRect().contains(pos):
                 mousePoint = vb.mapSceneToView(pos)
                 
+                # Get the x and y data from the plot
                 data_x = self.plot_data_items[num].xData
                 data_y = self.plot_data_items[num].yData
-                sizeofdata = len(data_y) 
+
+                # Find the x index closest to where the mouse if pointing
                 index = (np.abs(data_x - mousePoint.x())).argmin()
 
-                if index > 0 and index < sizeofdata:
+                if index > 0 and index < len(data_y):
                     x = mousePoint.x()
                     y = data_y[index]
 
+            # Set the cursor x and y positions
             self.cursor_x[num].setPos(x)
             self.cursor_y[num].setPos(y)
 
+            # Set the cursor label
             self.cursor_label[num].setText("{:.2f}".format(y))
             self.cursor_label[num].setPos(-10.4, y)
 
