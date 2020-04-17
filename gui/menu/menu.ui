@@ -39,7 +39,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>134</width>
+       <width>114</width>
        <height>16777215</height>
       </size>
      </property>
@@ -471,7 +471,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_settings">
+    <widget class="QPushButton" name="button_settingsfork">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -480,7 +480,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>134</width>
+       <width>170</width>
        <height>16777215</height>
       </size>
      </property>
@@ -497,7 +497,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="button_expause">
+    <widget class="QPushButton" name="button_specialops">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -506,7 +506,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>134</width>
+       <width>170</width>
        <height>16777215</height>
       </size>
      </property>
@@ -518,61 +518,8 @@
       </font>
      </property>
      <property name="text">
-      <string>Expir.
-Pause</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="button_inspause">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>134</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Insp.
-Pause</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="button_freeze">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>134</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Freeze</string>
+      <string>Special
+Operations</string>
      </property>
     </widget>
    </item>
@@ -592,7 +539,7 @@ Pause</string>
      </property>
      <property name="maximumSize">
       <size>
-       <width>114</width>
+       <width>170</width>
        <height>16777215</height>
       </size>
      </property>
@@ -625,7 +572,7 @@ Assisted</string>
      </property>
      <property name="maximumSize">
       <size>
-       <width>134</width>
+       <width>180</width>
        <height>16777215</height>
       </size>
      </property>
@@ -638,7 +585,7 @@ Assisted</string>
      </property>
      <property name="text">
       <string>Start
-Automatic</string>
+PCV</string>
      </property>
     </widget>
    </item>

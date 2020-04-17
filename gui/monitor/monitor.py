@@ -1,103 +1,175 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
-import os
 
 class Monitor(QtWidgets.QWidget):
-    def __init__(self, *args):
+    def __init__(self, name, config, *args):
         """
         Initialize the Monitor widget.
 
-        Grabs child widgets.
+        Grabs child widgets and sets alarm facility up.
+
         """
         super(Monitor, self).__init__(*args)
         uic.loadUi(os.environ['MVMGUI']+"monitor/monitor.ui", self)
-        self.name = None
+        self.config = config
+        self.configname = name
+
         self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
         self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
         self.label_min = self.findChild(QtWidgets.QLabel, "label_min")
         self.label_max = self.findChild(QtWidgets.QLabel, "label_max")
-        self.label_statnames = [];
-        self.label_statnames.append(self.findChild(QtWidgets.QLabel, "label_statname1"))
-        self.label_statnames.append(self.findChild(QtWidgets.QLabel, "label_statname2"))
-        self.label_statvalues = [];
-        self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue1"))
-        self.label_statvalues.append(self.findChild(QtWidgets.QLabel, "label_statvalue2"))
+        self.stats_slots = self.findChild(QtWidgets.QGridLayout, "stats_slots")
+        self.frame = self.findChild(QtWidgets.QFrame, "frame")
 
-        # Set up connections
-        self.mouseReleaseEvent = self.clear_alarm
+        monitor_default = {
+                "name": "NoName",
+                "init": 50,
+                "units": None,
+                "step": 1,
+                "dec_precision": 0,
+                "color": "white",
+                "alarmcolor": "red",
+                "observable": "o2",
+                "disp_type": None}
+        entry = self.config['monitors'].get(name, monitor_default)
 
-        self.setAutoFillBackground(True)
+        self.entry = entry
+        self.name = entry.get("name", monitor_default["name"])
+        self.value = entry.get("init", monitor_default["init"])
+        self.units = entry.get("units", monitor_default["units"])
+        self.dec_precision = entry.get("dec_precision", monitor_default["dec_precision"])
+        self.color = entry.get("color", monitor_default["color"])
+        self.alarmcolor = entry.get("alarmcolor", monitor_default["alarmcolor"])
+        self.step = entry.get("step", monitor_default["step"])
+        self.observable = entry.get("observable", monitor_default["observable"])
+        self.disp_type = entry.get("disp_type", monitor_default["disp_type"])
+        self.gui_alarm = None
 
-    def setup(self, name, setrange=(0,50,100), units=None, stats=None, alarmcolor='red',
-            color='black', step=None, dec_precision=0):
-        """
-        Sets up main values for the Monitor widget, including the name and the values for the
-        range as (minimum, initial, maximum). Also optionally set the units and statistical values
-        of the monitored field.
+        self.refresh()
+        self.set_alarm_state(False)
+        self.update_value(self.value)
+        self.update_thresholds(None, None, None, None)
+        self.label_value.resizeEvent = lambda event: self.handle_resize(event)
 
-        name: The name to be displayed.
-        setrange: Tuple (min, current, max) specifying the allowed min/max values and current value.
-        units: String value for the units to be displayed.
-        alarmcolor: Background color that the monitor will change to on alarm
-        color: Text color
-        step: optional value for nearest rounded value (e.g. step=10 rounds to nearest 10)
-        """
+        # Get handles for display type
+        self.display_opts = self.findChild(QtWidgets.QStackedWidget, "display_opts")
+        self.shown_widget = self.findChild(QtWidgets.QWidget, "default_text")
 
-        # unpack and assign min, current, and max
-        (low, val, high) = setrange
-        self.name = name
-        self.label_min.setText(str(low))
-        self.label_max.setText(str(high))
-        self.value = val
-        self.minimum = low
-        self.maximum = high
-        self.step = step
-        self.dec_precision = dec_precision
+        # bar type
+        self.progress_bar = self.findChild(QtWidgets.QProgressBar, "bar_value")
 
-        # Handle optional units
-        if units is not None:
-            name = name + " " + str(units)
-        self.label_name.setText(name)
+        # Handle optional custom display type
+        if self.disp_type is not None:
+            if "bar" in self.disp_type:
+                self.setup_bar_disp_type()
+        self.display_opts.setCurrentWidget(self.shown_widget)
 
-        self.setStyleSheet("QWidget { color: " + str(color) + "; }");
-
-        self.alarmcolor = alarmcolor
-        self.update(val)
+        # Setup config mode
+        self.config_mode = False
+        self.unhighlight()
 
         # Handle optional stats
         # TODO: determine is stats are useful/necessary
 
-    def update(self, value):
-        """
-        Updates the value in the monitored field
+    def setup_bar_disp_type(self):
+        (text, low, high) = self.disp_type.split(" ") 
+        self.shown_widget = self.findChild(QtWidgets.QWidget, "progress_bar")
+        self.shown_widget.setStyleSheet(
+                "QProgressBar {"
+                "   background-color: rgba(0,0,0,0);"
+                "   text-align: center;"
+                "}"
+                "QProgressBar::chunk {"
+                "    background-color: #888888;"
+                "}")
+        showformat = "%p"
+        if self.units is not None: showformat += " " + self.units
+        self.progress_bar.setFormat(showformat)
+        self.progress_bar.setMinimum(int(low))
+        self.progress_bar.setMaximum(int(high))
 
-        value: The value that the monitor will display.
-        """
+    def name(self):
+        '''
+        Returns the configuration name 
+        for this monitor
+        '''
+        return self.configname
+
+    def connect_gui_alarm(self, gui_alarm):
+        '''
+        Stores the GuiAlarm class
+        '''
+        self.gui_alarm = gui_alarm
+
+    def update_thresholds(self, alarm_min, alarm_setmin, alarm_max, alarm_setmax):
+        '''
+        Updates the labes showind the threshold values
+        '''
+        self.label_min.hide()
+        self.label_max.hide()
+        # if self.alarm is not None:
+        print("Updating thresholds for " + self.configname)
+
+        if alarm_min is not None:
+            self.label_min.setText(str(alarm_setmin))
+            self.label_min.show()
+
+        if alarm_max is not None:
+            self.label_max.setText(str(alarm_setmax))
+            self.label_max.show()
+
+    def refresh(self):
+        # Handle optional units
+        if self.units is not None:
+            self.label_name.setText(self.name + " " + str(self.units))
+        else:
+            self.label_name.setText(self.name)
+
+        self.setStyleSheet("QWidget { color: " + str(self.color) + "; }");
+        self.setAutoFillBackground(True)
+
+    def handle_resize(self, event):
+        # Handle font resize
+        self.resize_font(self.label_value, minpx=10, maxpx=50, offset=23)
+        self.resize_font(self.progress_bar, minpx=10, maxpx=16, offset=0)
+
+    def resize_font(self, label, minpx=10, maxpx=50, offset=0):
+        f = label.font()
+        f.setPixelSize(max(min(self.height()-offset, maxpx), minpx))
+        label.setFont(f)
+
+    def set_alarm_state(self, isalarm):
+        '''
+        Sets or clears the alarm
+        arguments:
+        - isalarm: True is alarmed state
+        '''
+        if isalarm:
+            color = self.alarmcolor
+        else:
+            color = QtGui.QColor("#000000")
+            if self.gui_alarm is not None: 
+                self.gui_alarm.clear_alarm(self.configname)
+        palette = self.palette()
+        role = self.backgroundRole()
+        palette.setColor(role, QtGui.QColor(color))
+        self.setPalette(palette)
+
+    def highlight(self):
+        self.frame.setStyleSheet("#frame { border: 5px solid limegreen; }");
+
+    def unhighlight(self):
+        self.frame.setStyleSheet("#frame { border: 0.5px solid white; }");
+
+    def update_value(self, value):
         if self.step is not None:
             self.value = round(value / self.step) * self.step
         else:
             self.value = value;
         self.label_value.setText("%.*f" % (self.dec_precision, self.value))
+        self.bar_value.setValue(self.value)
 
-        # handle palette changes due to alarm
-        if self.is_alarm():
-            palette = self.palette()
-            role = self.backgroundRole() #choose whatever you like
-            palette.setColor(role, QtGui.QColor(self.alarmcolor))
-            self.setPalette(palette)
 
-    def clear_alarm(self, event):
-        """
-        Clears previous out of range alarms by reverting the background color.
-        """
-        palette = self.palette()
-        role = self.backgroundRole() #choose whatever you like
-        palette.setColor(role, QtGui.QColor("#000000"))
-        self.setPalette(palette)
 
-    def is_alarm(self):
-        """
-        Returns true if the monitored value is beyond the min or max threshold (i.e ALARM!).
-        """
-        return self.value <= self.minimum or self.value >= self.maximum
+

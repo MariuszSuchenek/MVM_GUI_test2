@@ -117,8 +117,7 @@ class ToolSettings(QtWidgets.QWidget):
         """
         if self.show_fraction:
             # Display fraction
-            (num, den) = value.as_integer_ratio()
-            disp_value = "1:%.2g" % (float(den) / float(num))
+            disp_value = "1:%.2g" % value
         else:
             # Display decimal/integer
             disp_value = "%g" % (round(value / self.step) * self.step)

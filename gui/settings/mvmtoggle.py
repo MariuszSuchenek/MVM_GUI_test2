@@ -36,3 +36,15 @@ class MVMToggle(QtWidgets.QPushButton):
             sw_rect.moveLeft(-width)
         painter.drawRoundedRect(sw_rect, radius, radius)
         painter.drawText(sw_rect, Qt.AlignCenter, label)
+
+    def setValue(self, value):
+        '''
+        Just calls setChecked().
+        '''
+        return self.setChecked(value)
+
+    def value(self):
+        '''
+        Just calls isChecked().
+        '''
+        return int(self.isChecked())

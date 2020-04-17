@@ -1,77 +1,52 @@
 #!/usr/bin/env python3
-import sys, traceback
-import time
+import sys
 import datetime
-from PyQt5.QtCore import QThreadPool
-from communication.threading_utils import Worker
+from PyQt5.QtCore import QTimer
+from messagebox import MessageBox
 
 class DataHandler():
     '''
-    This class takes care of starting a new QThread which
+    This class takes care of starting a new QTimer which
     is entirey dedicated to read data from the ESP32.
-    You will need to connect a DataFiller using connect_data_filler(),
-    and this class will fill the data direclty.
     '''
 
-    def __init__(self, config, esp32):
+    def __init__(self, config, esp32, data_filler, gui_alarm):
         '''
-        Initializes this class by creating a new QThreadPool
+        Initializes this class by creating a new QTimer
+
+        arguments:
+        - config: the config dictionary
+        - esp32: the esp32serial instance
+        - data_filler: the instance to the DataFiller class 
+        - gui_alarm: the alarm class
         '''
-        self._running = False
-        self._threadpool = QThreadPool()
-        print('Number of available threads:', self._threadpool.maxThreadCount())
 
         self._config = config
         self._esp32 = esp32
-
-        self._n_attempts = 0
-
-    def connect_data_filler(self, data_filler):
-        '''
-        Connects a DataFiller to this class
-        '''
         self._data_f = data_filler
+        self._gui_alarm = gui_alarm
 
-    def esp32_data_callback(self, parameter, data):
+        self._timer = QTimer()
+        self._timer.timeout.connect(self.esp32_io)
+        self._start_timer()
+
+
+    def __del__(self):
         '''
-        This method is called everytime there is a new read from
-        the ESP32, and it receives the parameters read, and
-        the data associated to it
-        '''
-
-        if parameter == 'Done.' and data is None and not self._running:
-            # it is the signal that the thread is closing gracefully,
-            # ignore it! TODO: feel free to implement a better way to do
-            # this.
-            return
-
-        # print('Got data:', parameter, data)
-        status = self._data_f.add_data_point(parameter, data)
-
-        # if not status:
-        #     print("\033[91mERROR: Will ingore parameter {parameter}.\033[0m")
-
-    def stop_io(self):
-        '''
-        Ask the thread to gracefully stop iterating
+        Destructor
+        Stops the timer
         '''
 
-        self._running = False
-        self._threadpool.waitForDone()
+        self._stop_timer()
 
-    def esp32_io(self, data_callback):
+
+    def esp32_io(self):
         '''
-        This is the main function that runs in the thread.
+        This is the main function that runs every time a QTimer times out.
+        It runs the get_all to get the data from the ESP.
         '''
 
-        if self._running:
-            return
-
-        self._running = True
-
-        while self._running:
-            start = datetime.datetime.now()
-            
+        try:
             # Get all params from ESP
             current_values = self._esp32.get_all()
 
@@ -79,63 +54,74 @@ class DataHandler():
             for p, v in current_values.items():
                 current_values[p] = float(v)
 
-            # some parameters need to be constructed, as they
-            # are not direclty available from the ESP:
-            self.construct_missing_params(current_values)
+            current_values = self._convert_values(current_values)
 
-            # finally, emit for all the values we have:
+            self._gui_alarm.set_data(current_values)
+
+            # finally, send values to the DataFiller
             for p, v in current_values.items():
-                data_callback.emit(p, v)
 
-            delta_secs = (datetime.datetime.now() - start).total_seconds()
-            sleep_secs = max(0, self._config['sampling_interval'] - delta_secs)
-            
-            # Sleep for some time...
-            time.sleep(sleep_secs)
+                # print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
+                self._data_f.add_data_point(p, v)
 
-        return "Done."
+        except Exception as error:
+            self.open_comm_error(str(error))
 
-    def construct_missing_params(self, values):
+    def _convert_values(self, values):
         '''
-        Constructs parameters than can be calculated
-        from those available in the ESP.
         '''
 
-        # 1) Calculate Tidal Volume
-        # bpm is respiratory rate [1/minute]
-        # flow is respiratory minute volume [L/minute]
-        # we calculate tidal volume as
-        # volume = flow / bpm
-        if 'bpm' in values and 'flow' in values:
-            values['volume'] = values['flow'] / values['bpm'] * 1e3 # mL
-
-        # 2)
+        conv = self._config['conversions']
+        return {k:v * conv.get(k, 1.) for (k, v) in values.items()}
+        # for n, v in values.items():
+        #     values[n] = v * conv['pressure'] if 'pressure' in conv else v
 
 
-    def thread_complete(self):
+
+    def open_comm_error(self, error):
         '''
-        Called when a thread ends.
+        Opens a message window if there is a communication error.
         '''
+        msg = MessageBox()
 
-        if self._running:
-            print("\033[91mERROR: The I/O thread finished! Going to start a new one...\033[0m")
-            self._n_attempts += 1
-            if self._n_attempts > 100:
-                raise Exception('Failed to communicate with ESP after 100 attempts.')
-            self._running = False
-            self.start_io_thread()
+        # TODO: find a good exit point
+        callbacks = {msg.Retry: self._restart_timer,
+                     msg.Abort: lambda: sys.exit(-1)}
 
-    def start_io_thread(self):
+        fn = msg.critical("COMMUNICATION ERROR",
+                          "CANNOT COMMUNICATE WITH THE HARDWARE",
+                          "Check cable connections then click retry.\n"+error,
+                          "COMMUNICATION ERROR",
+                          callbacks)
+        fn()
+
+
+    def _start_timer(self):
         '''
-        Starts the thread.
+        Starts the QTimer.
         '''
-        worker = Worker(self.esp32_io)
-        worker.signals.result.connect(self.esp32_data_callback)
-        worker.signals.finished.connect(self.thread_complete)
+        self._timer.start(self._config["sampling_interval"] * 1000)
 
-        self._threadpool.start(worker)
+    def _stop_timer(self):
+        '''
+        Stops the QTimer.
+        '''
+        self._timer.stop()
+
+    def _restart_timer(self):
+        '''
+        Restarts the QTimer if the QTimer is active,
+        or simply starts the QTimer
+        '''
+        if self._timer.isActive():
+            self._stop_timer()
+
+        self._start_timer()
 
     def set_data(self, param, value):
+        '''
+        Sets data to the ESP
+        '''
 
         result = self._esp32.set(param, value)
 
