@@ -105,13 +105,13 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
                     x = mousePoint.x()
                     y = data_y[index]
 
-            # Set the cursor x and y positions
-            self.cursor_x[num].setPos(x)
-            self.cursor_y[num].setPos(y)
+                    # Set the cursor x and y positions
+                    self.cursor_x[num].setPos(x)
+                    self.cursor_y[num].setPos(y)
 
-            # Set the cursor label
-            self.cursor_label[num].setText("{:.2f}".format(y))
-            self.cursor_label[num].setPos(-10.4, y)
+                    # Set the cursor label
+                    self.cursor_label[num].setText("{:.2f}".format(y))
+                    self.cursor_label[num].setPos(-10.4, y)
 
 
     def disconnect_workers(self):
