@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
+import numpy as np
 
 class FrozenPlotsBottomMenu(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -20,8 +21,8 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.cursor_y = [None] * 3
         self.cursor_label = [None] * 3 
         self.signal_proxy = [None] * 3
-        self.plots = None
-        self.plot_data_items = None
+        self.plots = [None] * 3
+        self.plot_data_items = [None] * 3
 
     def connect_workers(self, data_filler, plots):
         '''
@@ -44,13 +45,13 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
                     rateLimit=60, slot=self.update_cursor)
 
             self.cursor_label[num] = TextItem('MyTest', (255, 255, 255), anchor=(0, 0))
-            self.cursor_label[num].setPos(-10, 10)
+            self.cursor_label[num].setPos(-10.4, 10)
             plot.addItem(self.cursor_label[num])
 
             # Find the PlotDataItem displaying data
             for item in plot.getPlotItem().items:
                 if isinstance(item, PlotDataItem):
-                    self.plot_data_items.append(item)
+                    self.plot_data_items[num] = item
 
 
     def update_cursor(self, evt):
@@ -59,17 +60,21 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
             vb = plot.getViewBox()
             if plot.sceneBoundingRect().contains(pos):
                 mousePoint = vb.mapSceneToView(pos)
-                index = int(mousePoint.x())
-                sizeofdata = 0 # TODO: initialize it with the lenght of
-                #the plot data array
+                
+                data_x = self.plot_data_items[num].xData
+                data_y = self.plot_data_items[num].yData
+                sizeofdata = len(data_y) 
+                index = (np.abs(data_x - mousePoint.x())).argmin()
+
                 if index > 0 and index < sizeofdata:
                     x = mousePoint.x()
-                    y = 0 # TODO: assign it to the value in the plot corresponding to x
-                    #TODO show x and y in some way
-            self.cursor_x[num].setPos(mousePoint.x())
+                    y = data_y[index]
 
-            self.cursor_y[num].setPos(mousePoint.y())
-            self.cursor_label[num].setPos(-10, mousePoint.y())
+            self.cursor_x[num].setPos(x)
+            self.cursor_y[num].setPos(y)
+
+            self.cursor_label[num].setText("{:.2f}".format(y))
+            self.cursor_label[num].setPos(-10.4, y)
 
     def disconnect_workers(self):
         try: self.button_reset_zoom.pressed.disconnect()
