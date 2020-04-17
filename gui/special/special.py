@@ -41,7 +41,7 @@ class SpecialBar(QtWidgets.QWidget):
 
 
         self._timer = QtCore.QTimer(self)
-        self._timer.timeout.connect(lambda: self.send_signal(mode=mode, pause=True)) 
+        self._timer.timeout.connect(lambda: self.send_signal(mode=mode, pause=True))
         self._timer.start(self._config['expinsp_setinterval'] * 1000)
 
 
@@ -63,7 +63,7 @@ class SpecialBar(QtWidgets.QWidget):
     def send_signal(self, mode, pause):
         '''
         Sends signal the appropriate signal the ESP
-        to pause inpiration or expiration. 
+        to pause inpiration or expiration.
         '''
         try:
             if not self._data_h.set_data(mode, int(pause)):
@@ -72,14 +72,14 @@ class SpecialBar(QtWidgets.QWidget):
             msg = MessageBox()
             fn = msg.critical("Critical",
                               "Severe hardware communication error",
-                              str(error), 
+                              str(error),
                               "Communication error",
                               { msg.Ok: lambda: self.stop_timer() })
             fn()
 
     def stop_timer(self):
         '''
-        Stops the QTimer which sends 
+        Stops the QTimer which sends
         signals to the ESP
         '''
         if hasattr(self, '_timer'):
