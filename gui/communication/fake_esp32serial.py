@@ -4,6 +4,7 @@ ESP32 chip isn't available.
 """
 
 import random
+import time
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QTextCursor
 from communication.peep import peep
@@ -25,6 +26,7 @@ class FakeMonitored(QtWidgets.QWidget):
         self.random_cb.setChecked(random)
         self.random_cb.toggled.connect(self._random_checkbox_fn)
         self._random_checkbox_fn()
+        self._lung_recruit_stop_time = 0
 
     def _random_checkbox_fn(self):
         self.value_ib.setEnabled(not self.random_cb.isChecked())
@@ -203,6 +205,9 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
         print("FakeESP32Serial-DEBUG: set %s %s" % (name, value))
 
+        if name == 'pause_lg' and int(value) == 1:
+            self._lung_recruit_stop_time = time.time() + self.set_params["pause_lg_time"]
+
         self.set_params[name] = value
         return "OK"
 
@@ -231,6 +236,12 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
         if name in self.observables:
             retval = self.observables[name].generate()
+        elif name == 'pause_lg_time':
+            eta = self._lung_recruit_stop_time - time.time()
+            if eta > 0:
+                retval = eta
+            else:
+                retval = 0
         elif name in self.set_params:
             retval = self.set_params[name]
         else:
