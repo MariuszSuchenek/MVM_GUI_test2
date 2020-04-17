@@ -19,12 +19,13 @@ class SpecialBar(QtWidgets.QWidget):
         self.button_inspause.pressed.connect(lambda: self.paused_pressed('pause_inhale'))
         self.button_inspause.released.connect(lambda: self.paused_released('pause_inhale'))
 
-    def connect_datahandler_config(self, data_h, config):
+    def connect_datahandler_config_esp32(self, data_h, config, esp32):
         '''
         Passes the data handler and the confi dict to this class.
         '''
         self._data_h = data_h
         self._config = config
+        self._esp32 = esp32
 
     def is_configured(self):
         return hasattr(self, "_data_h") and hasattr(self, "_config")
