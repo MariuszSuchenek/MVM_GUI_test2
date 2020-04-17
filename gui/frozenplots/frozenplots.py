@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
+from pyqtgraph import InfiniteLine, SignalProxy
 
 class FrozenPlotsBottomMenu(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -15,6 +16,8 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.button_reset_zoom = self.findChild(QtWidgets.QPushButton, "button_reset_zoom")
         self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
 
+        self.cursor = [None] * 3
+        self.signal_proxy = [None] * 3
 
     def connect_workers(self, data_filler, plots):
         '''
@@ -25,6 +28,28 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
 
         # X axes are linked, so only need to manipulate 1 plot
         self.xzoom.connect_workers(plots[0].getPlotItem())
+
+        for num, plot in enumerate(plots):
+            self.cursor[num] = InfiniteLine(angle=90, movable=False)
+            plot.addItem(self.cursor[num], ignoreBounds=True)
+            self.signal_proxy[num] = SignalProxy(plot.scene().sigMouseMoved,
+                    rateLimit=60, slot=self.update_cursor)
+
+    def update_cursor(evt):
+        pos = evt[0]
+        # TODO: make sure that self.plots points to a valid array
+        for num, plot in enumerate(self.plots):
+            vb = plot.vb
+            if plot.sceneBoundingRect().contains(pos):
+                mousePoint = vb.mapSceneToView(pos)
+                index = int(mousePoint.x())
+                sizeofdata = 0 # TODO: initialize it with the lenght of
+                #the plot data array
+                if index > 0 and index < sizeofdata:
+                    x = mousePoint.x()
+                    y = 0 # TODO: assign it to the value in the plot corresponding to x
+                    #TODO show x and y in some way
+            self.cursor[num].setPos(mousePoint.x())
 
     def disconnect_workers(self):
         try: self.button_reset_zoom.pressed.disconnect()
