@@ -19,6 +19,33 @@ std::map<String, String> parameters;
 
 std::vector<String> random_measures;
 
+namespace time {
+
+struct Seconds
+{
+  static
+  unsigned long from_millis(unsigned long milli)
+  {
+    return milli / 1000ul;
+  }
+
+  static
+  unsigned long from_micros(unsigned long micro)
+  {
+    return micro / 1000000ul;
+  }
+};
+
+template<class Time>
+unsigned long now()
+{
+  return Time::from_micros(micros());
+}
+
+} // ns time
+
+unsigned long pause_lg_expiration = time::now<time::Seconds>() + 10;
+
 void setup()
 {
   Serial.begin(115200);
@@ -44,6 +71,7 @@ void setup()
   parameters["pressure_support"] = String(10);
   parameters["backup_enable"]    = String(1);
   parameters["backup_min_rate"]  = String(10);
+  parameters["pause_lg_time"]    = "10";
 }
 
 // this is tricky, didn't had the time to think a better algo
@@ -64,6 +92,13 @@ String set(String const& command)
   auto const name = parse_word(command);
   auto const value = parse_word(command.substring(name.length() + 4));
   parameters[name] = value;
+
+  if (name == "pause_lg" && value == "1") {
+    pause_lg_expiration
+    = time::now<time::Seconds>()
+    + parameters["pause_lg_time"].toInt();
+  }
+
   return "OK";
 }
 
@@ -86,6 +121,9 @@ String get(String const& command)
       + String(random(1000, 2000)) + "," // total_inspired_volume
       + String(random(1000, 2000)) + "," // total_expired_volume
       + String(random(10, 100));         // volume_minute
+  } else if (name == "pause_lg_time") {
+    auto const now = time::now<time::Seconds>();
+    return now > pause_lg_expiration ? "0" : String(pause_lg_expiration - now);
   }
 
   auto const it = std::find(
