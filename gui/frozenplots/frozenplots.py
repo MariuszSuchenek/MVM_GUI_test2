@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
-from pyqtgraph import InfiniteLine, SignalProxy
+from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 
 class FrozenPlotsBottomMenu(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -18,6 +18,8 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
 
         self.cursor = [None] * 3
         self.signal_proxy = [None] * 3
+        self.plots = None
+        self.plot_data_items = None
 
     def connect_workers(self, data_filler, plots):
         '''
@@ -37,6 +39,10 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
             self.signal_proxy[num] = SignalProxy(plot.scene().sigMouseMoved,
                     rateLimit=60, slot=self.update_cursor)
 
+            # Find the PlotDataItem displaying data
+            for item in plot.getPlotItem().items:
+                if isinstance(item, PlotDataItem):
+                    self.plot_data_items.append(item)
     def update_cursor(self, evt):
         pos = evt[0]
         # TODO: make sure that self.plots points to a valid array
