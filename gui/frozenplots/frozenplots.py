@@ -35,7 +35,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
             self.signal_proxy[num] = SignalProxy(plot.scene().sigMouseMoved,
                     rateLimit=60, slot=self.update_cursor)
 
-    def update_cursor(evt):
+    def update_cursor(self, evt):
         pos = evt[0]
         # TODO: make sure that self.plots points to a valid array
         for num, plot in enumerate(self.plots):
