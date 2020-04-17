@@ -54,6 +54,14 @@ class Cursor:
         for c in self.cursor_y:     c.setVisible(False)
         for c in self.cursor_label: c.setVisible(False)
 
+    def relabel(self):
+
+        if self._y is None:
+            return
+        for num, plot in enumerate(self.plots):
+            self.cursor_label[num].setText("{:.2f}".format(self._y))
+            self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], self._y)
+
 
 
     def update_cursor(self, evt):
@@ -77,16 +85,16 @@ class Cursor:
                 index = (np.abs(data_x - mousePoint.x())).argmin()
 
                 if index > 0 and index < len(data_y):
-                    x = mousePoint.x()
-                    y = data_y[index]
+                    self._x = mousePoint.x()
+                    self._y = data_y[index]
 
                     # Set the cursor x and y positions
-                    self.cursor_x[num].setPos(x)
-                    self.cursor_y[num].setPos(y)
+                    self.cursor_x[num].setPos(self._x)
+                    self.cursor_y[num].setPos(self._y)
 
                     # Set the cursor label
-                    self.cursor_label[num].setText("{:.2f}".format(y))
-                    self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], y)
+                    self.cursor_label[num].setText("{:.2f}".format(self._y))
+                    self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], self._y)
 
 
 
@@ -123,7 +131,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.button_reset_zoom.pressed.connect(data_filler.reset_zoom)
 
         # X axes are linked, so only need to manipulate 1 plot
-        self.xzoom.connect_workers(plots[0].getPlotItem())
+        self.xzoom.connect_workers(plots[0].getPlotItem(), cursor)
 
         self._cursor = cursor
 
@@ -240,11 +248,13 @@ class XZoom(QtWidgets.QWidget):
         self.zoom_factor = 1.25
         self.translate_factor = 0.1
 
-    def connect_workers(self, plot):
+    def connect_workers(self, plot, cursor):
         self.button_plus.pressed.connect(lambda: self.zoom_in(plot))
         self.button_minus.pressed.connect(lambda: self.zoom_out(plot))
         self.button_left.pressed.connect(lambda: self.shift_left(plot))
         self.button_right.pressed.connect(lambda: self.shift_right(plot))
+
+        self._cursor = cursor
 
     def disconnect_workers(self):
         try: self.button_plus.pressed.disconnect()
@@ -258,9 +268,11 @@ class XZoom(QtWidgets.QWidget):
 
     def zoom_in(self, plot):
         plot.getViewBox().scaleBy(x=1/self.zoom_factor)
+        self._cursor.relabel()
 
     def zoom_out(self, plot):
         plot.getViewBox().scaleBy(x=self.zoom_factor)
+        self._cursor.relabel()
 
     def compute_translation(self, plot):
         [[xmin, xmax], [ymin, ymax]] = plot.viewRange()
