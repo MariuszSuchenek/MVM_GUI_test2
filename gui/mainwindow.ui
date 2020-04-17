@@ -668,6 +668,7 @@
        </widget>
       </widget>
       <widget class="Toolbar" name="toolbar"/>
+      <widget class="SpecialBar" name="specialbar"/>
       <widget class="Menu" name="menu"/>
       <widget class="FrozenPlotsBottomMenu" name="frozenplots_bottom"/>
       <widget class="SettingsBar" name="settingsbar"/>
@@ -1815,6 +1816,12 @@ Screen</string>
    <class>AlarmsBar</class>
    <extends>QWidget</extends>
    <header>alarms/alarmsbar</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SpecialBar</class>
+   <extends>QWidget</extends>
+   <header>special/special</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

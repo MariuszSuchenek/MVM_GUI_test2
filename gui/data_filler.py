@@ -2,6 +2,7 @@ from PyQt5 import QtGui, QtCore
 import numpy as np
 import pyqtgraph as pg
 from ast import literal_eval # to convert a string to list
+from copy import copy 
 
 class DataFiller():
     '''
@@ -55,7 +56,7 @@ class DataFiller():
         self._plots[name] = plot.plot()
         self._data[name] = np.linspace(0, 0, self._n_samples)
         self._historic_data[name] = np.linspace(0, 0, self._n_historic_samples)
-        self._plots[name].setData(self._xdata, self._data[name])
+        self._plots[name].setData(copy(self._xdata), copy(self._data[name]))
         self._colors[name] = plot_config['color']
         self._looping_data_idx[name] = 0
 
@@ -271,8 +272,8 @@ class DataFiller():
             color = self._colors[name]
             color = color.replace('rgb', '')
             color = literal_eval(color)
-            self._plots[name].setData(self._xdata,
-                                      self._data[name],
+            self._plots[name].setData(copy(self._xdata),
+                                      copy(self._data[name]),
                                       pen=pg.mkPen(color, width=self._config['line_width']))
             self.set_default_x_range(name)
             self.set_y_range(name)

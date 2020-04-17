@@ -13,6 +13,7 @@ from settings.settingsbar import SettingsBar
 from alarms.alarms import Alarms
 from alarms.guialarms import GuiAlarms
 from alarms.alarmsbar import AlarmsBar
+from special.special import SpecialBar
 
 from toolsettings.toolsettings import ToolSettings
 from monitor.monitor import Monitor
@@ -22,6 +23,7 @@ from start_stop_worker import StartStopWorker
 from alarm_handler import AlarmHandler
 from controller_status import ControllerStatus
 from numpad.numpad import NumPad
+from frozenplots.frozenplots import Cursor
 
 import pyqtgraph as pg
 import sys
@@ -70,6 +72,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu            = self.findChild(QtWidgets.QWidget,        "menu")
         self.frozen_bot      = self.findChild(QtWidgets.QWidget,        "frozenplots_bottom")
         self.settingsbar     = self.findChild(QtWidgets.QWidget,        "settingsbar")
+        self.specialbar      = self.findChild(QtWidgets.QWidget,        "specialbar")
         self.blank           = self.findChild(QtWidgets.QWidget,        "blank")
         self.settingsfork    = self.findChild(QtWidgets.QWidget,        "settingsforkbar")
         self.alarmsbar       = self.findChild(QtWidgets.QWidget,        "alarmsbar")
@@ -116,11 +119,9 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.button_back         = self.menu.findChild(QtWidgets.QPushButton, "button_back")
         self.button_settingsfork = self.menu.findChild(QtWidgets.QPushButton, "button_settingsfork")
-        self.button_freeze       = self.menu.findChild(QtWidgets.QPushButton, "button_freeze")
         self.button_startstop    = self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
         self.button_autoassist   = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
-        self.button_inspause     = self.menu.findChild(QtWidgets.QPushButton, "button_inspause")
-        self.button_expause      = self.menu.findChild(QtWidgets.QPushButton, "button_expause")
+        self.button_specialops   = self.menu.findChild(QtWidgets.QPushButton, "button_specialops")
 
         self.button_alarms       = self.settingsfork.findChild(QtWidgets.QPushButton, "button_alarms")
         self.button_settings     = self.settingsfork.findChild(QtWidgets.QPushButton, "button_settings")
@@ -134,6 +135,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_upalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_upalarm")
         self.button_downalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_downalarm")
         self.button_offalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_offalarm")
+
+        self.button_freeze       = self.specialbar.findChild(QtWidgets.QPushButton, "button_freeze")
+        self.button_backspecial  = self.specialbar.findChild(QtWidgets.QPushButton, "button_backspecial")
 
         '''
         Get frozen plots bottom bar widgets and connect
@@ -155,16 +159,24 @@ class MainWindow(QtWidgets.QMainWindow):
 
         This effectively defines navigation from the bottombar.
         '''
-        self.button_back.pressed.connect(self.show_toolbar)
-        self.button_freeze.pressed.connect(self.freeze_plots)
-        self.button_unfreeze.pressed.connect(self.unfreeze_plots)
-        self.button_alarms.pressed.connect(self.goto_alarms)
-        self.button_settingsfork.pressed.connect(self.show_settingsfork)
+        # Toolbar
         self.button_menu.pressed.connect(self.show_menu)
 
+        # Menu
+        self.button_back.pressed.connect(self.show_toolbar)
+        self.button_alarms.pressed.connect(self.goto_alarms)
+        self.button_settingsfork.pressed.connect(self.show_settingsfork)
+        self.button_specialops.pressed.connect(self.show_specialbar)
+
+        # Settings
         self.button_settings.pressed.connect(self.goto_settings)
         self.button_lockscreen.pressed.connect(self.lock_screen)
         self.button_backsettings.pressed.connect(self.show_menu)
+
+        # Special
+        self.button_freeze.pressed.connect(self.freeze_plots)
+        self.button_unfreeze.pressed.connect(self.unfreeze_plots)
+        self.button_backspecial.pressed.connect(self.show_menu)
 
         # Assign unlock screen button and setup state
         self.unlockscreen_interval = self.config['unlockscreen_interval']
@@ -246,8 +258,9 @@ class MainWindow(QtWidgets.QMainWindow):
         active_plots = []
         for slotname in self.plots:
             active_plots.append(self.plots[slotname])
-        self.frozen_bot.connect_workers(self.data_filler, active_plots)
-        self.frozen_right.connect_workers(active_plots)
+        self.cursor = Cursor(active_plots)
+        self.frozen_bot.connect_workers(self.data_filler, active_plots, self.cursor)
+        self.frozen_right.connect_workers(active_plots, self.cursor)
 
         '''
         Instantiate DataHandler, which will start a new
@@ -258,7 +271,8 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self._data_h = DataHandler(config, self.esp32, self.data_filler, self.gui_alarm)
 
-        self.menu.connect_datahandler_config(self._data_h, self.config)
+        self.specialbar.connect_datahandler_config_esp32(self._data_h,
+                self.config, self.esp32)
 
         '''
         Connect settings button to Settings overlay.
@@ -371,6 +385,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_settingsbar(self):
         self.bottombar.setCurrentWidget(self.settingsbar)
 
+    def show_specialbar(self):
+        self.bottombar.setCurrentWidget(self.specialbar)
+
     def show_main(self):
         self.toppane.setCurrentWidget(self.main)
 
@@ -395,5 +412,5 @@ class MainWindow(QtWidgets.QMainWindow):
     def unfreeze_plots(self):
         self.data_filler.unfreeze()
         self.rightbar.setCurrentWidget(self.monitors_bar)
-        self.show_menu()
+        self.show_specialbar()
 

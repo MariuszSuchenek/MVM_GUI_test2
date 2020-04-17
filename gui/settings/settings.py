@@ -40,6 +40,9 @@ class Settings(QtWidgets.QMainWindow):
             'support_pressure':  self.spinBox_support_pressure,
             'minimal_resp_rate': self.spinBox_min_resp_rate,
             'enable_backup':     self.toggle_enable_backup,
+            # Lung recruit
+            'lung_recruit_pres': self.spinBox_lr_p,
+            'lung_recruit_time': self.spinBox_lr_t,
         }
 
         self._all_fakebtn = {
@@ -52,6 +55,9 @@ class Settings(QtWidgets.QMainWindow):
             'flow_trigger':      self.fake_btn_flow_trig,
             'support_pressure':  self.fake_btn_support_pressure,
             'minimal_resp_rate': self.fake_btn_min_resp_rate,
+            # Lung recruit
+            'lung_recruit_pres': self.fake_btn_lr_p,
+            'lung_recruit_time': self.fake_btn_lr_t
         }
 
         self.toolsettings_lookup = None
@@ -149,6 +155,12 @@ class Settings(QtWidgets.QMainWindow):
         self._all_fakebtn['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
         self._all_fakebtn['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
         self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
+
+        # Lung recruitment
+        self._all_fakebtn['lung_recruit_pres'].clicked.connect(lambda:
+                self.spawn_presets_window('lung_recruit_pres'))
+        self._all_fakebtn['lung_recruit_time'].clicked.connect(lambda:
+                self.spawn_presets_window('lung_recruit_time'))
 
         for param, btn in self._all_spinboxes.items():
             if param == 'enable_backup':
@@ -282,9 +294,9 @@ class Settings(QtWidgets.QMainWindow):
 
             if 'conversion' in self._config[param]:
                 value = value * self._config[param]['conversion']
-                if self._debug: print('Converting value for', param, 
+                if self._debug: print('Converting value for', param,
                     'from', value/self._config[param].get('conversion', 1.), 'to', value)
-                
+
             if self._debug: print('Setting value of', param, ':', value)
 
             # Update the value in the config file

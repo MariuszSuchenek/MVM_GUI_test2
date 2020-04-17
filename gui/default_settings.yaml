@@ -58,6 +58,8 @@ esp_settable_param:
     support_pressure:  'pressure_support'
     enable_backup:     'backup_enable'
     minimal_resp_rate: 'backup_min_rate'
+    lung_recruit_pres: 'pause_lg_p'
+    lung_recruit_time: 'pause_lg_time'
 
 
 # This is the string returned by the ESP in case of success
@@ -141,7 +143,7 @@ monitors:
         observable: total_inspired_volume
 
     volume_minute: 
-        name: "v<sub>rate</sub>"
+        name: "Flow"
         init: 100
         step: 1
         dec_precision: 0
@@ -190,11 +192,11 @@ monitors:
         observable: battery_powered
 
     flow: 
-        name: "MVe"
+        name: "Flow"
         init: 10
         step: 1
         dec_precision: 0
-        units: "(slpm)"
+        units: "(litres/minute)"
         color: "rgb(0,255,255)"
         alarmcolor: "red"
         observable: flow
@@ -298,6 +300,22 @@ alarms:
         observable: battery_charge
         linked_monitor: battery_charge
 
+    peak:
+      min: 5
+      max: 70
+      under_threshold_code: 1
+      over_threshold_code: 1
+      observable: peak
+      linked_monitor: peak
+
+    vrate:
+      min: 2
+      max: 40
+      under_threshold_code: 1
+      over_threshold_code: 1
+      observable: volume_minute
+      linked_monitor: volume_minute
+
 plots:
     plot_top: 
         name: "Insp. Press."
@@ -316,14 +334,14 @@ plots:
         observable: tidal
 
     plot_bot: 
-        name: "MVe"
+        name: "Flow"
         min: 2 
         max: 20
-        units: "(slpm)"
+        units: "(litres/minute)"
         color: "rgb(0,255,255)"
         observable: flow
 #
-# Automatic Mode
+# PCV Mode
 #
 # Note: can only have max 6 presets for now.
 
@@ -367,6 +385,7 @@ insp_pressure:
     default:  15
     min: 2
     max: 40
+    step: 1
     current: None
     units: "(cmH<sub>2</sub>O)"
     conversion: 0.980665 # From cmH2O to mbar
@@ -406,6 +425,7 @@ pressure_trigger:
     default: 1.
     min: 0.
     max: 10.
+    step: 1
     current: None
     presets:
         - [8, 'Hard']
@@ -420,6 +440,7 @@ flow_trigger:
     default: 30.
     min: 0.
     max: 50.
+    step: 1
     current: None
     presets:
         - [10, '']
@@ -435,6 +456,7 @@ support_pressure:
     default: 10.
     min: 2.
     max: 40.
+    step: 1
     current: None
     units: "(cmH<sub>2</sub>O)"
     conversion: 0.980665 # From cmH2O to mbar
@@ -466,6 +488,7 @@ minimal_resp_rate:
     default: 10.
     min: 0.
     max: 60.
+    step: 1
     current: None
     presets:
         - [3, '']
@@ -481,3 +504,27 @@ enable_backup:
   presets:
     - [1, "Enabled"]
     - [0, "Disabled"]
+
+# Lung rectruitment
+lung_recruit_pres:
+  default: 20
+  min: 0
+  max: 40
+  step: 1
+  current: 20
+  conversion: 0.980665 # From cmH2O to mbar
+  presets:
+    - [0, 'None']
+    - [20, 'default']
+    - [40, 'max']
+
+lung_recruit_time:
+  default: 10
+  min: 1
+  max: 20
+  step: 1
+  current: 10
+  presets:
+    - [1, 'min']
+    - [10, 'default']
+    - [20, 'max']
