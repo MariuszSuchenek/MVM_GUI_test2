@@ -93,6 +93,19 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
             vb = plot.getViewBox()
             if plot.sceneBoundingRect().contains(pos):
                 mousePoint = vb.mapSceneToView(pos)
+
+                # # Find the position of the label
+                # br = self._x_label.boundingRect()
+
+                # p = QtCore.QPointF(0, 0)
+                # axis = plot.getAxis('bottom')
+
+                # x = plot.size().width()/2. - br.width()/2.
+                # y = plot.size().height() - br.height()
+                # p.setX(x) # Leave it on the left, so it doesn't cover labels.
+                # p.setY(y)
+                # self._x_label.setPos(p)
+                # plot.getAxis('bottom').scene().addItem(self._x_label)
                 
                 # Get the x and y data from the plot
                 data_x = self.plot_data_items[num].xData
@@ -111,7 +124,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
 
                     # Set the cursor label
                     self.cursor_label[num].setText("{:.2f}".format(y))
-                    self.cursor_label[num].setPos(-10.4, y)
+                    self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], y)
 
 
     def disconnect_workers(self):
