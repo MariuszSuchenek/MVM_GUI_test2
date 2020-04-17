@@ -53,8 +53,30 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
                 if isinstance(item, PlotDataItem):
                     self.plot_data_items[num] = item
 
+        self.hide_cursors()
+
+    def show_cursors(self):
+
+        for c in self.cursor_x:     c.setVisible(True)
+        for c in self.cursor_y:     c.setVisible(True)
+        for c in self.cursor_label: c.setVisible(True)
+
+    def hide_cursors(self):
+
+        for c in self.cursor_x:     c.setVisible(False)
+        for c in self.cursor_y:     c.setVisible(False)
+        for c in self.cursor_label: c.setVisible(False)
+
+
 
     def update_cursor(self, evt):
+
+        if not self.isVisible():
+            self.hide_cursors()
+            return
+        else:
+            self.show_cursors()
+
         pos = evt[0]
         for num, plot in enumerate(self.plots):
             vb = plot.getViewBox()
@@ -75,6 +97,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
 
             self.cursor_label[num].setText("{:.2f}".format(y))
             self.cursor_label[num].setPos(-10.4, y)
+
 
     def disconnect_workers(self):
         try: self.button_reset_zoom.pressed.disconnect()
