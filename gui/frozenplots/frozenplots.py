@@ -29,6 +29,8 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         # X axes are linked, so only need to manipulate 1 plot
         self.xzoom.connect_workers(plots[0].getPlotItem())
 
+        self.plots = plots
+
         for num, plot in enumerate(plots):
             self.cursor[num] = InfiniteLine(angle=90, movable=False)
             plot.addItem(self.cursor[num], ignoreBounds=True)
