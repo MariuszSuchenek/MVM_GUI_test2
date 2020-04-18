@@ -147,7 +147,7 @@ monitors:
         init: 100
         step: 1
         dec_precision: 0
-        units: "(litres/min)"
+        units: "[slpm]"
         color: "rgb(50,205,50)"
         alarmcolor: "red"
         observable: volume_minute
@@ -196,7 +196,7 @@ monitors:
         init: 10
         step: 1
         dec_precision: 0
-        units: "(litres/minute)"
+        units: "[slpm]"
         color: "rgb(0,255,255)"
         alarmcolor: "red"
         observable: flow
@@ -337,7 +337,7 @@ plots:
         name: "Flow"
         min: 2 
         max: 20
-        units: "(litres/minute)"
+        units: "[slpm]"
         color: "rgb(0,255,255)"
         observable: flow
 #
