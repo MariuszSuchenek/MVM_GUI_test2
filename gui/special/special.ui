@@ -572,7 +572,7 @@ Pause</string>
       </font>
      </property>
      <property name="text">
-      <string>Lung
+       <string>Lung
 Recruitment</string>
      </property>
     </widget>

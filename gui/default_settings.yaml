@@ -143,7 +143,7 @@ monitors:
         observable: total_inspired_volume
 
     volume_minute: 
-        name: "Flow"
+        name: "V<sub>E</sub>"
         init: 100
         step: 1
         dec_precision: 0
@@ -153,9 +153,10 @@ monitors:
         observable: volume_minute
 
     beats_per_minute: 
-        name: "BPM"
+        name: "Measured Resp.Rate"
         init: 60
         step: 1
+        units: "[bpm]"
         dec_precision: 0
         color: "rgb(255,255,255)"
         alarmcolor: "red"
@@ -195,15 +196,15 @@ monitors:
         alarmcolor: "red"
         observable: battery_powered
 
-    flow: 
-        name: "Flow"
-        init: 10
-        step: 1
-        dec_precision: 0
-        units: "[slpm]"
-        color: "rgb(0,255,255)"
-        alarmcolor: "red"
-        observable: flow
+    #flow: 
+    #    name: "Flow"
+    #    init: 10
+    #    step: 1
+    #    dec_precision: 0
+    #    units: "[slpm]"
+    #    color: "rgb(255,255,255)"
+    #    alarmcolor: "red"
+    #    observable: flow
 
     oxygen_concentration: 
         name: "FiO<sub>2</sub>" 
@@ -226,7 +227,7 @@ monitors:
         observable: temperature
 
     peak: 
-        name: "IPAP" 
+        name: "Peak Pinsp" 
         init: 40
         step: 1
         dec_precision: 0
@@ -237,6 +238,8 @@ monitors:
 
 displayed_monitors:
     - battery_charge
+    - battery_powered
+    - beats_per_minute
     - peak
     - peep
     - total_inspired_volume
@@ -264,13 +267,13 @@ alarms:
         observable: pressure
         linked_monitor: inspiratory_pressure
 
-    flow:
-        min: -300
-        max: 300
-        under_threshold_code: 1024
-        over_threshold_code: 2048
-        observable: flow
-        linked_monitor: flow
+    #flow:
+    #    min: -300
+    #    max: 300
+    #    under_threshold_code: 1024
+    #    over_threshold_code: 2048
+    #    observable: flow
+    #    linked_monitor: flow
 
     tidal_volume:
         min: -10
@@ -322,7 +325,7 @@ alarms:
 
 plots:
     plot_top: 
-        name: "IP"
+        name: "Pinsp"
         min: 10
         max: 80
         units: "[cmH<sub>2</sub>O]"
