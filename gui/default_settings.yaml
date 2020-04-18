@@ -217,7 +217,7 @@ monitors:
         init: 40
         step: 1
         dec_precision: 0
-        units: "[C]"
+        units: "[°C]"
         color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: temperature
