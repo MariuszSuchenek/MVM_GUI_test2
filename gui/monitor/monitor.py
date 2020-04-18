@@ -26,6 +26,7 @@ class Monitor(QtWidgets.QWidget):
                 "init": 50,
                 "units": None,
                 "step": 1,
+                "map": {},
                 "dec_precision": 0,
                 "color": "white",
                 "alarmcolor": "red",
@@ -41,6 +42,7 @@ class Monitor(QtWidgets.QWidget):
         self.color = entry.get("color", monitor_default["color"])
         self.alarmcolor = entry.get("alarmcolor", monitor_default["alarmcolor"])
         self.step = entry.get("step", monitor_default["step"])
+        self.map = entry.get("map", monitor_default["map"])
         self.observable = entry.get("observable", monitor_default["observable"])
         self.disp_type = entry.get("disp_type", monitor_default["disp_type"])
         self.gui_alarm = None
@@ -72,7 +74,7 @@ class Monitor(QtWidgets.QWidget):
         # TODO: determine is stats are useful/necessary
 
     def setup_bar_disp_type(self):
-        (text, low, high) = self.disp_type.split(" ") 
+        (text, low, high) = self.disp_type.split(" ")
         self.shown_widget = self.findChild(QtWidgets.QWidget, "progress_bar")
         self.shown_widget.setStyleSheet(
                 "QProgressBar {"
@@ -90,7 +92,7 @@ class Monitor(QtWidgets.QWidget):
 
     def name(self):
         '''
-        Returns the configuration name 
+        Returns the configuration name
         for this monitor
         '''
         return self.configname
@@ -148,7 +150,7 @@ class Monitor(QtWidgets.QWidget):
             color = self.alarmcolor
         else:
             color = QtGui.QColor("#000000")
-            if self.gui_alarm is not None: 
+            if self.gui_alarm is not None:
                 self.gui_alarm.clear_alarm(self.configname)
         palette = self.palette()
         role = self.backgroundRole()
@@ -166,7 +168,12 @@ class Monitor(QtWidgets.QWidget):
             self.value = round(value / self.step) * self.step
         else:
             self.value = value;
-        self.label_value.setText("%.*f" % (self.dec_precision, self.value))
+        string_value = "%.*f" % (self.dec_precision, value)
+
+        if self.map != {}:
+            string_value = self.map.get(value, string_value)
+
+        self.label_value.setText(string_value)
         self.bar_value.setValue(self.value)
 
 
