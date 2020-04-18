@@ -172,7 +172,7 @@ monitors:
         observable: peep
 
     battery_charge: 
-        name: "Battery %"
+        name: "Battery [%]"
         init: 100 
         step: 1
         units: null
