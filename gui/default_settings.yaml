@@ -183,9 +183,12 @@ monitors:
         disp_type: "bar 0 100"
 
     battery_powered: 
-        name: "Battery Power"
+        name: "Power source"
         init: 100 
         step: 1
+        map:
+          0: "AC"
+          1: "Battery"
         units: null
         dec_precision: 0
         color: "rgb(255,255,255)"
