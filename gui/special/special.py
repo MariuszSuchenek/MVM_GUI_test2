@@ -20,6 +20,7 @@ class SpecialBar(QtWidgets.QWidget):
         self.button_inspause.released.connect(lambda: self.paused_released('pause_inhale'))
         self.button_lung_recruit.pressed.connect(self.toggle_lung_recruit)
         self._lung_recruit = False
+        self._timer = {}
 
     def connect_datahandler_config_esp32(self, data_h, config, esp32):
         '''
@@ -71,9 +72,9 @@ class SpecialBar(QtWidgets.QWidget):
             raise Exception('Can only call paused_pressed with pause_exhale or pause_inhale.')
 
 
-        self._timer = QtCore.QTimer(self)
-        self._timer.timeout.connect(lambda: self.send_signal(mode=mode, pause=True))
-        self._timer.start(self._config['expinsp_setinterval'] * 1000)
+        self._timer[mode] = QtCore.QTimer(self)
+        self._timer[mode].timeout.connect(lambda: self.send_signal(mode=mode, pause=True))
+        self._timer[mode].start(self._config['expinsp_setinterval'] * 1000)
 
 
     def paused_released(self, mode):
@@ -86,7 +87,7 @@ class SpecialBar(QtWidgets.QWidget):
         if mode not in ['pause_exhale', 'pause_inhale']:
             raise Exception('Can only call paused_pressed with pause_exhale or pause_inhale.')
 
-        self.stop_timer()
+        self.stop_timer(mode)
 
         self.send_signal(mode=mode, pause=False)
 
@@ -105,15 +106,15 @@ class SpecialBar(QtWidgets.QWidget):
                               "Severe hardware communication error",
                               str(error),
                               "Communication error",
-                              { msg.Ok: lambda: self.stop_timer() })
+                              { msg.Ok: lambda: self.stop_timer(mode) })
             fn()
 
-    def stop_timer(self):
+    def stop_timer(self, mode):
         '''
         Stops the QTimer which sends
         signals to the ESP
         '''
         if hasattr(self, '_timer'):
-            self._timer.stop()
+            self._timer[mode].stop()
 
 
