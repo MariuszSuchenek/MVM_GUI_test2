@@ -118,7 +118,7 @@ QTabBar::tab:!selected {
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>PCV Settings</string>
+        <string>PCV</string>
        </attribute>
        <widget class="QLabel" name="label">
         <property name="geometry">
@@ -609,7 +609,7 @@ QTabBar::tab:!selected {
         </font>
        </property>
        <attribute name="title">
-        <string>Assisted Mode Settings</string>
+        <string>PSV</string>
        </attribute>
        <widget class="QLabel" name="label_6">
         <property name="geometry">
@@ -1304,7 +1304,7 @@ QTabBar::tab:!selected {
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
-        <string>Lung Rectruitment</string>
+        <string>Lung Recruitment</string>
        </attribute>
        <widget class="QLabel" name="label_5">
         <property name="geometry">
