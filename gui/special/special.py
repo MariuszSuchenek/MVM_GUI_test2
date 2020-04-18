@@ -39,19 +39,29 @@ class SpecialBar(QtWidgets.QWidget):
             self.toggle_lung_recruit()
             self._lung_recruit_timer.stop()
         else:
-            self.button_lung_recruit.setText("Stop\nLung recruit\n%d" % int(eta))
+            self.button_lung_recruit.setText("Stop\nLung Recruitment\n%d" % int(eta))
 
     def toggle_lung_recruit(self):
         if self._lung_recruit:
             self._lung_recruit = False
             self._esp32.set("pause_lg", 0)
             self._lung_recruit_timer.stop()
-            self.button_lung_recruit.setText("Lung recruit")
+            self.button_lung_recruit.setText("Lung\nRecruitment")
         else:
+            msg = MessageBox()
+            fn = msg.question("Please confirm",
+                              "Do you want to start the Lung Recruitment procedure?",
+                              None,
+                              "Confirmation required",
+                              {msg.Yes: lambda: True, msg.No: lambda: False})
+            answer = fn()
+            if not answer:
+                return
+
             self._lung_recruit = True
             lr_time = self._config["lung_recruit_time"]["current"]
             lr_pres = self._config["lung_recruit_pres"]["current"]
-            self.button_lung_recruit.setText("Stop\nLung recruit\n %d" % lr_time)
+            self.button_lung_recruit.setText("Stop\nLung Recruitment\n %d" % lr_time)
 
             self._esp32.set("pause_lg_p", lr_pres)
             self._esp32.set("pause_lg_time", lr_time)
