@@ -71,6 +71,8 @@ class SpecialBar(QtWidgets.QWidget):
         if mode not in ['pause_exhale', 'pause_inhale']:
             raise Exception('Can only call paused_pressed with pause_exhale or pause_inhale.')
 
+        for other_pause in self._timer:
+            self.paused_released(other_pause)
 
         self._timer[mode] = QtCore.QTimer(self)
         self._timer[mode].timeout.connect(lambda: self.send_signal(mode=mode, pause=True))
