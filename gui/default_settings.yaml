@@ -165,6 +165,7 @@ monitors:
         name: "PEEP"
         init: 60
         step: 1
+        units: "[cmH<sub>2</sub>O]"
         dec_precision: 0
         color: "rgb(0,255,255)"
         alarmcolor: "red"
