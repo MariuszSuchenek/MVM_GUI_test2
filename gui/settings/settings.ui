@@ -124,9 +124,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>20</y>
-          <width>341</width>
-          <height>50</height>
+          <y>0</y>
+          <width>340</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="font">
@@ -145,9 +145,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>110</y>
-          <width>341</width>
-          <height>50</height>
+          <y>70</y>
+          <width>340</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="font">
@@ -167,8 +167,8 @@ QTabBar::tab:!selected {
          <rect>
           <x>360</x>
           <y>0</y>
-          <width>401</width>
-          <height>80</height>
+          <width>400</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="font">
@@ -190,9 +190,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>360</x>
-          <y>90</y>
-          <width>401</width>
-          <height>80</height>
+          <y>70</y>
+          <width>400</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="font">
@@ -220,8 +220,8 @@ QTabBar::tab:!selected {
          <rect>
           <x>440</x>
           <y>0</y>
-          <width>241</width>
-          <height>81</height>
+          <width>240</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="palette">
@@ -334,9 +334,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>440</x>
-          <y>90</y>
-          <width>241</width>
-          <height>81</height>
+          <y>70</y>
+          <width>240</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="palette">
@@ -449,9 +449,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>200</y>
-          <width>341</width>
-          <height>50</height>
+          <y>139</y>
+          <width>340</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="font">
@@ -470,9 +470,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>360</x>
-          <y>180</y>
-          <width>401</width>
-          <height>80</height>
+          <y>140</y>
+          <width>400</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="font">
@@ -499,9 +499,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>440</x>
-          <y>180</y>
-          <width>241</width>
-          <height>81</height>
+          <y>140</y>
+          <width>240</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="palette">
@@ -623,10 +623,10 @@ QTabBar::tab:!selected {
        <widget class="QLabel" name="label_6">
         <property name="geometry">
          <rect>
-          <x>9</x>
-          <y>10</y>
-          <width>341</width>
-          <height>40</height>
+          <x>10</x>
+          <y>0</y>
+          <width>340</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="font">
@@ -645,7 +645,7 @@ QTabBar::tab:!selected {
          <rect>
           <x>10</x>
           <y>80</y>
-          <width>341</width>
+          <width>340</width>
           <height>40</height>
          </rect>
         </property>
@@ -665,7 +665,7 @@ QTabBar::tab:!selected {
          <rect>
           <x>360</x>
           <y>0</y>
-          <width>401</width>
+          <width>400</width>
           <height>60</height>
          </rect>
         </property>
@@ -686,7 +686,7 @@ QTabBar::tab:!selected {
          <rect>
           <x>360</x>
           <y>70</y>
-          <width>401</width>
+          <width>400</width>
           <height>60</height>
          </rect>
         </property>
@@ -720,7 +720,7 @@ QTabBar::tab:!selected {
          <rect>
           <x>440</x>
           <y>0</y>
-          <width>241</width>
+          <width>240</width>
           <height>60</height>
          </rect>
         </property>
@@ -835,7 +835,7 @@ QTabBar::tab:!selected {
          <rect>
           <x>440</x>
           <y>70</y>
-          <width>241</width>
+          <width>240</width>
           <height>60</height>
          </rect>
         </property>
@@ -950,7 +950,7 @@ QTabBar::tab:!selected {
          <rect>
           <x>360</x>
           <y>140</y>
-          <width>401</width>
+          <width>400</width>
           <height>60</height>
          </rect>
         </property>
@@ -971,7 +971,7 @@ QTabBar::tab:!selected {
          <rect>
           <x>440</x>
           <y>140</y>
-          <width>241</width>
+          <width>240</width>
           <height>60</height>
          </rect>
         </property>
@@ -1085,9 +1085,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>150</y>
-          <width>341</width>
-          <height>40</height>
+          <y>140</y>
+          <width>340</width>
+          <height>60</height>
          </rect>
         </property>
         <property name="font">
@@ -1130,7 +1130,7 @@ border: 2px solid gray;
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>161</width>
+           <width>160</width>
            <height>40</height>
           </rect>
          </property>
@@ -1153,7 +1153,7 @@ border: 2px solid gray;
           <rect>
            <x>190</x>
            <y>40</y>
-           <width>261</width>
+           <width>260</width>
            <height>71</height>
           </rect>
          </property>
@@ -1173,7 +1173,7 @@ border: 2px solid gray;
           <rect>
            <x>460</x>
            <y>40</y>
-           <width>311</width>
+           <width>310</width>
            <height>60</height>
           </rect>
          </property>
@@ -1203,7 +1203,7 @@ border: 2px solid gray;
           <rect>
            <x>540</x>
            <y>40</y>
-           <width>151</width>
+           <width>150</width>
            <height>60</height>
           </rect>
          </property>
@@ -1345,8 +1345,8 @@ border: 2px solid gray;
          <rect>
           <x>440</x>
           <y>40</y>
-          <width>231</width>
-          <height>51</height>
+          <width>230</width>
+          <height>50</height>
          </rect>
         </property>
         <property name="palette">
@@ -1460,7 +1460,7 @@ border: 2px solid gray;
          <rect>
           <x>20</x>
           <y>120</y>
-          <width>231</width>
+          <width>230</width>
           <height>50</height>
          </rect>
         </property>
@@ -1481,8 +1481,8 @@ border: 2px solid gray;
          <rect>
           <x>440</x>
           <y>120</y>
-          <width>241</width>
-          <height>51</height>
+          <width>240</width>
+          <height>50</height>
          </rect>
         </property>
         <property name="palette">
@@ -1596,8 +1596,8 @@ border: 2px solid gray;
          <rect>
           <x>360</x>
           <y>120</y>
-          <width>401</width>
-          <height>51</height>
+          <width>400</width>
+          <height>50</height>
          </rect>
         </property>
         <property name="font">
@@ -1644,7 +1644,7 @@ border: 2px solid gray;
           <rect>
            <x>10</x>
            <y>40</y>
-           <width>331</width>
+           <width>330</width>
            <height>50</height>
           </rect>
          </property>
@@ -1665,8 +1665,8 @@ border: 2px solid gray;
           <rect>
            <x>350</x>
            <y>40</y>
-           <width>401</width>
-           <height>51</height>
+           <width>400</width>
+           <height>50</height>
           </rect>
          </property>
          <property name="font">
