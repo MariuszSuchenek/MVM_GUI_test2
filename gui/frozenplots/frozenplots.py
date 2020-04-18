@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui, QtCore
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 import numpy as np
+import os
 
 class Cursor:
     '''

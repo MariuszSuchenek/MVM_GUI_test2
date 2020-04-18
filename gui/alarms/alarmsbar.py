@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
+import os
 
 class AlarmsBar(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -10,5 +11,5 @@ class AlarmsBar(QtWidgets.QWidget):
         Grabs child widgets.
         """
         super(AlarmsBar, self).__init__(*args)
-        uic.loadUi("alarms/alarmsbar.ui", self)
+        uic.loadUi(os.environ['MVMGUI']+"alarms/alarmsbar.ui", self)
 

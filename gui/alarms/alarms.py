@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui, QtCore
+import os
 
 def clickable(widget):
     class Filter(QtCore.QObject):
@@ -25,7 +26,7 @@ class Alarms(QtWidgets.QWidget):
         Grabs child widgets.
         """
         super(Alarms, self).__init__(*args)
-        uic.loadUi("alarms/alarms.ui", self)
+        uic.loadUi(os.environ['MVMGUI']+"alarms/alarms.ui", self)
 
         self.layout          = self.findChild(QtWidgets.QGridLayout, "monitors_layout")
         self.label_alarmname = self.findChild(QtWidgets.QLabel,      "label_alarmname")

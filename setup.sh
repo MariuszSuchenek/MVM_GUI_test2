@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MVMGUI_BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export MVMGUI_BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export MVMGUI="${MVMGUI_BASEDIR}/gui/"
 
 # Test numpy

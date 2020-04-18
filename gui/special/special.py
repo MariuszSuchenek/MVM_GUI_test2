@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui, QtCore
 from messagebox import MessageBox
+import os
 
 class SpecialBar(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -11,7 +12,7 @@ class SpecialBar(QtWidgets.QWidget):
         Provides a passthrough to underlying widgets.
         """
         super(SpecialBar, self).__init__(*args)
-        uic.loadUi("special/special.ui", self)
+        uic.loadUi(os.environ['MVMGUI']+"special/special.ui", self)
 
         self.button_expause.pressed.connect(lambda: self.paused_pressed('pause_exhale'))
         self.button_expause.released.connect(lambda: self.paused_released('pause_exhale'))

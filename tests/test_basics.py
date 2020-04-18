@@ -29,10 +29,12 @@ def test_menu(qtbot):
 
     assert qt_api.QApplication.instance() is not None
 
+    esp32 = FakeESP32Serial(config)
+
     window = MainWindow(config, esp32)
     qtbot.addWidget(window)
     qtbot.mouseClick(window.button_menu, QtCore.Qt.LeftButton)
-    assert window.bottombar.currentIndex() == 1
+    assert window.bottombar.currentWidget() == window.menu
 
 
 
