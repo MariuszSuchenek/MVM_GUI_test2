@@ -663,9 +663,9 @@ QTabBar::tab:!selected {
        <widget class="QDoubleSpinBox" name="spinBox_pressure_trigger">
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>360</x>
           <y>0</y>
-          <width>501</width>
+          <width>401</width>
           <height>60</height>
          </rect>
         </property>
@@ -684,9 +684,9 @@ QTabBar::tab:!selected {
        <widget class="QDoubleSpinBox" name="spinBox_flow_trigger">
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>360</x>
           <y>70</y>
-          <width>501</width>
+          <width>401</width>
           <height>60</height>
          </rect>
         </property>
@@ -718,9 +718,9 @@ QTabBar::tab:!selected {
        <widget class="QPushButton" name="fake_btn_pr_trigger">
         <property name="geometry">
          <rect>
-          <x>340</x>
+          <x>440</x>
           <y>0</y>
-          <width>341</width>
+          <width>241</width>
           <height>60</height>
          </rect>
         </property>
@@ -833,9 +833,9 @@ QTabBar::tab:!selected {
        <widget class="QPushButton" name="fake_btn_flow_trig">
         <property name="geometry">
          <rect>
-          <x>340</x>
+          <x>440</x>
           <y>70</y>
-          <width>341</width>
+          <width>241</width>
           <height>60</height>
          </rect>
         </property>
@@ -948,9 +948,9 @@ QTabBar::tab:!selected {
        <widget class="QDoubleSpinBox" name="spinBox_support_pressure">
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>360</x>
           <y>140</y>
-          <width>501</width>
+          <width>401</width>
           <height>60</height>
          </rect>
         </property>
@@ -969,9 +969,9 @@ QTabBar::tab:!selected {
        <widget class="QPushButton" name="fake_btn_support_pressure">
         <property name="geometry">
          <rect>
-          <x>340</x>
+          <x>440</x>
           <y>140</y>
-          <width>341</width>
+          <width>241</width>
           <height>60</height>
          </rect>
         </property>
@@ -1364,9 +1364,9 @@ border: 2px solid gray;
        <widget class="QDoubleSpinBox" name="spinBox_lr_t">
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>360</x>
           <y>0</y>
-          <width>511</width>
+          <width>401</width>
           <height>80</height>
          </rect>
         </property>
@@ -1388,9 +1388,9 @@ border: 2px solid gray;
        <widget class="QPushButton" name="fake_btn_lr_t">
         <property name="geometry">
          <rect>
-          <x>330</x>
+          <x>440</x>
           <y>0</y>
-          <width>351</width>
+          <width>231</width>
           <height>81</height>
          </rect>
         </property>
@@ -1524,9 +1524,9 @@ border: 2px solid gray;
        <widget class="QPushButton" name="fake_btn_lr_p">
         <property name="geometry">
          <rect>
-          <x>340</x>
+          <x>440</x>
           <y>100</y>
-          <width>351</width>
+          <width>241</width>
           <height>81</height>
          </rect>
         </property>
@@ -1639,9 +1639,9 @@ border: 2px solid gray;
        <widget class="QDoubleSpinBox" name="spinBox_lr_p">
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>360</x>
           <y>100</y>
-          <width>511</width>
+          <width>401</width>
           <height>80</height>
          </rect>
         </property>
