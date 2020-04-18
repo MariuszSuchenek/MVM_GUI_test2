@@ -81,6 +81,7 @@ class AlarmHandler:
                              { self._msg_err.Ignore: lambda:
                                  self.ok_worker('alarm', esp32alarm) },
                              do_not_block=True)
+                self._msg_err.move(0, 100)
                 self._msg_err.open()
             else:
                 # If the window is already opened, just change the text
@@ -105,6 +106,7 @@ class AlarmHandler:
                              { self._msg_war.Ok: lambda:
                                  self.ok_worker('warning', esp32warning) },
                              do_not_block=True)
+                self._msg_war.move(0, 300)
                 self._msg_war.open()
             else:
                 # If the window is already opened, just change the text

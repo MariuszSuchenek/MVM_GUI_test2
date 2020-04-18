@@ -57,7 +57,7 @@ class StartStopWorker():
             result = self.esp32.set('mode', self.MODE_ASSIST)
 
             if result:
-                self.mode_text = "Assisted"
+                self.mode_text = "PSV"
                 self.button_autoassist.setText("Set\nPCV")
                 self.update_startstop_text()
                 self.mode = self.MODE_ASSIST
@@ -69,7 +69,7 @@ class StartStopWorker():
 
             if result:
                 self.mode_text = "PCV"
-                self.button_autoassist.setText("Set\nAssisted")
+                self.button_autoassist.setText("Set\nPSV")
                 self.update_startstop_text()
                 self.mode = self.MODE_AUTO
             else:

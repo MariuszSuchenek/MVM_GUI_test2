@@ -127,7 +127,7 @@ monitors:
         init: 30
         step: 1
         dec_precision: 0
-        units: "(cmH<sub>2</sub>O)"
+        units: "[cmH<sub>2</sub>O]"
         color: "rgb(255,255,0)"
         alarmcolor: "red"
         observable: pressure
@@ -137,7 +137,7 @@ monitors:
         init: 100
         step: 1
         dec_precision: 0
-        units: "(ml)"
+        units: "[ml]"
         color: "rgb(50,205,50)"
         alarmcolor: "red"
         observable: total_inspired_volume
@@ -147,7 +147,7 @@ monitors:
         init: 100
         step: 1
         dec_precision: 0
-        units: "(litres/min)"
+        units: "[slpm]"
         color: "rgb(50,205,50)"
         alarmcolor: "red"
         observable: volume_minute
@@ -165,16 +165,17 @@ monitors:
         name: "PEEP"
         init: 60
         step: 1
+        units: "[cmH<sub>2</sub>O]"
         dec_precision: 0
         color: "rgb(0,255,255)"
         alarmcolor: "red"
         observable: peep
 
     battery_charge: 
-        name: "Battery"
+        name: "Battery %"
         init: 100 
         step: 1
-        units: "%"
+        units: null
         dec_precision: 0
         color: "rgb(255,255,255)"
         alarmcolor: "red"
@@ -196,17 +197,17 @@ monitors:
         init: 10
         step: 1
         dec_precision: 0
-        units: "(litres/minute)"
+        units: "[slpm]"
         color: "rgb(0,255,255)"
         alarmcolor: "red"
         observable: flow
 
     oxygen_concentration: 
-        name: "O<sub>2</sub> Conc." 
+        name: "FiO<sub>2</sub>" 
         init: 40
         step: 1
         dec_precision: 0
-        units: "(%)"
+        units: "[%]"
         color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: o2
@@ -216,17 +217,17 @@ monitors:
         init: 40
         step: 1
         dec_precision: 0
-        units: "(C)"
+        units: "[°C]"
         color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: temperature
 
     peak: 
-        name: "PEAK" 
+        name: "IPAP" 
         init: 40
         step: 1
         dec_precision: 0
-        units: "(cmH<sub>2</sub>O)"
+        units: "[cmH<sub>2</sub>O]"
         color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: peak
@@ -318,10 +319,10 @@ alarms:
 
 plots:
     plot_top: 
-        name: "Insp. Press."
+        name: "IP"
         min: 10
         max: 80
-        units: "(cmH<sub>2</sub>O)"
+        units: "[cmH<sub>2</sub>O]"
         color: "rgb(255,255,0)"
         observable: pressure
 
@@ -329,7 +330,7 @@ plots:
         name: "v<sub>tidal</sub>"
         min: 50
         max: 1500
-        units: "(ml)"
+        units: "[ml]"
         color: "rgb(50,205,50)"
         observable: tidal
 
@@ -337,7 +338,7 @@ plots:
         name: "Flow"
         min: 2 
         max: 20
-        units: "(litres/minute)"
+        units: "[slpm]"
         color: "rgb(0,255,255)"
         observable: flow
 #
@@ -387,7 +388,7 @@ insp_pressure:
     max: 40
     step: 1
     current: None
-    units: "(cmH<sub>2</sub>O)"
+    units: "[cmH<sub>2</sub>O]"
     conversion: 0.980665 # From cmH2O to mbar
     presets:
         - [5, '']
@@ -415,7 +416,7 @@ insp_pressure:
 
 
 #
-# Assisted Mode
+# PSV Mode
 #
 # Note: can only have max 6 presets for now.
 
@@ -458,7 +459,7 @@ support_pressure:
     max: 40.
     step: 1
     current: None
-    units: "(cmH<sub>2</sub>O)"
+    units: "[cmH<sub>2</sub>O]"
     conversion: 0.980665 # From cmH2O to mbar
     presets:
         - [5, '']
@@ -521,10 +522,11 @@ lung_recruit_pres:
 lung_recruit_time:
   default: 10
   min: 1
-  max: 20
+  max: 30
   step: 1
   current: 10
   presets:
     - [1, 'min']
     - [10, 'default']
-    - [20, 'max']
+    - [20, '']
+    - [30, 'max']
