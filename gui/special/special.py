@@ -47,6 +47,16 @@ class SpecialBar(QtWidgets.QWidget):
             self._lung_recruit_timer.stop()
             self.button_lung_recruit.setText("Lung\nRecruitment")
         else:
+            msg = MessageBox()
+            fn = msg.question("Please confirm",
+                              "Do you want to start the Lung Recruitment procedure?",
+                              None,
+                              "Confirmation required",
+                              {msg.Yes: lambda: True, msg.No: lambda: False})
+            answer = fn()
+            if not answer:
+                return
+
             self._lung_recruit = True
             lr_time = self._config["lung_recruit_time"]["current"]
             lr_pres = self._config["lung_recruit_pres"]["current"]
