@@ -318,7 +318,7 @@ alarms:
 
 plots:
     plot_top: 
-        name: "Insp. Press."
+        name: "IP"
         min: 10
         max: 80
         units: "[cmH<sub>2</sub>O]"
