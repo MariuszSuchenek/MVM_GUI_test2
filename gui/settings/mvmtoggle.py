@@ -14,7 +14,10 @@ class MVMToggle(QtWidgets.QPushButton):
 
     def paintEvent(self, event):
         label = "ON" if self.isChecked() else "OFF"
-        bg_color = Qt.green if self.isChecked() else Qt.red
+        if self.isEnabled():
+            bg_color = Qt.green if self.isChecked() else Qt.red
+        else:
+            bg_color = Qt.gray
 
         radius = 18
         width = 60
