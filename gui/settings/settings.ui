@@ -1216,7 +1216,7 @@ border: 2px solid gray;
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apnea Time [s]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
-        <widget class="QDoubleSpinBox" name="spinBox_min_resp_rate">
+        <widget class="QDoubleSpinBox" name="spinBox_max_apnea_time">
          <property name="geometry">
           <rect>
            <x>349</x>
@@ -1246,7 +1246,7 @@ border: 2px solid gray;
           <bool>true</bool>
          </property>
         </widget>
-        <widget class="QPushButton" name="fake_btn_min_resp_rate">
+        <widget class="QPushButton" name="fake_btn_max_apnea_time">
          <property name="geometry">
           <rect>
            <x>430</x>

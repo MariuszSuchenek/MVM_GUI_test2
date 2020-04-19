@@ -38,7 +38,7 @@ class Settings(QtWidgets.QMainWindow):
             'pressure_trigger':  self.spinBox_pressure_trigger,
             'flow_trigger':      self.spinBox_flow_trigger,
             'support_pressure':  self.spinBox_support_pressure,
-            'minimal_resp_rate': self.spinBox_min_resp_rate,
+            'max_apnea_time':    self.spinBox_max_apnea_time,
             'enable_backup':     self.toggle_enable_backup,
             # Lung recruit
             'lung_recruit_pres': self.spinBox_lr_p,
@@ -54,7 +54,7 @@ class Settings(QtWidgets.QMainWindow):
             'pressure_trigger':  self.fake_btn_pr_trigger,
             'flow_trigger':      self.fake_btn_flow_trig,
             'support_pressure':  self.fake_btn_support_pressure,
-            'minimal_resp_rate': self.fake_btn_min_resp_rate,
+            'max_apnea_time':    self.fake_btn_max_apnea_time,
             # Lung recruit
             'lung_recruit_pres': self.fake_btn_lr_p,
             'lung_recruit_time': self.fake_btn_lr_t
@@ -154,7 +154,8 @@ class Settings(QtWidgets.QMainWindow):
         self._all_fakebtn['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
         self._all_fakebtn['flow_trigger'].clicked.connect(lambda: self.spawn_presets_window('flow_trigger'))
         self._all_fakebtn['support_pressure'].clicked.connect(lambda: self.spawn_presets_window('support_pressure'))
-        self._all_fakebtn['minimal_resp_rate'].clicked.connect(lambda: self.spawn_presets_window('minimal_resp_rate'))
+        self._all_fakebtn['max_apnea_time'].clicked.connect(lambda:
+                self.spawn_presets_window('max_apnea_time'))
 
         # Lung recruitment
         self._all_fakebtn['lung_recruit_pres'].clicked.connect(lambda:

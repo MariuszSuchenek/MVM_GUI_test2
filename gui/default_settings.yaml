@@ -57,7 +57,7 @@ esp_settable_param:
     flow_trigger:      'assist_flow_min'
     support_pressure:  'pressure_support'
     enable_backup:     'backup_enable'
-    minimal_resp_rate: 'backup_min_rate'
+    max_apnea_time:    'backup_min_time'
     lung_recruit_pres: 'pause_lg_p'
     lung_recruit_time: 'pause_lg_time'
 
@@ -491,10 +491,10 @@ support_pressure:
 #        - [15, '']
 
 # Minimal Respiratory Rate
-minimal_resp_rate:
-    default: 10.
-    min: 0.
-    max: 60.
+max_apnea_time:
+    default: 5
+    min: 2
+    max: 20.
     step: 1
     current: None
     presets:
