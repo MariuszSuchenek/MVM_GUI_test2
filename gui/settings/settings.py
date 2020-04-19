@@ -34,6 +34,8 @@ class Settings(QtWidgets.QMainWindow):
             'respiratory_rate':  self.spinBox_rr,
             'insp_expir_ratio':  self.spinBox_insp_expir_ratio,
             'insp_pressure':     self.spinBox_insp_pressure,
+            'pcv_trigger_enable': self.toggle_pcv_trigger_enable,
+            'pcv_trigger_pressure': self.spinBox_trigger_sensitivity,
             # Assist
             'pressure_trigger':  self.spinBox_pressure_trigger,
             'flow_trigger':      self.spinBox_flow_trigger,
@@ -50,6 +52,7 @@ class Settings(QtWidgets.QMainWindow):
             'respiratory_rate': self.fake_btn_rr,
             'insp_expir_ratio': self.fake_btn_ie,
             'insp_pressure':    self.fake_btn_insp_pressure,
+            'pcv_trigger_pressure': self.fake_btn_trigger_sensitivity,
             # Assist
             'pressure_trigger':  self.fake_btn_pr_trigger,
             'flow_trigger':      self.fake_btn_flow_trig,
@@ -149,6 +152,8 @@ class Settings(QtWidgets.QMainWindow):
         self._all_fakebtn['respiratory_rate'].clicked.connect(lambda: self.spawn_presets_window('respiratory_rate'))
         self._all_fakebtn['insp_expir_ratio'].clicked.connect(lambda: self.spawn_presets_window('insp_expir_ratio'))
         self._all_fakebtn['insp_pressure'].clicked.connect(lambda: self.spawn_presets_window('insp_pressure'))
+        self._all_fakebtn['pcv_trigger_pressure'].clicked.connect(lambda:
+                self.spawn_presets_window('pcv_trigger_pressure'))
 
         # Assist
         self._all_fakebtn['pressure_trigger'].clicked.connect(lambda: self.spawn_presets_window('pressure_trigger'))
@@ -164,7 +169,7 @@ class Settings(QtWidgets.QMainWindow):
                 self.spawn_presets_window('lung_recruit_time'))
 
         for param, btn in self._all_spinboxes.items():
-            if param == 'enable_backup':
+            if param in ['enable_backup', 'pcv_trigger_enable']:
                 btn.clicked.connect(self.worker)
             else:
                 btn.valueChanged.connect(self.worker)
@@ -189,7 +194,7 @@ class Settings(QtWidgets.QMainWindow):
             btn.setValue(value_config['default'])
             self._current_values[param] = value_config['default']
 
-            if param != 'enable_backup':
+            if param not in ['enable_backup', 'pcv_trigger_enable']:
                 btn.setMinimum(value_config['min'])
                 btn.setMaximum(value_config['max'])
 
@@ -287,7 +292,7 @@ class Settings(QtWidgets.QMainWindow):
 
             # value is the variable to be sent to the hardware,
             # so possibly converted from the settings
-            if param == 'enable_backup':
+            if param in ['enable_backup', 'pcv_trigger_enable']:
                 value = int(self._current_values[param])
             elif param == 'insp_expir_ratio':
                 i_over_e = 1. / self._current_values[param]
