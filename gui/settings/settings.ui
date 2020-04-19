@@ -132,7 +132,7 @@ QTabBar::tab:!selected {
         <property name="font">
          <font>
           <family>Cantarell</family>
-          <pointsize>15</pointsize>
+          <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -153,7 +153,7 @@ QTabBar::tab:!selected {
         <property name="font">
          <font>
           <family>Cantarell</family>
-          <pointsize>15</pointsize>
+          <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -457,7 +457,7 @@ QTabBar::tab:!selected {
         <property name="font">
          <font>
           <family>Cantarell</family>
-          <pointsize>15</pointsize>
+          <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -649,7 +649,7 @@ QTabBar::tab:!selected {
         <property name="font">
          <font>
           <family>Cantarell</family>
-          <pointsize>15</pointsize>
+          <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -679,7 +679,7 @@ QTabBar::tab:!selected {
         </property>
         <property name="font">
          <font>
-          <pointsize>15</pointsize>
+          <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -699,7 +699,7 @@ QTabBar::tab:!selected {
         </property>
         <property name="font">
          <font>
-          <pointsize>15</pointsize>
+          <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1140,7 +1140,7 @@ QTabBar::tab:!selected {
         </property>
         <property name="font">
          <font>
-          <pointsize>15</pointsize>
+          <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1207,7 +1207,7 @@ border: 2px solid gray;
          </property>
          <property name="font">
           <font>
-           <pointsize>15</pointsize>
+           <pointsize>13</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1518,7 +1518,7 @@ border: 2px solid gray;
         <property name="font">
          <font>
           <family>Cantarell</family>
-          <pointsize>15</pointsize>
+          <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1705,7 +1705,7 @@ border: 2px solid gray;
          <property name="font">
           <font>
            <family>Cantarell</family>
-           <pointsize>15</pointsize>
+           <pointsize>13</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
