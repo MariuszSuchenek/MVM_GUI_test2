@@ -159,7 +159,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>Insp:Expir Ratio (I:E)   1  :</string>
+         <string>I:E                                                                 1  :</string>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="spinBox_rr">
@@ -463,7 +463,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Target Insp. Pres. [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;insp&lt;/span&gt; [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="spinBox_insp_pressure">
@@ -686,13 +686,13 @@ border: 2px solid gray;
          <property name="font">
           <font>
            <family>Cantarell</family>
-           <pointsize>11</pointsize>
+           <pointsize>13</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I.T. Sens. [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O/s&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITS [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O/s&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_14">
@@ -712,7 +712,7 @@ border: 2px solid gray;
           </font>
          </property>
          <property name="text">
-          <string>Enable I.T.</string>
+          <string>Enable IT</string>
          </property>
         </widget>
         <widget class="QPushButton" name="fake_btn_trigger_sensitivity">
@@ -871,7 +871,7 @@ border: 2px solid gray;
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inhale Trigger Sensitivity [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O/s&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITS [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O/s&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
@@ -891,7 +891,7 @@ border: 2px solid gray;
          </font>
         </property>
         <property name="text">
-         <string>Expiratory Trigger Sensitivity [%]</string>
+         <string>ETS [%]</string>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="spinBox_pressure_trigger">
@@ -1332,7 +1332,7 @@ border: 2px solid gray;
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Target Support Pressure [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;insp&lt;/span&gt; [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QGroupBox" name="groupBox">
@@ -1399,7 +1399,7 @@ border: 2px solid gray;
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apnea Time [s]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apnea Lag [s]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
         <widget class="QDoubleSpinBox" name="spinBox_max_apnea_time">
