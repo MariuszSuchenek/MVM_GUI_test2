@@ -463,7 +463,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Target inspiratory pressure [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Target Inspiratory Pressure [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="spinBox_insp_pressure">
@@ -610,53 +610,226 @@ QTabBar::tab:!selected {
          <string/>
         </property>
        </widget>
-       <widget class="QDoubleSpinBox" name="spinBox_trigger_sensitivity">
-        <property name="geometry">
-         <rect>
-          <x>360</x>
-          <y>240</y>
-          <width>400</width>
-          <height>60</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>15</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::PlusMinus</enum>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_4">
+       <widget class="QGroupBox" name="groupBox_3">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>240</y>
-          <width>340</width>
-          <height>60</height>
+          <y>200</y>
+          <width>781</width>
+          <height>131</height>
          </rect>
         </property>
         <property name="font">
          <font>
-          <family>Cantarell</family>
           <pointsize>13</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inhale Trigger Sensitivity [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <property name="styleSheet">
+         <string notr="true">QGroupBox {
+border: 2px solid gray;
+}</string>
         </property>
+        <property name="title">
+         <string>Inhale Trigger Parameters</string>
+        </property>
+        <widget class="QDoubleSpinBox" name="spinBox_trigger_sensitivity">
+         <property name="geometry">
+          <rect>
+           <x>350</x>
+           <y>70</y>
+           <width>400</width>
+           <height>60</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>15</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::PlusMinus</enum>
+         </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
+        </widget>
+        <widget class="MVMToggle" name="toggle_pcv_trigger_enable" native="true">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>210</x>
+           <y>30</y>
+           <width>131</width>
+           <height>41</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_4">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>70</y>
+           <width>340</width>
+           <height>60</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Cantarell</family>
+           <pointsize>13</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inhale Trigger Sensitivity [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_14">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>181</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>13</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Enable Inhale Trigger</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="fake_btn_trigger_sensitivity">
+         <property name="geometry">
+          <rect>
+           <x>430</x>
+           <y>70</y>
+           <width>240</width>
+           <height>60</height>
+          </rect>
+         </property>
+         <property name="palette">
+          <palette>
+           <active>
+            <colorrole role="Button">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Base">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="Button">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Base">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled>
+            <colorrole role="Button">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Base">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window">
+             <brush brushstyle="SolidPattern">
+              <color alpha="0">
+               <red>0</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
+          </palette>
+         </property>
+         <property name="font">
+          <font>
+           <underline>false</underline>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+	background-color: rgba(0, 0, 0, 0);
+     border-style: outset;
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_2">
@@ -1171,7 +1344,7 @@ border: 2px solid gray;
 }</string>
         </property>
         <property name="title">
-         <string>Apnea parameters</string>
+         <string>Apnea Parameters</string>
         </property>
         <widget class="QLabel" name="label_11">
          <property name="geometry">
@@ -1221,7 +1394,7 @@ border: 2px solid gray;
           <rect>
            <x>349</x>
            <y>40</y>
-           <width>421</width>
+           <width>401</width>
            <height>60</height>
           </rect>
          </property>
@@ -1251,7 +1424,7 @@ border: 2px solid gray;
           <rect>
            <x>430</x>
            <y>40</y>
-           <width>260</width>
+           <width>241</width>
            <height>60</height>
           </rect>
          </property>
