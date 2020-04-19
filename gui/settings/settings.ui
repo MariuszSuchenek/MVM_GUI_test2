@@ -638,7 +638,7 @@ border: 2px solid gray;
          <property name="geometry">
           <rect>
            <x>350</x>
-           <y>70</y>
+           <y>40</y>
            <width>400</width>
            <height>60</height>
           </rect>
@@ -667,8 +667,8 @@ border: 2px solid gray;
          </property>
          <property name="geometry">
           <rect>
-           <x>210</x>
-           <y>30</y>
+           <x>20</x>
+           <y>60</y>
            <width>131</width>
            <height>41</height>
           </rect>
@@ -677,9 +677,9 @@ border: 2px solid gray;
         <widget class="QLabel" name="label_4">
          <property name="geometry">
           <rect>
-           <x>10</x>
-           <y>70</y>
-           <width>340</width>
+           <x>170</x>
+           <y>40</y>
+           <width>180</width>
            <height>60</height>
           </rect>
          </property>
@@ -692,34 +692,34 @@ border: 2px solid gray;
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inhale Trigger Sensitivity [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I.T. Sens. [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O/s&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_14">
          <property name="geometry">
           <rect>
-           <x>10</x>
-           <y>30</y>
-           <width>181</width>
+           <x>40</x>
+           <y>20</y>
+           <width>101</width>
            <height>41</height>
           </rect>
          </property>
          <property name="font">
           <font>
-           <pointsize>13</pointsize>
+           <pointsize>11</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
          <property name="text">
-          <string>Enable Inhale Trigger</string>
+          <string>Enable I.T.</string>
          </property>
         </widget>
         <widget class="QPushButton" name="fake_btn_trigger_sensitivity">
          <property name="geometry">
           <rect>
            <x>430</x>
-           <y>70</y>
+           <y>40</y>
            <width>240</width>
            <height>60</height>
           </rect>
@@ -828,6 +828,19 @@ border: 2px solid gray;
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+        <widget class="Line" name="line_5">
+         <property name="geometry">
+          <rect>
+           <x>155</x>
+           <y>35</y>
+           <width>20</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </widget>
@@ -1392,9 +1405,9 @@ border: 2px solid gray;
         <widget class="QDoubleSpinBox" name="spinBox_max_apnea_time">
          <property name="geometry">
           <rect>
-           <x>349</x>
+           <x>350</x>
            <y>40</y>
-           <width>401</width>
+           <width>400</width>
            <height>60</height>
           </rect>
          </property>
