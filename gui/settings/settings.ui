@@ -463,7 +463,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Target Inspiratory Pressure [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Target Insp. Pres. [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="spinBox_insp_pressure">
