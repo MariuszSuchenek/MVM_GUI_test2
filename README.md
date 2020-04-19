@@ -14,6 +14,7 @@
 - PySerial
 - PyYaml
 - numpy
+- to run it under windows, install the Cantarell font https://fonts.google.com/specimen/Cantarell
 
 ## Run
 
