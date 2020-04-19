@@ -686,7 +686,7 @@ border: 2px solid gray;
          <property name="font">
           <font>
            <family>Cantarell</family>
-           <pointsize>13</pointsize>
+           <pointsize>12</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
