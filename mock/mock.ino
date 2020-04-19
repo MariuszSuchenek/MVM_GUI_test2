@@ -1,8 +1,8 @@
 #include <StandardCplusplus.h>
-
 // If this fails, install ArduinoSTL from the Arduino library
 // and use the following instead:
 // #include <ArduinoSTL.h>
+// Don't use either if using an ESP32.
 
 #include <map>
 #include <vector>
@@ -19,16 +19,10 @@ std::map<String, String> parameters;
 
 std::vector<String> random_measures;
 
-namespace time {
+namespace Time {
 
 struct Seconds
 {
-  static
-  unsigned long from_millis(unsigned long milli)
-  {
-    return milli / 1000ul;
-  }
-
   static
   unsigned long from_micros(unsigned long micro)
   {
@@ -44,7 +38,7 @@ unsigned long now()
 
 } // ns time
 
-unsigned long pause_lg_expiration = time::now<time::Seconds>() + 10;
+unsigned long pause_lg_expiration = Time::now<Time::Seconds>() + 10;
 
 void setup()
 {
@@ -95,7 +89,7 @@ String set(String const& command)
 
   if (name == "pause_lg" && value == "1") {
     pause_lg_expiration
-    = time::now<time::Seconds>()
+    = Time::now<Time::Seconds>()
     + parameters["pause_lg_time"].toInt();
   }
 
@@ -122,7 +116,7 @@ String get(String const& command)
       + String(random(1000, 2000)) + "," // total_expired_volume
       + String(random(10, 100));         // volume_minute
   } else if (name == "pause_lg_time") {
-    auto const now = time::now<time::Seconds>();
+    auto const now = Time::now<Time::Seconds>();
     return now > pause_lg_expiration ? "0" : String(pause_lg_expiration - now);
   }
 
