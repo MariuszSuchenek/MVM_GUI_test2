@@ -159,7 +159,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>Insp:Expir ratio (I:E)   1  /</string>
+         <string>Insp:Expir Ratio (I:E)   1  :</string>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="spinBox_rr">
@@ -686,7 +686,7 @@ border: 2px solid gray;
          <property name="font">
           <font>
            <family>Cantarell</family>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -871,7 +871,7 @@ border: 2px solid gray;
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inhale Trigger Sensitivity [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inhale Trigger Sensitivity [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O/s&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
