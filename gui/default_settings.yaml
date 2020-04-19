@@ -145,7 +145,7 @@ monitors:
         observable: total_inspired_volume
 
     volume_minute: 
-        name: "V<sub>Exp</sub>"
+        name: "V<sub>exp</sub>"
         init: 100
         step: 1
         dec_precision: 0
@@ -335,7 +335,7 @@ plots:
         observable: pressure
 
     plot_mid: 
-        name: "v<sub>tidal</sub>"
+        name: "V<sub>tidal</sub>"
         min: 50
         max: 1500
         units: "[ml]"
