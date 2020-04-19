@@ -45,7 +45,7 @@ class SpecialBar(QtWidgets.QWidget):
             self._lung_recruit = False
             self._esp32.set("pause_lg", 0)
             self._lung_recruit_timer.stop()
-            self.button_lung_recruit.setText("Lung\nRecruitment")
+            self.button_lung_recruit.setText("Country-Specific\nProcedures")
         else:
             msg = MessageBox()
             fn = msg.question("Please confirm",
