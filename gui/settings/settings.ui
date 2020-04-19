@@ -1332,7 +1332,7 @@ border: 2px solid gray;
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Target support pressure  [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Target Support Pressure [cmH&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;O]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QGroupBox" name="groupBox">
