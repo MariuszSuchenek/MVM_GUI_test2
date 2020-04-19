@@ -145,10 +145,10 @@ monitors:
         observable: total_inspired_volume
 
     volume_minute: 
-        name: "V<sub>exp</sub>"
+        name: "V<sub>E</sub>"
         init: 100
-        step: 1
-        dec_precision: 0
+        step: 0.1
+        dec_precision: 1
         units: "[slpm]"
         color: "rgb(255,255,255)"
         alarmcolor: "red"
