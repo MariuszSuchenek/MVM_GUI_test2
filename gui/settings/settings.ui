@@ -138,7 +138,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>Respiratory Rate [bpm]</string>
+         <string>RR [bpm]</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_2">
