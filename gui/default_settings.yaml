@@ -60,6 +60,8 @@ esp_settable_param:
     max_apnea_time:    'backup_min_time'
     lung_recruit_pres: 'pause_lg_p'
     lung_recruit_time: 'pause_lg_time'
+    pcv_trigger_pressure: 'pcv_trigger'
+    pcv_trigger_enable: 'pcv_trigger_enable'
 
 
 # This is the string returned by the ESP in case of success
@@ -506,6 +508,29 @@ max_apnea_time:
 
 # Enable backup
 enable_backup: 
+  default: 1
+  current: None
+  presets:
+    - [1, "Enabled"]
+    - [0, "Disabled"]
+
+
+# PCV trigger pressure
+pcv_trigger_pressure:
+  default: 5
+  min: 0
+  max: 10.
+  step: 1
+  conversion: 0.980665 # From cmH2O to mbar
+  current: None
+  presets:
+    - [3, '']
+    - [5, '']
+    - [10, '']
+    - [15, '']
+
+# Enable PCV trigger
+pcv_trigger_enable: 
   default: 1
   current: None
   presets:
