@@ -57,7 +57,7 @@ class ToolSettings(QtWidgets.QWidget):
 
         self.update(val)
 
-    def load_presets(self, name="default"):
+    def load_presets(self, name="default", label=None):
         toolsettings_default = {
                 "name": "Param",
                 "default": 50,
@@ -69,8 +69,9 @@ class ToolSettings(QtWidgets.QWidget):
                 "dec_precision": 0,
                 "show_fraction": False}
         entry = self._config.get(name, toolsettings_default)
+        tlabel = label if label is not None else entry.get("name", toolsettings_default["name"])
         self.setup(
-                entry.get("name", toolsettings_default["name"]),
+                tlabel,
                 setrange=(
                     entry.get("min", toolsettings_default["min"]),
                     entry.get("default", toolsettings_default["default"]),

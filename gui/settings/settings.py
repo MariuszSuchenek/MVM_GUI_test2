@@ -201,7 +201,7 @@ class Settings(QtWidgets.QMainWindow):
         # setup the toolsettings with preset values
         self.toolsettings_lookup["respiratory_rate"].load_presets("respiratory_rate")
         self.toolsettings_lookup["insp_expir_ratio"].load_presets("insp_expir_ratio")
-        self.toolsettings_lookup["insp_pressure"].load_presets("insp_pressure")
+        self.toolsettings_lookup["insp_pressure"].load_presets("insp_pressure", "Target Pressure")
 
         self._current_values_temp = copy.copy(self._current_values)
 
