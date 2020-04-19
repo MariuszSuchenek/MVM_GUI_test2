@@ -142,7 +142,8 @@ class Alarms(QtWidgets.QWidget):
         """
         monitor = self.monitors[name]
         alarm = monitor.gui_alarm
-        self.label_alarmname.setText(monitor.name)
+        unit = "" if monitor.units is None else monitor.units
+        self.label_alarmname.setText(monitor.name + " " + unit)
         self.label_alarmname.setStyleSheet("QLabel { color: " + monitor.color + "; background-color: black}")
 
         self.set_slider_range(self.slider_alarmmin, monitor)
@@ -198,7 +199,7 @@ class Alarms(QtWidgets.QWidget):
     def move_selected_to_index(self, index=None):
         """
         Moves the selected monitor to the index location on the monitor bar
-        
+
         index: location on the monitor bar
             If None, monitor is removed from the bar
             If >= len(displayed_monitors), adds to end
@@ -211,7 +212,7 @@ class Alarms(QtWidgets.QWidget):
             index = -1
             # print("Moving " + self.selected + " to alarms page")
 
-        newmons = [] 
+        newmons = []
         for (i, name) in enumerate(self.displayed_monitors):
             if i == index:
                 newmons.append(self.selected)
@@ -232,7 +233,7 @@ class Alarms(QtWidgets.QWidget):
         if self.selected in self.displayed_monitors:
             index = self.monitors_slots.indexOf(self.monitors[self.selected])+2
         else:
-            index = 0 
+            index = 0
         self.move_selected_to_index(index=index)
 
     def move_selected_up(self):
@@ -243,7 +244,7 @@ class Alarms(QtWidgets.QWidget):
         if self.selected in self.displayed_monitors:
             index = self.monitors_slots.indexOf(self.monitors[self.selected])-1
         else:
-            index = len(self.displayed_monitors) 
+            index = len(self.displayed_monitors)
         self.move_selected_to_index(index=index)
 
     def move_selected_off(self):
@@ -272,8 +273,8 @@ class Alarms(QtWidgets.QWidget):
         for name, monitor in self.monitors.items():
             if name not in self.displayed_monitors:
                 # Monitor not displayed, so goes on Alarms page
-                self.layout.addWidget(monitor, int(hidd % self.STORED_PER_COL), 10-int(hidd / self.STORED_PER_COL)) 
-                hidd += 1 
+                self.layout.addWidget(monitor, int(hidd % self.STORED_PER_COL), 10-int(hidd / self.STORED_PER_COL))
+                hidd += 1
 
         for (disp, name) in enumerate(self.displayed_monitors):
             # Monitor displayed, so goes on Monitor Bar

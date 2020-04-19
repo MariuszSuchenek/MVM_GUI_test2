@@ -57,9 +57,11 @@ esp_settable_param:
     flow_trigger:      'assist_flow_min'
     support_pressure:  'pressure_support'
     enable_backup:     'backup_enable'
-    minimal_resp_rate: 'backup_min_rate'
+    max_apnea_time:    'backup_min_time'
     lung_recruit_pres: 'pause_lg_p'
     lung_recruit_time: 'pause_lg_time'
+    pcv_trigger_pressure: 'pcv_trigger'
+    pcv_trigger_enable: 'pcv_trigger_enable'
 
 
 # This is the string returned by the ESP in case of success
@@ -128,36 +130,37 @@ monitors:
         step: 1
         dec_precision: 0
         units: "[cmH<sub>2</sub>O]"
-        color: "rgb(255,255,0)"
+        color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: pressure
 
     total_inspired_volume: 
-        name: "v<sub>tidal</sub>"
+        name: "V<sub>tidal</sub>"
         init: 100
         step: 1
         dec_precision: 0
         units: "[ml]"
-        color: "rgb(50,205,50)"
+        color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: total_inspired_volume
 
     volume_minute: 
-        name: "Flow"
+        name: "V<sub>E</sub>"
         init: 100
-        step: 1
-        dec_precision: 0
+        step: 0.1
+        dec_precision: 1
         units: "[slpm]"
-        color: "rgb(50,205,50)"
+        color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: volume_minute
 
     beats_per_minute: 
-        name: "BPM"
+        name: "Meas. RR"
         init: 60
         step: 1
+        units: "[bpm]"
         dec_precision: 0
-        color: "rgb(50,205,50)"
+        color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: bpm
 
@@ -167,7 +170,7 @@ monitors:
         step: 1
         units: "[cmH<sub>2</sub>O]"
         dec_precision: 0
-        color: "rgb(0,255,255)"
+        color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: peep
 
@@ -183,24 +186,27 @@ monitors:
         disp_type: "bar 0 100"
 
     battery_powered: 
-        name: "Battery Power"
+        name: "Power Source"
         init: 100 
         step: 1
+        map:
+          0: "AC"
+          1: "Battery"
         units: null
         dec_precision: 0
         color: "rgb(255,255,255)"
         alarmcolor: "red"
         observable: battery_powered
 
-    flow: 
-        name: "Flow"
-        init: 10
-        step: 1
-        dec_precision: 0
-        units: "[slpm]"
-        color: "rgb(0,255,255)"
-        alarmcolor: "red"
-        observable: flow
+    #flow: 
+    #    name: "Flow"
+    #    init: 10
+    #    step: 1
+    #    dec_precision: 0
+    #    units: "[slpm]"
+    #    color: "rgb(255,255,255)"
+    #    alarmcolor: "red"
+    #    observable: flow
 
     oxygen_concentration: 
         name: "FiO<sub>2</sub>" 
@@ -223,7 +229,7 @@ monitors:
         observable: temperature
 
     peak: 
-        name: "IPAP" 
+        name: "Max P<sub>insp</sub>" 
         init: 40
         step: 1
         dec_precision: 0
@@ -234,6 +240,8 @@ monitors:
 
 displayed_monitors:
     - battery_charge
+    - battery_powered
+    - beats_per_minute
     - peak
     - peep
     - total_inspired_volume
@@ -261,13 +269,13 @@ alarms:
         observable: pressure
         linked_monitor: inspiratory_pressure
 
-    flow:
-        min: -300
-        max: 300
-        under_threshold_code: 1024
-        over_threshold_code: 2048
-        observable: flow
-        linked_monitor: flow
+    #flow:
+    #    min: -300
+    #    max: 300
+    #    under_threshold_code: 1024
+    #    over_threshold_code: 2048
+    #    observable: flow
+    #    linked_monitor: flow
 
     tidal_volume:
         min: -10
@@ -319,7 +327,7 @@ alarms:
 
 plots:
     plot_top: 
-        name: "IP"
+        name: "PAW"
         min: 10
         max: 80
         units: "[cmH<sub>2</sub>O]"
@@ -327,7 +335,7 @@ plots:
         observable: pressure
 
     plot_mid: 
-        name: "v<sub>tidal</sub>"
+        name: "V<sub>tidal</sub>"
         min: 50
         max: 1500
         units: "[ml]"
@@ -485,10 +493,10 @@ support_pressure:
 #        - [15, '']
 
 # Minimal Respiratory Rate
-minimal_resp_rate:
-    default: 10.
-    min: 0.
-    max: 60.
+max_apnea_time:
+    default: 5
+    min: 2
+    max: 20.
     step: 1
     current: None
     presets:
@@ -500,6 +508,29 @@ minimal_resp_rate:
 
 # Enable backup
 enable_backup: 
+  default: 1
+  current: None
+  presets:
+    - [1, "Enabled"]
+    - [0, "Disabled"]
+
+
+# PCV trigger pressure
+pcv_trigger_pressure:
+  default: 5
+  min: 0
+  max: 10.
+  step: 1
+  conversion: 0.980665 # From cmH2O to mbar
+  current: None
+  presets:
+    - [3, '']
+    - [5, '']
+    - [10, '']
+    - [15, '']
+
+# Enable PCV trigger
+pcv_trigger_enable: 
   default: 1
   current: None
   presets:
