@@ -14,6 +14,27 @@ class DataFiller():
     In "frozen" mode, we keep adding new data points to _data,
     but don't update the displayed graph. When we unfreeze, we
     then see the full recent data.
+
+    Attributes:
+        _qtgraphs           (dict) All PlotItems
+        _plots              (dict) All PlotDataItems
+        _data               (dict) The data for all plots
+        _historic_data      (dict) The historic data for all plots
+        _default_yrange     (dict) The default y ranges per plot
+        _yrange             (dict) The current y ranges per plot
+        _monitors           (dict) The monitors to which to send data
+        _colors             (dict) The plot color
+        _config             (dict) The config dict
+        _n_samples          (int) The number of samples to plot
+        _n_historic_samples (int) The number of samples to keep for historic data
+        _sampling           (float) The time interval between samples
+        _time_window        (float) The number of seconds shown
+        _xdata              (array) The data along x
+        _frozen             (bool) True we are in forzen state
+        _first_plot         (PlotDataItem) Reference to the first drwan plot
+        _looping            (bool) True displays looping plots
+        _looping_data_idx   (int) The x index of the looping line
+        _looping_lines      (dict) A dict of InfiniteLines
     '''
 
     def __init__(self, config):
@@ -25,7 +46,6 @@ class DataFiller():
         self._yrange = {}
         self._monitors = {}
         self._colors = {}
-        self._default_yrange = {}
         self._config = config
         self._n_samples = self._config['nsamples']
         self._n_historic_samples = self._config.get('historic_nsamples',
