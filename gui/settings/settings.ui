@@ -1201,7 +1201,7 @@ border: 2px solid gray;
           <rect>
            <x>190</x>
            <y>40</y>
-           <width>260</width>
+           <width>151</width>
            <height>61</height>
           </rect>
          </property>
@@ -1219,9 +1219,9 @@ border: 2px solid gray;
         <widget class="QDoubleSpinBox" name="spinBox_min_resp_rate">
          <property name="geometry">
           <rect>
-           <x>460</x>
+           <x>349</x>
            <y>40</y>
-           <width>310</width>
+           <width>421</width>
            <height>60</height>
           </rect>
          </property>
@@ -1249,9 +1249,9 @@ border: 2px solid gray;
         <widget class="QPushButton" name="fake_btn_min_resp_rate">
          <property name="geometry">
           <rect>
-           <x>540</x>
+           <x>430</x>
            <y>40</y>
-           <width>150</width>
+           <width>260</width>
            <height>60</height>
           </rect>
          </property>
