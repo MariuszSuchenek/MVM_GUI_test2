@@ -14,6 +14,27 @@ class DataFiller():
     In "frozen" mode, we keep adding new data points to _data,
     but don't update the displayed graph. When we unfreeze, we
     then see the full recent data.
+
+    Attributes:
+        _qtgraphs           (dict) All PlotItems
+        _plots              (dict) All PlotDataItems
+        _data               (dict) The data for all plots
+        _historic_data      (dict) The historic data for all plots
+        _default_yrange     (dict) The default y ranges per plot
+        _yrange             (dict) The current y ranges per plot
+        _monitors           (dict) The monitors to which to send data
+        _colors             (dict) The plot color
+        _config             (dict) The config dict
+        _n_samples          (int) The number of samples to plot
+        _n_historic_samples (int) The number of samples to keep for historic data
+        _sampling           (float) The time interval between samples
+        _time_window        (float) The number of seconds shown
+        _xdata              (array) The data along x
+        _frozen             (bool) True we are in forzen state
+        _first_plot         (PlotDataItem) Reference to the first drwan plot
+        _looping            (bool) True displays looping plots
+        _looping_data_idx   (int) The x index of the looping line
+        _looping_lines      (dict) A dict of InfiniteLines
     '''
 
     def __init__(self, config):
@@ -21,9 +42,10 @@ class DataFiller():
         self._plots = {}
         self._data = {}
         self._historic_data = {}
+        self._default_yrange = {}
+        self._yrange = {}
         self._monitors = {}
         self._colors = {}
-        self._default_ranges = {}
         self._config = config
         self._n_samples = self._config['nsamples']
         self._n_historic_samples = self._config.get('historic_nsamples',
@@ -56,6 +78,7 @@ class DataFiller():
         self._plots[name] = plot.plot()
         self._data[name] = np.linspace(0, 0, self._n_samples)
         self._historic_data[name] = np.linspace(0, 0, self._n_historic_samples)
+        self._yrange[name] = None
         self._plots[name].setData(copy(self._xdata), copy(self._data[name]))
         self._colors[name] = plot_config['color']
         self._looping_data_idx[name] = 0
@@ -91,7 +114,7 @@ class DataFiller():
         value_max = plot_config['max']
         ymin = value_min - (value_max-value_min)*0.1
         ymax = value_max + (value_max-value_min)*0.1
-        self._default_ranges[name] = [ymin, ymax]
+        self._default_yrange[name] = [ymin, ymax]
         self.set_default_y_range(name)
 
         # Remove mouse interaction with plots
@@ -108,7 +131,11 @@ class DataFiller():
         if name not in self._qtgraphs:
             raise Exception('Cannot set y range for graph', name, 'as it doesn\'t exist.')
 
-        self._qtgraphs[name].setYRange(self._default_ranges[name][0], self._default_ranges[name][1])
+        # Save the range for future use
+        self._yrange[name] = (self._default_yrange[name][0], self._default_yrange[name][1])
+
+        # Set the range to the graph
+        self._qtgraphs[name].setYRange(*self._default_yrange[name])
         
         # Also set the width (space) on the left of the Y axis (for the label and ticks)
         self._qtgraphs[name].getAxis('left').setWidth(self._config['left_ax_label_space'])
@@ -132,9 +159,25 @@ class DataFiller():
         ymax += span * 0.1
         ymin -= span * 0.1
 
-        self._qtgraphs[name].setYRange(ymin, ymax)
+        # Save the range for future use
+        self._yrange[name] = (ymin, ymax)
+
+        # Set the range to the graph
+        self._qtgraphs[name].setYRange(*self._yrange[name])
 
         self.updateTicks(name, ymax - ymin)
+
+    def restore_y_range(self, name):
+        '''
+        Restores a previously set y range.
+        If the y range was not previously set,
+        this method calls set_y_range()
+        '''
+        if self._yrange[name] is None:
+            self.set_y_range()
+            return
+
+        self._qtgraphs[name].setYRange(*self._yrange[name])
 
     def updateTicks(self, name, yrange=None):
         '''
@@ -317,7 +360,7 @@ class DataFiller():
         '''
         for name, plot in self._qtgraphs.items():
             self.set_default_x_range(name)
-            self.set_default_y_range(name)
+            self.restore_y_range(name)
 
     def update_monitor(self, name):
         '''
