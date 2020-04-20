@@ -176,11 +176,11 @@ void serial_loop(Stream& connection)
 
     if (command.length() == 0) {
     } else if (command_type == "get") {
-      connection.println("valore=" + get(command));
+      mvm::send(connection, get(command));
     } else if (command_type == "set") {
-      connection.println("valore=" + set(command));
+      mvm::send(connection, set(command));
     } else {
-      connection.println("valore=notok");
+      mvm::send(connection, "notok");
     }
   }
 }
