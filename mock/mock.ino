@@ -46,11 +46,11 @@ size_t send(Stream& connection, String const& data)
 {
   auto const header = String("valore=");
   auto const len = header.length() + data.length();
-  
+
   auto sent = connection.print(header);
-  
+
   auto pos = data.c_str();
-  
+
   while (sent != len) {
     auto const to_be_sent = len - sent;
     auto const nbytes
