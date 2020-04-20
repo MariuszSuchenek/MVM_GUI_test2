@@ -44,6 +44,7 @@ class ControllerStatus:
         self._mode = None
         self._backup = None
 
+        self._esp32_io()
 
     def _init_settings_panel(self):
         '''
