@@ -135,7 +135,7 @@ class DataFiller():
         self._yrange[name] = (self._default_yrange[name][0], self._default_yrange[name][1])
 
         # Set the range to the graph
-        self._qtgraphs[name].setYRange(self._default_yrange[name][0], self._default_yrange[name][1])
+        self._qtgraphs[name].setYRange(*self._default_yrange[name])
         
         # Also set the width (space) on the left of the Y axis (for the label and ticks)
         self._qtgraphs[name].getAxis('left').setWidth(self._config['left_ax_label_space'])
@@ -163,7 +163,7 @@ class DataFiller():
         self._yrange[name] = (ymin, ymax)
 
         # Set the range to the graph
-        self._qtgraphs[name].setYRange(ymin, ymax)
+        self._qtgraphs[name].setYRange(*self._yrange[name])
 
         self.updateTicks(name, ymax - ymin)
 
@@ -177,7 +177,7 @@ class DataFiller():
             self.set_y_range()
             return
 
-        self._qtgraphs[name].setYRange(self._yrange[name][0], self._yrange[name][1])
+        self._qtgraphs[name].setYRange(*self._yrange[name])
 
     def updateTicks(self, name, yrange=None):
         '''
