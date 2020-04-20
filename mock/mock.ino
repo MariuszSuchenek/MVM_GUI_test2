@@ -97,7 +97,7 @@ void setup()
   parameters["pressure_support"] = String(10);
   parameters["backup_enable"]    = String(1);
   parameters["backup_min_rate"]  = String(10);
-  parameters["pause_lg_time"]    = "10";
+  parameters["pause_lg_time"]    = String(10);
 }
 
 // this is tricky, didn't had the time to think a better algo
