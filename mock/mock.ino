@@ -252,7 +252,7 @@ void loop()
   serial_loop(Serial);
   serial_loop(Debug);
   
-  if (parameters.at("wdenable") == "1") {
+  if (parameters["wdenable"] == "1") {
     auto const now = mvm::now<mvm::Seconds>();
     if (now > gui_watchdog_expr) {
       alarm_status = mvm::raise_hw_alarm(30, alarm_status);
