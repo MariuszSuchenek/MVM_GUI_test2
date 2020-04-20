@@ -42,6 +42,32 @@ unsigned long now()
   return Time::from_micros(micros());
 }
 
+size_t send(Stream& connection, String const& data)
+{
+  auto const header = String("valore=");
+  auto const len = header.length() + data.length();
+  
+  auto sent = connection.print(header);
+  
+  auto pos = data.c_str();
+  
+  while (sent != len) {
+    auto const to_be_sent = len - sent;
+    auto const nbytes
+      = to_be_sent > SERIAL_TX_BUFFER_SIZE
+      ? SERIAL_TX_BUFFER_SIZE
+      : to_be_sent;
+
+    auto const written = connection.write(pos, nbytes);
+    pos += written;
+    sent += written;
+  }
+
+  sent += connection.println("");
+
+  return sent;
+}
+
 } // ns mvm
 
 unsigned long pause_lg_expiration = mvm::now<mvm::Seconds>() + 10;
