@@ -17,6 +17,7 @@ class GuiAlarms:
         self._obs = copy(config["alarms"])
         self._esp32 = esp32
         self._monitors = monitors
+        self._start_stop_worker = None
 
         self._mon_to_obs = {}
         for n, v in self._obs.items():
@@ -29,6 +30,13 @@ class GuiAlarms:
 
         self._alarmed_monitors = set()
         self.update_mon_thresholds()
+
+    def connect_workers(self, start_stop_worker):
+        '''
+        GuiAlarm is governed by the state of start_stop worker.
+        Only if start_stop_worker is runnig will alarms be issued.
+        '''
+        self._start_stop_worker = start_stop_worker
 
     def update_mon_thresholds(self):
         '''
@@ -79,8 +87,9 @@ class GuiAlarms:
         Checks if the current value is above or under
         threshold (if a threshold exists)
         '''
-        self._test_over_threshold(item, value)
-        self._test_under_threshold(item, value)
+        if self._start_stop_worker is not None and self._start_stop_worker.is_running():
+            self._test_over_threshold(item, value)
+            self._test_under_threshold(item, value)
 
     def clear_alarm(self, name):
         '''
