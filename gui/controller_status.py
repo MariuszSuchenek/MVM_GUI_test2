@@ -163,6 +163,10 @@ class ControllerStatus:
         self._start_timer()
 
     def is_running(self):
+        '''
+        Returns the current run parameter
+        read from the microcontroller
+        '''
         if self._run is None:
             self._esp32_io()
         return self._run
