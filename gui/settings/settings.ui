@@ -72,7 +72,7 @@ QDoubleSpinBox::down-button  {
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="tabs">
       <property name="font">
        <font>
         <pointsize>15</pointsize>
@@ -116,7 +116,7 @@ QTabBar::tab:!selected {
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="tab_pcv">
        <attribute name="title">
         <string>PCV</string>
        </attribute>
@@ -845,7 +845,7 @@ border: 2px solid gray;
         </widget>
        </widget>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="tab_psv">
        <property name="font">
         <font>
          <pointsize>15</pointsize>
@@ -1573,7 +1573,7 @@ border: 2px solid gray;
        <zorder>fake_btn_support_pressure</zorder>
        <zorder>label_9</zorder>
       </widget>
-      <widget class="QWidget" name="tab_3">
+      <widget class="QWidget" name="tab_csp">
        <attribute name="title">
         <string>CSP</string>
        </attribute>
