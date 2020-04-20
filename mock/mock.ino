@@ -96,7 +96,7 @@ void setup()
   parameters["assist_flow_min"]  = String(20);
   parameters["pressure_support"] = String(10);
   parameters["backup_enable"]    = String(1);
-  parameters["backup_min_rate"]  = String(10);
+  parameters["backup_min_time"]  = String(10);
   parameters["pause_lg_time"]    = String(10);
 }
 
