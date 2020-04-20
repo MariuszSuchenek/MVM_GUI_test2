@@ -47,6 +47,11 @@ class StartStopWorker():
                      'Error communicating with the hardware', message,
                      '** COMMUNICATION ERROR **', {msg.Ok: lambda:
                          sys.exit(-1)})()
+    def is_running(self):
+        """
+        A simple function that returns true if running.
+        """
+        return self.run == self.DO_RUN
 
 
     def toggle_mode(self):
