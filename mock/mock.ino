@@ -98,6 +98,7 @@ mvm::alarm_t alarm_status = 0;
 mvm::alarm_t warning_status = 0;
 
 unsigned long pause_lg_expiration = mvm::now<mvm::Seconds>() + 10;
+unsigned long gui_watchdog_expr = mvm::now<mvm::Seconds>() + 5;
 
 void setup()
 {
