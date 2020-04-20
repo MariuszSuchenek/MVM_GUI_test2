@@ -121,6 +121,21 @@ class StartStopWorker():
         self.toolbar.set_stopped(self.mode_text)
         self.settings.enable_special_ops_tab()
 
+    def confirm_start_pressed(self):
+        '''
+        Opens a window which asks for confirmation
+        when the Start button is pressed.
+        '''
+        self.button_autoassist.setDown(False)
+        currentMode = self.mode_text.upper()
+        msg = MessageBox()
+        ok = msg.question("**STARTING %s MODE**" % currentMode,
+                          "Are you sure you want to START %s MODE?" %
+                           currentMode,
+                           None, "IMPORTANT", { msg.Yes: lambda: True,
+                           msg.No: lambda: False })()
+        return ok
+
     def confirm_stop_pressed(self):
         '''
         Opens a window which asks for confirmation
@@ -157,15 +172,15 @@ class StartStopWorker():
         """
 
         if self.run == self.DONOT_RUN:
+            if self.confirm_start_pressed():
+                # Send signal to ESP to start running
+                result = self.esp32.set('run', self.DO_RUN)
 
-            # Send signal to ESP to start running
-            result = self.esp32.set('run', self.DO_RUN)
-
-            if result:
-                self.run = self.DO_RUN
-                self.start_button_pressed()
-            else:
-                self.raise_comm_error('Cannot start ventilator.')
+                if result:
+                    self.run = self.DO_RUN
+                    self.start_button_pressed()
+                else:
+                    self.raise_comm_error('Cannot start ventilator.')
 
 
         else:
