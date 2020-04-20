@@ -40,6 +40,10 @@ class ControllerStatus:
         self._timer.timeout.connect(self._esp32_io)
         self._start_timer()
 
+        self._run = None
+        self._mode = None
+        self._backup = None
+
 
     def _init_settings_panel(self):
         '''
@@ -77,10 +81,14 @@ class ControllerStatus:
         StartStopWorker class.
         '''
 
-        self._start_stop_worker.set_run(int(self._esp32.get('run')))
-        self._start_stop_worker.set_mode(int(self._esp32.get('mode')))
+        self._run = int(self._esp32.get('run'))
+        self._mode = int(self._esp32.get('mode'))
+        self._backup = int(self._esp32.get('backup'))
 
-        if int(self._esp32.get('backup')):
+        self._start_stop_worker.set_run(self._run)
+        self._start_stop_worker.set_mode(self._mode)
+
+        if self._backup:
             if not self._backup_ackowledged:
                 self._open_backup_warning()
         else:
