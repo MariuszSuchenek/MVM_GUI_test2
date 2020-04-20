@@ -54,7 +54,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
 
         self.set_params = {
-            "run": 1,
+            "run": 0,
             "mode": 0,
             "backup": 0,
             "alarm": 0,
