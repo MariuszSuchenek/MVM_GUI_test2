@@ -127,6 +127,7 @@ void setup()
   parameters["backup_enable"]    = String(1);
   parameters["backup_min_time"]  = String(10);
   parameters["pause_lg_time"]    = String(10);
+  parameters["pause_lg_p"]       = String(10);
 }
 
 // this is tricky, didn't had the time to think a better algo
@@ -171,8 +172,6 @@ String set(String const& command)
   } else if (name == "wdenable" && value == "1") {
     gui_watchdog_expr = mvm::now<mvm::Seconds>() + 5;
     alarm_status = mvm::snooze_hw_alarm(30, alarm_status);
-  } else {
-    return "notok";
   }
 
   parameters[name] = value;
