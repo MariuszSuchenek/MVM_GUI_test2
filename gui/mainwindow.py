@@ -305,6 +305,8 @@ class MainWindow(QtWidgets.QMainWindow):
         Instantiate ControllerStatus
         '''
         self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
+        if self._ctr_status.is_running():
+            self.goto_main()
 
     def lock_screen(self):
         self.toppane.setDisabled(True)
