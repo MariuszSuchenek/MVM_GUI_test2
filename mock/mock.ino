@@ -89,6 +89,9 @@ void setup()
   parameters["mode"]   = String(0);
   parameters["backup"] = String(0);
 
+  parameters["pcv_trigger"]        = String(5);
+  parameters["pcv_trigger_enable"] = String(0);
+
   parameters["rate"]             = String(12);
   parameters["ratio"]            = String(2);
   parameters["ptarget"]          = String(15);
