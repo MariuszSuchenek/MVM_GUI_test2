@@ -251,7 +251,7 @@ void loop()
 {
   serial_loop(Serial);
   serial_loop(Debug);
-  
+
   if (parameters["wdenable"] == "1") {
     auto const now = mvm::now<mvm::Seconds>();
     if (now > gui_watchdog_expr) {
