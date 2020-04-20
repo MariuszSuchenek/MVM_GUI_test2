@@ -68,7 +68,34 @@ size_t send(Stream& connection, String const& data)
   return sent;
 }
 
+using alarm_t = uint32_t;
+
+alarm_t raise_hw_alarm(int num, alarm_t alarm)
+{
+  alarm_t const alarm_bit = 1 << num;
+
+  return alarm | alarm_bit;
+}
+
+alarm_t snooze_hw_alarm(int num, alarm_t alarm)
+{
+  alarm_t const alarm_bit = 1 << num;
+  alarm_t const mask = 0xFFFFFFFF ^ alarm_bit;
+
+  return alarm & mask;
+}
+
+alarm_t set_gui_alarm(alarm_t alarm)
+{
+  alarm_t constexpr gui_alarm_bit = 1 << 29;
+
+  return alarm | gui_alarm_bit;
+}
+
 } // ns mvm
+
+mvm::alarm_t alarm_status = 0;
+mvm::alarm_t warning_status = 0;
 
 unsigned long pause_lg_expiration = mvm::now<mvm::Seconds>() + 10;
 
@@ -81,9 +108,6 @@ void setup()
 
   random_measures = { "pressure", "bpm", "flow", "o2", "tidal", "peep",
                       "temperature", "power_mode", "battery" };
-
-  parameters["alarm"] = String(0);
-  parameters["warning"] = String(0);
 
   parameters["run"]    = String(0);
   parameters["mode"]   = String(0);
@@ -120,6 +144,32 @@ String set(String const& command)
 {
   auto const name = parse_word(command);
   auto const value = parse_word(command.substring(name.length() + 4));
+
+  if (name == "alarm") {
+    if (value == "0") {
+      alarm_status = 0;
+    } else if (value == "1") {
+      alarm_status = mvm::set_gui_alarm(alarm_status);
+    } else {
+      return "notok";
+    }
+    return "OK";
+  } else if (name == "alarm_snooze") {
+    alarm_status = mvm::snooze_hw_alarm(value.toInt(), alarm_status);
+    return "OK";
+  } else if (name == "warning" && value == "0") {
+    warning_status = 0;
+    return "OK";
+  } else if (name == "_hwalarm") {
+    alarm_status = mvm::raise_hw_alarm(value.toInt(), alarm_status);
+    return "OK";
+  } else if (name == "_hwwarning") {
+    warning_status = mvm::raise_hw_alarm(value.toInt(), warning_status);
+    return "OK";
+  } else {
+    return "notok";
+  }
+
   parameters[name] = value;
 
   if (name == "pause_lg" && value == "1") {
@@ -153,6 +203,10 @@ String get(String const& command)
   } else if (name == "pause_lg_time") {
     auto const now = mvm::now<mvm::Seconds>();
     return now > pause_lg_expiration ? "0" : String(pause_lg_expiration - now);
+  } else if (name == "alarm") {
+    return String(alarm_status);
+  } else if (name == "warning") {
+    return String(warning_status);
   }
 
   auto const it = std::find(
