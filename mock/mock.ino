@@ -19,7 +19,7 @@ std::map<String, String> parameters;
 
 std::vector<String> random_measures;
 
-namespace time {
+namespace mvm {
 
 struct Seconds
 {
@@ -42,9 +42,9 @@ unsigned long now()
   return Time::from_micros(micros());
 }
 
-} // ns time
+} // ns mvm
 
-unsigned long pause_lg_expiration = time::now<time::Seconds>() + 10;
+unsigned long pause_lg_expiration = mvm::now<mvm::Seconds>() + 10;
 
 void setup()
 {
@@ -95,7 +95,7 @@ String set(String const& command)
 
   if (name == "pause_lg" && value == "1") {
     pause_lg_expiration
-    = time::now<time::Seconds>()
+    = mvm::now<mvm::Seconds>()
     + parameters["pause_lg_time"].toInt();
   }
 
@@ -122,7 +122,7 @@ String get(String const& command)
       + String(random(1000, 2000)) + "," // total_expired_volume
       + String(random(10, 100));         // volume_minute
   } else if (name == "pause_lg_time") {
-    auto const now = time::now<time::Seconds>();
+    auto const now = mvm::now<mvm::Seconds>();
     return now > pause_lg_expiration ? "0" : String(pause_lg_expiration - now);
   }
 
