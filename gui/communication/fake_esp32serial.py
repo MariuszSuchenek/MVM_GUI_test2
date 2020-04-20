@@ -26,7 +26,6 @@ class FakeMonitored(QtWidgets.QWidget):
         self.random_cb.setChecked(random)
         self.random_cb.toggled.connect(self._random_checkbox_fn)
         self._random_checkbox_fn()
-        self._lung_recruit_stop_time = 0
 
     def _random_checkbox_fn(self):
         self.value_ib.setEnabled(not self.random_cb.isChecked())
@@ -51,10 +50,11 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.warning_checkboxes = {}
         self._connect_alarm_and_warning_widgets()
         self._connect_status_widgets()
+        self._lung_recruit_stop_time = 0
 
 
         self.set_params = {
-            "run": 0,
+            "run": 1,
             "mode": 0,
             "backup": 0,
             "alarm": 0,
