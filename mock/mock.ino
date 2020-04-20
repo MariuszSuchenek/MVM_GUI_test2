@@ -112,6 +112,7 @@ void setup()
   parameters["run"]    = String(0);
   parameters["mode"]   = String(0);
   parameters["backup"] = String(0);
+  parameters["wdenable"] = String(0);
 
   parameters["pcv_trigger"]        = String(5);
   parameters["pcv_trigger_enable"] = String(0);
@@ -166,6 +167,9 @@ String set(String const& command)
   } else if (name == "_hwwarning") {
     warning_status = mvm::raise_hw_alarm(value.toInt(), warning_status);
     return "OK";
+  } else if (name == "wdenable" && value == "1") {
+    gui_watchdog_expr = mvm::now<mvm::Seconds>() + 5;
+    alarm_status = mvm::snooze_hw_alarm(30, alarm_status);
   } else {
     return "notok";
   }
@@ -246,4 +250,11 @@ void loop()
 {
   serial_loop(Serial);
   serial_loop(Debug);
+  
+  if (parameters.at("wdenable") == "1") {
+    auto const now = mvm::now<mvm::Seconds>();
+    if (now > gui_watchdog_expr) {
+      alarm_status = mvm::raise_hw_alarm(30, alarm_status);
+    }
+  }
 }
