@@ -338,6 +338,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def goto_settings(self):
         self.show_settings()
         self.show_settingsbar()
+        if self._start_stop_worker.mode == self._start_stop_worker.MODE_ASSIST:
+            self.settings.tabs.setCurrentWidget(self.settings.tab_psv)
+        elif self._start_stop_worker.mode == self._start_stop_worker.MODE_AUTO:
+            self.settings.tabs.setCurrentWidget(self.settings.tab_pcv)
+
 
     def goto_main(self):
         self.show_main()
@@ -359,7 +364,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def show_settings(self):
         self.toppane.setCurrentWidget(self.settings)
-        self.settings.tabWidget.setFocus()
+        self.settings.tabs.setFocus()
 
     def show_startup(self):
         self.toppane.setCurrentWidget(self.startup)
