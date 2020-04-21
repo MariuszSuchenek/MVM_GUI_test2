@@ -13,7 +13,6 @@ class StartStopWorker():
     mode. For now, this is called only from the
     mainwindow.
     '''
-    MODE_STOP = -1
     MODE_AUTO = 0
     MODE_ASSIST = 1
 
