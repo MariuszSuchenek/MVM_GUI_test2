@@ -91,7 +91,7 @@ class Settings(QtWidgets.QMainWindow):
         self.inactivate_settings_buttons()
 
         # Always set the focus to the tab
-        self.tabWidget.setFocus()
+        self.tabs.setFocus()
 
 
     def hide_preset_worker(self):
@@ -105,7 +105,7 @@ class Settings(QtWidgets.QMainWindow):
         self.repaint()
 
         # Always set the focus to the tab
-        self.tabWidget.setFocus()
+        self.tabs.setFocus()
 
     def preset_worker(self):
 
@@ -124,13 +124,13 @@ class Settings(QtWidgets.QMainWindow):
         '''
         Inactivates all in the settings window
         '''
-        self.tabWidget.setDisabled(True)
+        self.tabs.setDisabled(True)
 
     def activate_settings_buttons(self):
         '''
         Activates all in the settings window
         '''
-        self.tabWidget.setEnabled(True)
+        self.tabs.setEnabled(True)
 
 
     def connect_workers(self):
