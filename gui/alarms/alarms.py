@@ -10,7 +10,7 @@ class AlarmScrollBar(QtWidgets.QScrollBar):
         self.setStyleSheet("""QScrollBar:horizontal {
                 height: 15px;
                 margin: 0px 40px 0 40px;
-                background-color: #e4e8df;
+                background-color: #cccfca;
             }
             QScrollBar::handle:horizontal {
                 min-width: 40px;
