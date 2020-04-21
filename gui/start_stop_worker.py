@@ -13,8 +13,8 @@ class StartStopWorker():
     mode. For now, this is called only from the
     mainwindow.
     '''
-    MODE_AUTO = 0
-    MODE_ASSIST = 1
+    MODE_PCV = 0
+    MODE_PSV = 1
 
     DO_RUN = 1
     DONOT_RUN = 0
@@ -31,7 +31,7 @@ class StartStopWorker():
 
         self.mode_text = "PCV"
 
-        self.mode = self.MODE_AUTO
+        self.mode = self.MODE_PCV
         self.run  = self.DONOT_RUN
         return
 
@@ -55,27 +55,27 @@ class StartStopWorker():
 
     def toggle_mode(self):
         """
-        Toggles between desired mode (MODE_AUTO or MODE_ASSIST).
+        Toggles between desired mode (MODE_PCV or MODE_PSV).
         """
-        if self.mode == self.MODE_AUTO:
-            result = self.esp32.set('mode', self.MODE_ASSIST)
+        if self.mode == self.MODE_PCV:
+            result = self.esp32.set('mode', self.MODE_PSV)
 
             if result:
                 self.mode_text = "PSV"
                 self.button_autoassist.setText("Set\nPCV")
                 self.update_startstop_text()
-                self.mode = self.MODE_ASSIST
+                self.mode = self.MODE_PSV
             else:
                 self.raise_comm_error('Cannot set PSV mode.')
 
         else:
-            result = self.esp32.set('mode', self.MODE_AUTO)
+            result = self.esp32.set('mode', self.MODE_PCV)
 
             if result:
                 self.mode_text = "PCV"
                 self.button_autoassist.setText("Set\nPSV")
                 self.update_startstop_text()
-                self.mode = self.MODE_AUTO
+                self.mode = self.MODE_PCV
             else:
                 self.raise_comm_error('Cannot set PCV mode.')
 
