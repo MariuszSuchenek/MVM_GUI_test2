@@ -74,6 +74,8 @@ class Settings(QtWidgets.QMainWindow):
 
         self.load_presets()
 
+        self.tabWidget = self.tabs
+
     def spawn_presets_window(self, name):
         presets = self._config[name]['presets']
 
