@@ -99,14 +99,14 @@ class ControllerStatus:
     def _open_backup_warning(self):
         '''
         Opens a warning message if the ventilator
-        changed from assisted to automatic ventilation.
+        changed from PSV to PCV ventilation.
         '''
         msg = MessageBox()
 
         callbacks = {msg.Ok: self._acknowlege_backup}
 
         fn = msg.warning("CHANGE OF MODE",
-                         "The ventilator changed from assisted to automatic mode.",
+                         "The ventilator changed from PSV to PCV mode.",
                          "The microcontroller raised the backup flag.",
                          "",
                          callbacks)

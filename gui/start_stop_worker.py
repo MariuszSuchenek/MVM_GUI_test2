@@ -67,7 +67,7 @@ class StartStopWorker():
                 self.update_startstop_text()
                 self.mode = self.MODE_ASSIST
             else:
-                self.raise_comm_error('Cannot set assisted mode.')
+                self.raise_comm_error('Cannot set PSV mode.')
 
         else:
             result = self.esp32.set('mode', self.MODE_AUTO)
@@ -78,7 +78,7 @@ class StartStopWorker():
                 self.update_startstop_text()
                 self.mode = self.MODE_AUTO
             else:
-                self.raise_comm_error('Cannot set automatic mode.')
+                self.raise_comm_error('Cannot set PCV mode.')
 
     def update_startstop_text(self):
         '''
