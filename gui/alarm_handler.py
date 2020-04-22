@@ -8,6 +8,7 @@ BITMAP = { 1 << x: x for x in range(32)}
 
 class SnoozeButton:
     '''
+    Takes care of snoozing alarms.
     '''
     ERROR = 0
     WARNING = 1
