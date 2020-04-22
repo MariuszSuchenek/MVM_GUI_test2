@@ -93,6 +93,8 @@ class AlarmButton(QtGui.QPushButton):
         self.setStyleSheet('background-color: %s; color : white; border: 0.5px solid white; font-weight: bold;' % self._bkg_color)
 
         self.setMaximumWidth(35)
+        self.setSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Expanding)
+
 
     def on_click_event(self):
 
@@ -195,24 +197,6 @@ class AlarmHandler:
                     self._alarmstack.addWidget(btn)
                     self._err_buttons[alarm_code] = btn
 
-            if not self._alarm_raised:
-                self._alarm_raised = True
-                self._msg_err.critical("ALARM",
-                             " - ".join(errors),
-                             "\n".join(errors_full),
-                             "Alarm received.",
-                             { self._msg_err.Ignore: lambda:
-                                 self.ok_worker('alarm', esp32alarm) },
-                             do_not_block=True)
-                self._msg_err.move(0, 100)
-                self._msg_err.open()
-            else:
-                # If the window is already opened, just change the text
-                self._msg_err.setInformativeText(" - ".join(errors))
-                self._msg_err.setDetailedText("\n".join(errors_full))
-                self._msg_err.raise_()
-
-
         #
         # WARNINGS
         #
@@ -227,23 +211,6 @@ class AlarmHandler:
                     btn = AlarmButton(AlarmButton.WARNING, warning_code, err_str, self._alarmlabel, self._snooze_btn)
                     self._alarmstack.addWidget(btn)
                     self._war_buttons[warning_code] = btn
-
-            if not self._warning_raised:
-                self._warning_raised = True
-                self._msg_war.warning("WARNING",
-                             " - ".join(errors),
-                             "\n".join(errors_full),
-                             "Warning received.",
-                             { self._msg_war.Ok: lambda:
-                                 self.ok_worker('warning', esp32warning) },
-                             do_not_block=True)
-                self._msg_war.move(0, 300)
-                self._msg_war.open()
-            else:
-                # If the window is already opened, just change the text
-                self._msg_war.setInformativeText(" - ".join(errors))
-                self._msg_war.setDetailedText("\n".join(errors_full))
-                self._msg_war.raise_()
 
     def snooze_alarm(self, code):
         if code not in self._err_buttons:
@@ -266,43 +233,6 @@ class AlarmHandler:
         self._alarmlabel.setStyleSheet('QLabel { background-color : black;')
         self._alarmsnooze.hide()
 
-
-    def ok_worker(self, mode, raised_ones):
-        '''
-        The callback function called when the alarm
-        or warning pop up window is closed by clicking
-        on the Ok button.
-
-        arguments:
-        - mode: what this is closing, an 'alarm' or a 'warning'
-        '''
-
-        if mode not in ['alarm', 'warning']:
-            raise Exception('mode must be alarm or warning.')
-
-        if mode == 'alarm':
-            self._alarm_raised = False
-        else:
-            self._warning_raised = False
-
-        # Reset the alarms/warnings in the ESP
-        # If the ESP connection fails at this
-        # time, raise an error box
-        try:
-            if mode == 'alarm':
-                for alarm_code in raised_ones.unpack():
-                    self._esp32.snooze_hw_alarm(alarm_code)
-            else:
-                self._esp32.reset_warnings()
-        except Exception as error:
-            msg = MessageBox()
-            fn = msg.critical("Critical",
-                              "Severe hardware communication error",
-                              str(error),
-                              "Communication error",
-                              { msg.Retry: lambda: self.ok_worker(mode),
-                                msg.Abort: lambda: None })
-            fn()
 
     def raise_alarm(self):
         '''
