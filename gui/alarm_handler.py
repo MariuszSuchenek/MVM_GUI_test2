@@ -171,6 +171,10 @@ class AlarmHandler:
 
         self._snooze_btn = SnoozeButton(self._esp32, self, self._alarmsnooze)
 
+        btn = QtGui.QPushButton('?')
+        btn.setMaximumWidth(1)
+        btn.setStyleSheet('background-color: black; color: black; border: 0.5px solid black; font-weight: bold;')
+        self._alarmstack.addWidget(btn)
 
 
     def handle_alarms(self):
@@ -237,12 +241,12 @@ class AlarmHandler:
         Graphically snoozes alarm corresponding to 'code'
         '''
         if code not in self._err_buttons:
-            raise Exception('Cannot snooze code %s as alarm button doesn\t exist.' % code)
+            raise Exception('Cannot snooze code %s as alarm button doesn\'t exist.' % code)
 
         self._err_buttons[code].deleteLater()
         del self._err_buttons[code]
         self._alarmlabel.setText('')
-        self._alarmlabel.setStyleSheet('QLabel { background-color : black; }')
+        self._alarmlabel.setStyleSheet('QLabel { background-color: black; }')
         self._alarmsnooze.hide()
 
 
@@ -251,12 +255,12 @@ class AlarmHandler:
         Graphically snoozes warning corresponding to 'code'
         '''
         if code not in self._war_buttons:
-            raise Exception('Cannot snooze code %s as warning button doesn\t exist.' % code)
+            raise Exception('Cannot snooze code %s as warning button doesn\'t exist.' % code)
 
         self._war_buttons[code].deleteLater()
         del self._war_buttons[code]
         self._alarmlabel.setText('')
-        self._alarmlabel.setStyleSheet('QLabel { background-color : black; }')
+        self._alarmlabel.setStyleSheet('QLabel { background-color: black; }')
         self._alarmsnooze.hide()
 
 
