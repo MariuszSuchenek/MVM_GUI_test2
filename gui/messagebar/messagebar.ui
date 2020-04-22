@@ -465,6 +465,26 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="button_confirm">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Confirm - Yes</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="confirm_msg">
      <property name="minimumSize">
       <size>
@@ -494,26 +514,6 @@
      </property>
      <property name="margin">
       <number>6</number>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="button_confirm">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Confirm - Yes</string>
      </property>
     </widget>
    </item>
