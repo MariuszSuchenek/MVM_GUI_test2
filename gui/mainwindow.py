@@ -24,6 +24,7 @@ from alarm_handler import AlarmHandler
 from controller_status import ControllerStatus
 from numpad.numpad import NumPad
 from frozenplots.frozenplots import Cursor
+from messagebar.messagebar import MessageBar
 
 import pyqtgraph as pg
 import sys
@@ -177,6 +178,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_freeze.pressed.connect(self.freeze_plots)
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
         self.button_backspecial.pressed.connect(self.show_menu)
+
+        # Confirmation bar
+        self.messagebar = MessageBar(self)
+        self.bottombar.insertWidget(self.bottombar.count(), self.messagebar)
 
         # Assign unlock screen button and setup state
         self.unlockscreen_interval = self.config['unlockscreen_interval']
