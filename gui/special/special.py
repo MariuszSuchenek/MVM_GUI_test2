@@ -37,7 +37,7 @@ class SpecialBar(QtWidgets.QWidget):
     def _get_lung_recruit_eta(self):
         eta = float(self._esp32.get("pause_lg_time"))
         if eta == 0:
-            self.toggle_lung_recruit()
+            self.stop_lung_recruit()
             self._lung_recruit_timer.stop()
         else:
             self.button_lung_recruit.setText("Stop\nLung Recruitment\n%d" % int(eta))
@@ -56,18 +56,22 @@ class SpecialBar(QtWidgets.QWidget):
         self._lung_recruit_timer.timeout.connect(self._get_lung_recruit_eta)
         self._lung_recruit_timer.start(500)
 
+    def stop_lung_recruit(self):
+        self._lung_recruit = False
+        self._esp32.set("pause_lg", 0)
+        self._lung_recruit_timer.stop()
+        self.button_lung_recruit.setText("Country-Specific\nProcedures")
+
+
     def toggle_lung_recruit(self):
         if self._lung_recruit:
-            self._lung_recruit = False
-            self._esp32.set("pause_lg", 0)
-            self._lung_recruit_timer.stop()
-            self.button_lung_recruit.setText("Country-Specific\nProcedures")
+            self.stop_lung_recruit()
         else:
             self._messagebar.get_confirmation(
                     "Please confirm",
                     "Do you wanted to start the Lung Recruitment procedure?",
                     func_confirm=self.start_lung_recruit,
-                    color="green")
+                    color="#00FF00")
             """
             msg = MessageBox()
             fn = msg.question("Please confirm",
