@@ -33,6 +33,7 @@ class SnoozeButton:
 
         self._alarmsnooze.clicked.connect(self._on_click_snooze)
         self._alarmsnooze.setStyleSheet('background-color: blue; color : white; font-weight: bold;')
+        self._alarmsnooze.setMaximumWidth(150)
 
     def set_code(self, code):
         '''
