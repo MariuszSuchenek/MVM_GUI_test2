@@ -158,12 +158,6 @@ class AlarmHandler:
         self._esp32 = esp32
         self._alarmbar = alarmbar
 
-        self._alarm_raised = False
-        self._warning_raised = False
-
-        self._msg_err = MessageBox()
-        self._msg_war = MessageBox()
-
         self._alarm_timer = QtCore.QTimer()
         self._alarm_timer.timeout.connect(self.handle_alarms)
         self._alarm_timer.start(config["alarminterval"] * 1000)
@@ -219,7 +213,7 @@ class AlarmHandler:
 
             for alarm_code, err_str in zip(alarm_codes, errors):
                 if alarm_code not in self._err_buttons:
-                    btn = AlarmButton(AlarmButton.ERROR, alarm_code, err_str, self._alarmlabel, self._snooze_btn)
+                    btn = AlarmButton(ERROR, alarm_code, err_str, self._alarmlabel, self._snooze_btn)
                     self._alarmstack.addWidget(btn)
                     self._err_buttons[alarm_code] = btn
 
@@ -234,7 +228,7 @@ class AlarmHandler:
 
             for warning_code, err_str in zip(warning_codes, errors):
                 if warning_code not in self._war_buttons:
-                    btn = AlarmButton(AlarmButton.WARNING, warning_code, err_str, self._alarmlabel, self._snooze_btn)
+                    btn = AlarmButton(WARNING, warning_code, err_str, self._alarmlabel, self._snooze_btn)
                     self._alarmstack.addWidget(btn)
                     self._war_buttons[warning_code] = btn
 
