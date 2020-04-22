@@ -4,18 +4,80 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from messagebox import MessageBox
 from communication.esp32serial import ESP32Alarm, ESP32Warning
 
+class SnoozeButton:
+    '''
+    '''
+    ERROR = 0
+    WARNING = 1
+
+    def __init__(self, esp32, alarm_h, alarmsnooze):
+        self._esp32 = esp32
+        self._alarm_h = alarm_h
+        self._alarmsnooze = alarmsnooze
+
+        self._alarmsnooze.hide()
+        self._code = None
+        self._mode = None
+
+        self._alarmsnooze.clicked.connect(self._on_click_snooze)
+        self._alarmsnooze.setStyleSheet('background-color: blue; color : white; font-weight: bold;')
+
+    def set_code(self, code):
+        self._code = code
+        self._alarmsnooze.setText('Snooze %s' % str(self._code))
+
+    def set_mode(self, mode):
+        self._mode = mode
+
+    def show(self):
+        self._alarmsnooze.show()
+
+    def _on_click_snooze(self):
+        '''
+        The callback function called when the alarm
+        or warning pop up window is closed by clicking
+        on the Ok button.
+
+        arguments:
+        - mode: what this is closing, an 'alarm' or a 'warning'
+        '''
+
+        if self._mode not in [self.WARNING, self.ERROR]:
+            raise Exception('mode must be alarm or warning.')
+
+        # Reset the alarms/warnings in the ESP
+        # If the ESP connection fails at this
+        # time, raise an error box
+        try:
+            if self._mode == self.ERROR:
+                self._esp32.snooze_hw_alarm(self._code)
+                self._alarm_h.snooze_alarm(self._code)
+            else:
+                self._esp32.reset_warnings()
+                self._alarm_h.snooze_warning(self._code)
+        except Exception as error:
+            msg = MessageBox()
+            fn = msg.critical("Critical",
+                              "Severe hardware communication error",
+                              str(error),
+                              "Communication error",
+                              { msg.Retry: lambda: self.ok_worker(mode),
+                                msg.Abort: lambda: None })
+            fn()
+
 class AlarmButton(QtGui.QPushButton):
     '''
     '''
     ERROR = 0
     WARNING = 1
 
-    def __init__(self, mode, code, errstr, label):
+    def __init__(self, mode, code, errstr, label, snooze_btn):
         super(AlarmButton, self).__init__()
         self._mode = mode
         self._code = code
         self._errstr = errstr
         self._label = label
+        self._snooze_btn = snooze_btn
 
         self.clicked.connect(self.on_click_event)
 
@@ -30,7 +92,7 @@ class AlarmButton(QtGui.QPushButton):
 
         self.setStyleSheet('background-color: %s; color : white; border: 0.5px solid white; font-weight: bold;' % self._bkg_color)
 
-        self.setMaximumWidth(30)
+        self.setMaximumWidth(35)
 
     def on_click_event(self):
 
@@ -38,6 +100,14 @@ class AlarmButton(QtGui.QPushButton):
         self._label.setStyleSheet('QLabel { background-color : %s; color : white; font-weight: bold;}' % self._bkg_color)
         self._label.setText(self._errstr)
         self._label.show()
+
+        self._activate_snooze_btn()
+
+    def _activate_snooze_btn(self):
+        self._snooze_btn.set_mode(self._mode)
+        self._snooze_btn.set_code(self._code)
+        self._snooze_btn.show()
+
 
 class AlarmHandler:
     '''
@@ -75,7 +145,9 @@ class AlarmHandler:
 
         self._alarmlabel = self._alarmbar.findChild(QtWidgets.QLabel, "alarmlabel")
         self._alarmstack = self._alarmbar.findChild(QtWidgets.QHBoxLayout, "alarmstack")
+        self._alarmsnooze = self._alarmbar.findChild(QtWidgets.QPushButton, "alarmsnooze")
 
+        self._snooze_btn = SnoozeButton(self._esp32, self, self._alarmsnooze)
 
 
 
@@ -119,7 +191,7 @@ class AlarmHandler:
 
             for alarm_code, err_str in zip(alarm_codes, errors):
                 if alarm_code not in self._err_buttons:
-                    btn = AlarmButton(AlarmButton.ERROR, alarm_code, err_str, self._alarmlabel)
+                    btn = AlarmButton(AlarmButton.ERROR, alarm_code, err_str, self._alarmlabel, self._snooze_btn)
                     self._alarmstack.addWidget(btn)
                     self._err_buttons[alarm_code] = btn
 
@@ -152,7 +224,7 @@ class AlarmHandler:
 
             for warning_code, err_str in zip(warning_codes, errors):
                 if warning_code not in self._war_buttons:
-                    btn = AlarmButton(AlarmButton.WARNING, warning_code, err_str, self._alarmlabel)
+                    btn = AlarmButton(AlarmButton.WARNING, warning_code, err_str, self._alarmlabel, self._snooze_btn)
                     self._alarmstack.addWidget(btn)
                     self._war_buttons[warning_code] = btn
 
@@ -172,6 +244,27 @@ class AlarmHandler:
                 self._msg_war.setInformativeText(" - ".join(errors))
                 self._msg_war.setDetailedText("\n".join(errors_full))
                 self._msg_war.raise_()
+
+    def snooze_alarm(self, code):
+        if code not in self._err_buttons:
+            raise Exception('Cannot snooze code %s as alarm button doesn\t exist.' % code)
+
+        self._err_buttons[code].deleteLater()
+        del self._err_buttons[code]
+        self._alarmlabel.setText('')
+        self._alarmlabel.setStyleSheet('QLabel { background-color : black;')
+        self._alarmsnooze.hide()
+
+
+    def snooze_warning(self, code):
+        if code not in self._war_buttons:
+            raise Exception('Cannot snooze code %s as warning button doesn\t exist.' % code)
+
+        self._war_buttons[code].deleteLater()
+        del self._war_buttons[code]
+        self._alarmlabel.setText('')
+        self._alarmlabel.setStyleSheet('QLabel { background-color : black;')
+        self._alarmsnooze.hide()
 
 
     def ok_worker(self, mode, raised_ones):
