@@ -4,6 +4,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from messagebox import MessageBox
 from communication.esp32serial import ESP32Alarm, ESP32Warning
 
+BITMAP = { 1 << x: x for x in range(32)}
+
 class SnoozeButton:
     '''
     '''
@@ -24,7 +26,7 @@ class SnoozeButton:
 
     def set_code(self, code):
         self._code = code
-        self._alarmsnooze.setText('Snooze %s' % str(self._code))
+        self._alarmsnooze.setText('Snooze %s' % str(BITMAP[self._code]))
 
     def set_mode(self, mode):
         self._mode = mode
@@ -88,12 +90,13 @@ class AlarmButton(QtGui.QPushButton):
         else:
             raise Exception('Option %s not supported'.format(self._mode))
 
-        self.setText(str(code))
+        self.setText(str(BITMAP[self._code]))
 
         self.setStyleSheet('background-color: %s; color : white; border: 0.5px solid white; font-weight: bold;' % self._bkg_color)
 
         self.setMaximumWidth(35)
         self.setSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Expanding)
+
 
 
     def on_click_event(self):
