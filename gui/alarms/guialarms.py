@@ -113,7 +113,7 @@ class GuiAlarms:
         #        self._esp32.snooze_hw_alarm(over_code)
 
 
-    def update_thresholds(observable, minimum, maximum):
+    def update_thresholds(self, observable, minimum, maximum):
         '''
         Updated the thresholds
         '''
