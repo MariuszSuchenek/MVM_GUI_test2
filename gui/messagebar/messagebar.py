@@ -41,13 +41,17 @@ class MessageBar(QtWidgets.QWidget):
         func_cancel: Additional function to run when cancel is pressed
         color: Flashing border color of confirmation box
         """
-        self.prev_menu = self.bottombar.currentWidget()
-        self.bottombar.setCurrentWidget(self)
+        current_widget = self.bottombar.currentWidget()
+        if current_widget != self:
+            self.prev_menu = current_widget 
+
         self.func_confirm = func_confirm
         self.func_cancel = func_cancel
 
         self.confirm_msg.setText("<p><b>" + title + "</b></p>" + message)
         self.confirm_msg.bordercolor = color
+
+        self.bottombar.setCurrentWidget(self)
 
     def blink_confirm(self):
         """
@@ -67,23 +71,23 @@ class MessageBar(QtWidgets.QWidget):
         """
         Confirm button is pressed
         """
-        self.return_menu()
 
         if self.func_confirm is not None:
             self.func_confirm()
 
         self.cleanup()
+        self.return_menu()
 
     def cancelled(self):
         """
         Cancel button is pressed
         """
-        self.return_menu()
 
         if self.func_cancel is not None:
             self.func_cancel()
 
         self.cleanup()
+        self.return_menu()
 
     def cleanup(self):
         """
@@ -93,4 +97,5 @@ class MessageBar(QtWidgets.QWidget):
         self.func_confirm = None
 
     def return_menu(self):
+        print(self.prev_menu)
         self.bottombar.setCurrentWidget(self.prev_menu)
