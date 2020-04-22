@@ -13,6 +13,15 @@ class SnoozeButton:
     WARNING = 1
 
     def __init__(self, esp32, alarm_h, alarmsnooze):
+        '''
+        Constructor
+
+        arguments:
+        - esp32: instance of ESP32Serial
+        - alarm_h: instance of AlarmHandler
+        - alarmsnooze: the snooze alarm button
+        '''
+
         self._esp32 = esp32
         self._alarm_h = alarm_h
         self._alarmsnooze = alarmsnooze
@@ -25,23 +34,28 @@ class SnoozeButton:
         self._alarmsnooze.setStyleSheet('background-color: blue; color : white; font-weight: bold;')
 
     def set_code(self, code):
+        '''
+        Sets the alarm code
+        '''
         self._code = code
         self._alarmsnooze.setText('Snooze %s' % str(BITMAP[self._code]))
 
     def set_mode(self, mode):
+        '''
+        Sets the mode (alarm/warning)
+        '''
         self._mode = mode
 
     def show(self):
+        '''
+        Shows the snooze alarm button
+        '''
         self._alarmsnooze.show()
 
     def _on_click_snooze(self):
         '''
         The callback function called when the alarm
-        or warning pop up window is closed by clicking
-        on the Ok button.
-
-        arguments:
-        - mode: what this is closing, an 'alarm' or a 'warning'
+        snooze button is clicked.
         '''
 
         if self._mode not in [self.WARNING, self.ERROR]:
@@ -69,6 +83,8 @@ class SnoozeButton:
 
 class AlarmButton(QtGui.QPushButton):
     '''
+    The alarm and warning buttons
+    shown in the top alarmbar
     '''
     ERROR = 0
     WARNING = 1
@@ -81,7 +97,7 @@ class AlarmButton(QtGui.QPushButton):
         self._label = label
         self._snooze_btn = snooze_btn
 
-        self.clicked.connect(self.on_click_event)
+        self.clicked.connect(self._on_click_event)
 
         if self._mode == self.ERROR:
             self._bkg_color = 'red'
@@ -99,7 +115,11 @@ class AlarmButton(QtGui.QPushButton):
 
 
 
-    def on_click_event(self):
+    def _on_click_event(self):
+        '''
+        The callback function called when the user
+        clicks on an alarm button
+        '''
 
         # Set the label showing the alarm name
         self._label.setStyleSheet('QLabel { background-color : %s; color : white; font-weight: bold;}' % self._bkg_color)
@@ -109,6 +129,10 @@ class AlarmButton(QtGui.QPushButton):
         self._activate_snooze_btn()
 
     def _activate_snooze_btn(self):
+        '''
+        Activates the snooze button
+        that will silence this alarm
+        '''
         self._snooze_btn.set_mode(self._mode)
         self._snooze_btn.set_code(self._code)
         self._snooze_btn.show()
@@ -216,6 +240,9 @@ class AlarmHandler:
                     self._war_buttons[warning_code] = btn
 
     def snooze_alarm(self, code):
+        '''
+        Graphically snoozes alarm corresponding to 'code'
+        '''
         if code not in self._err_buttons:
             raise Exception('Cannot snooze code %s as alarm button doesn\t exist.' % code)
 
@@ -227,6 +254,9 @@ class AlarmHandler:
 
 
     def snooze_warning(self, code):
+        '''
+        Graphically snoozes warning corresponding to 'code'
+        '''
         if code not in self._war_buttons:
             raise Exception('Cannot snooze code %s as warning button doesn\t exist.' % code)
 
