@@ -496,9 +496,8 @@
        </sizepolicy>
       </property>
       <property name="styleSheet">
-       <string notr="true">QHBoxLayout {
-background-color: black;
-}</string>
+       <string notr="true">background: black;
+</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
