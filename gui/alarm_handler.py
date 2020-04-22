@@ -111,6 +111,7 @@ class AlarmButton(QtGui.QPushButton):
         self.setStyleSheet('background-color: %s; color : white; border: 0.5px solid white; font-weight: bold;' % self._bkg_color)
 
         self.setMaximumWidth(35)
+        self.setMaximumHeight(30)
 
 
 
@@ -151,7 +152,7 @@ class AlarmHandler:
         arguments:
         - config: the dictionary storing the configuration
         - esp32: the esp32serial object
-        - alarmbar: the alarm bar 
+        - alarmbar: the alarm bar
         '''
 
         self._config = config

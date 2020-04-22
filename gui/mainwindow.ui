@@ -474,6 +474,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>30</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">background: black;
 </string>
@@ -509,6 +515,12 @@
        </item>
        <item>
         <widget class="QLabel" name="alarmlabel">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
+         </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -531,6 +543,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="alarmsnooze">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
+         </property>
          <property name="text">
           <string>PushButton</string>
          </property>
