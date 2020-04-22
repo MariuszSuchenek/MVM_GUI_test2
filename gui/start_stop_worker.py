@@ -29,6 +29,7 @@ class StartStopWorker():
         self.button_autoassist = button_autoassist
         self.toolbar = toolbar
         self.settings = settings
+        self.messagebar = self.main_window.messagebar
 
         self.mode_text = "PCV"
 
@@ -96,6 +97,16 @@ class StartStopWorker():
         '''
         Callback for when the Start button is pressed
         '''
+        # Send signal to ESP to start running
+        result = self.esp32.set('run', self.DO_RUN)
+
+        if result:
+            self.run = self.DO_RUN
+            self.show_stop_button()
+        else:
+            self.raise_comm_error('Cannot start ventilator.')
+
+    def show_stop_button(self):
         self.button_startstop.setDisabled(True)
         self.button_autoassist.setDisabled(True)
         self.button_startstop.repaint()
@@ -110,10 +121,21 @@ class StartStopWorker():
                  self.button_startstop.setStyleSheet("color: red"),
                  self.toolbar.set_running(self.mode_text)))
 
+
     def stop_button_pressed(self):
         '''
         Callback for when the Stop button is pressed
         '''
+        # Send signal to ESP to stop running
+        result = self.esp32.set('run', self.DONOT_RUN)
+
+        if result:
+            self.run = self.DONOT_RUN
+            self.show_start_button()
+        else:
+            self.raise_comm_error('Cannot stop ventilator.')
+
+    def show_start_button(self):
         self.button_startstop.setEnabled(True)
         self.button_autoassist.setEnabled(True)
 
@@ -133,6 +155,11 @@ class StartStopWorker():
         '''
         self.button_autoassist.setDown(False)
         currentMode = self.mode_text.upper()
+        self.messagebar.get_confirmation(
+                "**STARTING %s MODE**" % currentMode,
+                "Are you sure you want to START %s MODE?" % currentMode,
+                func_confirm=self.start_button_pressed)
+        """
         msg = MessageBox()
         ok = msg.question("**STARTING %s MODE**" % currentMode,
                           "Are you sure you want to START %s MODE?" %
@@ -140,6 +167,7 @@ class StartStopWorker():
                            None, "IMPORTANT", { msg.Yes: lambda: True,
                            msg.No: lambda: False })()
         return ok
+        """
 
     def confirm_stop_pressed(self):
         '''
@@ -148,6 +176,11 @@ class StartStopWorker():
         '''
         self.button_autoassist.setDown(False)
         currentMode = self.mode_text.upper()
+        self.messagebar.get_confirmation(
+                "**STOPPING %s MODE**" % currentMode,
+                "Are you sure you want to STOP %s MODE?" % currentMode,
+                func_confirm=self.stop_button_pressed)
+        """
         msg = MessageBox()
         ok = msg.question("**STOPPING %s MODE**" % currentMode,
                           "Are you sure you want to STOP %s MODE?" %
@@ -155,7 +188,7 @@ class StartStopWorker():
                            None, "IMPORTANT", { msg.Yes: lambda: True,
                            msg.No: lambda: False })()
         return ok
-
+        """
 
     def button_timeout(self):
         '''
@@ -177,28 +210,9 @@ class StartStopWorker():
         """
 
         if self.run == self.DONOT_RUN:
-            if self.confirm_start_pressed():
-                # Send signal to ESP to start running
-                result = self.esp32.set('run', self.DO_RUN)
-
-                if result:
-                    self.run = self.DO_RUN
-                    self.start_button_pressed()
-                else:
-                    self.raise_comm_error('Cannot start ventilator.')
-
-
+            self.confirm_start_pressed()
         else:
-            if self.confirm_stop_pressed():
-
-                # Send signal to ESP to stop running
-                result = self.esp32.set('run', self.DONOT_RUN)
-
-                if result:
-                    self.run = self.DONOT_RUN
-                    self.stop_button_pressed()
-                else:
-                    self.raise_comm_error('Cannot stop ventilator.')
+            self.confirm_stop_pressed()
 
 
     def _stop_abruptly(self):
@@ -207,7 +221,7 @@ class StartStopWorker():
         changes the test in the bottons and status.
         '''
         self.run = self.DONOT_RUN
-        self.stop_button_pressed()
+        self.show_start_button()
 
     def set_run(self, run):
         '''
