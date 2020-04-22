@@ -46,7 +46,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Start the alarm handler, which will check for ESP alarms
         '''
-        self.alarm_h = AlarmHandler(self.config, self.esp32)
+        self.alarm_h = AlarmHandler(self.config, self.esp32, self.alarmbar)
 
         '''
         Get the toppane and child pages

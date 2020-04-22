@@ -22,6 +22,13 @@ class ESP32BaseAlarm:
     def __str__(self):
         return 'All alarms: ' + ' - '.join(self.strerror_all())
 
+    def get_alarm_codes(self):
+
+        if not hasattr(self, 'alarms'):
+            return self.unpack()
+            
+        return self.alarms
+
     def unpack(self):
         '''
         Unpacks the number obtained from the ESP

@@ -4,6 +4,34 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from messagebox import MessageBox
 from communication.esp32serial import ESP32Alarm, ESP32Warning
 
+class AlarmButton(QtGui.QPushButton):
+    '''
+    '''
+    ERROR = 0
+    WARNING = 1
+
+    def __init__(self, mode, code, errstr, label):
+        super(AlarmButton, self).__init__()
+        self._mode = mode
+        self._code = code
+        self._errstr = errstr
+        self._label = label
+
+        self.clicked.connect(self.on_click_event)
+
+        if self._mode == self.ERROR:
+            self._bkg_color = 'red'
+        elif self._mode == self.WARNING:
+            self._bkg_color = 'orange'
+        else:
+            raise Exception('Option %s not supported'.format(self._mode))
+
+        self.setStyleSheet('background-color: %s' % self._bkg_color)
+
+    def on_click_event(self):
+        self._label.setStyleSheet('QLabel { background-color : %s; color : white; }' % self._bkg_color)
+        self._label.setText(self._errstr)
+        self._label.show()
 
 class AlarmHandler:
     '''
