@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from messagebox import MessageBox
 from communication.esp32serial import ESP32Alarm, ESP32Warning
 
-BITMAP = { 1 << x: x for x in range(32)}
+BITMAP = {1 << x: x for x in range(32)}
 ERROR = 0
 WARNING = 1
 
