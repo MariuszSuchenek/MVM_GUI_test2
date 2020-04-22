@@ -256,7 +256,7 @@ class AlarmHandler:
         self._war_buttons[code].deleteLater()
         del self._war_buttons[code]
         self._alarmlabel.setText('')
-        self._alarmlabel.setStyleSheet('QLabel { background-color : black;')
+        self._alarmlabel.setStyleSheet('QLabel { background-color : black; }')
         self._alarmsnooze.hide()
 
 
