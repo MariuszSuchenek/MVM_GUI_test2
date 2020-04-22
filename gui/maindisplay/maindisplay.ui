@@ -7,13 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>390</height>
+    <height>345</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>390</height>
+    <height>345</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -85,13 +91,13 @@
      <property name="minimumSize">
       <size>
        <width>160</width>
-       <height>390</height>
+       <height>345</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>160</width>
-       <height>390</height>
+       <height>345</height>
       </size>
      </property>
      <property name="currentIndex">
