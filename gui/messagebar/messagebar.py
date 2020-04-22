@@ -72,6 +72,8 @@ class MessageBar(QtWidgets.QWidget):
         if self.func_confirm is not None:
             self.func_confirm()
 
+        self.cleanup()
+
     def cancelled(self):
         """
         Cancel button is pressed
@@ -81,8 +83,14 @@ class MessageBar(QtWidgets.QWidget):
         if self.func_cancel is not None:
             self.func_cancel()
 
-    def return_menu(self):
-        self.bottombar.setCurrentWidget(self.prev_menu)
-        # Remove cancel and confirm functions for safety
+        self.cleanup()
+
+    def cleanup(self):
+        """
+        Remove cancel and confirm functions for safety
+        """
         self.func_cancel = None
         self.func_confirm = None
+
+    def return_menu(self):
+        self.bottombar.setCurrentWidget(self.prev_menu)
