@@ -32,7 +32,7 @@ class SnoozeButton:
         self._mode = None
 
         self._alarmsnooze.clicked.connect(self._on_click_snooze)
-        self._alarmsnooze.setStyleSheet('background-color: blue; color : white; font-weight: bold;')
+        self._alarmsnooze.setStyleSheet('background-color: rgb(0,0,205); color: white; font-weight: bold;')
         self._alarmsnooze.setMaximumWidth(150)
 
     def set_code(self, code):
@@ -111,7 +111,6 @@ class AlarmButton(QtGui.QPushButton):
         self.setStyleSheet('background-color: %s; color : white; border: 0.5px solid white; font-weight: bold;' % self._bkg_color)
 
         self.setMaximumWidth(35)
-        self.setSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Expanding)
 
 
 
@@ -243,7 +242,7 @@ class AlarmHandler:
         self._err_buttons[code].deleteLater()
         del self._err_buttons[code]
         self._alarmlabel.setText('')
-        self._alarmlabel.setStyleSheet('QLabel { background-color : black;')
+        self._alarmlabel.setStyleSheet('QLabel { background-color : black; }')
         self._alarmsnooze.hide()
 
 
