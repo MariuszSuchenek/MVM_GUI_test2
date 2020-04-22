@@ -277,7 +277,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._data_h = DataHandler(config, self.esp32, self.data_filler, self.gui_alarm)
 
         self.specialbar.connect_datahandler_config_esp32(self._data_h,
-                self.config, self.esp32)
+                self.config, self.esp32, self.messagebar)
 
         '''
         Connect settings button to Settings overlay.
