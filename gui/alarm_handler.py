@@ -26,10 +26,16 @@ class AlarmButton(QtGui.QPushButton):
         else:
             raise Exception('Option %s not supported'.format(self._mode))
 
-        self.setStyleSheet('background-color: %s' % self._bkg_color)
+        self.setText(str(code))
+
+        self.setStyleSheet('background-color: %s; color : white; border: 0.5px solid white; font-weight: bold;' % self._bkg_color)
+
+        self.setMaximumWidth(30)
 
     def on_click_event(self):
-        self._label.setStyleSheet('QLabel { background-color : %s; color : white; }' % self._bkg_color)
+
+        # Set the label showing the alarm name
+        self._label.setStyleSheet('QLabel { background-color : %s; color : white; font-weight: bold;}' % self._bkg_color)
         self._label.setText(self._errstr)
         self._label.show()
 
@@ -40,17 +46,19 @@ class AlarmHandler:
     or warnings coming from ESP32
     '''
 
-    def __init__(self, config, esp32):
+    def __init__(self, config, esp32, alarmbar):
         '''
         Constructor
 
         arguments:
         - config: the dictionary storing the configuration
         - esp32: the esp32serial object
+        - alarmbar: the alarm bar 
         '''
 
         self._config = config
         self._esp32 = esp32
+        self._alarmbar = alarmbar
 
         self._alarm_raised = False
         self._warning_raised = False
@@ -61,6 +69,13 @@ class AlarmHandler:
         self._alarm_timer = QtCore.QTimer()
         self._alarm_timer.timeout.connect(self.handle_alarms)
         self._alarm_timer.start(config["alarminterval"] * 1000)
+
+        self._err_buttons = {}
+        self._war_buttons = {}
+
+        self._alarmlabel = self._alarmbar.findChild(QtWidgets.QLabel, "alarmlabel")
+        self._alarmstack = self._alarmbar.findChild(QtWidgets.QHBoxLayout, "alarmstack")
+
 
 
 
@@ -100,6 +115,14 @@ class AlarmHandler:
             errors = esp32alarm.strerror_all()
             errors_full = esp32alarm.strerror_all(append_err_no=True)
 
+            alarm_codes = esp32alarm.get_alarm_codes()
+
+            for alarm_code, err_str in zip(alarm_codes, errors):
+                if alarm_code not in self._err_buttons:
+                    btn = AlarmButton(AlarmButton.ERROR, alarm_code, err_str, self._alarmlabel)
+                    self._alarmstack.addWidget(btn)
+                    self._err_buttons[alarm_code] = btn
+
             if not self._alarm_raised:
                 self._alarm_raised = True
                 self._msg_err.critical("ALARM",
@@ -124,6 +147,14 @@ class AlarmHandler:
         if esp32warning:
             errors = esp32warning.strerror_all()
             errors_full = esp32warning.strerror_all(append_err_no=True)
+
+            warning_codes = esp32warning.get_alarm_codes()
+
+            for warning_code, err_str in zip(warning_codes, errors):
+                if warning_code not in self._war_buttons:
+                    btn = AlarmButton(AlarmButton.WARNING, warning_code, err_str, self._alarmlabel)
+                    self._alarmstack.addWidget(btn)
+                    self._war_buttons[warning_code] = btn
 
             if not self._warning_raised:
                 self._warning_raised = True
