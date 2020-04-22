@@ -172,12 +172,6 @@ class AlarmHandler:
 
         self._snooze_btn = SnoozeButton(self._esp32, self, self._alarmsnooze)
 
-        btn = QtGui.QPushButton('?')
-        btn.setMaximumWidth(1)
-        btn.setStyleSheet('background-color: black; color: black; border: 0.5px solid black; font-weight: bold;')
-        self._alarmstack.addWidget(btn)
-
-
     def handle_alarms(self):
         '''
         The callback method which is called periodically
