@@ -5,13 +5,13 @@ from messagebox import MessageBox
 from communication.esp32serial import ESP32Alarm, ESP32Warning
 
 BITMAP = { 1 << x: x for x in range(32)}
+ERROR = 0
+WARNING = 1
 
 class SnoozeButton:
     '''
     Takes care of snoozing alarms.
     '''
-    ERROR = 0
-    WARNING = 1
 
     def __init__(self, esp32, alarm_h, alarmsnooze):
         '''
@@ -59,14 +59,14 @@ class SnoozeButton:
         snooze button is clicked.
         '''
 
-        if self._mode not in [self.WARNING, self.ERROR]:
+        if self._mode not in [WARNING, ERROR]:
             raise Exception('mode must be alarm or warning.')
 
         # Reset the alarms/warnings in the ESP
         # If the ESP connection fails at this
         # time, raise an error box
         try:
-            if self._mode == self.ERROR:
+            if self._mode == ERROR:
                 self._esp32.snooze_hw_alarm(self._code)
                 self._alarm_h.snooze_alarm(self._code)
             else:
@@ -87,8 +87,6 @@ class AlarmButton(QtGui.QPushButton):
     The alarm and warning buttons
     shown in the top alarmbar
     '''
-    ERROR = 0
-    WARNING = 1
 
     def __init__(self, mode, code, errstr, label, snooze_btn):
         super(AlarmButton, self).__init__()
@@ -100,9 +98,9 @@ class AlarmButton(QtGui.QPushButton):
 
         self.clicked.connect(self._on_click_event)
 
-        if self._mode == self.ERROR:
+        if self._mode == ERROR:
             self._bkg_color = 'red'
-        elif self._mode == self.WARNING:
+        elif self._mode == WARNING:
             self._bkg_color = 'orange'
         else:
             raise Exception('Option %s not supported'.format(self._mode))
