@@ -20,7 +20,7 @@ class MessageBar(QtWidgets.QWidget):
         self.confirm_msg    = self.findChild(QtWidgets.QLabel, "confirm_msg")
 
         self.confirm_msg.blinkstate = False
-        self.confirm_msg.bordercolor = "#000000"
+        self.confirm_msg.bordercolor = "#ffffff"
         self.blinktimer = QtCore.QTimer(self)
         self.blinktimer.setInterval(500) #.5 seconds
         self.blinktimer.timeout.connect(self.blink_confirm)
@@ -59,7 +59,7 @@ class MessageBar(QtWidgets.QWidget):
         """
         label = self.confirm_msg
         if label.blinkstate:
-            color = "#000000"
+            color = "#ffffff"
             label.blinkstate = False
         else:
             color = label.bordercolor
