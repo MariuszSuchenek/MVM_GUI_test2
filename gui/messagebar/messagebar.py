@@ -43,7 +43,7 @@ class MessageBar(QtWidgets.QWidget):
         """
         current_widget = self.bottombar.currentWidget()
         if current_widget != self:
-            self.prev_menu = current_widget 
+            self.prev_menu = current_widget
 
         self.func_confirm = func_confirm
         self.func_cancel = func_cancel
@@ -66,7 +66,7 @@ class MessageBar(QtWidgets.QWidget):
             label.blinkstate = True
 
         label.setStyleSheet("QLabel { border: 3px solid " + color + "; }")
-        
+
     def confirmed(self):
         """
         Confirm button is pressed
@@ -97,5 +97,4 @@ class MessageBar(QtWidgets.QWidget):
         self.func_confirm = None
 
     def return_menu(self):
-        print(self.prev_menu)
         self.bottombar.setCurrentWidget(self.prev_menu)
