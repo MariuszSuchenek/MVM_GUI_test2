@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>345</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -91,13 +91,13 @@
      <property name="minimumSize">
       <size>
        <width>160</width>
-       <height>345</height>
+       <height>360</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>160</width>
-       <height>345</height>
+       <height>360</height>
       </size>
      </property>
      <property name="currentIndex">
@@ -121,7 +121,11 @@
         <number>0</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="monitors_slots"/>
+        <layout class="QVBoxLayout" name="monitors_slots">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+        </layout>
        </item>
       </layout>
      </widget>
