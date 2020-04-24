@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore, QtGui, QtWidgets
-import os
+import os, sys
 import yaml
 import copy
 from .settingsfile import SettingsFile
-
 from presets.presets import Presets
+from messagebox import MessageBox
 
 class Settings(QtWidgets.QMainWindow):
     def __init__(self, mainparent, *args):
@@ -63,6 +63,9 @@ class Settings(QtWidgets.QMainWindow):
             'lung_recruit_time': self.fake_btn_lr_t
         }
 
+        self._all_spinboxes['respiratory_rate'].valueChanged.connect(self._recalculate_inspiratory_time)
+        self._all_spinboxes['insp_expir_ratio'].valueChanged.connect(self._recalculate_inspiratory_time)
+
         self.toolsettings_lookup = None
 
         # Connect all widgets
@@ -73,6 +76,11 @@ class Settings(QtWidgets.QMainWindow):
         self._current_preset_name = None
 
         self.load_presets()
+
+    def _recalculate_inspiratory_time(self):
+        rr = self._all_spinboxes['respiratory_rate'].value()
+        expr_denon = self._all_spinboxes['insp_expir_ratio'].value()
+        self.inspiratory_time_label.setText("%.2f" % (60.0/(rr * (1+expr_denon))))
 
     def spawn_presets_window(self, name):
         presets = self._config[name]['presets']
@@ -191,12 +199,12 @@ class Settings(QtWidgets.QMainWindow):
         for param, btn in self._all_spinboxes.items():
             value_config = self._config[param]
 
-            btn.setValue(value_config['default'])
-            self._current_values[param] = value_config['default']
-
             if param not in ['enable_backup', 'pcv_trigger_enable']:
                 btn.setMinimum(value_config['min'])
                 btn.setMaximum(value_config['max'])
+
+            btn.setValue(value_config['default'])
+            self._current_values[param] = value_config['default']
 
         # assign an easy lookup for toolsettings
         self.toolsettings_lookup = {}
@@ -314,16 +322,29 @@ class Settings(QtWidgets.QMainWindow):
             btn.setStyleSheet("color: red")
 
             esp_param_name = self._config['esp_settable_param'][param]
-            status = self._data_h.set_data(esp_param_name, value)
 
-            if status:
-                # Now set the color to green, as we know it has been set
-                btn.setStyleSheet("color: green")
+            # Finally, try to set the value to the ESP
+            # Raise an error message if this fails.
+            try:
+                if self._data_h.set_data(esp_param_name, value):
+                    # Now set the color to green, as we know it has been set
+                    btn.setStyleSheet("color: green")
+            except Exception as error:
+                msg = MessageBox()
+                msg.critical("Critical",
+                             "Severe Hardware Communication Error",
+                             str(error),
+                             "Communication error",
+                             { msg.Retry: lambda: self.send_values_to_hardware,
+                               msg.Abort: lambda: sys.exit(-1) })()
 
             if param == 'respiratory_rate':
                 self.toolsettings_lookup["respiratory_rate"].update(value)
             elif param == 'insp_expir_ratio':
                 self.toolsettings_lookup["insp_expir_ratio"].update(self._current_values[param])
+            elif param == 'insp_pressure':
+                self.toolsettings_lookup["insp_pressure"].update(value)
+                
         settings_file = SettingsFile(self._config["settings_file_path"])
         settings_file.store(settings_to_file)
 

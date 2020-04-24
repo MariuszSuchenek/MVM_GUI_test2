@@ -126,7 +126,7 @@ QTabBar::tab:!selected {
           <x>10</x>
           <y>0</y>
           <width>340</width>
-          <height>60</height>
+          <height>50</height>
          </rect>
         </property>
         <property name="font">
@@ -145,9 +145,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>70</y>
-          <width>340</width>
-          <height>60</height>
+          <y>60</y>
+          <width>140</width>
+          <height>50</height>
          </rect>
         </property>
         <property name="font">
@@ -159,7 +159,7 @@ QTabBar::tab:!selected {
          </font>
         </property>
         <property name="text">
-         <string>I:E                                                                 1  :</string>
+         <string>I:E</string>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="spinBox_rr">
@@ -168,7 +168,7 @@ QTabBar::tab:!selected {
           <x>360</x>
           <y>0</y>
           <width>400</width>
-          <height>60</height>
+          <height>50</height>
          </rect>
         </property>
         <property name="font">
@@ -190,9 +190,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>360</x>
-          <y>70</y>
+          <y>60</y>
           <width>400</width>
-          <height>60</height>
+          <height>50</height>
          </rect>
         </property>
         <property name="font">
@@ -221,7 +221,7 @@ QTabBar::tab:!selected {
           <x>440</x>
           <y>0</y>
           <width>240</width>
-          <height>60</height>
+          <height>50</height>
          </rect>
         </property>
         <property name="palette">
@@ -334,9 +334,9 @@ QTabBar::tab:!selected {
         <property name="geometry">
          <rect>
           <x>440</x>
-          <y>70</y>
+          <y>60</y>
           <width>240</width>
-          <height>60</height>
+          <height>50</height>
          </rect>
         </property>
         <property name="palette">
@@ -451,7 +451,7 @@ QTabBar::tab:!selected {
           <x>10</x>
           <y>140</y>
           <width>340</width>
-          <height>60</height>
+          <height>50</height>
          </rect>
         </property>
         <property name="font">
@@ -472,7 +472,7 @@ QTabBar::tab:!selected {
           <x>360</x>
           <y>140</y>
           <width>400</width>
-          <height>60</height>
+          <height>50</height>
          </rect>
         </property>
         <property name="font">
@@ -501,7 +501,7 @@ QTabBar::tab:!selected {
           <x>440</x>
           <y>140</y>
           <width>240</width>
-          <height>60</height>
+          <height>50</height>
          </rect>
         </property>
         <property name="palette">
@@ -679,7 +679,7 @@ border: 2px solid gray;
           <rect>
            <x>190</x>
            <y>40</y>
-           <width>161</width>
+           <width>160</width>
            <height>60</height>
           </rect>
          </property>
@@ -843,6 +843,67 @@ border: 2px solid gray;
           <enum>Qt::Vertical</enum>
          </property>
         </widget>
+       </widget>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>50</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>I [s]</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="inspiratory_time_label">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>110</y>
+          <width>90</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_13">
+        <property name="geometry">
+         <rect>
+          <x>269</x>
+          <y>60</y>
+          <width>71</width>
+          <height>50</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Cantarell</family>
+          <pointsize>13</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>1 :</string>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_psv">
@@ -1362,7 +1423,7 @@ border: 2px solid gray;
         <widget class="QLabel" name="label_11">
          <property name="geometry">
           <rect>
-           <x>9</x>
+           <x>10</x>
            <y>20</y>
            <width>171</width>
            <height>40</height>
@@ -1387,8 +1448,8 @@ border: 2px solid gray;
           <rect>
            <x>190</x>
            <y>40</y>
-           <width>151</width>
-           <height>61</height>
+           <width>150</width>
+           <height>60</height>
           </rect>
          </property>
          <property name="font">
@@ -1437,7 +1498,7 @@ border: 2px solid gray;
           <rect>
            <x>430</x>
            <y>40</y>
-           <width>241</width>
+           <width>240</width>
            <height>60</height>
           </rect>
          </property>
@@ -1555,8 +1616,8 @@ border: 2px solid gray;
           <rect>
            <x>20</x>
            <y>60</y>
-           <width>131</width>
-           <height>41</height>
+           <width>130</width>
+           <height>40</height>
           </rect>
          </property>
         </widget>
@@ -2024,8 +2085,8 @@ Operative System</string>
          <rect>
           <x>80</x>
           <y>20</y>
-          <width>621</width>
-          <height>31</height>
+          <width>620</width>
+          <height>30</height>
          </rect>
         </property>
         <property name="font">

@@ -144,6 +144,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
                 "gas_leakage_alarm": 5,
                 "gas_occlusion_alarm": 6,
                 "partial_gas_occlusion_alarm": 7,
+                "apnea_alarm": 22,
                 "system_failure_alarm": 31}
 
         # HW warnings

@@ -24,6 +24,7 @@ from alarm_handler import AlarmHandler
 from controller_status import ControllerStatus
 from numpad.numpad import NumPad
 from frozenplots.frozenplots import Cursor
+from messagebar.messagebar import MessageBar
 
 import pyqtgraph as pg
 import sys
@@ -46,7 +47,7 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Start the alarm handler, which will check for ESP alarms
         '''
-        self.alarm_h = AlarmHandler(self.config, self.esp32)
+        self.alarm_h = AlarmHandler(self.config, self.esp32, self.alarmbar)
 
         '''
         Get the toppane and child pages
@@ -178,6 +179,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_unfreeze.pressed.connect(self.unfreeze_plots)
         self.button_backspecial.pressed.connect(self.show_menu)
 
+        # Confirmation bar
+        self.messagebar = MessageBar(self)
+        self.bottombar.insertWidget(self.bottombar.count(), self.messagebar)
+
         # Assign unlock screen button and setup state
         self.unlockscreen_interval = self.config['unlockscreen_interval']
         self.button_unlockscreen._state = 0
@@ -272,7 +277,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._data_h = DataHandler(config, self.esp32, self.data_filler, self.gui_alarm)
 
         self.specialbar.connect_datahandler_config_esp32(self._data_h,
-                self.config, self.esp32)
+                self.config, self.esp32, self.messagebar)
 
         '''
         Connect settings button to Settings overlay.

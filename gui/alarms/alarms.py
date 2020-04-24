@@ -2,7 +2,39 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui, QtCore
 
+
+class AlarmScrollBar(QtWidgets.QScrollBar):
+    """
+    Custom class to override QScrollBar parameters.
+    """
+    def __init__(self, *args):
+        # QtWidgets.QScrollBar.init(self, parent, **kwargs)
+        super(AlarmScrollBar, self).__init__(*args)
+        self.setStyleSheet("""QScrollBar:horizontal {
+                height: 15px;
+                margin: 0px 40px 0 40px;
+                background-color: #cccfca;
+            }
+            QScrollBar::handle:horizontal {
+                min-width: 40px;
+            }
+            QScrollBar::add-line:horizontal {
+                width: 40px;
+                subcontrol-position: right;
+                subcontrol-origin: margin;
+            }
+
+            QScrollBar::sub-line:horizontal {
+                width: 40px;
+                subcontrol-position: left;
+                subcontrol-origin: margin;
+            }""")
+
 def clickable(widget):
+    """
+    Creates a click event filter for widgets that are not normally clickable.
+    The 'connect' function can be used to now attach a function to the click event.
+    """
     class Filter(QtCore.QObject):
         clicked = QtCore.pyqtSignal()
         def eventFilter(self, obj, event):

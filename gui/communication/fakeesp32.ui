@@ -29,40 +29,27 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="raise_alarm_btn">
-     <property name="geometry">
-      <rect>
-       <x>340</x>
-       <y>120</y>
-       <width>131</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Raise HW alarm</string>
-     </property>
-    </widget>
     <widget class="QWidget" name="gridLayoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
        <width>461</width>
-       <height>104</height>
+       <height>133</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="partial_gas_occlusion_alarm">
-        <property name="text">
-         <string>Partial gas circuit occlusion</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QCheckBox" name="high_inner_pressure_alarm">
         <property name="text">
          <string>High inner pressure</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="partial_gas_occlusion_alarm">
+        <property name="text">
+         <string>Partial gas circuit occlusion</string>
         </property>
        </widget>
       </item>
@@ -73,10 +60,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="gas_leakage_alarm">
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="battery_low_alarm">
         <property name="text">
-         <string>Gas circuit leakage</string>
+         <string>Low battery</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="high_input_pressure_alarm">
+        <property name="text">
+         <string>High pressure in</string>
         </property>
        </widget>
       </item>
@@ -94,17 +88,17 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="battery_low_alarm">
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="gas_leakage_alarm">
         <property name="text">
-         <string>Low battery</string>
+         <string>Gas circuit leakage</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="high_input_pressure_alarm">
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="apnea_alarm">
         <property name="text">
-         <string>High pressure in</string>
+         <string>Apnea alarm</string>
         </property>
        </widget>
       </item>
@@ -148,7 +142,7 @@
       <rect>
        <x>640</x>
        <y>120</y>
-       <width>131</width>
+       <width>130</width>
        <height>23</height>
       </rect>
      </property>
@@ -167,6 +161,19 @@
      </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="raise_alarm_btn">
+     <property name="geometry">
+      <rect>
+       <x>340</x>
+       <y>120</y>
+       <width>130</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Raise HW alarm</string>
      </property>
     </widget>
    </widget>

@@ -124,16 +124,6 @@ start_mode_timeout: 2000 # [ms] between pressing Start and allowing Stop (max 30
 #       None: Display auto scaling text.
 #       bar [low] [high]: Show a progress bar with minimum [low] and maximum [high].
 monitors:
-    inspiratory_pressure: 
-        name: "Insp. Press."
-        init: 30
-        step: 1
-        dec_precision: 0
-        units: "[cmH<sub>2</sub>O]"
-        color: "rgb(255,255,255)"
-        alarmcolor: "red"
-        observable: pressure
-
     total_inspired_volume: 
         name: "V<sub>tidal</sub>"
         init: 100
@@ -259,16 +249,6 @@ alarms:
         observable: o2
         linked_monitor: oxygen_concentration
     
-    pressure:
-        min: -10
-        setmin: -10
-        max: 80
-        setmax: 40
-        under_threshold_code: 256
-        over_threshold_code: 512
-        observable: pressure
-        linked_monitor: inspiratory_pressure
-
     #flow:
     #    min: -300
     #    max: 300
@@ -519,7 +499,7 @@ enable_backup:
 pcv_trigger_pressure:
   default: 5
   min: 0
-  max: 10.
+  max: 15.
   step: 1
   conversion: 0.980665 # From cmH2O to mbar
   current: None
