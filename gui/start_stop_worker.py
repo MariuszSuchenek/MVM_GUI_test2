@@ -2,7 +2,7 @@
 A file from class StartStopWorker
 '''
 import sys
-from PyQt5 import QtCore
+from PyQt5.QtCore import QTimer
 from messagebox import MessageBox
 
 
@@ -35,8 +35,78 @@ class StartStopWorker():
         self._mode = self.MODE_PCV
         self._run = self.DONOT_RUN
 
+        self._backup_ackowledged = False
 
-    def raise_comm_error(self, message):
+        self._esp32_io()
+
+        self._timer = QTimer()
+        self._timer.timeout.connect(self._esp32_io)
+        self._start_timer()
+
+
+    def _esp32_io(self):
+        '''
+        The callback function called every time the
+        QTimer times out.
+        '''
+
+        try:
+            self._call_esp32()
+        except Exception as error:
+            self._raise_comm_error(str(error))
+
+
+    def _call_esp32(self):
+        '''
+        Gets the run, mode and backup vairables
+        from the ESP, and passes them to the
+        StartStopWorker class.
+        '''
+
+        run = int(self._esp32.get('run'))
+        mode = int(self._esp32.get('mode'))
+        backup = int(self._esp32.get('backup'))
+        print('Reading from ESP: run', run, 'mode', mode)
+
+        if backup:
+            if not self._backup_ackowledged:
+                self._open_backup_warning()
+                # TODO: Cannot have pop up window
+        else:
+            self._backup_ackowledged = False
+
+        if run == self._run and mode == self._mode:
+            return
+
+        self.set_run(run)
+        self.set_mode(mode)
+
+
+    def _open_backup_warning(self):
+        '''
+        Opens a warning message if the ventilator
+        changed from PSV to PCV ventilation.
+        '''
+        msg = MessageBox()
+
+        callbacks = {msg.Ok: self._acknowlege_backup}
+
+        fn = msg.warning("CHANGE OF MODE",
+                         "The ventilator changed from PSV to PCV mode.",
+                         "The microcontroller raised the backup flag.",
+                         "",
+                         callbacks)
+        fn()
+
+
+    def _acknowlege_backup(self):
+        '''
+        Sets _backup_ackowledged to True
+        '''
+        self._backup_ackowledged = True
+
+
+    def _raise_comm_error(self, message):
         """
         Opens an error window with 'message'.
         """
@@ -67,7 +137,7 @@ class StartStopWorker():
                 self.update_startstop_text()
                 self._mode = self.MODE_PSV
             else:
-                self.raise_comm_error('Cannot set PSV mode.')
+                self._raise_comm_error('Cannot set PSV mode.')
 
         else:
             result = self._esp32.set('mode', self.MODE_PCV)
@@ -78,7 +148,7 @@ class StartStopWorker():
                 self.update_startstop_text()
                 self._mode = self.MODE_PCV
             else:
-                self.raise_comm_error('Cannot set PCV mode.')
+                self._raise_comm_error('Cannot set PCV mode.')
 
     def update_startstop_text(self):
         '''
@@ -103,7 +173,7 @@ class StartStopWorker():
             self._run = self.DO_RUN
             self.show_stop_button()
         else:
-            self.raise_comm_error('Cannot start ventilator.')
+            self._raise_comm_error('Cannot start ventilator.')
 
     def show_stop_button(self):
         '''
@@ -117,11 +187,11 @@ class StartStopWorker():
 
         self._settings.disable_special_ops_tab()
 
-        QtCore.QTimer.singleShot(self.button_timeout(), lambda: (
-                                 self.update_startstop_text(),
-                                 self._button_startstop.setEnabled(True),
-                                 self._button_startstop.setStyleSheet("color: red"),
-                                 self._toolbar.set_running(self._mode_text)))
+        QTimer.singleShot(self.button_timeout(), lambda: (
+                          self.update_startstop_text(),
+                          self._button_startstop.setEnabled(True),
+                          self._button_startstop.setStyleSheet("color: red"),
+                          self._toolbar.set_running(self._mode_text)))
 
 
     def stop_button_pressed(self):
@@ -135,7 +205,7 @@ class StartStopWorker():
             self._run = self.DONOT_RUN
             self.show_start_button()
         else:
-            self.raise_comm_error('Cannot stop ventilator.')
+            self._raise_comm_error('Cannot stop ventilator.')
 
     def show_start_button(self):
         '''
@@ -191,7 +261,7 @@ class StartStopWorker():
                 timeout = 3000
         return timeout
 
-    def toggle_start_stop(self):
+    def toggle_start_stop(self, user=True):
         """
         Toggles between desired run state (DO_RUN or DONOT_RUN).
         """
@@ -202,14 +272,6 @@ class StartStopWorker():
             self.confirm_stop_pressed()
 
 
-    def _stop_abruptly(self):
-        '''
-        If the hardware stops running, this
-        changes the test in the bottons and status.
-        '''
-        self._run = self.DONOT_RUN
-        self.show_start_button()
-
     def set_run(self, run):
         '''
         Sets the run variable directly.
@@ -219,16 +281,42 @@ class StartStopWorker():
         if self._run == run:
             return
 
-        if self._run == self.DO_RUN:
+        if run == self.DONOT_RUN:
+            self._run = self.DONOT_RUN
             msg = MessageBox()
             msg.critical('STOPPING VENTILATION',
                          'The hardware has stopped the ventilation.',
                          'The microcontroller has stopped the ventilation by sending run = '+str(run),
                          'The microcontroller has stopped the ventilation by sending run = '+str(run),
-                         {msg.Ok: self._stop_abruptly})()
+                         {msg.Ok: self.show_start_button})()
 
         else:
-            self.toggle_start_stop()
+            self._run = self.DO_RUN
+            self.show_stop_button()
+
+    def _start_timer(self):
+        '''
+        Starts the QTimer.
+        '''
+        self._timer.start(self._config["status_sampling_interval"] * 1000)
+
+
+    def _stop_timer(self):
+        '''
+        Stops the QTimer.
+        '''
+        self._timer.stop()
+
+
+    def _restart_timer(self):
+        '''
+        Restarts the QTimer if the QTimer is active,
+        or simply starts the QTimer
+        '''
+        if self._timer.isActive():
+            self._stop_timer()
+
+        self._start_timer()
 
     def set_mode(self, mode):
         '''
