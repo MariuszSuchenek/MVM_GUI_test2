@@ -1,8 +1,8 @@
 '''
 A file from class StartStopWorker
 '''
-
-from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
+from PyQt5.QtCore import QTimer
 from messagebox import MessageBox
 
 
@@ -13,31 +13,99 @@ class StartStopWorker():
     mode. For now, this is called only from the
     mainwindow.
     '''
-    MODE_STOP = -1
-    MODE_AUTO = 0
-    MODE_ASSIST = 1
+    MODE_PCV = 0
+    MODE_PSV = 1
 
     DO_RUN = 1
     DONOT_RUN = 0
 
     def __init__(self, main_window, config, esp32, button_startstop,
-            button_autoassist, toolbar, settings):
-        self.main_window = main_window
-        self.config = config
-        self.esp32 = esp32
-        self.button_startstop = button_startstop
-        self.button_autoassist = button_autoassist
-        self.toolbar = toolbar
-        self.settings = settings
-        self.messagebar = self.main_window.messagebar
+                 button_autoassist, toolbar, settings):
+        self._main_window = main_window
+        self._config = config
+        self._esp32 = esp32
+        self._button_startstop = button_startstop
+        self._button_autoassist = button_autoassist
+        self._toolbar = toolbar
+        self._settings = settings
+        self._messagebar = self._main_window.messagebar
 
-        self.mode_text = "PCV"
+        self._mode_text = "PCV"
 
-        self.mode = self.MODE_AUTO
-        self.run  = self.DONOT_RUN
-        return
+        self._mode = self.MODE_PCV
+        self._run = self.DONOT_RUN
 
-    def raise_comm_error(self, message):
+        self._backup_ackowledged = False
+
+        self._esp32_io()
+
+        self._timer = QTimer()
+        self._timer.timeout.connect(self._esp32_io)
+        self._start_timer()
+
+
+    def _esp32_io(self):
+        '''
+        The callback function called every time the
+        QTimer times out.
+        '''
+
+        try:
+            self._call_esp32()
+        except Exception as error:
+            self._raise_comm_error(str(error))
+
+
+    def _call_esp32(self):
+        '''
+        Gets the run, mode and backup vairables
+        from the ESP, and passes them to the
+        StartStopWorker class.
+        '''
+
+        run = int(self._esp32.get('run'))
+        mode = int(self._esp32.get('mode'))
+        backup = int(self._esp32.get('backup'))
+        print('Reading from ESP: run', run, 'mode', mode)
+
+        if backup:
+            if not self._backup_ackowledged:
+                self._open_backup_warning()
+                # TODO: Cannot have pop up window
+        else:
+            self._backup_ackowledged = False
+
+        if run == self._run and mode == self._mode:
+            return
+
+        self.set_run(run)
+        self.set_mode(mode)
+
+
+    def _open_backup_warning(self):
+        '''
+        Opens a warning message if the ventilator
+        changed from PSV to PCV ventilation.
+        '''
+        msg = MessageBox()
+
+        callbacks = {msg.Ok: self._acknowlege_backup}
+
+        msg.warning("CHANGE OF MODE",
+                    "The ventilator changed from PSV to PCV mode.",
+                    "The microcontroller raised the backup flag.",
+                    "",
+                    callbacks)()
+
+
+    def _acknowlege_backup(self):
+        '''
+        Sets _backup_ackowledged to True
+        '''
+        self._backup_ackowledged = True
+
+
+    def _raise_comm_error(self, message):
         """
         Opens an error window with 'message'.
         """
@@ -47,50 +115,50 @@ class StartStopWorker():
         msg.critical('COMMUNICATION ERROR',
                      'Error communicating with the hardware', message,
                      '** COMMUNICATION ERROR **', {msg.Ok: lambda:
-                         sys.exit(-1)})()
+                                                   sys.exit(-1)})()
     def is_running(self):
         """
         A simple function that returns true if running.
         """
-        return self.run == self.DO_RUN
+        return self._run == self.DO_RUN
 
 
     def toggle_mode(self):
         """
-        Toggles between desired mode (MODE_AUTO or MODE_ASSIST).
+        Toggles between desired mode (MODE_PCV or MODE_PSV).
         """
-        if self.mode == self.MODE_AUTO:
-            result = self.esp32.set('mode', self.MODE_ASSIST)
+        if self._mode == self.MODE_PCV:
+            result = self._esp32.set('mode', self.MODE_PSV)
 
             if result:
-                self.mode_text = "PSV"
-                self.button_autoassist.setText("Set\nPCV")
+                self._mode_text = "PSV"
+                self._button_autoassist.setText("Set\nPCV")
                 self.update_startstop_text()
-                self.mode = self.MODE_ASSIST
+                self._mode = self.MODE_PSV
             else:
-                self.raise_comm_error('Cannot set assisted mode.')
+                self._raise_comm_error('Cannot set PSV mode.')
 
         else:
-            result = self.esp32.set('mode', self.MODE_AUTO)
+            result = self._esp32.set('mode', self.MODE_PCV)
 
             if result:
-                self.mode_text = "PCV"
-                self.button_autoassist.setText("Set\nPSV")
+                self._mode_text = "PCV"
+                self._button_autoassist.setText("Set\nPSV")
                 self.update_startstop_text()
-                self.mode = self.MODE_AUTO
+                self._mode = self.MODE_PCV
             else:
-                self.raise_comm_error('Cannot set automatic mode.')
+                self._raise_comm_error('Cannot set PCV mode.')
 
     def update_startstop_text(self):
         '''
         Updates the text in the Start/Stop button
         '''
-        if self.run == self.DONOT_RUN:
-            self.button_startstop.setText("Start\n" + self.mode_text)
-            self.toolbar.set_stopped(self.mode_text)
+        if self._run == self.DONOT_RUN:
+            self._button_startstop.setText("Start\n" + self._mode_text)
+            self._toolbar.set_stopped(self._mode_text)
         else:
-            self.button_startstop.setText("Stop\n" + self.mode_text)
-            self.toolbar.set_running(self.mode_text)
+            self._button_startstop.setText("Stop\n" + self._mode_text)
+            self._toolbar.set_running(self._mode_text)
 
 
     def start_button_pressed(self):
@@ -98,28 +166,31 @@ class StartStopWorker():
         Callback for when the Start button is pressed
         '''
         # Send signal to ESP to start running
-        result = self.esp32.set('run', self.DO_RUN)
+        result = self._esp32.set('run', self.DO_RUN)
 
         if result:
-            self.run = self.DO_RUN
+            self._run = self.DO_RUN
             self.show_stop_button()
         else:
-            self.raise_comm_error('Cannot start ventilator.')
+            self._raise_comm_error('Cannot start ventilator.')
 
     def show_stop_button(self):
-        self.button_startstop.setDisabled(True)
-        self.button_autoassist.setDisabled(True)
-        self.button_startstop.repaint()
-        self.button_autoassist.repaint()
+        '''
+        Shows the stop button
+        '''
+        self._button_startstop.setDisabled(True)
+        self._button_autoassist.setDisabled(True)
+        self._button_startstop.repaint()
+        self._button_autoassist.repaint()
         self.update_startstop_text()
 
-        self.settings.disable_special_ops_tab()
+        self._settings.disable_special_ops_tab()
 
-        QtCore.QTimer.singleShot(self.button_timeout(), lambda: (
-                 self.update_startstop_text(),
-                 self.button_startstop.setEnabled(True),
-                 self.button_startstop.setStyleSheet("color: red"),
-                 self.toolbar.set_running(self.mode_text)))
+        QTimer.singleShot(self.button_timeout(), lambda: (
+                          self.update_startstop_text(),
+                          self._button_startstop.setEnabled(True),
+                          self._button_startstop.setStyleSheet("color: red"),
+                          self._toolbar.set_running(self._mode_text)))
 
 
     def stop_button_pressed(self):
@@ -127,68 +198,53 @@ class StartStopWorker():
         Callback for when the Stop button is pressed
         '''
         # Send signal to ESP to stop running
-        result = self.esp32.set('run', self.DONOT_RUN)
+        result = self._esp32.set('run', self.DONOT_RUN)
 
         if result:
-            self.run = self.DONOT_RUN
+            self._run = self.DONOT_RUN
             self.show_start_button()
         else:
-            self.raise_comm_error('Cannot stop ventilator.')
+            self._raise_comm_error('Cannot stop ventilator.')
 
     def show_start_button(self):
-        self.button_startstop.setEnabled(True)
-        self.button_autoassist.setEnabled(True)
+        '''
+        Shows the start button
+        '''
+        self._button_startstop.setEnabled(True)
+        self._button_autoassist.setEnabled(True)
 
         self.update_startstop_text()
-        self.button_startstop.setStyleSheet("color: black")
+        self._button_startstop.setStyleSheet("color: black")
 
-        self.button_startstop.repaint()
-        self.button_autoassist.repaint()
+        self._button_startstop.repaint()
+        self._button_autoassist.repaint()
 
-        self.toolbar.set_stopped(self.mode_text)
-        self.settings.enable_special_ops_tab()
+        self._toolbar.set_stopped(self._mode_text)
+        self._settings.enable_special_ops_tab()
 
     def confirm_start_pressed(self):
         '''
         Opens a window which asks for confirmation
         when the Start button is pressed.
         '''
-        self.button_autoassist.setDown(False)
-        currentMode = self.mode_text.upper()
-        self.messagebar.get_confirmation(
-                "**STARTING %s MODE**" % currentMode,
-                "Are you sure you want to START %s MODE?" % currentMode,
+        self._button_autoassist.setDown(False)
+        current_mode = self._mode_text.upper()
+        self._messagebar.get_confirmation(
+                "**STARTING %s MODE**" % current_mode,
+                "Are you sure you want to START %s MODE?" % current_mode,
                 func_confirm=self.start_button_pressed)
-        """
-        msg = MessageBox()
-        ok = msg.question("**STARTING %s MODE**" % currentMode,
-                          "Are you sure you want to START %s MODE?" %
-                           currentMode,
-                           None, "IMPORTANT", { msg.Yes: lambda: True,
-                           msg.No: lambda: False })()
-        return ok
-        """
 
     def confirm_stop_pressed(self):
         '''
         Opens a window which asks for confirmation
         when the Stop button is pressed.
         '''
-        self.button_autoassist.setDown(False)
-        currentMode = self.mode_text.upper()
-        self.messagebar.get_confirmation(
-                "**STOPPING %s MODE**" % currentMode,
-                "Are you sure you want to STOP %s MODE?" % currentMode,
+        self._button_autoassist.setDown(False)
+        current_mode = self._mode_text.upper()
+        self._messagebar.get_confirmation(
+                "**STOPPING %s MODE**" % current_mode,
+                "Are you sure you want to STOP %s MODE?" % current_mode,
                 func_confirm=self.stop_button_pressed)
-        """
-        msg = MessageBox()
-        ok = msg.question("**STOPPING %s MODE**" % currentMode,
-                          "Are you sure you want to STOP %s MODE?" %
-                           currentMode,
-                           None, "IMPORTANT", { msg.Yes: lambda: True,
-                           msg.No: lambda: False })()
-        return ok
-        """
 
     def button_timeout(self):
         '''
@@ -197,8 +253,8 @@ class StartStopWorker():
         '''
         timeout = 1000
         # Set timeout for being able to stop this mode
-        if 'start_mode_timeout' in self.config:
-            timeout = self.config['start_mode_timeout']
+        if 'start_mode_timeout' in self._config:
+            timeout = self._config['start_mode_timeout']
             # set maximum timeout
             if timeout > 3000:
                 timeout = 3000
@@ -209,19 +265,11 @@ class StartStopWorker():
         Toggles between desired run state (DO_RUN or DONOT_RUN).
         """
 
-        if self.run == self.DONOT_RUN:
+        if self._run == self.DONOT_RUN:
             self.confirm_start_pressed()
         else:
             self.confirm_stop_pressed()
 
-
-    def _stop_abruptly(self):
-        '''
-        If the hardware stops running, this
-        changes the test in the bottons and status.
-        '''
-        self.run = self.DONOT_RUN
-        self.show_start_button()
 
     def set_run(self, run):
         '''
@@ -229,19 +277,46 @@ class StartStopWorker():
         Usually called at start up, when reading
         the run value from the ESP.
         '''
-        if self.run == run:
+        if self._run == run:
             return
 
-        if self.run == self.DO_RUN:
+        self._run = run
+        
+        if run == self.DONOT_RUN:
+            # TODO: this should be an alarm
             msg = MessageBox()
             msg.critical('STOPPING VENTILATION',
                          'The hardware has stopped the ventilation.',
                          'The microcontroller has stopped the ventilation by sending run = '+str(run),
                          'The microcontroller has stopped the ventilation by sending run = '+str(run),
-                         {msg.Ok: self._stop_abruptly})()
+                         {msg.Ok: self.show_start_button})()
 
         else:
-            self.toggle_start_stop()
+            self.show_stop_button()
+
+    def _start_timer(self):
+        '''
+        Starts the QTimer.
+        '''
+        self._timer.start(self._config["status_sampling_interval"] * 1000)
+
+
+    def _stop_timer(self):
+        '''
+        Stops the QTimer.
+        '''
+        self._timer.stop()
+
+
+    def _restart_timer(self):
+        '''
+        Restarts the QTimer if the QTimer is active,
+        or simply starts the QTimer
+        '''
+        if self._timer.isActive():
+            self._stop_timer()
+
+        self._start_timer()
 
     def set_mode(self, mode):
         '''
@@ -249,7 +324,7 @@ class StartStopWorker():
         Usually called at start up, when reading
         the mode value from the ESP.
         '''
-        if self.mode != mode:
+        if self._mode != mode:
             self.toggle_mode()
 
 

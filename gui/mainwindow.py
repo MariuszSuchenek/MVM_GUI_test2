@@ -21,7 +21,6 @@ from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
 from alarm_handler import AlarmHandler
-from controller_status import ControllerStatus
 from numpad.numpad import NumPad
 from frozenplots.frozenplots import Cursor
 from messagebar.messagebar import MessageBar
@@ -302,14 +301,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.toolbar,
                 self.settings)
 
+        if self._start_stop_worker.is_running():
+            self.goto_main()
+
         self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
         self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
         self.gui_alarm.connect_workers(self._start_stop_worker)
-
-        '''
-        Instantiate ControllerStatus
-        '''
-        self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
+        
 
     def lock_screen(self):
         self.toppane.setDisabled(True)
@@ -343,9 +341,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def goto_settings(self):
         self.show_settings()
         self.show_settingsbar()
-        if self._start_stop_worker.mode == self._start_stop_worker.MODE_ASSIST:
+        if self._start_stop_worker.mode == self._start_stop_worker.MODE_PSV:
             self.settings.tabs.setCurrentWidget(self.settings.tab_psv)
-        elif self._start_stop_worker.mode == self._start_stop_worker.MODE_AUTO:
+        elif self._start_stop_worker.mode == self._start_stop_worker.MODE_PCV:
             self.settings.tabs.setCurrentWidget(self.settings.tab_pcv)
 
 
