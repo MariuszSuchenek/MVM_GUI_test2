@@ -91,8 +91,8 @@ class ESP32Alarm(ESP32BaseAlarm):
         1 << 3: "Internal pressure too high",
         1 << 4: "Out of battery power",
         1 << 5: "Leakage in gas circuit",
-        1 << 6: "Obstruction in idraulic circuit",
-        1 << 7: "Partial obstruction in idraulic circuit",
+        1 << 6: "Obstruction in hydraulic circuit",
+        1 << 7: "Partial obstruction in hydraulic circuit",
         # From the GUI
         1 << 8: "Pressure to patient mouth too low",
         1 << 9: "Pressure to patient mouth too high",
