@@ -191,12 +191,12 @@ class Settings(QtWidgets.QMainWindow):
         for param, btn in self._all_spinboxes.items():
             value_config = self._config[param]
 
-            btn.setValue(value_config['default'])
-            self._current_values[param] = value_config['default']
-
             if param not in ['enable_backup', 'pcv_trigger_enable']:
                 btn.setMinimum(value_config['min'])
                 btn.setMaximum(value_config['max'])
+
+            btn.setValue(value_config['default'])
+            self._current_values[param] = value_config['default']
 
         # assign an easy lookup for toolsettings
         self.toolsettings_lookup = {}
