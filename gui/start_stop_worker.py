@@ -91,12 +91,11 @@ class StartStopWorker():
 
         callbacks = {msg.Ok: self._acknowlege_backup}
 
-        fn = msg.warning("CHANGE OF MODE",
-                         "The ventilator changed from PSV to PCV mode.",
-                         "The microcontroller raised the backup flag.",
-                         "",
-                         callbacks)
-        fn()
+        msg.warning("CHANGE OF MODE",
+                    "The ventilator changed from PSV to PCV mode.",
+                    "The microcontroller raised the backup flag.",
+                    "",
+                    callbacks)()
 
 
     def _acknowlege_backup(self):
@@ -229,10 +228,10 @@ class StartStopWorker():
         when the Start button is pressed.
         '''
         self._button_autoassist.setDown(False)
-        currentMode = self._mode_text.upper()
+        current_mode = self._mode_text.upper()
         self._messagebar.get_confirmation(
-                "**STARTING %s MODE**" % currentMode,
-                "Are you sure you want to START %s MODE?" % currentMode,
+                "**STARTING %s MODE**" % current_mode,
+                "Are you sure you want to START %s MODE?" % current_mode,
                 func_confirm=self.start_button_pressed)
 
     def confirm_stop_pressed(self):
@@ -241,10 +240,10 @@ class StartStopWorker():
         when the Stop button is pressed.
         '''
         self._button_autoassist.setDown(False)
-        currentMode = self._mode_text.upper()
+        current_mode = self._mode_text.upper()
         self._messagebar.get_confirmation(
-                "**STOPPING %s MODE**" % currentMode,
-                "Are you sure you want to STOP %s MODE?" % currentMode,
+                "**STOPPING %s MODE**" % current_mode,
+                "Are you sure you want to STOP %s MODE?" % current_mode,
                 func_confirm=self.stop_button_pressed)
 
     def button_timeout(self):
@@ -261,7 +260,7 @@ class StartStopWorker():
                 timeout = 3000
         return timeout
 
-    def toggle_start_stop(self, user=True):
+    def toggle_start_stop(self):
         """
         Toggles between desired run state (DO_RUN or DONOT_RUN).
         """
