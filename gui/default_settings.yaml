@@ -519,7 +519,7 @@ enable_backup:
 pcv_trigger_pressure:
   default: 5
   min: 0
-  max: 10.
+  max: 15.
   step: 1
   conversion: 0.980665 # From cmH2O to mbar
   current: None
