@@ -21,7 +21,6 @@ from data_filler import DataFiller
 from data_handler import DataHandler
 from start_stop_worker import StartStopWorker
 from alarm_handler import AlarmHandler
-from controller_status import ControllerStatus
 from numpad.numpad import NumPad
 from frozenplots.frozenplots import Cursor
 from messagebar.messagebar import MessageBar
@@ -302,16 +301,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.toolbar,
                 self.settings)
 
+        if self._start_stop_worker.is_running():
+            self.goto_main()
+
         self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
         self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
         self.gui_alarm.connect_workers(self._start_stop_worker)
-
-        '''
-        Instantiate ControllerStatus
-        '''
-        self._ctr_status = ControllerStatus(config, self.esp32, self.settings, self._start_stop_worker)
-        if self._ctr_status.is_running():
-            self.goto_main()
+        
 
     def lock_screen(self):
         self.toppane.setDisabled(True)
