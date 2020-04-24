@@ -158,15 +158,6 @@ class StartStopWorker():
                 "**STARTING %s MODE**" % currentMode,
                 "Are you sure you want to START %s MODE?" % currentMode,
                 func_confirm=self.start_button_pressed)
-        """
-        msg = MessageBox()
-        ok = msg.question("**STARTING %s MODE**" % currentMode,
-                          "Are you sure you want to START %s MODE?" %
-                           currentMode,
-                           None, "IMPORTANT", { msg.Yes: lambda: True,
-                           msg.No: lambda: False })()
-        return ok
-        """
 
     def confirm_stop_pressed(self):
         '''
@@ -179,15 +170,6 @@ class StartStopWorker():
                 "**STOPPING %s MODE**" % currentMode,
                 "Are you sure you want to STOP %s MODE?" % currentMode,
                 func_confirm=self.stop_button_pressed)
-        """
-        msg = MessageBox()
-        ok = msg.question("**STOPPING %s MODE**" % currentMode,
-                          "Are you sure you want to STOP %s MODE?" %
-                           currentMode,
-                           None, "IMPORTANT", { msg.Yes: lambda: True,
-                           msg.No: lambda: False })()
-        return ok
-        """
 
     def button_timeout(self):
         '''
