@@ -110,6 +110,7 @@ class ESP32Alarm(ESP32BaseAlarm):
         1 << 21: "Respiratory rate too high",
 
         # from the ESP
+        1 << 22: "Apnea alarm",
         1 << 29: "GUI alarm raised",
         1 << 30: "GUI watchdog not reset",
         1 << 31: "System failure",
