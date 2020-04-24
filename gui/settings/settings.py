@@ -63,6 +63,9 @@ class Settings(QtWidgets.QMainWindow):
             'lung_recruit_time': self.fake_btn_lr_t
         }
 
+        self._all_spinboxes['respiratory_rate'].valueChanged.connect(self._recalculate_inspiratory_time)
+        self._all_spinboxes['insp_expir_ratio'].valueChanged.connect(self._recalculate_inspiratory_time)
+
         self.toolsettings_lookup = None
 
         # Connect all widgets
@@ -73,6 +76,11 @@ class Settings(QtWidgets.QMainWindow):
         self._current_preset_name = None
 
         self.load_presets()
+
+    def _recalculate_inspiratory_time(self):
+        rr = self._all_spinboxes['respiratory_rate'].value()
+        expr_denon = self._all_spinboxes['insp_expir_ratio'].value()
+        self.inspiratory_time_label.setText("%.2f" % (60.0/(rr * (1+expr_denon))))
 
     def spawn_presets_window(self, name):
         presets = self._config[name]['presets']
