@@ -281,8 +281,9 @@ class StartStopWorker():
         if self._run == run:
             return
 
+        self._run = run
+        
         if run == self.DONOT_RUN:
-            self._run = self.DONOT_RUN
             # TODO: this should be an alarm
             msg = MessageBox()
             msg.critical('STOPPING VENTILATION',
@@ -292,7 +293,6 @@ class StartStopWorker():
                          {msg.Ok: self.show_start_button})()
 
         else:
-            self._run = self.DO_RUN
             self.show_stop_button()
 
     def _start_timer(self):
