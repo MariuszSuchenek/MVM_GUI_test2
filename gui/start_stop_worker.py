@@ -283,6 +283,7 @@ class StartStopWorker():
 
         if run == self.DONOT_RUN:
             self._run = self.DONOT_RUN
+            # TODO: this should be an alarm
             msg = MessageBox()
             msg.critical('STOPPING VENTILATION',
                          'The hardware has stopped the ventilation.',
