@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore, QtGui, QtWidgets
-import os
+import os, sys
 import yaml
 import copy
 from .settingsfile import SettingsFile
-
 from presets.presets import Presets
+from messagebox import MessageBox
 
 class Settings(QtWidgets.QMainWindow):
     def __init__(self, mainparent, *args):
@@ -314,11 +314,21 @@ class Settings(QtWidgets.QMainWindow):
             btn.setStyleSheet("color: red")
 
             esp_param_name = self._config['esp_settable_param'][param]
-            status = self._data_h.set_data(esp_param_name, value)
 
-            if status:
-                # Now set the color to green, as we know it has been set
-                btn.setStyleSheet("color: green")
+            # Finally, try to set the value to the ESP
+            # Raise an error message if this fails.
+            try:
+                if self._data_h.set_data(esp_param_name, value):
+                    # Now set the color to green, as we know it has been set
+                    btn.setStyleSheet("color: green")
+            except Exception as error:
+                msg = MessageBox()
+                msg.critical("Critical",
+                             "Severe Hardware Communication Error",
+                             str(error),
+                             "Communication error",
+                             { msg.Retry: lambda: self.send_values_to_hardware,
+                               msg.Abort: lambda: sys.exit(-1) })()
 
             if param == 'respiratory_rate':
                 self.toolsettings_lookup["respiratory_rate"].update(value)
