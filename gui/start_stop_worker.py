@@ -91,7 +91,6 @@ class StartStopWorker():
         run = int(self._esp32.get('run'))
         mode = int(self._esp32.get('mode'))
         backup = int(self._esp32.get('backup'))
-        print('Reading from ESP: run', run, 'mode', mode)
 
         if backup:
             if not self._backup_ackowledged:
