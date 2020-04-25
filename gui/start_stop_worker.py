@@ -65,8 +65,9 @@ class StartStopWorker():
             # parameters from the ESP and set those
             # values to the settings panels
             for param, esp_name in self._config['esp_settable_param'].items():
-                print('Reading Settings parameters from ESP:', param, self._esp32.get(esp_name))
-                self._settings.update_spinbox_value(param, float(self._esp32.get(esp_name)))
+                value = float(self._esp32.get(esp_name))
+                print('Reading Settings parameters from ESP:', param, value)
+                self._settings.update_spinbox_value(param, value)
 
 
     def _esp32_io(self):
