@@ -59,7 +59,19 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
             "backup": 0,
             "alarm": 0,
             "warning": 0,
-            "temperature": 40}
+            "temperature": 40,
+            "rate": 17.0,
+            "ratio": 2/3,
+            "ptarget": 37.7,
+            "pcv_trigger_enable": 1,
+            "pcv_trigger": 7,
+            "assist_ptrigger": 7.0,
+            "assist_flow_min": 47.0,
+            "pressure_support": 27.,
+            "backup_min_time": 17.0,
+            "backup_enable": 1,
+            "pause_lg_p": 37,
+            "pause_lg_time": 7.0}
 
         self.event_log = self.findChild(QtWidgets.QPlainTextEdit, "event_log")
         self.event_log.setReadOnly(True)
