@@ -307,7 +307,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
         self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
         self.gui_alarm.connect_workers(self._start_stop_worker)
-        
 
     def lock_screen(self):
         self.toppane.setDisabled(True)
@@ -341,9 +340,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def goto_settings(self):
         self.show_settings()
         self.show_settingsbar()
-        if self._start_stop_worker.mode == self._start_stop_worker.MODE_PSV:
+        if self._start_stop_worker.mode() == self._start_stop_worker.MODE_PSV:
             self.settings.tabs.setCurrentWidget(self.settings.tab_psv)
-        elif self._start_stop_worker.mode == self._start_stop_worker.MODE_PCV:
+        elif self._start_stop_worker.mode() == self._start_stop_worker.MODE_PCV:
             self.settings.tabs.setCurrentWidget(self.settings.tab_pcv)
 
 
