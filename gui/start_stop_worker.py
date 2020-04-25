@@ -39,9 +39,34 @@ class StartStopWorker():
 
         self._esp32_io()
 
+        self._init_settings_panel()
+
         self._timer = QTimer()
         self._timer.timeout.connect(self._esp32_io)
         self._start_timer()
+
+    def _init_settings_panel(self):
+        '''
+        Initializes the settings values.
+        If the ESP if running, read the current parameters
+        and set them in the Setting panel.
+        If the ESP is not running, don't do anything here,
+        and leave the default behaviour.
+        '''
+
+        if self._run == self.DONOT_RUN:
+            # If the ESP is NOT running, set the YAML parameters
+            # in the settings panels, and also send those 
+            # values to the ESP
+            self._settings.load_presets()
+            self._settings.send_values_to_hardware()
+        else:
+            # If the ESP is running, read the current 
+            # parameters from the ESP and set those
+            # values to the settings panels
+            for param, esp_name in self._config['esp_settable_param'].items():
+                print('Reading Settings parameters from ESP:', param, self._esp32.get(esp_name))
+                self._settings.update_spinbox_value(param, float(self._esp32.get(esp_name)))
 
 
     def _esp32_io(self):
