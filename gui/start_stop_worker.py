@@ -56,12 +56,12 @@ class StartStopWorker():
 
         if self._run == self.DONOT_RUN:
             # If the ESP is NOT running, set the YAML parameters
-            # in the settings panels, and also send those 
+            # in the settings panels, and also send those
             # values to the ESP
             self._settings.load_presets()
             self._settings.send_values_to_hardware()
         else:
-            # If the ESP is running, read the current 
+            # If the ESP is running, read the current
             # parameters from the ESP and set those
             # values to the settings panels
             for param, esp_name in self._config['esp_settable_param'].items():
