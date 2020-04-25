@@ -67,7 +67,11 @@ class StartStopWorker():
             for param, esp_name in self._config['esp_settable_param'].items():
                 value = float(self._esp32.get(esp_name))
                 print('Reading Settings parameters from ESP:', param, value)
-                self._settings.update_spinbox_value(param, value)
+                if esp_name == 'ratio':
+                    converted_value = (value**-1 - 1)**-1
+                    self._settings.update_spinbox_value(param, converted_value)
+                else:
+                    self._settings.update_spinbox_value(param, value)
 
 
     def _esp32_io(self):
