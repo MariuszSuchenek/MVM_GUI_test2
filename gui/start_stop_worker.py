@@ -146,6 +146,12 @@ class StartStopWorker():
         """
         return self._run == self.DO_RUN
 
+    def mode(self):
+        """
+        Return the current mode
+        """
+
+        return self._mode
 
     def toggle_mode(self):
         """
@@ -305,7 +311,7 @@ class StartStopWorker():
             return
 
         self._run = run
-        
+
         if run == self.DONOT_RUN:
             # TODO: this should be an alarm
             msg = MessageBox()
