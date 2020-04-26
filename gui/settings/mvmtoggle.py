@@ -1,20 +1,32 @@
+"""
+MVM toggle helper.
+An MVM toggle is a custom, big toggle button.
+"""
+
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QRect
 
 
 class MVMToggle(QtWidgets.QPushButton):
-    '''
-    This is custom QPushButton that renders
-     as a toggle
-    '''
+    """
+    This is custom QPushButton that renders as a toggle
+    """
 
     def __init__(self, parent=None):
+        """
+        Constructor
+        """
+
         super().__init__(parent)
         self.setCheckable(True)
         self.setMinimumWidth(66)
         self.setMinimumHeight(22)
 
     def paintEvent(self, event):
+        """
+        Reimplement the QPushButton.paintEvent function
+        """
+
         label = "ON" if self.isChecked() else "OFF"
         if self.isEnabled():
             bg_color = Qt.green if self.isChecked() else Qt.red

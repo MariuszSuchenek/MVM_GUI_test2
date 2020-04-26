@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Settings ui helper
+"""
+
 import sys
 import copy
 from PyQt5 import QtWidgets, uic
