@@ -23,7 +23,9 @@ class Cursor(object):
 
         arguments:
 
-        plots: the plots
+        - plots: the plots
+
+        returns: the initialized class
         """
 
         self.plots = plots
@@ -95,8 +97,10 @@ class Cursor(object):
         Update the cursor lines and labels.
         If this menu is not shown (we are not in Freeze)
         simply return and don't waste time.
-        """
 
+        arguments:
+        - evt: Event to be handled for updating the cursor.
+        """
         pos = evt[0]
         for num, plot in enumerate(self.plots):
             view_box = plot.getViewBox()
@@ -148,6 +152,9 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
     def showEvent(self, event):
         """
         An override of the the Qt showEvent() slot.
+
+        arguments:
+        - event: Event to be handled
         """
         super(FrozenPlotsBottomMenu, self).showEvent(event)
         self.signal_shown.emit()
@@ -155,6 +162,9 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
     def hideEvent(self, event):
         """
         An override of the the Qt hideEvent() slot.
+
+        arguments:
+        - event: Event to be handled
         """
         super(FrozenPlotsBottomMenu, self).hideEvent(event)
         self.signal_hided.emit()
@@ -163,6 +173,11 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         """
         Connect workers for bottom "freeze" menu.
         The unfreeze button is handled by mainwindow.
+
+        arguments:
+        - data_filler: Reference to the data_filler used to fill plots with data
+        - plots: List of plots to be connected
+        - cursor: The associated Cursor
         """
         self.button_reset_zoom.pressed.connect(data_filler.reset_zoom)
 
@@ -178,7 +193,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         """
         Toggles the cursor on or off.
 
-        on: If true, turns the cursor on. Otherwise, turns it off
+        state_on: If true, turns the cursor on. Otherwise, turns it off
         """
         if state_on:
             self._cursor.show_cursors()
@@ -218,6 +233,10 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         """
         Connect Y zoom workers. There are 3 widgets, each controlling
         a separate plot.
+
+        arguments:
+        - plots: List of plots to be connected
+        - cursor: The associated Cursor
         """
         self.yzoom_top.connect_workers(plots[0].getPlotItem(), cursor)
         self.yzoom_mid.connect_workers(plots[1].getPlotItem(), cursor)
