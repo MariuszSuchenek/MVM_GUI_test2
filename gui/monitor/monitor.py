@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
+
+
 class Monitor(QtWidgets.QWidget):
     def __init__(self, name, config, *args):
         """
@@ -22,28 +24,31 @@ class Monitor(QtWidgets.QWidget):
         self.frame = self.findChild(QtWidgets.QFrame, "frame")
 
         monitor_default = {
-                "name": "NoName",
-                "init": 50,
-                "units": None,
-                "step": 1,
-                "map": {},
-                "dec_precision": 0,
-                "color": "white",
-                "alarmcolor": "red",
-                "observable": "o2",
-                "disp_type": None}
+            "name": "NoName",
+            "init": 50,
+            "units": None,
+            "step": 1,
+            "map": {},
+            "dec_precision": 0,
+            "color": "white",
+            "alarmcolor": "red",
+            "observable": "o2",
+            "disp_type": None}
         entry = self.config['monitors'].get(name, monitor_default)
 
         self.entry = entry
         self.name = entry.get("name", monitor_default["name"])
         self.value = entry.get("init", monitor_default["init"])
         self.units = entry.get("units", monitor_default["units"])
-        self.dec_precision = entry.get("dec_precision", monitor_default["dec_precision"])
+        self.dec_precision = entry.get(
+            "dec_precision", monitor_default["dec_precision"])
         self.color = entry.get("color", monitor_default["color"])
-        self.alarmcolor = entry.get("alarmcolor", monitor_default["alarmcolor"])
+        self.alarmcolor = entry.get(
+            "alarmcolor", monitor_default["alarmcolor"])
         self.step = entry.get("step", monitor_default["step"])
         self.map = entry.get("map", monitor_default["map"])
-        self.observable = entry.get("observable", monitor_default["observable"])
+        self.observable = entry.get(
+            "observable", monitor_default["observable"])
         self.disp_type = entry.get("disp_type", monitor_default["disp_type"])
         self.gui_alarm = None
 
@@ -54,7 +59,8 @@ class Monitor(QtWidgets.QWidget):
         self.label_value.resizeEvent = lambda event: self.handle_resize(event)
 
         # Get handles for display type
-        self.display_opts = self.findChild(QtWidgets.QStackedWidget, "display_opts")
+        self.display_opts = self.findChild(
+            QtWidgets.QStackedWidget, "display_opts")
         self.shown_widget = self.findChild(QtWidgets.QWidget, "default_text")
 
         # bar type
@@ -77,15 +83,16 @@ class Monitor(QtWidgets.QWidget):
         (text, low, high) = self.disp_type.split(" ")
         self.shown_widget = self.findChild(QtWidgets.QWidget, "progress_bar")
         self.shown_widget.setStyleSheet(
-                "QProgressBar {"
-                "   background-color: rgba(0,0,0,0);"
-                "   text-align: center;"
-                "}"
-                "QProgressBar::chunk {"
-                "    background-color: #888888;"
-                "}")
+            "QProgressBar {"
+            "   background-color: rgba(0,0,0,0);"
+            "   text-align: center;"
+            "}"
+            "QProgressBar::chunk {"
+            "    background-color: #888888;"
+            "}")
         showformat = "%p"
-        if self.units is not None: showformat += " " + self.units
+        if self.units is not None:
+            showformat += " " + self.units
         self.progress_bar.setFormat(showformat)
         self.progress_bar.setMinimum(int(low))
         self.progress_bar.setMaximum(int(high))
@@ -127,7 +134,7 @@ class Monitor(QtWidgets.QWidget):
         else:
             self.label_name.setText(self.name)
 
-        self.setStyleSheet("QWidget { color: " + str(self.color) + "; }");
+        self.setStyleSheet("QWidget { color: " + str(self.color) + "; }")
         self.setAutoFillBackground(True)
 
     def handle_resize(self, event):
@@ -158,16 +165,16 @@ class Monitor(QtWidgets.QWidget):
         self.setPalette(palette)
 
     def highlight(self):
-        self.frame.setStyleSheet("#frame { border: 5px solid limegreen; }");
+        self.frame.setStyleSheet("#frame { border: 5px solid limegreen; }")
 
     def unhighlight(self):
-        self.frame.setStyleSheet("#frame { border: 0.5px solid white; }");
+        self.frame.setStyleSheet("#frame { border: 0.5px solid white; }")
 
     def update_value(self, value):
         if self.step is not None:
             self.value = round(value / self.step) * self.step
         else:
-            self.value = value;
+            self.value = value
         string_value = "%.*f" % (self.dec_precision, value)
 
         if self.map != {}:
@@ -175,7 +182,3 @@ class Monitor(QtWidgets.QWidget):
 
         self.label_value.setText(string_value)
         self.bar_value.setValue(self.value)
-
-
-
-

@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
+
 class SettingsBar(QtWidgets.QWidget):
     def __init__(self, *args):
         """
@@ -11,4 +12,3 @@ class SettingsBar(QtWidgets.QWidget):
         """
         super(SettingsBar, self).__init__(*args)
         uic.loadUi("settings/settingsbar.ui", self)
-

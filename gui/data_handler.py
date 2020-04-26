@@ -4,6 +4,7 @@ import datetime
 from PyQt5.QtCore import QTimer
 from messagebox import MessageBox
 
+
 class DataHandler():
     '''
     This class takes care of starting a new QTimer which
@@ -30,7 +31,6 @@ class DataHandler():
         self._timer.timeout.connect(self.esp32_io)
         self._start_timer()
 
-
     def __del__(self):
         '''
         Destructor
@@ -38,7 +38,6 @@ class DataHandler():
         '''
 
         self._stop_timer()
-
 
     def esp32_io(self):
         '''
@@ -72,11 +71,9 @@ class DataHandler():
         '''
 
         conv = self._config['conversions']
-        return {k:v * conv.get(k, 1.) for (k, v) in values.items()}
+        return {k: v * conv.get(k, 1.) for (k, v) in values.items()}
         # for n, v in values.items():
         #     values[n] = v * conv['pressure'] if 'pressure' in conv else v
-
-
 
     def open_comm_error(self, error):
         '''
@@ -94,7 +91,6 @@ class DataHandler():
                           "COMMUNICATION ERROR",
                           callbacks)
         fn()
-
 
     def _start_timer(self):
         '''
@@ -126,4 +122,3 @@ class DataHandler():
         result = self._esp32.set(param, value)
 
         return result == self._config['return_success_code']
-

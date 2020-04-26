@@ -3,7 +3,7 @@ Library to interface with the ESP32
 """
 
 from threading import Lock
-import serial # pySerial
+import serial  # pySerial
 from . import ESP32Alarm, ESP32Warning
 
 __all__ = ("ESP32Serial", "ESP32Exception")
@@ -29,8 +29,7 @@ class ESP32Exception(Exception):
         self.output = output
 
         super(ESP32Exception, self).__init__(
-                "ERROR in %s: line: '%s'; output: %s" % (verb, line, output))
-
+            "ERROR in %s: line: '%s'; output: %s" % (verb, line, output))
 
 
 class ESP32Serial:
@@ -127,7 +126,8 @@ class ESP32Serial:
                     result = self.connection.read_until(terminator=self.term)
                     return self._parse(result)
                 except Exception as exc:
-                    print("ERROR: set failing: %s %s" % (result.decode(), str(exc)))
+                    print("ERROR: set failing: %s %s" %
+                          (result.decode(), str(exc)))
             raise ESP32Exception("set", command, result.decode())
 
     def set_watchdog(self):
@@ -163,7 +163,8 @@ class ESP32Serial:
                     result = self.connection.read_until(terminator=self.term)
                     return self._parse(result)
                 except Exception as exc:
-                    print("ERROR: get failing: %s %s" % (result.decode(), str(exc)))
+                    print("ERROR: get failing: %s %s" %
+                          (result.decode(), str(exc)))
             raise ESP32Exception("get", command, result.decode())
 
     def get_all(self):
@@ -189,11 +190,13 @@ class ESP32Serial:
                     values = self._parse(result).split(',')
 
                     if len(values) != len(self.get_all_fields):
-                        raise Exception("get_all answer mismatch: expected: %s, got %s" % (self.get_all_fields, values))
+                        raise Exception("get_all answer mismatch: expected: %s, got %s" % (
+                            self.get_all_fields, values))
 
                     return dict(zip(self.get_all_fields, values))
                 except Exception as exc:
-                    print("ERROR: get failing: %s %s" % (result.decode(), str(exc)))
+                    print("ERROR: get failing: %s %s" %
+                          (result.decode(), str(exc)))
             raise ESP32Exception("get", "get all", result.decode())
 
     def get_alarms(self):
@@ -257,7 +260,7 @@ class ESP32Serial:
 
         # yes, the ESP sends alarms as binary-coded struct, but the snooze
         # happens by means of the exponent
-        bitmap = { 1 << x: x for x in range(32)}
+        bitmap = {1 << x: x for x in range(32)}
 
         pos = bitmap[alarm_type]
         return self.set("alarm_snooze", pos)

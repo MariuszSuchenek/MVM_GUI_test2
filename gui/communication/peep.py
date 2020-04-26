@@ -6,13 +6,15 @@ import yaml
 """
 a class to simulate the patient breath
 """
+
+
 class peep:
     def __init__(self):
         base_dir = os.path.dirname(__file__)
         settings_file = os.path.join(base_dir, 'simulation.yaml')
         with open(settings_file) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
-        print ('Simulator Config:', yaml.dump(config), sep='\n')
+        print('Simulator Config:', yaml.dump(config), sep='\n')
         self.t1 = float(config['t1'])
         self.t2 = self.t1 + float(config['t2'])
         self.t3 = self.t2 + float(config['t3'])
@@ -30,9 +32,10 @@ class peep:
         self.t0 = time.time()
         self.btiming_fluctuations = float(config['btiming_fluctuations'])
         print('PEEP timing   : {} {} {} {} {}'.format(self.t1, self.t2, self.t3,
-                                                   self.t4, self.t5))
+                                                      self.t4, self.t5))
         print('PEEP pressures: {} {}'.format(self.p1, self.p2))
-        print('PEEP flow     : {} {} {} {}'.format(self.f1, self.f2, self.f3, self.f4))
+        print('PEEP flow     : {} {} {} {}'.format(
+            self.f1, self.f2, self.f3, self.f4))
 
     def pressure(self):
         """
@@ -65,7 +68,7 @@ class peep:
             # restart the cycle
             self.restart()
         # add some random fluctuations
-        p += np.random.normal(scale = (self.p2 - self.p1)*self.resolution)
+        p += np.random.normal(scale=(self.p2 - self.p1)*self.resolution)
         return p
 
     def flow(self):
@@ -92,9 +95,9 @@ class peep:
             # restart cycle
             self.restart()
         # add some random fluctuation
-        f += np.random.normal(scale = (self.f1 - self.f2)*self.resolution)
+        f += np.random.normal(scale=(self.f1 - self.f2)*self.resolution)
         return f
 
     def restart(self):
         # the cycle restarts after a fixed +- random time
-        self.t0 = time.time() + np.random.normal(scale = self.btiming_fluctuations)
+        self.t0 = time.time() + np.random.normal(scale=self.btiming_fluctuations)

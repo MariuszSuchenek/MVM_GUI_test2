@@ -4,6 +4,7 @@ from PyQt5 import QtGui, QtCore
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 import numpy as np
 
+
 class Cursor:
     '''
     Handles the cursor lines and cursor labels
@@ -20,10 +21,9 @@ class Cursor:
 
         self.plots = plots
 
-
         self.cursor_x = [None] * 3
         self.cursor_y = [None] * 3
-        self.cursor_label = [None] * 3 
+        self.cursor_label = [None] * 3
         self.signal_proxy = [None] * 3
         self.plot_data_items = [None] * 3
         self._x = [None] * 3
@@ -35,9 +35,10 @@ class Cursor:
             plot.addItem(self.cursor_x[num], ignoreBounds=True)
             plot.addItem(self.cursor_y[num], ignoreBounds=True)
             self.signal_proxy[num] = SignalProxy(plot.scene().sigMouseMoved,
-                    rateLimit=60, slot=self.update_cursor)
+                                                 rateLimit=60, slot=self.update_cursor)
 
-            self.cursor_label[num] = TextItem('', (255, 255, 255), anchor=(0, 0))
+            self.cursor_label[num] = TextItem(
+                '', (255, 255, 255), anchor=(0, 0))
             self.cursor_label[num].setPos(-10.4, 10)
             plot.addItem(self.cursor_label[num])
 
@@ -53,18 +54,24 @@ class Cursor:
         Shows all the cursor lines and labels 
         on the 3 plots
         '''
-        for c in self.cursor_x:     c.setVisible(True)
-        for c in self.cursor_y:     c.setVisible(True)
-        for c in self.cursor_label: c.setVisible(True)
+        for c in self.cursor_x:
+            c.setVisible(True)
+        for c in self.cursor_y:
+            c.setVisible(True)
+        for c in self.cursor_label:
+            c.setVisible(True)
 
     def hide_cursors(self):
         '''
         Hides all the cursor lines and labels 
         on the 3 plots
         '''
-        for c in self.cursor_x:     c.setVisible(False)
-        for c in self.cursor_y:     c.setVisible(False)
-        for c in self.cursor_label: c.setVisible(False)
+        for c in self.cursor_x:
+            c.setVisible(False)
+        for c in self.cursor_y:
+            c.setVisible(False)
+        for c in self.cursor_label:
+            c.setVisible(False)
 
     def draw_label(self):
         '''
@@ -74,7 +81,8 @@ class Cursor:
             return
         for num, plot in enumerate(self.plots):
             self.cursor_label[num].setText("{:.2f}".format(self._y[num]))
-            self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], self._y[num])
+            self.cursor_label[num].setPos(
+                plot.getAxis('bottom').range[0], self._y[num])
 
     def update_cursor(self, evt):
         '''
@@ -88,7 +96,7 @@ class Cursor:
             vb = plot.getViewBox()
             if plot.sceneBoundingRect().contains(pos):
                 mousePoint = vb.mapSceneToView(pos)
-                
+
                 # Get the x and y data from the plot
                 data_x = self.plot_data_items[num].xData
                 data_y = self.plot_data_items[num].yData
@@ -104,9 +112,10 @@ class Cursor:
                     self.cursor_x[num].setPos(self._x[num])
                     self.cursor_y[num].setPos(self._y[num])
 
-                    self.cursor_label[num].setText("{:.2f}".format(self._y[num]))
-                    self.cursor_label[num].setPos(plot.getAxis('bottom').range[0], self._y[num])
-
+                    self.cursor_label[num].setText(
+                        "{:.2f}".format(self._y[num]))
+                    self.cursor_label[num].setPos(
+                        plot.getAxis('bottom').range[0], self._y[num])
 
 
 class FrozenPlotsBottomMenu(QtWidgets.QWidget):
@@ -122,9 +131,9 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         super(FrozenPlotsBottomMenu, self).__init__(*args)
         uic.loadUi("frozenplots/frozenplots_bottom.ui", self)
 
-        self.button_reset_zoom = self.findChild(QtWidgets.QPushButton, "button_reset_zoom")
+        self.button_reset_zoom = self.findChild(
+            QtWidgets.QPushButton, "button_reset_zoom")
         self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
-
 
     def showEvent(self, event):
         super(FrozenPlotsBottomMenu, self).showEvent(event)
@@ -150,16 +159,18 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.signal_shown.connect(lambda: self.toggle_cursor(True))
 
     def toggle_cursor(self, on=True):
-        if on: 
+        if on:
             self._cursor.show_cursors()
-        else: 
+        else:
             self._cursor.hide_cursors()
 
-
     def disconnect_workers(self):
-        try: self.button_reset_zoom.pressed.disconnect()
-        except Exception: pass
+        try:
+            self.button_reset_zoom.pressed.disconnect()
+        except Exception:
+            pass
         self.xzoom.disconnect_workers()
+
 
 class FrozenPlotsRightMenu(QtWidgets.QWidget):
     def __init__(self, *args):
@@ -191,6 +202,7 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         self.yzoom_mid.disconnect_workers()
         self.yzoom_bot.disconnect_workers()
 
+
 class YZoom(QtWidgets.QWidget):
     def __init__(self, *args):
         """
@@ -210,14 +222,22 @@ class YZoom(QtWidgets.QWidget):
         self.translate_factor = 0.1
 
     def disconnect_workers(self):
-        try: self.button_plus.pressed.disconnect()
-        except Exception: pass
-        try: self.button_minus.pressed.disconnect()
-        except Exception: pass
-        try: self.button_up.pressed.disconnect()
-        except Exception: pass
-        try: self.button_down.pressed.disconnect()
-        except Exception: pass
+        try:
+            self.button_plus.pressed.disconnect()
+        except Exception:
+            pass
+        try:
+            self.button_minus.pressed.disconnect()
+        except Exception:
+            pass
+        try:
+            self.button_up.pressed.disconnect()
+        except Exception:
+            pass
+        try:
+            self.button_down.pressed.disconnect()
+        except Exception:
+            pass
 
     def connect_workers(self, plot, cursor):
         self.button_plus.pressed.connect(lambda: self.zoom_in(plot))
@@ -247,6 +267,7 @@ class YZoom(QtWidgets.QWidget):
         plot.getViewBox().translateBy(y=-self.compute_translation(plot))
         self._cursor.draw_label()
 
+
 class XZoom(QtWidgets.QWidget):
     def __init__(self, *args):
         """
@@ -274,14 +295,22 @@ class XZoom(QtWidgets.QWidget):
         self._cursor = cursor
 
     def disconnect_workers(self):
-        try: self.button_plus.pressed.disconnect()
-        except Exception: pass
-        try: self.button_minus.pressed.disconnect()
-        except Exception: pass
-        try: self.button_left.pressed.disconnect()
-        except Exception: pass
-        try: self.button_right.pressed.disconnect()
-        except Exception: pass
+        try:
+            self.button_plus.pressed.disconnect()
+        except Exception:
+            pass
+        try:
+            self.button_minus.pressed.disconnect()
+        except Exception:
+            pass
+        try:
+            self.button_left.pressed.disconnect()
+        except Exception:
+            pass
+        try:
+            self.button_right.pressed.disconnect()
+        except Exception:
+            pass
 
     def zoom_in(self, plot):
         plot.getViewBox().scaleBy(x=1/self.zoom_factor)
@@ -302,4 +331,3 @@ class XZoom(QtWidgets.QWidget):
     def shift_right(self, plot):
         plot.getViewBox().translateBy(x=self.compute_translation(plot))
         self._cursor.draw_label()
-

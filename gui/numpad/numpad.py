@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class NumPad():
     def __init__(self, mainparent):
         """
@@ -10,7 +11,8 @@ class NumPad():
         mainparent: Reference to the main window.
         """
         self.mainparent = mainparent
-        self.button_back = self.mainparent.findChild(QtWidgets.QPushButton, "numpad_back")
+        self.button_back = self.mainparent.findChild(
+            QtWidgets.QPushButton, "numpad_back")
 
         # Only have every other button
         self.buttons_num = []
@@ -18,7 +20,8 @@ class NumPad():
             name = "numpad_" + str(i) + str(i+1)
             button = self.mainparent.findChild(QtWidgets.QPushButton, name)
             # button.pressed.connect(lambda num=i: self.input_number(num))
-            button.pressed.connect(lambda num=int(i/2)+1: self.input_number(num))
+            button.pressed.connect(lambda num=int(
+                i/2)+1: self.input_number(num))
             self.buttons_num.append(button)
 
         self.assign_code("0000", None)
@@ -47,7 +50,7 @@ class NumPad():
         self.input_values[:-1] = self.input_values[1:]
         self.input_values[-1] = num
         self.check_code()
-    
+
     def check_code(self):
         """
         Check the code against the input values.
@@ -60,6 +63,3 @@ class NumPad():
                 self.func()
             # Reassign the code to reset
             self.assign_code(self.code, self.func)
-
-    
-    

@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
+
 class AlarmsBar(QtWidgets.QWidget):
     def __init__(self, *args):
         """
@@ -11,4 +12,3 @@ class AlarmsBar(QtWidgets.QWidget):
         """
         super(AlarmsBar, self).__init__(*args)
         uic.loadUi("alarms/alarmsbar.ui", self)
-

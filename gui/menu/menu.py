@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
+
 class Menu(QtWidgets.QWidget):
     def __init__(self, *args):
         """
@@ -11,6 +12,3 @@ class Menu(QtWidgets.QWidget):
         """
         super(Menu, self).__init__(*args)
         uic.loadUi("menu/menu.ui", self)
-
-
-

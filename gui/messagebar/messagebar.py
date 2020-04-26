@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui, QtCore
 
+
 class MessageBar(QtWidgets.QWidget):
     def __init__(self, parent, *args):
         """
@@ -15,14 +16,16 @@ class MessageBar(QtWidgets.QWidget):
         self.mainparent = parent
         self.bottombar = self.mainparent.bottombar
 
-        self.button_confirm = self.findChild(QtWidgets.QPushButton, "button_confirm")
-        self.button_cancel  = self.findChild(QtWidgets.QPushButton, "button_cancel")
-        self.confirm_msg    = self.findChild(QtWidgets.QLabel, "confirm_msg")
+        self.button_confirm = self.findChild(
+            QtWidgets.QPushButton, "button_confirm")
+        self.button_cancel = self.findChild(
+            QtWidgets.QPushButton, "button_cancel")
+        self.confirm_msg = self.findChild(QtWidgets.QLabel, "confirm_msg")
 
         self.confirm_msg.blinkstate = False
         self.confirm_msg.bordercolor = "#ffffff"
         self.blinktimer = QtCore.QTimer(self)
-        self.blinktimer.setInterval(500) #.5 seconds
+        self.blinktimer.setInterval(500)  # .5 seconds
         self.blinktimer.timeout.connect(self.blink_confirm)
         self.blinktimer.start()
 

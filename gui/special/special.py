@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui, QtCore
 from messagebox import MessageBox
 
+
 class SpecialBar(QtWidgets.QWidget):
     def __init__(self, *args):
         """
@@ -13,11 +14,15 @@ class SpecialBar(QtWidgets.QWidget):
         super(SpecialBar, self).__init__(*args)
         uic.loadUi("special/special.ui", self)
 
-        self.button_expause.pressed.connect(lambda: self.paused_pressed('pause_exhale'))
-        self.button_expause.released.connect(lambda: self.paused_released('pause_exhale'))
+        self.button_expause.pressed.connect(
+            lambda: self.paused_pressed('pause_exhale'))
+        self.button_expause.released.connect(
+            lambda: self.paused_released('pause_exhale'))
 
-        self.button_inspause.pressed.connect(lambda: self.paused_pressed('pause_inhale'))
-        self.button_inspause.released.connect(lambda: self.paused_released('pause_inhale'))
+        self.button_inspause.pressed.connect(
+            lambda: self.paused_pressed('pause_inhale'))
+        self.button_inspause.released.connect(
+            lambda: self.paused_released('pause_inhale'))
         self.button_lung_recruit.pressed.connect(self.toggle_lung_recruit)
         self._lung_recruit = False
         self._timer = {}
@@ -40,13 +45,15 @@ class SpecialBar(QtWidgets.QWidget):
             self.stop_lung_recruit()
             self._lung_recruit_timer.stop()
         else:
-            self.button_lung_recruit.setText("Stop\nLung Recruitment\n%d" % int(eta))
+            self.button_lung_recruit.setText(
+                "Stop\nLung Recruitment\n%d" % int(eta))
 
     def start_lung_recruit(self):
         self._lung_recruit = True
         lr_time = self._config["lung_recruit_time"]["current"]
         lr_pres = self._config["lung_recruit_pres"]["current"]
-        self.button_lung_recruit.setText("Stop\nLung Recruitment\n %d" % lr_time)
+        self.button_lung_recruit.setText(
+            "Stop\nLung Recruitment\n %d" % lr_time)
 
         self._esp32.set("pause_lg_p", lr_pres)
         self._esp32.set("pause_lg_time", lr_time)
@@ -62,16 +69,15 @@ class SpecialBar(QtWidgets.QWidget):
         self._lung_recruit_timer.stop()
         self.button_lung_recruit.setText("Country-Specific\nProcedures")
 
-
     def toggle_lung_recruit(self):
         if self._lung_recruit:
             self.stop_lung_recruit()
         else:
             self._messagebar.get_confirmation(
-                    "Please confirm",
-                    "Do you wanted to start the Lung Recruitment procedure?",
-                    func_confirm=self.start_lung_recruit,
-                    color="#00FF00")
+                "Please confirm",
+                "Do you wanted to start the Lung Recruitment procedure?",
+                func_confirm=self.start_lung_recruit,
+                color="#00FF00")
             """
             msg = MessageBox()
             fn = msg.question("Please confirm",
@@ -84,7 +90,6 @@ class SpecialBar(QtWidgets.QWidget):
                 return
             """
 
-
     def paused_pressed(self, mode):
         '''
         Called when either the inspiration ot expiration pause
@@ -93,15 +98,16 @@ class SpecialBar(QtWidgets.QWidget):
         if not self.is_configured():
             raise Exception('Need to call connect_config_esp first.')
         if mode not in ['pause_exhale', 'pause_inhale']:
-            raise Exception('Can only call paused_pressed with pause_exhale or pause_inhale.')
+            raise Exception(
+                'Can only call paused_pressed with pause_exhale or pause_inhale.')
 
         for other_pause in self._timer:
             self.paused_released(other_pause)
 
         self._timer[mode] = QtCore.QTimer(self)
-        self._timer[mode].timeout.connect(lambda: self.send_signal(mode=mode, pause=True))
+        self._timer[mode].timeout.connect(
+            lambda: self.send_signal(mode=mode, pause=True))
         self._timer[mode].start(self._config['expinsp_setinterval'] * 1000)
-
 
     def paused_released(self, mode):
         '''
@@ -111,12 +117,12 @@ class SpecialBar(QtWidgets.QWidget):
         if not self.is_configured():
             raise Exception('Need to call connect_config_esp first.')
         if mode not in ['pause_exhale', 'pause_inhale']:
-            raise Exception('Can only call paused_pressed with pause_exhale or pause_inhale.')
+            raise Exception(
+                'Can only call paused_pressed with pause_exhale or pause_inhale.')
 
         self.stop_timer(mode)
 
         self.send_signal(mode=mode, pause=False)
-
 
     def send_signal(self, mode, pause):
         '''
@@ -132,7 +138,7 @@ class SpecialBar(QtWidgets.QWidget):
                               "Severe hardware communication error",
                               str(error),
                               "Communication error",
-                              { msg.Ok: lambda: self.stop_timer(mode) })
+                              {msg.Ok: lambda: self.stop_timer(mode)})
             fn()
 
     def stop_timer(self, mode):
@@ -142,5 +148,3 @@ class SpecialBar(QtWidgets.QWidget):
         '''
         if hasattr(self, '_timer'):
             self._timer[mode].stop()
-
-

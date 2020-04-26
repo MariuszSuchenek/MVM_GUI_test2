@@ -4,6 +4,7 @@ Alarm facility.
 
 from copy import copy
 
+
 class GuiAlarms:
     def __init__(self, config, esp32, monitors):
         '''
@@ -27,7 +28,6 @@ class GuiAlarms:
             v['setmin'] = v.get('setmin', v.get('min'))
             v['setmax'] = v.get('setmax', v.get('max'))
 
-
         self._alarmed_monitors = set()
         self.update_mon_thresholds()
 
@@ -44,7 +44,8 @@ class GuiAlarms:
         '''
         for n, v in self._obs.items():
             self._monitors[v['linked_monitor']].update_thresholds(v.get('min'),
-                                                                  v.get('setmin'),
+                                                                  v.get(
+                                                                      'setmin'),
                                                                   v.get('max'),
                                                                   v.get('setmax'))
 
@@ -102,16 +103,15 @@ class GuiAlarms:
             if len(self._alarmed_monitors) == 0:
                 self._esp32.snooze_gui_alarm()
 
-        #self._esp32.reset_alarms()
+        # self._esp32.reset_alarms()
         #obs = self._mon_to_obs.get(name, None)
-        #if obs is not None:
+        # if obs is not None:
         #    under_code = self._obs[obs]['under_threshold_code']
         #    over_code = self._obs[obs]['over_threshold_code']
         #    if under_code is not None:
         #        self._esp32.snooze_hw_alarm(under_code)
         #    if over_code is not None:
         #        self._esp32.snooze_hw_alarm(over_code)
-
 
     def update_thresholds(self, observable, minimum, maximum):
         '''
@@ -121,7 +121,6 @@ class GuiAlarms:
 
         self._obs[observable]["setmin"] = minimum
         self._obs[observable]["setmax"] = maximum
-
 
     def set_data(self, data):
         '''
@@ -138,7 +137,8 @@ class GuiAlarms:
         Checks if max and min are not None
         '''
         obs = self._mon_to_obs.get(name, None)
-        if obs is None: return False
+        if obs is None:
+            return False
         value_max = self._obs[obs]['max']
         value_min = self._obs[obs]['min']
         return value_max is not None and value_min is not None
@@ -149,8 +149,10 @@ class GuiAlarms:
         with name
         '''
         obs = self._mon_to_obs.get(name, None)
-        if obs is None: return False
-        else: return self._obs[obs].get('setmin', self._obs[obs]['min'])
+        if obs is None:
+            return False
+        else:
+            return self._obs[obs].get('setmin', self._obs[obs]['min'])
 
     def get_setmax(self, name):
         '''
@@ -158,8 +160,10 @@ class GuiAlarms:
         with name
         '''
         obs = self._mon_to_obs.get(name, None)
-        if obs is None: return False
-        else: return self._obs[obs].get('setmax', self._obs[obs]['max'])
+        if obs is None:
+            return False
+        else:
+            return self._obs[obs].get('setmax', self._obs[obs]['max'])
 
     def get_min(self, name):
         '''
@@ -167,8 +171,10 @@ class GuiAlarms:
         with name
         '''
         obs = self._mon_to_obs.get(name, None)
-        if obs is None: return False
-        else: return self._obs[obs]['min']
+        if obs is None:
+            return False
+        else:
+            return self._obs[obs]['min']
 
     def get_max(self, name):
         '''
@@ -176,8 +182,10 @@ class GuiAlarms:
         with name
         '''
         obs = self._mon_to_obs.get(name, None)
-        if obs is None: return False
-        else: return self._obs[obs]['max']
+        if obs is None:
+            return False
+        else:
+            return self._obs[obs]['max']
 
     def update_min(self, name, minvalue):
         '''
@@ -198,6 +206,3 @@ class GuiAlarms:
         if obs is not None:
             self._obs[obs]['setmax'] = maxvalue
             self.update_mon_thresholds()
-
-
-

@@ -29,6 +29,7 @@ import pyqtgraph as pg
 import sys
 import time
 
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, config, esp32, *args, **kwargs):
         """
@@ -36,7 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         super(MainWindow, self).__init__(*args, **kwargs)
-        uic.loadUi('mainwindow.ui', self) # Load the .ui file
+        uic.loadUi('mainwindow.ui', self)  # Load the .ui file
 
         self.config = config
         self.esp32 = esp32
@@ -51,63 +52,82 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get the toppane and child pages
         '''
-        self.toppane    = self.findChild(QtWidgets.QStackedWidget, "toppane")
-        self.main       = self.findChild(QtWidgets.QWidget,        "main")
-        self.initial    = self.findChild(QtWidgets.QWidget,        "initial")
-        self.startup    = self.findChild(QtWidgets.QWidget,        "startup")
-
+        self.toppane = self.findChild(QtWidgets.QStackedWidget, "toppane")
+        self.main = self.findChild(QtWidgets.QWidget,        "main")
+        self.initial = self.findChild(QtWidgets.QWidget,        "initial")
+        self.startup = self.findChild(QtWidgets.QWidget,        "startup")
 
         '''
         Get the center pane (plots) widgets
         '''
-        self.centerpane         = self.findChild(QtWidgets.QStackedWidget, "centerpane")
-        self.plots_all          = self.findChild(QtWidgets.QWidget,        "plots_all")
-        self.alarms_settings    = self.findChild(QtWidgets.QWidget,        "alarms_settings")
+        self.centerpane = self.findChild(
+            QtWidgets.QStackedWidget, "centerpane")
+        self.plots_all = self.findChild(QtWidgets.QWidget,        "plots_all")
+        self.alarms_settings = self.findChild(
+            QtWidgets.QWidget,        "alarms_settings")
 
         '''
         Get the bottombar and child pages
         '''
-        self.bottombar       = self.findChild(QtWidgets.QStackedWidget, "bottombar")
-        self.toolbar         = self.findChild(QtWidgets.QWidget,        "toolbar")
-        self.menu            = self.findChild(QtWidgets.QWidget,        "menu")
-        self.frozen_bot      = self.findChild(QtWidgets.QWidget,        "frozenplots_bottom")
-        self.settingsbar     = self.findChild(QtWidgets.QWidget,        "settingsbar")
-        self.specialbar      = self.findChild(QtWidgets.QWidget,        "specialbar")
-        self.blank           = self.findChild(QtWidgets.QWidget,        "blank")
-        self.settingsfork    = self.findChild(QtWidgets.QWidget,        "settingsforkbar")
-        self.alarmsbar       = self.findChild(QtWidgets.QWidget,        "alarmsbar")
-        self.numpadbar       = self.findChild(QtWidgets.QWidget,        "numpadbar")
+        self.bottombar = self.findChild(QtWidgets.QStackedWidget, "bottombar")
+        self.toolbar = self.findChild(QtWidgets.QWidget,        "toolbar")
+        self.menu = self.findChild(QtWidgets.QWidget,        "menu")
+        self.frozen_bot = self.findChild(
+            QtWidgets.QWidget,        "frozenplots_bottom")
+        self.settingsbar = self.findChild(
+            QtWidgets.QWidget,        "settingsbar")
+        self.specialbar = self.findChild(
+            QtWidgets.QWidget,        "specialbar")
+        self.blank = self.findChild(QtWidgets.QWidget,        "blank")
+        self.settingsfork = self.findChild(
+            QtWidgets.QWidget,        "settingsforkbar")
+        self.alarmsbar = self.findChild(QtWidgets.QWidget,        "alarmsbar")
+        self.numpadbar = self.findChild(QtWidgets.QWidget,        "numpadbar")
 
         '''
         Get the stackable bits on the right
         '''
-        self.rightbar       = self.main.findChild(QtWidgets.QStackedWidget, "rightbar")
-        self.monitors_bar   = self.main.findChild(QtWidgets.QWidget,        "monitors_bar")
-        self.frozen_right   = self.main.findChild(QtWidgets.QWidget,        "frozenplots_right")
+        self.rightbar = self.main.findChild(
+            QtWidgets.QStackedWidget, "rightbar")
+        self.monitors_bar = self.main.findChild(
+            QtWidgets.QWidget,        "monitors_bar")
+        self.frozen_right = self.main.findChild(
+            QtWidgets.QWidget,        "frozenplots_right")
 
         '''
         Get initial and startup buttons
         '''
-        self.button_new_patient    = self.initial.findChild(QtWidgets.QPushButton, "button_new_patient")
-        self.button_resume_patient = self.initial.findChild(QtWidgets.QPushButton, "button_resume_patient")
+        self.button_new_patient = self.initial.findChild(
+            QtWidgets.QPushButton, "button_new_patient")
+        self.button_resume_patient = self.initial.findChild(
+            QtWidgets.QPushButton, "button_resume_patient")
         self.button_resume_patient.setEnabled(self.user_settings != {})
 
-        self.button_start_settings = self.startup.findChild(QtWidgets.QPushButton, "button_start_settings")
-        self.button_start_vent     = self.startup.findChild(QtWidgets.QPushButton, "button_start_vent")
-        self.button_start_test     = self.startup.findChild(QtWidgets.QPushButton, "button_start_test")
+        self.button_start_settings = self.startup.findChild(
+            QtWidgets.QPushButton, "button_start_settings")
+        self.button_start_vent = self.startup.findChild(
+            QtWidgets.QPushButton, "button_start_vent")
+        self.button_start_test = self.startup.findChild(
+            QtWidgets.QPushButton, "button_start_test")
 
         '''
         Get toolbar widgets
         '''
-        self.button_menu  = self.toolbar.findChild(QtWidgets.QPushButton, "button_menu")
-        self.button_unlockscreen  = self.toolbar.findChild(QtWidgets.QPushButton, "button_unlockscreen")
-        self.home_button  = self.toolbar.findChild(QtWidgets.QWidget, "home_button")
-        self.goto_menu    = self.toolbar.findChild(QtWidgets.QWidget, "goto_menu")
-        self.goto_unlock  = self.toolbar.findChild(QtWidgets.QWidget, "goto_unlock")
-        self.label_status = self.toolbar.findChild(QtWidgets.QLabel,  "label_status")
+        self.button_menu = self.toolbar.findChild(
+            QtWidgets.QPushButton, "button_menu")
+        self.button_unlockscreen = self.toolbar.findChild(
+            QtWidgets.QPushButton, "button_unlockscreen")
+        self.home_button = self.toolbar.findChild(
+            QtWidgets.QWidget, "home_button")
+        self.goto_menu = self.toolbar.findChild(QtWidgets.QWidget, "goto_menu")
+        self.goto_unlock = self.toolbar.findChild(
+            QtWidgets.QWidget, "goto_unlock")
+        self.label_status = self.toolbar.findChild(
+            QtWidgets.QLabel,  "label_status")
 
-        toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
-        self.toolsettings = {};
+        toolsettings_names = {"toolsettings_1",
+                              "toolsettings_2", "toolsettings_3"}
+        self.toolsettings = {}
 
         for name in toolsettings_names:
             toolsettings = self.toolbar.findChild(QtWidgets.QWidget, name)
@@ -117,32 +137,49 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         Get menu widgets and connect settings for the menu widget
         '''
-        self.button_back         = self.menu.findChild(QtWidgets.QPushButton, "button_back")
-        self.button_settingsfork = self.menu.findChild(QtWidgets.QPushButton, "button_settingsfork")
-        self.button_startstop    = self.menu.findChild(QtWidgets.QPushButton, "button_startstop")
-        self.button_autoassist   = self.menu.findChild(QtWidgets.QPushButton, "button_autoassist")
-        self.button_specialops   = self.menu.findChild(QtWidgets.QPushButton, "button_specialops")
+        self.button_back = self.menu.findChild(
+            QtWidgets.QPushButton, "button_back")
+        self.button_settingsfork = self.menu.findChild(
+            QtWidgets.QPushButton, "button_settingsfork")
+        self.button_startstop = self.menu.findChild(
+            QtWidgets.QPushButton, "button_startstop")
+        self.button_autoassist = self.menu.findChild(
+            QtWidgets.QPushButton, "button_autoassist")
+        self.button_specialops = self.menu.findChild(
+            QtWidgets.QPushButton, "button_specialops")
 
-        self.button_alarms       = self.settingsfork.findChild(QtWidgets.QPushButton, "button_alarms")
-        self.button_settings     = self.settingsfork.findChild(QtWidgets.QPushButton, "button_settings")
-        self.button_lockscreen   = self.settingsfork.findChild(QtWidgets.QPushButton, "button_lockscreen")
-        self.button_backsettings = self.settingsfork.findChild(QtWidgets.QPushButton, "button_backsettings")
+        self.button_alarms = self.settingsfork.findChild(
+            QtWidgets.QPushButton, "button_alarms")
+        self.button_settings = self.settingsfork.findChild(
+            QtWidgets.QPushButton, "button_settings")
+        self.button_lockscreen = self.settingsfork.findChild(
+            QtWidgets.QPushButton, "button_lockscreen")
+        self.button_backsettings = self.settingsfork.findChild(
+            QtWidgets.QPushButton, "button_backsettings")
 
+        self.button_backalarms = self.alarmsbar.findChild(
+            QtWidgets.QPushButton, "button_backalarms")
+        self.button_applyalarm = self.alarmsbar.findChild(
+            QtWidgets.QPushButton, "button_applyalarm")
+        self.button_resetalarm = self.alarmsbar.findChild(
+            QtWidgets.QPushButton, "button_resetalarm")
+        self.button_upalarm = self.alarmsbar.findChild(
+            QtWidgets.QPushButton, "button_upalarm")
+        self.button_downalarm = self.alarmsbar.findChild(
+            QtWidgets.QPushButton, "button_downalarm")
+        self.button_offalarm = self.alarmsbar.findChild(
+            QtWidgets.QPushButton, "button_offalarm")
 
-        self.button_backalarms = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_backalarms")
-        self.button_applyalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_applyalarm")
-        self.button_resetalarm = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_resetalarm")
-        self.button_upalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_upalarm")
-        self.button_downalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_downalarm")
-        self.button_offalarm   = self.alarmsbar.findChild(QtWidgets.QPushButton, "button_offalarm")
-
-        self.button_freeze       = self.specialbar.findChild(QtWidgets.QPushButton, "button_freeze")
-        self.button_backspecial  = self.specialbar.findChild(QtWidgets.QPushButton, "button_backspecial")
+        self.button_freeze = self.specialbar.findChild(
+            QtWidgets.QPushButton, "button_freeze")
+        self.button_backspecial = self.specialbar.findChild(
+            QtWidgets.QPushButton, "button_backspecial")
 
         '''
         Get frozen plots bottom bar widgets and connect
         '''
-        self.button_unfreeze =   self.frozen_bot.findChild(QtWidgets.QPushButton, "button_unfreeze")
+        self.button_unfreeze = self.frozen_bot.findChild(
+            QtWidgets.QPushButton, "button_unfreeze")
 
         '''
         Connect initial startup buttons
@@ -186,11 +223,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.unlockscreen_interval = self.config['unlockscreen_interval']
         self.button_unlockscreen._state = 0
         self.button_unlockscreen.setAutoRepeat(True)
-        self.button_unlockscreen.setAutoRepeatInterval(self.unlockscreen_interval)
+        self.button_unlockscreen.setAutoRepeatInterval(
+            self.unlockscreen_interval)
         self.button_unlockscreen.clicked.connect(self.handle_unlock)
 
         self.numpad = NumPad(self)
-        self.numpad.assign_code(self.config['unlockscreen_code'], self.unlock_screen)
+        self.numpad.assign_code(
+            self.config['unlockscreen_code'], self.unlock_screen)
 
         self.numpad.button_back.pressed.connect(self.lock_screen)
         self.button_backalarms.pressed.connect(self.exit_alarms)
@@ -201,15 +240,15 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
         self.data_filler = DataFiller(config)
 
-
         '''
         Set up tool settings (bottom bar)
 
         self.toolsettings[..] are the objects that hold min, max values for a given setting as
         as the current value (displayed as a slider and as a number).
         '''
-        toolsettings_names = {"toolsettings_1", "toolsettings_2", "toolsettings_3"}
-        self.toolsettings = {};
+        toolsettings_names = {"toolsettings_1",
+                              "toolsettings_2", "toolsettings_3"}
+        self.toolsettings = {}
 
         for name in toolsettings_names:
             toolsettings = self.toolbar.findChild(QtWidgets.QWidget, name)
@@ -224,7 +263,7 @@ class MainWindow(QtWidgets.QMainWindow):
         here.
         '''
         # plot slot widget names
-        self.plots = {};
+        self.plots = {}
         for name in config['plots']:
             plot = self.main.findChild(QtWidgets.QWidget, name)
             plot.setFixedHeight(130)
@@ -244,18 +283,24 @@ class MainWindow(QtWidgets.QMainWindow):
         #     alarm = GuiAlarm(name, config, self.monitors, self.alarm_h)
         #     self.alarms[name] = alarm
         self.gui_alarm = GuiAlarms(config, self.esp32, self.monitors)
-        for m in self.monitors.values(): m.connect_gui_alarm(self.gui_alarm)
-
+        for m in self.monitors.values():
+            m.connect_gui_alarm(self.gui_alarm)
 
         # Get displayed monitors
-        self.monitors_slots = self.main.findChild(QtWidgets.QVBoxLayout, "monitors_slots")
+        self.monitors_slots = self.main.findChild(
+            QtWidgets.QVBoxLayout, "monitors_slots")
         self.alarms_settings.connect_monitors(self)
         self.alarms_settings.populate_monitors()
-        self.button_applyalarm.pressed.connect(self.alarms_settings.apply_selected)
-        self.button_resetalarm.pressed.connect(self.alarms_settings.reset_selected)
-        self.button_offalarm.pressed.connect(self.alarms_settings.move_selected_off)
-        self.button_upalarm.pressed.connect(self.alarms_settings.move_selected_up)
-        self.button_downalarm.pressed.connect(self.alarms_settings.move_selected_down)
+        self.button_applyalarm.pressed.connect(
+            self.alarms_settings.apply_selected)
+        self.button_resetalarm.pressed.connect(
+            self.alarms_settings.reset_selected)
+        self.button_offalarm.pressed.connect(
+            self.alarms_settings.move_selected_off)
+        self.button_upalarm.pressed.connect(
+            self.alarms_settings.move_selected_up)
+        self.button_downalarm.pressed.connect(
+            self.alarms_settings.move_selected_down)
 
         # Connect the frozen plots
         # Requires building of an ordered array to associate the correct controls with the plot.
@@ -263,7 +308,8 @@ class MainWindow(QtWidgets.QMainWindow):
         for slotname in self.plots:
             active_plots.append(self.plots[slotname])
         self.cursor = Cursor(active_plots)
-        self.frozen_bot.connect_workers(self.data_filler, active_plots, self.cursor)
+        self.frozen_bot.connect_workers(
+            self.data_filler, active_plots, self.cursor)
         self.frozen_right.connect_workers(active_plots, self.cursor)
 
         '''
@@ -273,17 +319,17 @@ class MainWindow(QtWidgets.QMainWindow):
         data directly to the DataFiller, which will
         then display them.
         '''
-        self._data_h = DataHandler(config, self.esp32, self.data_filler, self.gui_alarm)
+        self._data_h = DataHandler(
+            config, self.esp32, self.data_filler, self.gui_alarm)
 
         self.specialbar.connect_datahandler_config_esp32(self._data_h,
-                self.config, self.esp32, self.messagebar)
+                                                         self.config, self.esp32, self.messagebar)
 
         '''
         Connect settings button to Settings overlay.
         '''
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
-
 
         '''
         Set up start/stop auto/min mode buttons.
@@ -293,19 +339,21 @@ class MainWindow(QtWidgets.QMainWindow):
         '''
 
         self._start_stop_worker = StartStopWorker(
-                self,
-                self.config,
-                self.esp32,
-                self.button_startstop,
-                self.button_autoassist,
-                self.toolbar,
-                self.settings)
+            self,
+            self.config,
+            self.esp32,
+            self.button_startstop,
+            self.button_autoassist,
+            self.toolbar,
+            self.settings)
 
         if self._start_stop_worker.is_running():
             self.goto_main()
 
-        self.button_startstop.released.connect(self._start_stop_worker.toggle_start_stop)
-        self.button_autoassist.released.connect(self._start_stop_worker.toggle_mode)
+        self.button_startstop.released.connect(
+            self._start_stop_worker.toggle_start_stop)
+        self.button_autoassist.released.connect(
+            self._start_stop_worker.toggle_mode)
         self.gui_alarm.connect_workers(self._start_stop_worker)
 
     def lock_screen(self):
@@ -345,7 +393,6 @@ class MainWindow(QtWidgets.QMainWindow):
         elif self._start_stop_worker.mode() == self._start_stop_worker.MODE_PCV:
             self.settings.tabs.setCurrentWidget(self.settings.tab_pcv)
 
-
     def goto_main(self):
         self.show_main()
         self.show_toolbar()
@@ -377,7 +424,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_numpadbar(self):
         self.bottombar.setCurrentWidget(self.numpadbar)
 
-    def show_toolbar(self, locked_state = False):
+    def show_toolbar(self, locked_state=False):
         """
         Shows the toolbar in the bottom bar.
 
@@ -388,7 +435,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.home_button.setCurrentWidget(self.goto_unlock)
         else:
             self.home_button.setCurrentWidget(self.goto_menu)
-
 
     def show_settingsbar(self):
         self.bottombar.setCurrentWidget(self.settingsbar)
@@ -416,9 +462,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.rightbar.setCurrentWidget(self.frozen_right)
         self.bottombar.setCurrentWidget(self.frozen_bot)
 
-
     def unfreeze_plots(self):
         self.data_filler.unfreeze()
         self.rightbar.setCurrentWidget(self.monitors_bar)
         self.show_specialbar()
-

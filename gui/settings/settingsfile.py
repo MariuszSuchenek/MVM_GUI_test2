@@ -3,7 +3,7 @@ from hashlib import md5
 from os import path as os_path
 
 
-__all__=('SettingsFile',)
+__all__ = ('SettingsFile',)
 
 
 def _check_file(filename):
@@ -59,7 +59,6 @@ class SettingsFile:
                 value = md5(configfile.read()).hexdigest()
             return value == challenge
         return False
-
 
     def store(self, data):
         """

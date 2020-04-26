@@ -1,6 +1,7 @@
 from functools import reduce
 from PyQt5.QtWidgets import QMessageBox
 
+
 class MessageBox(QMessageBox):
     '''
     Class that displaes a QT message box, with callbacks
@@ -27,7 +28,6 @@ class MessageBox(QMessageBox):
         """
 
         super(MessageBox, self).__init__()
-
 
     def _wrapper(self, text, long_text, detail_text, title, icon, callbacks, do_not_block=False):
         """
@@ -86,7 +86,7 @@ class MessageBox(QMessageBox):
         self.setText(text)
         self.setInformativeText(long_text)
         self.setDetailedText(detail_text)
-        self.setStyleSheet(button_style);
+        self.setStyleSheet(button_style)
         self.setStandardButtons(bitmask)
 
         if do_not_block:
@@ -174,5 +174,3 @@ class MessageBox(QMessageBox):
 
         return self._wrapper(text, long_text, detail_text, title,
                              self.Warning, callbacks, do_not_block)
-
-

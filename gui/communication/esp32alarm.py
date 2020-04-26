@@ -26,7 +26,7 @@ class ESP32BaseAlarm:
 
         if not hasattr(self, 'alarms'):
             return self.unpack()
-            
+
         return self.alarms
 
     def unpack(self):
@@ -34,12 +34,12 @@ class ESP32BaseAlarm:
         Unpacks the number obtained from the ESP
         '''
 
-        self.alarms = list(filter(lambda x: x, [ self.number & (1<<test) for test in range(32)]))
+        self.alarms = list(
+            filter(lambda x: x, [self.number & (1 << test) for test in range(32)]))
 
         print('Found alarms', self.alarms)
 
         return self.alarms
-
 
     def strerror(self, n):
         '''
@@ -83,7 +83,6 @@ class ESP32BaseAlarm:
         return str_error
 
 
-
 class ESP32Alarm(ESP32BaseAlarm):
     def __init__(self, number):
         if number & (1 << 29):
@@ -122,6 +121,7 @@ class ESP32Alarm(ESP32BaseAlarm):
         1 << 30: "GUI watchdog not reset",
         1 << 31: "System failure",
     }
+
 
 class ESP32Warning(ESP32BaseAlarm):
 

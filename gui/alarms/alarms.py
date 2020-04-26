@@ -7,6 +7,7 @@ class AlarmScrollBar(QtWidgets.QScrollBar):
     """
     Custom class to override QScrollBar parameters.
     """
+
     def __init__(self, *args):
         # QtWidgets.QScrollBar.init(self, parent, **kwargs)
         super(AlarmScrollBar, self).__init__(*args)
@@ -30,6 +31,7 @@ class AlarmScrollBar(QtWidgets.QScrollBar):
                 subcontrol-origin: margin;
             }""")
 
+
 def clickable(widget):
     """
     Creates a click event filter for widgets that are not normally clickable.
@@ -37,6 +39,7 @@ def clickable(widget):
     """
     class Filter(QtCore.QObject):
         clicked = QtCore.pyqtSignal()
+
         def eventFilter(self, obj, event):
             if obj == widget:
                 if event.type() == QtCore.QEvent.MouseButtonRelease:
@@ -48,8 +51,10 @@ def clickable(widget):
     widget.installEventFilter(filter)
     return filter.clicked
 
+
 class Alarms(QtWidgets.QWidget):
     STORED_PER_COL = 7
+
     def __init__(self, *args):
         """
         Initialize the Alarms widget.
@@ -59,18 +64,27 @@ class Alarms(QtWidgets.QWidget):
         super(Alarms, self).__init__(*args)
         uic.loadUi("alarms/alarms.ui", self)
 
-        self.layout          = self.findChild(QtWidgets.QGridLayout, "monitors_layout")
-        self.label_alarmname = self.findChild(QtWidgets.QLabel,      "label_alarmname")
+        self.layout = self.findChild(QtWidgets.QGridLayout, "monitors_layout")
+        self.label_alarmname = self.findChild(
+            QtWidgets.QLabel,      "label_alarmname")
 
-        self.slider_alarmmin = self.findChild(QtWidgets.QScrollBar,  "slider_alarmmin")
-        self.alarmmin_min    = self.findChild(QtWidgets.QLabel,      "alarmmin_min")
-        self.alarmmin_value  = self.findChild(QtWidgets.QLabel,      "alarmmin_value")
-        self.alarmmin_max    = self.findChild(QtWidgets.QLabel,      "alarmmin_max")
+        self.slider_alarmmin = self.findChild(
+            QtWidgets.QScrollBar,  "slider_alarmmin")
+        self.alarmmin_min = self.findChild(
+            QtWidgets.QLabel,      "alarmmin_min")
+        self.alarmmin_value = self.findChild(
+            QtWidgets.QLabel,      "alarmmin_value")
+        self.alarmmin_max = self.findChild(
+            QtWidgets.QLabel,      "alarmmin_max")
 
-        self.slider_alarmmax = self.findChild(QtWidgets.QScrollBar,  "slider_alarmmax")
-        self.alarmmax_min    = self.findChild(QtWidgets.QLabel,      "alarmmax_min")
-        self.alarmmax_value  = self.findChild(QtWidgets.QLabel,      "alarmmax_value")
-        self.alarmmax_max    = self.findChild(QtWidgets.QLabel,      "alarmmax_max")
+        self.slider_alarmmax = self.findChild(
+            QtWidgets.QScrollBar,  "slider_alarmmax")
+        self.alarmmax_min = self.findChild(
+            QtWidgets.QLabel,      "alarmmax_min")
+        self.alarmmax_value = self.findChild(
+            QtWidgets.QLabel,      "alarmmax_value")
+        self.alarmmax_max = self.findChild(
+            QtWidgets.QLabel,      "alarmmax_max")
 
         self.enabled = True
 
@@ -98,7 +112,8 @@ class Alarms(QtWidgets.QWidget):
 
         selected: config name
         """
-        if not self.enabled: return
+        if not self.enabled:
+            return
 
         for name, monitor in self.monitors.items():
             if name == selected:
@@ -124,7 +139,8 @@ class Alarms(QtWidgets.QWidget):
         alarm = monitor.gui_alarm
         if alarm.has_valid_minmax(monitor.configname):
             slider.setMinimum(0)
-            slider.setMaximum((alarm.get_max(monitor.configname) - alarm.get_min(monitor.configname)) / monitor.step)
+            slider.setMaximum((alarm.get_max(monitor.configname) -
+                               alarm.get_min(monitor.configname)) / monitor.step)
             slider.setSingleStep(monitor.step)
             slider.setPageStep(slider.maximum() / 2)
             slider.setEnabled(True)
@@ -144,8 +160,10 @@ class Alarms(QtWidgets.QWidget):
         # Prevent min > max
         alarm = monitor.gui_alarm
         if alarm.has_valid_minmax(monitor.configname):
-            slidervalue = min(self.slider_alarmmax.sliderPosition(), slidervalue)
-            value = slidervalue * monitor.step + alarm.get_min(monitor.configname)
+            slidervalue = min(
+                self.slider_alarmmax.sliderPosition(), slidervalue)
+            value = slidervalue * monitor.step + \
+                alarm.get_min(monitor.configname)
             self.alarmmin_value.setText(str(value))
             self.slider_alarmmin.setValue(slidervalue)
             self.slider_alarmmin.setSliderPosition(slidervalue)
@@ -160,8 +178,10 @@ class Alarms(QtWidgets.QWidget):
         # Prevent max < min
         alarm = monitor.gui_alarm
         if alarm.has_valid_minmax(monitor.configname):
-            slidervalue = max(self.slider_alarmmin.sliderPosition(), slidervalue)
-            value = slidervalue * monitor.step + alarm.get_min(monitor.configname)
+            slidervalue = max(
+                self.slider_alarmmin.sliderPosition(), slidervalue)
+            value = slidervalue * monitor.step + \
+                alarm.get_min(monitor.configname)
             self.alarmmax_value.setText(str(value))
             self.slider_alarmmax.setValue(slidervalue)
             self.slider_alarmmax.setSliderPosition(slidervalue)
@@ -176,14 +196,16 @@ class Alarms(QtWidgets.QWidget):
         alarm = monitor.gui_alarm
         unit = "" if monitor.units is None else monitor.units
         self.label_alarmname.setText(monitor.name + " " + unit)
-        self.label_alarmname.setStyleSheet("QLabel { color: " + monitor.color + "; background-color: black}")
+        self.label_alarmname.setStyleSheet(
+            "QLabel { color: " + monitor.color + "; background-color: black}")
 
         self.set_slider_range(self.slider_alarmmin, monitor)
         self.slider_alarmmin.valueChanged.connect(lambda value:
-                self.do_alarmmin_moved(value, monitor))
+                                                  self.do_alarmmin_moved(value, monitor))
 
         if alarm.has_valid_minmax(name):
-            sliderpos = int((alarm.get_setmin(name) - alarm.get_min(name)) / monitor.step)
+            sliderpos = int(
+                (alarm.get_setmin(name) - alarm.get_min(name)) / monitor.step)
             self.slider_alarmmin.setSliderPosition(sliderpos)
             self.do_alarmmin_moved(sliderpos, monitor)
             self.alarmmin_min.setText(str(alarm.get_min(name)))
@@ -195,9 +217,10 @@ class Alarms(QtWidgets.QWidget):
 
         self.set_slider_range(self.slider_alarmmax, monitor)
         self.slider_alarmmax.valueChanged.connect(lambda value:
-                self.do_alarmmax_moved(value, monitor))
+                                                  self.do_alarmmax_moved(value, monitor))
         if alarm.has_valid_minmax(name):
-            sliderpos = int((alarm.get_setmax(name) - alarm.get_min(name)) / monitor.step)
+            sliderpos = int(
+                (alarm.get_setmax(name) - alarm.get_min(name)) / monitor.step)
             self.slider_alarmmax.setSliderPosition(sliderpos)
             self.do_alarmmax_moved(sliderpos, monitor)
             self.alarmmax_min.setText(str(alarm.get_min(name)))
@@ -305,7 +328,8 @@ class Alarms(QtWidgets.QWidget):
         for name, monitor in self.monitors.items():
             if name not in self.displayed_monitors:
                 # Monitor not displayed, so goes on Alarms page
-                self.layout.addWidget(monitor, int(hidd % self.STORED_PER_COL), 10-int(hidd / self.STORED_PER_COL))
+                self.layout.addWidget(monitor, int(
+                    hidd % self.STORED_PER_COL), 10-int(hidd / self.STORED_PER_COL))
                 hidd += 1
 
         for (disp, name) in enumerate(self.displayed_monitors):
@@ -315,7 +339,6 @@ class Alarms(QtWidgets.QWidget):
         # Refresh monitors after populating
         for _name, monitor in self.monitors.items():
             monitor.refresh()
-
 
     def config_monitors(self):
         """
@@ -334,6 +357,3 @@ class Alarms(QtWidgets.QWidget):
         for name in self.monitors:
             self.monitors[name].unhighlight()
             self.monitors[name].config_mode = False
-
-
-

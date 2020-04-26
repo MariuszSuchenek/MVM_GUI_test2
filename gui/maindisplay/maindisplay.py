@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
+
 class MainDisplay(QtWidgets.QWidget):
     def __init__(self, *args):
         """

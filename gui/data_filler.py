@@ -1,8 +1,9 @@
 from PyQt5 import QtGui, QtCore
 import numpy as np
 import pyqtgraph as pg
-from ast import literal_eval # to convert a string to list
-from copy import copy 
+from ast import literal_eval  # to convert a string to list
+from copy import copy
+
 
 class DataFiller():
     '''
@@ -49,9 +50,9 @@ class DataFiller():
         self._config = config
         self._n_samples = self._config['nsamples']
         self._n_historic_samples = self._config.get('historic_nsamples',
-                200)
+                                                    200)
         self._sampling = self._config['sampling_interval']
-        self._time_window = self._n_samples * self._sampling # seconds
+        self._time_window = self._n_samples * self._sampling  # seconds
         self._xdata = np.linspace(-self._time_window, 0, self._n_samples)
         self._frozen = False
         self._first_plot = None
@@ -100,8 +101,10 @@ class DataFiller():
 
         # Customize the axis color
         color = self.parse_color(self._config['axis_line_color'])
-        plot.getAxis('bottom').setPen(pg.mkPen(color, width=self._config['axis_line_width']))
-        plot.getAxis('left').setPen(pg.mkPen(color, width=self._config['axis_line_width']))
+        plot.getAxis('bottom').setPen(
+            pg.mkPen(color, width=self._config['axis_line_width']))
+        plot.getAxis('left').setPen(
+            pg.mkPen(color, width=self._config['axis_line_width']))
 
         if self._looping:
             self.add_looping_lines(name, plot)
@@ -121,7 +124,8 @@ class DataFiller():
         plot.setMouseEnabled(x=False, y=False)
         plot.setMenuEnabled(False)
 
-        print('NORMAL: Connected plot', plot_config['name'], 'with variable', name)
+        print('NORMAL: Connected plot',
+              plot_config['name'], 'with variable', name)
 
     def set_default_y_range(self, name):
         '''
@@ -129,16 +133,19 @@ class DataFiller():
         specified in the config file.
         '''
         if name not in self._qtgraphs:
-            raise Exception('Cannot set y range for graph', name, 'as it doesn\'t exist.')
+            raise Exception('Cannot set y range for graph',
+                            name, 'as it doesn\'t exist.')
 
         # Save the range for future use
-        self._yrange[name] = (self._default_yrange[name][0], self._default_yrange[name][1])
+        self._yrange[name] = (self._default_yrange[name]
+                              [0], self._default_yrange[name][1])
 
         # Set the range to the graph
         self._qtgraphs[name].setYRange(*self._default_yrange[name])
-        
+
         # Also set the width (space) on the left of the Y axis (for the label and ticks)
-        self._qtgraphs[name].getAxis('left').setWidth(self._config['left_ax_label_space'])
+        self._qtgraphs[name].getAxis('left').setWidth(
+            self._config['left_ax_label_space'])
 
     def set_y_range(self, name):
         '''
@@ -146,7 +153,8 @@ class DataFiller():
         from the historic data set.
         '''
         if name not in self._historic_data or name not in self._qtgraphs:
-            raise Exception('Cannot set y range for graph', name, 'as it doesn\'t exist.')
+            raise Exception('Cannot set y range for graph',
+                            name, 'as it doesn\'t exist.')
 
         # Calculate the max and min using the larger historical data sample
         ymax = np.max(self._historic_data[name])
@@ -186,15 +194,16 @@ class DataFiller():
         '''
 
         if name not in self._qtgraphs:
-            raise Exception('Cannot set ticks for graph', name, 'as it doesn\'t exist.')
+            raise Exception('Cannot set ticks for graph',
+                            name, 'as it doesn\'t exist.')
 
         ax = self._qtgraphs[name].getAxis('left')
 
-        if yrange is None:  
+        if yrange is None:
             ax.setTickSpacing()
         else:
-            # Sligthly reduce the yrange so 
-            # the tick labels don't get 
+            # Sligthly reduce the yrange so
+            # the tick labels don't get
             # cropped on the top
             yrange -= yrange * 0.2
 
@@ -205,7 +214,6 @@ class DataFiller():
                 ax.setTickSpacing()
             else:
                 ax.setTickSpacing(major=major_step, minor=minor_step)
-
 
     def set_default_x_range(self, name):
         '''
@@ -222,7 +230,8 @@ class DataFiller():
         '''
         self._x_label = QtGui.QGraphicsTextItem()
         self._x_label.setVisible(True)
-        self._x_label.setHtml('<p style="color: %s">Time [s]:</p>' % self._config["axis_line_color"])
+        self._x_label.setHtml(
+            '<p style="color: %s">Time [s]:</p>' % self._config["axis_line_color"])
 
         # Find the position of the label
         br = self._x_label.boundingRect()
@@ -230,7 +239,7 @@ class DataFiller():
         axis = plot.getAxis('bottom')
         x = plot.size().width()/2. - br.width()/2.
         y = plot.size().height() - br.height()
-        p.setX(0) # Leave it on the left, so it doesn't cover labels.
+        p.setX(0)  # Leave it on the left, so it doesn't cover labels.
         p.setY(y)
         self._x_label.setPos(p)
         plot.getAxis('bottom').scene().addItem(self._x_label)
@@ -242,12 +251,12 @@ class DataFiller():
         '''
 
         self._looping_lines[name] = pg.InfiniteLine(pos=0,
-                                         angle=90,
-                                         movable=False,
-                                         pen=pg.mkPen(cosmetic=False,
-                                                      width=self._time_window / 25,
-                                                      color='k',
-                                                      style=QtCore.Qt.SolidLine))
+                                                    angle=90,
+                                                    movable=False,
+                                                    pen=pg.mkPen(cosmetic=False,
+                                                                 width=self._time_window / 25,
+                                                                 color='k',
+                                                                 style=QtCore.Qt.SolidLine))
 
         plot.addItem(self._looping_lines[name])
 
@@ -263,11 +272,11 @@ class DataFiller():
 
         self._looping_data_idx[name] = 0
 
-
         if name not in self._data:
             self._data[name] = np.linspace(0, 0, self._n_samples)
 
-        print('NORMAL: Connected monitor', monitor.configname , 'with variable', name)
+        print('NORMAL: Connected monitor',
+              monitor.configname, 'with variable', name)
 
     def add_data_point(self, name, data_point):
         '''
@@ -322,10 +331,9 @@ class DataFiller():
             self.set_y_range(name)
 
             if self._looping:
-                x_val = self._xdata[self._looping_data_idx[name]] - self._sampling * 0.1
+                x_val = self._xdata[self._looping_data_idx[name]
+                                    ] - self._sampling * 0.1
                 self._looping_lines[name].setValue(x_val)
-
-
 
     def freeze(self):
         '''
@@ -369,7 +377,8 @@ class DataFiller():
         '''
 
         if name in self._monitors:
-            last_data_idx = self._looping_data_idx[name] - 1 if self._looping else -1
+            last_data_idx = self._looping_data_idx[name] - \
+                1 if self._looping else -1
             self._monitors[name].update_value(self._data[name][last_data_idx])
         else:
             return
@@ -378,5 +387,3 @@ class DataFiller():
 
         color = rgb_string.replace('rgb', '')
         return literal_eval(color)
-
-

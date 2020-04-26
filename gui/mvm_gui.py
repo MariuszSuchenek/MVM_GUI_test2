@@ -17,6 +17,7 @@ from communication.esp32serial import ESP32Serial
 from communication.fake_esp32serial import FakeESP32Serial
 from messagebox import MessageBox
 
+
 def connect_esp32(config):
     try:
         if 'fakeESP32' in sys.argv:
@@ -33,8 +34,8 @@ def connect_esp32(config):
         fn = msg.critical("Do you want to retry?",
                           "Severe hardware communication error",
                           str(error) + err_msg, "Communication error",
-                          { msg.Retry: lambda: connect_esp32(config),
-                            msg.Abort: lambda: None})
+                          {msg.Retry: lambda: connect_esp32(config),
+                           msg.Abort: lambda: None})
         return fn()
 
     return esp32
@@ -63,4 +64,3 @@ if __name__ == "__main__":
     window.show()
     app.exec_()
     esp32.set("wdenable", 0)
-

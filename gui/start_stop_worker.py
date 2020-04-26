@@ -73,7 +73,6 @@ class StartStopWorker():
                 else:
                     self._settings.update_spinbox_value(param, value)
 
-
     def _esp32_io(self):
         '''
         The callback function called every time the
@@ -84,7 +83,6 @@ class StartStopWorker():
             self._call_esp32()
         except Exception as error:
             self._raise_comm_error(str(error))
-
 
     def _call_esp32(self):
         '''
@@ -110,7 +108,6 @@ class StartStopWorker():
         self.set_run(run)
         self.set_mode(mode)
 
-
     def _open_backup_warning(self):
         '''
         Opens a warning message if the ventilator
@@ -126,13 +123,11 @@ class StartStopWorker():
                     "",
                     callbacks)()
 
-
     def _acknowlege_backup(self):
         '''
         Sets _backup_ackowledged to True
         '''
         self._backup_ackowledged = True
-
 
     def _raise_comm_error(self, message):
         """
@@ -145,6 +140,7 @@ class StartStopWorker():
                      'Error communicating with the hardware', message,
                      '** COMMUNICATION ERROR **', {msg.Ok: lambda:
                                                    sys.exit(-1)})()
+
     def is_running(self):
         """
         A simple function that returns true if running.
@@ -195,7 +191,6 @@ class StartStopWorker():
             self._button_startstop.setText("Stop\n" + self._mode_text)
             self._toolbar.set_running(self._mode_text)
 
-
     def start_button_pressed(self):
         '''
         Callback for when the Start button is pressed
@@ -226,7 +221,6 @@ class StartStopWorker():
                           self._button_startstop.setEnabled(True),
                           self._button_startstop.setStyleSheet("color: red"),
                           self._toolbar.set_running(self._mode_text)))
-
 
     def stop_button_pressed(self):
         '''
@@ -265,9 +259,9 @@ class StartStopWorker():
         self._button_autoassist.setDown(False)
         current_mode = self._mode_text.upper()
         self._messagebar.get_confirmation(
-                "**STARTING %s MODE**" % current_mode,
-                "Are you sure you want to START %s MODE?" % current_mode,
-                func_confirm=self.start_button_pressed)
+            "**STARTING %s MODE**" % current_mode,
+            "Are you sure you want to START %s MODE?" % current_mode,
+            func_confirm=self.start_button_pressed)
 
     def confirm_stop_pressed(self):
         '''
@@ -277,9 +271,9 @@ class StartStopWorker():
         self._button_autoassist.setDown(False)
         current_mode = self._mode_text.upper()
         self._messagebar.get_confirmation(
-                "**STOPPING %s MODE**" % current_mode,
-                "Are you sure you want to STOP %s MODE?" % current_mode,
-                func_confirm=self.stop_button_pressed)
+            "**STOPPING %s MODE**" % current_mode,
+            "Are you sure you want to STOP %s MODE?" % current_mode,
+            func_confirm=self.stop_button_pressed)
 
     def button_timeout(self):
         '''
@@ -305,7 +299,6 @@ class StartStopWorker():
         else:
             self.confirm_stop_pressed()
 
-
     def set_run(self, run):
         '''
         Sets the run variable directly.
@@ -322,8 +315,10 @@ class StartStopWorker():
             msg = MessageBox()
             msg.critical('STOPPING VENTILATION',
                          'The hardware has stopped the ventilation.',
-                         'The microcontroller has stopped the ventilation by sending run = '+str(run),
-                         'The microcontroller has stopped the ventilation by sending run = '+str(run),
+                         'The microcontroller has stopped the ventilation by sending run = ' +
+                         str(run),
+                         'The microcontroller has stopped the ventilation by sending run = ' +
+                         str(run),
                          {msg.Ok: self.show_start_button})()
 
         else:
@@ -335,13 +330,11 @@ class StartStopWorker():
         '''
         self._timer.start(self._config["status_sampling_interval"] * 1000)
 
-
     def _stop_timer(self):
         '''
         Stops the QTimer.
         '''
         self._timer.stop()
-
 
     def _restart_timer(self):
         '''
@@ -361,5 +354,3 @@ class StartStopWorker():
         '''
         if self._mode != mode:
             self.toggle_mode()
-
-
