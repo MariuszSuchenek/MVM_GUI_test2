@@ -1,4 +1,8 @@
-class ESP32BaseAlarm:
+"""
+This module handles ESP32 alarms.
+"""
+
+class ESP32BaseAlarm(object):
     '''
     The base ESP Alarm Class
     '''
@@ -23,6 +27,9 @@ class ESP32BaseAlarm:
         return 'All alarms: ' + ' - '.join(self.strerror_all())
 
     def get_alarm_codes(self):
+        """
+        Gets the alarm codes.
+        """
 
         if not hasattr(self, 'alarms'):
             return self.unpack()
@@ -34,14 +41,13 @@ class ESP32BaseAlarm:
         Unpacks the number obtained from the ESP
         '''
 
-        self.alarms = list(
-            filter(lambda x: x, [self.number & (1 << test) for test in range(32)]))
+        self.alarms = list(x for x in [self.number & (1 << test) for test in range(32)] if x)
 
         print('Found alarms', self.alarms)
 
         return self.alarms
 
-    def strerror(self, n):
+    def strerror(self, n_error):
         '''
         Returns a string with the error
         specified by n
@@ -52,10 +58,9 @@ class ESP32BaseAlarm:
         if not hasattr(self, 'alarms'):
             self.unpack()
 
-        if n in self.alarm_to_string:
-            return self.alarm_to_string[n]
-        else:
-            return 'Unknown error'
+        if n_error in self.alarm_to_string:
+            return self.alarm_to_string[n_error]
+        return 'Unknown error'
 
     def strerror_all(self, append_err_no=False):
         '''
@@ -69,21 +74,24 @@ class ESP32BaseAlarm:
             self.unpack()
 
         str_error = []
-        for n in self.alarms:
+        for n_error in self.alarms:
 
-            s = self.strerror(n)
+            s_error = self.strerror(n_error)
 
             if append_err_no:
-                s += ' (code: '
-                s += str(n)
-                s += ')'
+                s_error += ' (code: '
+                s_error += str(n_error)
+                s_error += ')'
 
-            str_error.append(s)
+            str_error.append(s_error)
 
         return str_error
 
 
 class ESP32Alarm(ESP32BaseAlarm):
+    """
+    An ESP32 class for handling alarms, built on ESP32BaseAlarm
+    """
     def __init__(self, number):
         if number & (1 << 29):
             number = number ^ (1 << 29)
@@ -124,7 +132,9 @@ class ESP32Alarm(ESP32BaseAlarm):
 
 
 class ESP32Warning(ESP32BaseAlarm):
-
+    """
+    ESP32Warning class
+    """
     alarm_to_string = {
         # From the ESP
         1 << 0: "Oxygen sensor requires calibration",
