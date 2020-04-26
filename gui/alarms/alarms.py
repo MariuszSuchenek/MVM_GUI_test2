@@ -44,7 +44,6 @@ def clickable(widget):
 
     arguments:
     - widget: the widget to be made clickable
-    '''
     """
     class Filter(QtCore.QObject):
         '''
