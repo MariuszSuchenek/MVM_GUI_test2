@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+This module handles the Special Operations for the MVM GUI.
+This includes country-specific-procedurings, pause functions, and freezing functions.
+"""
+
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore
 from messagebox import MessageBox
@@ -27,20 +32,33 @@ class SpecialBar(QtWidgets.QWidget):
         self._lung_recruit = False
         self._timer = {}
 
-    def connect_datahandler_config_esp32(
-            self, data_h, config, esp32, messagebar):
-        '''
+    def connect_datahandler_config_esp32(self, data_h, config, esp32, messagebar):
+        """
         Passes the data handler and the confi dict to this class.
-        '''
+
+        arguments:
+        - data_h: A reference to the data handler.
+        - config: A dictionary of configuration parameters from default_settings.yaml
+        - esp32: A reference to the esp32 
+        - messagebar: Reference to the MessageBar used for confirmation.
+        """
         self._data_h = data_h
         self._config = config
         self._esp32 = esp32
         self._messagebar = messagebar
 
     def is_configured(self):
+        """
+        Returns whether or not the SpecialBar is configured.
+
+        returns: true or false depending on whether or not SpecialBar is configured.
+        """
         return hasattr(self, "_data_h") and hasattr(self, "_config")
 
     def _get_lung_recruit_eta(self):
+        """
+        Retrieves the Lungh Recruitment ETA from the esp32 and displays the result in Stop button
+        """
         eta = float(self._esp32.get("pause_lg_time"))
         if eta == 0:
             self.stop_lung_recruit()
@@ -50,6 +68,9 @@ class SpecialBar(QtWidgets.QWidget):
                 "Stop\nLung Recruitment\n%d" % int(eta))
 
     def start_lung_recruit(self):
+        """
+        Starts the lung recruitment procedure
+        """
         self._lung_recruit = True
         lr_time = self._config["lung_recruit_time"]["current"]
         lr_pres = self._config["lung_recruit_pres"]["current"]
@@ -65,12 +86,18 @@ class SpecialBar(QtWidgets.QWidget):
         self._lung_recruit_timer.start(500)
 
     def stop_lung_recruit(self):
+        """
+        Stops the lung recruitment procedure
+        """
         self._lung_recruit = False
         self._esp32.set("pause_lg", 0)
         self._lung_recruit_timer.stop()
         self.button_lung_recruit.setText("Country-Specific\nProcedures")
 
     def toggle_lung_recruit(self):
+        """
+        Toggles between starting and stopping the lung recruitment procedure
+        """
         if self._lung_recruit:
             self.stop_lung_recruit()
         else:
@@ -92,10 +119,13 @@ class SpecialBar(QtWidgets.QWidget):
             """
 
     def paused_pressed(self, mode):
-        '''
+        """
         Called when either the inspiration ot expiration pause
         buttons are pressed.
-        '''
+
+        arguments:
+        - mode: The pause mode (either 'pause_exhale' or 'pause_inhale')
+        """
         if not self.is_configured():
             raise Exception('Need to call connect_config_esp first.')
         if mode not in ['pause_exhale', 'pause_inhale']:
@@ -111,10 +141,13 @@ class SpecialBar(QtWidgets.QWidget):
         self._timer[mode].start(self._config['expinsp_setinterval'] * 1000)
 
     def paused_released(self, mode):
-        '''
+        """
         Called when either the inspiration ot expiration pause
         buttons are released.
-        '''
+
+        arguments:
+        - mode: The pause mode (either 'pause_exhale' or 'pause_inhale')
+        """
         if not self.is_configured():
             raise Exception('Need to call connect_config_esp first.')
         if mode not in ['pause_exhale', 'pause_inhale']:
@@ -126,10 +159,14 @@ class SpecialBar(QtWidgets.QWidget):
         self.send_signal(mode=mode, pause=False)
 
     def send_signal(self, mode, pause):
-        '''
+        """
         Sends signal the appropriate signal the ESP
         to pause inpiration or expiration.
-        '''
+
+        arguments:
+        - mode: The pause mode (either 'pause_exhale' or 'pause_inhale')
+        - pause: Boolean for paused or not paused
+        """
         try:
             if not self._data_h.set_data(mode, int(pause)):
                 raise Exception('Call to set_data failed.')
@@ -143,9 +180,12 @@ class SpecialBar(QtWidgets.QWidget):
             fn()
 
     def stop_timer(self, mode):
-        '''
+        """
         Stops the QTimer which sends
         signals to the ESP
-        '''
+
+        arguments: 
+        - mode: The pause mode (either 'pause_exhale' or 'pause_inhale')
+        """
         if hasattr(self, '_timer'):
             self._timer[mode].stop()
