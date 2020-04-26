@@ -266,14 +266,3 @@ class AlarmHandler:
         self._alarmlabel.setStyleSheet('QLabel { background-color: black; }')
         self._alarmsnooze.hide()
 
-    def raise_alarm(self):
-        '''
-        Raises an alarm in the ESP
-        '''
-        self._esp32.raise_gui_alarm()
-
-    def stop_alarm(self, code):
-        '''
-        Stops an alarm in the ESP
-        '''
-        self._esp32.reset_alarms()
