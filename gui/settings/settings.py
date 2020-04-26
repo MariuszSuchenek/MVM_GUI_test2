@@ -272,10 +272,12 @@ class Settings(QtWidgets.QMainWindow):
         self.toolsettings_lookup = {}
         self.toolsettings_lookup["respiratory_rate"] = self._toolsettings["toolsettings_1"]
         self.toolsettings_lookup["insp_expir_ratio"] = self._toolsettings["toolsettings_2"]
+        self.toolsettings_lookup["insp_pressure"] = self._toolsettings["toolsettings_3"]
 
         # setup the toolsettings with preset values
         self.toolsettings_lookup["respiratory_rate"].update(external_config["respiratory_rate"])
         self.toolsettings_lookup["insp_expir_ratio"].update(external_config["insp_expir_ratio"])
+        self.toolsettings_lookup["insp_pressure"].update(external_config["insp_pressure"])
 
         self.send_values_to_hardware()
 
