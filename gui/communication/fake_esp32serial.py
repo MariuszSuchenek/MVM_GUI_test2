@@ -54,9 +54,9 @@ class FakeMonitored(QtWidgets.QWidget):
         return self.value_ib.value()
 
 
-# pylint: disable=too-many-instance-attributes
-# These are appropriate instances for initialization of dictionaries
 class FakeESP32Serial(QtWidgets.QMainWindow):
+    # pylint: disable=too-many-instance-attributes
+    # These are appropriate instances for initialization of dictionaries
     """
     A widget class to emulate ESP32 functionality when not connected to hardware.
     """
