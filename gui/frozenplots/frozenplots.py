@@ -114,7 +114,7 @@ class Cursor():
                 # Find the x index closest to where the mouse if pointing
                 index = (np.abs(data_x - mouse_point.x())).argmin()
 
-                if index > 0 and index < len(data_y):
+                if 0 < index < len(data_y):
                     self._x[num] = mouse_point.x()
                     self._y[num] = data_y[index]
 
