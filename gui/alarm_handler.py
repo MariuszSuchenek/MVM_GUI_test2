@@ -11,7 +11,7 @@ the user has selected.
 """
 
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 from messagebox import MessageBox
 from communication.esp32serial import ESP32Exception
