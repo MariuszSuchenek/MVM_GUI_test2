@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
+'''
+Module containing the NumPad class
+'''
 from PyQt5 import QtWidgets
 
 
 class NumPad():
+    '''
+    Class defining a numeric pad
+    '''
     def __init__(self, mainparent):
+        #pylint: disable=cell-var-from-loop
+        # See pylint issue 3107
         """
         Creates the numpad menu.
 
