@@ -139,7 +139,7 @@ class StartStopWorker():
         msg.critical('COMMUNICATION ERROR',
                      'Error communicating with the hardware', message,
                      '** COMMUNICATION ERROR **', {msg.Ok: lambda:
-                                                   sys.exit(-1)})()
+                                                           sys.exit(-1)})()
 
     def is_running(self):
         """
@@ -217,10 +217,10 @@ class StartStopWorker():
         self._settings.disable_special_ops_tab()
 
         QTimer.singleShot(self.button_timeout(), lambda: (
-                          self.update_startstop_text(),
-                          self._button_startstop.setEnabled(True),
-                          self._button_startstop.setStyleSheet("color: red"),
-                          self._toolbar.set_running(self._mode_text)))
+            self.update_startstop_text(),
+            self._button_startstop.setEnabled(True),
+            self._button_startstop.setStyleSheet("color: red"),
+            self._toolbar.set_running(self._mode_text)))
 
     def stop_button_pressed(self):
         '''
