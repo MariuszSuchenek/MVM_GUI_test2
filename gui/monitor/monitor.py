@@ -110,7 +110,8 @@ class Monitor(QtWidgets.QWidget):
         '''
         self.gui_alarm = gui_alarm
 
-    def update_thresholds(self, alarm_min, alarm_setmin, alarm_max, alarm_setmax):
+    def update_thresholds(self, alarm_min, alarm_setmin,
+                          alarm_max, alarm_setmax):
         '''
         Updates the labes showind the threshold values
         '''
@@ -144,7 +145,7 @@ class Monitor(QtWidgets.QWidget):
 
     def resize_font(self, label, minpx=10, maxpx=50, offset=0):
         f = label.font()
-        f.setPixelSize(max(min(self.height()-offset, maxpx), minpx))
+        f.setPixelSize(max(min(self.height() - offset, maxpx), minpx))
         label.setFont(f)
 
     def set_alarm_state(self, isalarm):

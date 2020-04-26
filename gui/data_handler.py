@@ -18,7 +18,7 @@ class DataHandler():
         arguments:
         - config: the config dictionary
         - esp32: the esp32serial instance
-        - data_filler: the instance to the DataFiller class 
+        - data_filler: the instance to the DataFiller class
         - gui_alarm: the alarm class
         '''
 
@@ -87,7 +87,7 @@ class DataHandler():
 
         fn = msg.critical("COMMUNICATION ERROR",
                           "CANNOT COMMUNICATE WITH THE HARDWARE",
-                          "Check cable connections then click retry.\n"+error,
+                          "Check cable connections then click retry.\n" + error,
                           "COMMUNICATION ERROR",
                           callbacks)
         fn()

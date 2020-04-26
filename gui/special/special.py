@@ -27,7 +27,8 @@ class SpecialBar(QtWidgets.QWidget):
         self._lung_recruit = False
         self._timer = {}
 
-    def connect_datahandler_config_esp32(self, data_h, config, esp32, messagebar):
+    def connect_datahandler_config_esp32(
+            self, data_h, config, esp32, messagebar):
         '''
         Passes the data handler and the confi dict to this class.
         '''

@@ -22,7 +22,7 @@ class Presets(QtWidgets.QWidget):
         self.button_preset = []
         for i in range(1, 7):
             self.button_preset.append(self.findChild(
-                QtWidgets.QPushButton, "button_preset"+str(i)))
+                QtWidgets.QPushButton, "button_preset" + str(i)))
 
         for preset, button in zip(presets, self.button_preset):
             if len(preset[1]):

@@ -33,17 +33,17 @@ class Settings(QtWidgets.QMainWindow):
 
         self._all_spinboxes = {
             # Auto
-            'respiratory_rate':  self.spinBox_rr,
-            'insp_expir_ratio':  self.spinBox_insp_expir_ratio,
-            'insp_pressure':     self.spinBox_insp_pressure,
+            'respiratory_rate': self.spinBox_rr,
+            'insp_expir_ratio': self.spinBox_insp_expir_ratio,
+            'insp_pressure': self.spinBox_insp_pressure,
             'pcv_trigger_enable': self.toggle_pcv_trigger_enable,
             'pcv_trigger_pressure': self.spinBox_trigger_sensitivity,
             # Assist
-            'pressure_trigger':  self.spinBox_pressure_trigger,
-            'flow_trigger':      self.spinBox_flow_trigger,
-            'support_pressure':  self.spinBox_support_pressure,
-            'max_apnea_time':    self.spinBox_max_apnea_time,
-            'enable_backup':     self.toggle_enable_backup,
+            'pressure_trigger': self.spinBox_pressure_trigger,
+            'flow_trigger': self.spinBox_flow_trigger,
+            'support_pressure': self.spinBox_support_pressure,
+            'max_apnea_time': self.spinBox_max_apnea_time,
+            'enable_backup': self.toggle_enable_backup,
             # Lung recruit
             'lung_recruit_pres': self.spinBox_lr_p,
             'lung_recruit_time': self.spinBox_lr_t,
@@ -53,13 +53,13 @@ class Settings(QtWidgets.QMainWindow):
             # Auto
             'respiratory_rate': self.fake_btn_rr,
             'insp_expir_ratio': self.fake_btn_ie,
-            'insp_pressure':    self.fake_btn_insp_pressure,
+            'insp_pressure': self.fake_btn_insp_pressure,
             'pcv_trigger_pressure': self.fake_btn_trigger_sensitivity,
             # Assist
-            'pressure_trigger':  self.fake_btn_pr_trigger,
-            'flow_trigger':      self.fake_btn_flow_trig,
-            'support_pressure':  self.fake_btn_support_pressure,
-            'max_apnea_time':    self.fake_btn_max_apnea_time,
+            'pressure_trigger': self.fake_btn_pr_trigger,
+            'flow_trigger': self.fake_btn_flow_trig,
+            'support_pressure': self.fake_btn_support_pressure,
+            'max_apnea_time': self.fake_btn_max_apnea_time,
             # Lung recruit
             'lung_recruit_pres': self.fake_btn_lr_p,
             'lung_recruit_time': self.fake_btn_lr_t
@@ -85,7 +85,7 @@ class Settings(QtWidgets.QMainWindow):
         rr = self._all_spinboxes['respiratory_rate'].value()
         expr_denon = self._all_spinboxes['insp_expir_ratio'].value()
         self.inspiratory_time_label.setText(
-            "%.2f" % (60.0/(rr * (1+expr_denon))))
+            "%.2f" % (60.0 / (rr * (1 + expr_denon))))
 
     def spawn_presets_window(self, name):
         presets = self._config[name]['presets']
@@ -318,7 +318,7 @@ class Settings(QtWidgets.QMainWindow):
                 value = int(self._current_values[param])
             elif param == 'insp_expir_ratio':
                 i_over_e = 1. / self._current_values[param]
-                value = 1./(i_over_e + 1)
+                value = 1. / (i_over_e + 1)
             else:
                 value = self._current_values[param]
 
@@ -326,7 +326,7 @@ class Settings(QtWidgets.QMainWindow):
                 value = value * self._config[param]['conversion']
                 if self._debug:
                     print('Converting value for', param,
-                          'from', value/self._config[param].get('conversion', 1.), 'to', value)
+                          'from', value / self._config[param].get('conversion', 1.), 'to', value)
 
             if self._debug:
                 print('Setting value of', param, ':', value)

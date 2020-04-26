@@ -51,7 +51,7 @@ class Cursor:
 
     def show_cursors(self):
         '''
-        Shows all the cursor lines and labels 
+        Shows all the cursor lines and labels
         on the 3 plots
         '''
         for c in self.cursor_x:
@@ -63,7 +63,7 @@ class Cursor:
 
     def hide_cursors(self):
         '''
-        Hides all the cursor lines and labels 
+        Hides all the cursor lines and labels
         on the 3 plots
         '''
         for c in self.cursor_x:
@@ -248,7 +248,7 @@ class YZoom(QtWidgets.QWidget):
         self._cursor = cursor
 
     def zoom_in(self, plot):
-        plot.getViewBox().scaleBy(y=1/self.zoom_factor)
+        plot.getViewBox().scaleBy(y=1 / self.zoom_factor)
         self._cursor.draw_label()
 
     def zoom_out(self, plot):
@@ -313,7 +313,7 @@ class XZoom(QtWidgets.QWidget):
             pass
 
     def zoom_in(self, plot):
-        plot.getViewBox().scaleBy(x=1/self.zoom_factor)
+        plot.getViewBox().scaleBy(x=1 / self.zoom_factor)
         self._cursor.draw_label()
 
     def zoom_out(self, plot):

@@ -29,7 +29,8 @@ class MessageBox(QMessageBox):
 
         super(MessageBox, self).__init__()
 
-    def _wrapper(self, text, long_text, detail_text, title, icon, callbacks, do_not_block=False):
+    def _wrapper(self, text, long_text, detail_text, title,
+                 icon, callbacks, do_not_block=False):
         """
         Wrapper function to implement the message box
 
@@ -97,7 +98,8 @@ class MessageBox(QMessageBox):
         else:
             return callbacks[self.exec()]
 
-    def question(self, text, long_text, detail_text, title, callbacks, do_not_block=False):
+    def question(self, text, long_text, detail_text,
+                 title, callbacks, do_not_block=False):
         """
         Display a question message window
 
@@ -122,7 +124,8 @@ class MessageBox(QMessageBox):
         return self._wrapper(text, long_text, detail_text, title,
                              self.Question, callbacks, do_not_block)
 
-    def critical(self, text, long_text, detail_text, title, callbacks, do_not_block=False):
+    def critical(self, text, long_text, detail_text,
+                 title, callbacks, do_not_block=False):
         """
         Display a critical error window
 
@@ -149,7 +152,8 @@ class MessageBox(QMessageBox):
         return self._wrapper(text, long_text, detail_text, title,
                              self.Critical, callbacks, do_not_block)
 
-    def warning(self, text, long_text, detail_text, title, callbacks, do_not_block=False):
+    def warning(self, text, long_text, detail_text,
+                title, callbacks, do_not_block=False):
         """
         Display a warning message window
 

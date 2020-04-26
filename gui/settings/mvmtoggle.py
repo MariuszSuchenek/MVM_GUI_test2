@@ -35,9 +35,9 @@ class MVMToggle(QtWidgets.QPushButton):
         painter.setPen(pen)
 
         painter.drawRoundedRect(
-            QRect(-width, -radius, 2*width, 2*radius), radius, radius)
+            QRect(-width, -radius, 2 * width, 2 * radius), radius, radius)
         painter.setBrush(QtGui.QBrush(bg_color))
-        sw_rect = QRect(-radius, -radius, width + radius, 2*radius)
+        sw_rect = QRect(-radius, -radius, width + radius, 2 * radius)
         if not self.isChecked():
             sw_rect.moveLeft(-width)
         painter.drawRoundedRect(sw_rect, radius, radius)

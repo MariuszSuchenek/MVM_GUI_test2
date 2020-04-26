@@ -17,11 +17,11 @@ class NumPad():
         # Only have every other button
         self.buttons_num = []
         for i in range(0, 10, 2):
-            name = "numpad_" + str(i) + str(i+1)
+            name = "numpad_" + str(i) + str(i + 1)
             button = self.mainparent.findChild(QtWidgets.QPushButton, name)
             # button.pressed.connect(lambda num=i: self.input_number(num))
             button.pressed.connect(lambda num=int(
-                i/2)+1: self.input_number(num))
+                i / 2) + 1: self.input_number(num))
             self.buttons_num.append(button)
 
         self.assign_code("0000", None)

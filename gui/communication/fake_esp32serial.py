@@ -63,7 +63,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
             "warning": 0,
             "temperature": 40,
             "rate": 17.0,
-            "ratio": 2/3,
+            "ratio": 2 / 3,
             "ptarget": 37.7,
             "pcv_trigger_enable": 1,
             "pcv_trigger": 7,
@@ -143,7 +143,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
 
     def _connect_alarm_and_warning_widgets(self):
         def get_checkbox(wname, alarm_code):
-            return (1 << alarm_code, self.findChild(QtWidgets.QCheckBox, wname))
+            return (1 << alarm_code, self.findChild(
+                QtWidgets.QCheckBox, wname))
 
         # for simplicity here the bit number is used. It will be converted
         # few lines below.
@@ -199,8 +200,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         '''
         Changes the run,mode,backup variables in the ESP
         '''
-        self.set('run',    int(self.status_run.isChecked()))
-        self.set('mode',   int(self.status_mode.isChecked()))
+        self.set('run', int(self.status_run.isChecked()))
+        self.set('mode', int(self.status_mode.isChecked()))
         self.set('backup', int(self.status_backup.isChecked()))
 
     def log(self, message):

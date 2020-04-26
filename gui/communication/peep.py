@@ -46,29 +46,29 @@ class peep:
         p = self.p0
         if t > self.t1 and t < self.t2:
             # pressure linear increase
-            a = self.p2/(self.t2-self.t1)
-            b = -a*self.t1
-            p += a*t + b
+            a = self.p2 / (self.t2 - self.t1)
+            b = -a * self.t1
+            p += a * t + b
         elif t >= self.t2 and t < self.t3:
             # pressure reached its maximum and starts decreasing
             # exponentially
-            tau = (self.t3 - self.t2)*self.decaytime
+            tau = (self.t3 - self.t2) * self.decaytime
             c = self.p1
             A = self.p2 - self.p1
-            p += c+A*np.exp(-(t-self.t2)/tau)
+            p += c + A * np.exp(-(t - self.t2) / tau)
         elif t >= self.t3 and t < self.t4:
             # pressure stay stable for a while
             p += self.p1
         elif t >= self.t4 and t < self.t5:
             # pressure drops exponentially
-            tau = (self.t3 - self.t2)*self.decaytime
+            tau = (self.t3 - self.t2) * self.decaytime
             A = self.p1
-            p += A*np.exp(-(t-self.t4)/tau)
+            p += A * np.exp(-(t - self.t4) / tau)
         elif t > self.t5:
             # restart the cycle
             self.restart()
         # add some random fluctuations
-        p += np.random.normal(scale=(self.p2 - self.p1)*self.resolution)
+        p += np.random.normal(scale=(self.p2 - self.p1) * self.resolution)
         return p
 
     def flow(self):
@@ -80,22 +80,22 @@ class peep:
         if t > self.t1 and t < self.t2:
             # flow decays exponentially after a fast grow
             # reaching an intermediate level
-            tau = (self.t2 - self.t1)*self.decaytime
+            tau = (self.t2 - self.t1) * self.decaytime
             A = self.f1
             c = self.f2
-            f = A - c*(1-np.exp(-(t-self.t1)/tau))
+            f = A - c * (1 - np.exp(-(t - self.t1) / tau))
         elif t >= self.t2 and t < self.t4:
             # flow drops to low values, then increase
             # exponentially to zero
-            tau = (self.t2 - self.t1)*self.decaytime
+            tau = (self.t2 - self.t1) * self.decaytime
             A = self.f3
             c = self.f4
-            f = A-c*np.exp(-(t-self.t2)/tau)
+            f = A - c * np.exp(-(t - self.t2) / tau)
         elif t > self.t5:
             # restart cycle
             self.restart()
         # add some random fluctuation
-        f += np.random.normal(scale=(self.f1 - self.f2)*self.resolution)
+        f += np.random.normal(scale=(self.f1 - self.f2) * self.resolution)
         return f
 
     def restart(self):

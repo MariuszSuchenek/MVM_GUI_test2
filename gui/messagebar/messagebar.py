@@ -34,7 +34,8 @@ class MessageBar(QtWidgets.QWidget):
         self.button_confirm.pressed.connect(self.confirmed)
         self.button_cancel.pressed.connect(self.cancelled)
 
-    def get_confirmation(self, title, message, func_confirm=None, func_cancel=None, color="red"):
+    def get_confirmation(self, title, message,
+                         func_confirm=None, func_cancel=None, color="red"):
         """
         Shows the confirmation in the bottom bar.
 

@@ -115,8 +115,8 @@ class DataFiller():
         # Fix the y axis range
         value_min = plot_config['min']
         value_max = plot_config['max']
-        ymin = value_min - (value_max-value_min)*0.1
-        ymax = value_max + (value_max-value_min)*0.1
+        ymin = value_min - (value_max - value_min) * 0.1
+        ymax = value_max + (value_max - value_min) * 0.1
         self._default_yrange[name] = [ymin, ymax]
         self.set_default_y_range(name)
 
@@ -143,7 +143,8 @@ class DataFiller():
         # Set the range to the graph
         self._qtgraphs[name].setYRange(*self._default_yrange[name])
 
-        # Also set the width (space) on the left of the Y axis (for the label and ticks)
+        # Also set the width (space) on the left of the Y axis (for the label
+        # and ticks)
         self._qtgraphs[name].getAxis('left').setWidth(
             self._config['left_ax_label_space'])
 
@@ -190,7 +191,7 @@ class DataFiller():
     def updateTicks(self, name, yrange=None):
         '''
         Updates the major and minor ticks
-        in the graphs 
+        in the graphs
         '''
 
         if name not in self._qtgraphs:
@@ -237,7 +238,7 @@ class DataFiller():
         br = self._x_label.boundingRect()
         p = QtCore.QPointF(0, 0)
         axis = plot.getAxis('bottom')
-        x = plot.size().width()/2. - br.width()/2.
+        x = plot.size().width() / 2. - br.width() / 2.
         y = plot.size().height() - br.height()
         p.setX(0)  # Leave it on the left, so it doesn't cover labels.
         p.setY(y)

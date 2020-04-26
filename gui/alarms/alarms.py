@@ -66,25 +66,25 @@ class Alarms(QtWidgets.QWidget):
 
         self.layout = self.findChild(QtWidgets.QGridLayout, "monitors_layout")
         self.label_alarmname = self.findChild(
-            QtWidgets.QLabel,      "label_alarmname")
+            QtWidgets.QLabel, "label_alarmname")
 
         self.slider_alarmmin = self.findChild(
-            QtWidgets.QScrollBar,  "slider_alarmmin")
+            QtWidgets.QScrollBar, "slider_alarmmin")
         self.alarmmin_min = self.findChild(
-            QtWidgets.QLabel,      "alarmmin_min")
+            QtWidgets.QLabel, "alarmmin_min")
         self.alarmmin_value = self.findChild(
-            QtWidgets.QLabel,      "alarmmin_value")
+            QtWidgets.QLabel, "alarmmin_value")
         self.alarmmin_max = self.findChild(
-            QtWidgets.QLabel,      "alarmmin_max")
+            QtWidgets.QLabel, "alarmmin_max")
 
         self.slider_alarmmax = self.findChild(
-            QtWidgets.QScrollBar,  "slider_alarmmax")
+            QtWidgets.QScrollBar, "slider_alarmmax")
         self.alarmmax_min = self.findChild(
-            QtWidgets.QLabel,      "alarmmax_min")
+            QtWidgets.QLabel, "alarmmax_min")
         self.alarmmax_value = self.findChild(
-            QtWidgets.QLabel,      "alarmmax_value")
+            QtWidgets.QLabel, "alarmmax_value")
         self.alarmmax_max = self.findChild(
-            QtWidgets.QLabel,      "alarmmax_max")
+            QtWidgets.QLabel, "alarmmax_max")
 
         self.enabled = True
 
@@ -286,7 +286,8 @@ class Alarms(QtWidgets.QWidget):
         If the object is not on the monitor bar, place on the top.
         """
         if self.selected in self.displayed_monitors:
-            index = self.monitors_slots.indexOf(self.monitors[self.selected])+2
+            index = self.monitors_slots.indexOf(
+                self.monitors[self.selected]) + 2
         else:
             index = 0
         self.move_selected_to_index(index=index)
@@ -297,7 +298,8 @@ class Alarms(QtWidgets.QWidget):
         If the object is not on the monitor bar, place on the bottom.
         """
         if self.selected in self.displayed_monitors:
-            index = self.monitors_slots.indexOf(self.monitors[self.selected])-1
+            index = self.monitors_slots.indexOf(
+                self.monitors[self.selected]) - 1
         else:
             index = len(self.displayed_monitors)
         self.move_selected_to_index(index=index)
@@ -323,13 +325,14 @@ class Alarms(QtWidgets.QWidget):
         Populates monitors based on the ones assigned as displayed.
         If the monitor is not displayed, it is shown in the alarms page.
         """
-        # Iterate through all monitors and either display on main bar, or put on alarms page
+        # Iterate through all monitors and either display on main bar, or put
+        # on alarms page
         hidd = 0
         for name, monitor in self.monitors.items():
             if name not in self.displayed_monitors:
                 # Monitor not displayed, so goes on Alarms page
                 self.layout.addWidget(monitor, int(
-                    hidd % self.STORED_PER_COL), 10-int(hidd / self.STORED_PER_COL))
+                    hidd % self.STORED_PER_COL), 10 - int(hidd / self.STORED_PER_COL))
                 hidd += 1
 
         for (disp, name) in enumerate(self.displayed_monitors):
