@@ -6,19 +6,19 @@ from PyQt5 import QtCore
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 
 
-class Cursor:
-    '''
+class Cursor(QtWidgets.QWidget):
+    """
     Handles the cursor lines and cursor labels
-    '''
+    """
 
     def __init__(self, plots):
-        '''
+        """
         Constructor
 
         arguments:
 
-        -plots: the plots
-        '''
+        plots: the plots
+        """
 
         self.plots = plots
 
@@ -51,33 +51,33 @@ class Cursor:
         self.hide_cursors()
 
     def show_cursors(self):
-        '''
+        """
         Shows all the cursor lines and labels
         on the 3 plots
-        '''
-        for c in self.cursor_x:
-            c.setVisible(True)
-        for c in self.cursor_y:
-            c.setVisible(True)
-        for c in self.cursor_label:
-            c.setVisible(True)
+        """
+        for curs in self.cursor_x:
+            curs.setVisible(True)
+        for curs in self.cursor_y:
+            curs.setVisible(True)
+        for curs in self.cursor_label:
+            curs.setVisible(True)
 
     def hide_cursors(self):
-        '''
+        """
         Hides all the cursor lines and labels
         on the 3 plots
-        '''
-        for c in self.cursor_x:
-            c.setVisible(False)
-        for c in self.cursor_y:
-            c.setVisible(False)
-        for c in self.cursor_label:
-            c.setVisible(False)
+        """
+        for curs in self.cursor_x:
+            curs.setVisible(False)
+        for curs in self.cursor_y:
+            curs.setVisible(False)
+        for curs in self.cursor_label:
+            curs.setVisible(False)
 
     def draw_label(self):
-        '''
+        """
         Draw the cursor label
-        '''
+        """
         if self._y[0] is None:
             return
         for num, plot in enumerate(self.plots):
@@ -86,17 +86,17 @@ class Cursor:
                 plot.getAxis('bottom').range[0], self._y[num])
 
     def update_cursor(self, evt):
-        '''
+        """
         Update the cursor lines and labels.
         If this menu is not shown (we are not in Freeze)
         simply return and don't waste time.
-        '''
+        """
 
         pos = evt[0]
         for num, plot in enumerate(self.plots):
-            vb = plot.getViewBox()
+            view_box = plot.getViewBox()
             if plot.sceneBoundingRect().contains(pos):
-                mousePoint = vb.mapSceneToView(pos)
+                mousePoint = view_box.mapSceneToView(pos)
 
                 # Get the x and y data from the plot
                 data_x = self.plot_data_items[num].xData
@@ -155,10 +155,10 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.signal_hided.emit()
 
     def connect_workers(self, data_filler, plots, cursor):
-        '''
+        """
         Connect workers for bottom "freeze" menu.
         The unfreeze button is handled by mainwindow.
-        '''
+        """
         self.button_reset_zoom.pressed.connect(data_filler.reset_zoom)
 
         # X axes are linked, so only need to manipulate 1 plot
@@ -169,13 +169,13 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.signal_hided.connect(lambda: self.toggle_cursor(False))
         self.signal_shown.connect(lambda: self.toggle_cursor(True))
 
-    def toggle_cursor(self, on=True):
+    def toggle_cursor(self, state_on=True):
         """
         Toggles the cursor on or off.
 
         on: If true, turns the cursor on. Otherwise, turns it off
         """
-        if on:
+        if state_on:
             self._cursor.show_cursors()
         else:
             self._cursor.hide_cursors()
@@ -186,12 +186,16 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         """
         try:
             self.button_reset_zoom.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
         self.xzoom.disconnect_workers()
 
 
 class FrozenPlotsRightMenu(QtWidgets.QWidget):
+    """
+    A widget for handling right menu functions when plots are frozen.
+    Includes Y-axis tied zooming and translating per plot.
+    """
     def __init__(self, *args):
         """
         Initialize the FrozenPlotsRightMenu widget.
@@ -206,10 +210,10 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         self.yzoom_bot = self.findChild(QtWidgets.QWidget, "yzoom_bot")
 
     def connect_workers(self, plots, cursor):
-        '''
+        """
         Connect Y zoom workers. There are 3 widgets, each controlling
         a separate plot.
-        '''
+        """
         self.yzoom_top.connect_workers(plots[0].getPlotItem(), cursor)
         self.yzoom_mid.connect_workers(plots[1].getPlotItem(), cursor)
         self.yzoom_bot.connect_workers(plots[2].getPlotItem(), cursor)
@@ -253,19 +257,19 @@ class YZoom(QtWidgets.QWidget):
         """
         try:
             self.button_plus.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
         try:
             self.button_minus.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
         try:
             self.button_up.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
         try:
             self.button_down.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
 
     def connect_workers(self, plot, cursor):
@@ -370,19 +374,19 @@ class XZoom(QtWidgets.QWidget):
         """
         try:
             self.button_plus.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
         try:
             self.button_minus.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
         try:
             self.button_left.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
         try:
             self.button_right.pressed.disconnect()
-        except Exception:
+        except TypeError:
             pass
 
     def zoom_in(self, plot):
