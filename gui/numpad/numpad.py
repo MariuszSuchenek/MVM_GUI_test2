@@ -11,7 +11,7 @@ class NumPad():
     '''
     def __init__(self, mainparent):
         #pylint: disable=cell-var-from-loop
-        # See pylint issue 3107
+        # See PyLint issue 3107
         """
         Creates the numpad menu.
 
