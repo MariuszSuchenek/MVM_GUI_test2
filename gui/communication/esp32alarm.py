@@ -19,6 +19,7 @@ class ESP32BaseAlarm():
         - the number obtained from the ESP
         '''
         self.number = number
+        self.unpack()
 
     def __bool__(self):
         return self.number != 0
@@ -30,9 +31,6 @@ class ESP32BaseAlarm():
         """
         Gets the alarm codes.
         """
-
-        if not hasattr(self, 'alarms'):
-            return self.unpack()
 
         return self.alarms
 
@@ -55,8 +53,6 @@ class ESP32BaseAlarm():
         arguments:
         - n: the error number (unpacked)
         '''
-        if not hasattr(self, 'alarms'):
-            self.unpack()
 
         if n_error in self.alarm_to_string:
             return self.alarm_to_string[n_error]
@@ -70,8 +66,6 @@ class ESP32BaseAlarm():
         arguments:
         - append_err_no: if True, also adds the err number
         '''
-        if not hasattr(self, 'alarms'):
-            self.unpack()
 
         str_error = []
         for n_error in self.alarms:
