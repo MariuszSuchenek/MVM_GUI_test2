@@ -125,7 +125,7 @@ class ESP32Serial:
                 try:
                     result = self.connection.read_until(terminator=self.term)
                     return self._parse(result)
-                except Exception as exc:
+                except Exception as exc: # pylint: disable=W0703
                     print("ERROR: set failing: %s %s" %
                           (result.decode(), str(exc)))
             raise ESP32Exception("set", command, result.decode())
@@ -162,7 +162,7 @@ class ESP32Serial:
                 try:
                     result = self.connection.read_until(terminator=self.term)
                     return self._parse(result)
-                except Exception as exc:
+                except Exception as exc: # pylint: disable=W0703
                     print("ERROR: get failing: %s %s" %
                           (result.decode(), str(exc)))
             raise ESP32Exception("get", command, result.decode())
@@ -194,7 +194,7 @@ class ESP32Serial:
                             self.get_all_fields, values))
 
                     return dict(zip(self.get_all_fields, values))
-                except Exception as exc:
+                except Exception as exc: # pylint: disable=W0703
                     print("ERROR: get failing: %s %s" %
                           (result.decode(), str(exc)))
             raise ESP32Exception("get", "get all", result.decode())
