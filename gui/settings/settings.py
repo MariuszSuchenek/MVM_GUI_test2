@@ -8,10 +8,17 @@ import copy
 from PyQt5 import QtWidgets, uic
 from presets.presets import Presets
 from messagebox import MessageBox
+from communication import ESP32Exception
 from .settingsfile import SettingsFile
 
 
 class Settings(QtWidgets.QMainWindow):
+    #pylint: disable=too-many-instance-attributes
+    """
+    GUI tool for letting the user see and enter the operational parameter
+    of the ventilator.
+    """
+
     def __init__(self, mainparent, *args):
         """
         Initialized the Settings overlay widget.
@@ -83,12 +90,18 @@ class Settings(QtWidgets.QMainWindow):
         self.load_presets()
 
     def _recalculate_inspiratory_time(self):
-        rr = self._all_spinboxes['respiratory_rate'].value()
+        rrate = self._all_spinboxes['respiratory_rate'].value()
         expr_denon = self._all_spinboxes['insp_expir_ratio'].value()
         self.inspiratory_time_label.setText(
-            "%.2f" % (60.0 / (rr * (1 + expr_denon))))
+            "%.2f" % (60.0 / (rrate * (1 + expr_denon))))
 
     def spawn_presets_window(self, name):
+        """
+        Opens the preset overlay for the given parameter name.
+
+        arguments:
+        - name: the parameter name.
+        """
         presets = self._config[name]['presets']
 
         self._current_preset_name = name
@@ -110,7 +123,7 @@ class Settings(QtWidgets.QMainWindow):
 
     def hide_preset_worker(self):
         '''
-        Hides the Preset window
+        Callback to close the preset overlay.
         '''
         self._current_preset.hide()
         self.activate_settings_buttons()
@@ -122,6 +135,9 @@ class Settings(QtWidgets.QMainWindow):
         self.tabs.setFocus()
 
     def preset_worker(self):
+        """
+        Callback to accept a value from the preset overlay.
+        """
 
         value = self.sender().text()
         value = value.split(' ')[0]
@@ -168,8 +184,8 @@ class Settings(QtWidgets.QMainWindow):
             lambda: self.spawn_presets_window('insp_expir_ratio'))
         self._all_fakebtn['insp_pressure'].clicked.connect(
             lambda: self.spawn_presets_window('insp_pressure'))
-        self._all_fakebtn['pcv_trigger_pressure'].clicked.connect(lambda:
-                                                                  self.spawn_presets_window('pcv_trigger_pressure'))
+        self._all_fakebtn['pcv_trigger_pressure'].clicked.connect(
+            lambda: self.spawn_presets_window('pcv_trigger_pressure'))
 
         # Assist
         self._all_fakebtn['pressure_trigger'].clicked.connect(
@@ -178,14 +194,14 @@ class Settings(QtWidgets.QMainWindow):
             lambda: self.spawn_presets_window('flow_trigger'))
         self._all_fakebtn['support_pressure'].clicked.connect(
             lambda: self.spawn_presets_window('support_pressure'))
-        self._all_fakebtn['max_apnea_time'].clicked.connect(lambda:
-                                                            self.spawn_presets_window('max_apnea_time'))
+        self._all_fakebtn['max_apnea_time'].clicked.connect(
+            lambda: self.spawn_presets_window('max_apnea_time'))
 
         # Lung recruitment
-        self._all_fakebtn['lung_recruit_pres'].clicked.connect(lambda:
-                                                               self.spawn_presets_window('lung_recruit_pres'))
-        self._all_fakebtn['lung_recruit_time'].clicked.connect(lambda:
-                                                               self.spawn_presets_window('lung_recruit_time'))
+        self._all_fakebtn['lung_recruit_pres'].clicked.connect(
+            lambda: self.spawn_presets_window('lung_recruit_pres'))
+        self._all_fakebtn['lung_recruit_time'].clicked.connect(
+            lambda: self.spawn_presets_window('lung_recruit_time'))
 
         for param, btn in self._all_spinboxes.items():
             if param in ['enable_backup', 'pcv_trigger_enable']:
@@ -194,7 +210,7 @@ class Settings(QtWidgets.QMainWindow):
                 btn.valueChanged.connect(self.worker)
 
         # Special operations
-        # TODO
+        # TODO: implement the function to associate to buttons
         self.label_warning.setVisible(False)
         self.btn_sw_update.clicked.connect(lambda: print(
             'Sw update button clicked, but not implemented.'))
@@ -251,8 +267,14 @@ class Settings(QtWidgets.QMainWindow):
         self.mainparent.exit_settings()
 
     def update_spinbox_value(self, param, value):
-        '''
-        '''
+        """
+        Set a value to the given spinbox.
+
+        arguments:
+        - param: the name of the parameter associated to the spinbox.
+        - value: the value to be set.
+        """
+
         if param in self._all_spinboxes:
             self._all_spinboxes[param].setValue(value)
             self._current_values[param] = value
@@ -346,7 +368,7 @@ class Settings(QtWidgets.QMainWindow):
                 if self._data_h.set_data(esp_param_name, value):
                     # Now set the color to green, as we know it has been set
                     btn.setStyleSheet("color: green")
-            except Exception as error:
+            except ESP32Exception as error:
                 msg = MessageBox()
                 msg.critical("Critical",
                              "Severe Hardware Communication Error",

@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
+"""
+This module handles the main window.
+"""
+
 from PyQt5 import QtWidgets, uic
 
-from maindisplay.maindisplay import MainDisplay
+#from maindisplay.maindisplay import MainDisplay
 from settings.settings import Settings
 from settings.settingsfile import SettingsFile
 
-from toolbar.toolbar import Toolbar
-from menu.menu import Menu
-from settings.settingsbar import SettingsBar
-from alarms.alarms import Alarms
+#from toolbar.toolbar import Toolbar
+#from menu.menu import Menu
+#from settings.settingsbar import SettingsBar
+#from alarms.alarms import Alarms
 from alarms.guialarms import GuiAlarms
-from alarms.alarmsbar import AlarmsBar
-from special.special import SpecialBar
+#from alarms.alarmsbar import AlarmsBar
+#from special.special import SpecialBar
 
-from toolsettings.toolsettings import ToolSettings
+#from toolsettings.toolsettings import ToolSettings
 from monitor.monitor import Monitor
 from data_filler import DataFiller
 from data_handler import DataHandler
@@ -23,11 +27,18 @@ from numpad.numpad import NumPad
 from frozenplots.frozenplots import Cursor
 from messagebar.messagebar import MessageBar
 
-import pyqtgraph as pg
-
 
 class MainWindow(QtWidgets.QMainWindow):
+    #pylint: disable=too-many-public-methods
+    #pylint: disable=too-many-instance-attributes
+    """
+    The class taking care for the main window.
+    It is top-level with respect to other panes, menus, plots and
+    monitors.
+    """
+
     def __init__(self, config, esp32, *args, **kwargs):
+        #pylint: disable=too-many-statements
         """
         Initializes the main window for the MVM GUI. See below for subfunction setup description.
         """
@@ -130,9 +141,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toolsettings.connect_config(config)
             self.toolsettings[name] = toolsettings
 
-        '''
-        Get menu widgets and connect settings for the menu widget
-        '''
+        # Get menu widgets and connect settings for the menu widget
         self.button_back = self.menu.findChild(
             QtWidgets.QPushButton, "button_back")
         self.button_settingsfork = self.menu.findChild(
@@ -171,15 +180,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button_backspecial = self.specialbar.findChild(
             QtWidgets.QPushButton, "button_backspecial")
 
-        '''
-        Get frozen plots bottom bar widgets and connect
-        '''
+        # Get frozen plots bottom bar widgets and connect
         self.button_unfreeze = self.frozen_bot.findChild(
             QtWidgets.QPushButton, "button_unfreeze")
 
-        '''
-        Connect initial startup buttons
-        '''
+        # Connect initial startup buttons
         self.button_resume_patient.pressed.connect(self.goto_resume_patient)
         self.button_new_patient.pressed.connect(self.goto_new_patient)
         self.button_start_vent.pressed.connect(self.goto_main)
@@ -187,11 +192,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.button_start_test.pressed.connect()
         self.button_start_settings.pressed.connect(self.goto_settings)
 
-        '''
-        Connect back and menu buttons to toolbar and menu
+        # Connect back and menu buttons to toolbar and menu
+        # This effectively defines navigation from the bottombar.
 
-        This effectively defines navigation from the bottombar.
-        '''
         # Toolbar
         self.button_menu.pressed.connect(self.show_menu)
 
@@ -230,18 +233,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.numpad.button_back.pressed.connect(self.lock_screen)
         self.button_backalarms.pressed.connect(self.exit_alarms)
 
-        '''
-        Instantiate the DataFiller, which takes
-        care of filling plots data
-        '''
+        #Instantiate the DataFiller, which takes
+        #care of filling plots data
         self.data_filler = DataFiller(config)
 
-        '''
-        Set up tool settings (bottom bar)
+        #Set up tool settings (bottom bar)
 
-        self.toolsettings[..] are the objects that hold min, max values for a given setting as
-        as the current value (displayed as a slider and as a number).
-        '''
+        #self.toolsettings[..] are the objects that hold min, max values for a given setting as
+        #as the current value (displayed as a slider and as a number).
         toolsettings_names = {"toolsettings_1",
                               "toolsettings_2", "toolsettings_3"}
         self.toolsettings = {}
@@ -251,13 +250,12 @@ class MainWindow(QtWidgets.QMainWindow):
             toolsettings.connect_config(config)
             self.toolsettings[name] = toolsettings
 
-        '''
-        Set up data monitor/alarms (side bar) and plots
+        # Set up data monitor/alarms (side bar) and plots
 
-        self.monitors[..] are the objects that hold monitor values and thresholds for alarm min
-        and max. The current value and optional stats for the monitored value (mean, max) are set
-        here.
-        '''
+        #self.monitors[..] are the objects that hold monitor values and
+        #thresholds for alarm min and max. The current value and
+        #optional stats for the monitored value (mean, max) are set
+        #here.
         # plot slot widget names
         self.plots = {}
         for name in config['plots']:
@@ -279,8 +277,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #     alarm = GuiAlarm(name, config, self.monitors, self.alarm_h)
         #     self.alarms[name] = alarm
         self.gui_alarm = GuiAlarms(config, self.esp32, self.monitors)
-        for m in self.monitors.values():
-            m.connect_gui_alarm(self.gui_alarm)
+        for monitor in self.monitors.values():
+            monitor.connect_gui_alarm(self.gui_alarm)
 
         # Get displayed monitors
         self.monitors_slots = self.main.findChild(
@@ -309,31 +307,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self.data_filler, active_plots, self.cursor)
         self.frozen_right.connect_workers(active_plots, self.cursor)
 
-        '''
-        Instantiate DataHandler, which will start a new
-        thread to read data from the ESP32. We also connect
-        the DataFiller to it, so the thread will pass the
-        data directly to the DataFiller, which will
-        then display them.
-        '''
+        #Instantiate DataHandler, which will start a new
+        #thread to read data from the ESP32. We also connect
+        #the DataFiller to it, so the thread will pass the
+        #data directly to the DataFiller, which will
+        #then display them.
         self._data_h = DataHandler(
             config, self.esp32, self.data_filler, self.gui_alarm)
 
         self.specialbar.connect_datahandler_config_esp32(self._data_h,
                                                          self.config, self.esp32, self.messagebar)
 
-        '''
-        Connect settings button to Settings overlay.
-        '''
+        #Connect settings button to Settings overlay.
         self.settings = Settings(self)
         self.toppane.insertWidget(self.toppane.count(), self.settings)
 
-        '''
-        Set up start/stop auto/min mode buttons.
+        #Set up start/stop auto/min mode buttons.
 
-        Connect each to their respective mode toggle functions.
-        The StartStopWorker class takes care of starting and stopping a run
-        '''
+        #Connect each to their respective mode toggle functions.
+        #The StartStopWorker class takes care of starting and stopping a run
 
         self._start_stop_worker = StartStopWorker(
             self,
@@ -354,16 +346,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gui_alarm.connect_workers(self._start_stop_worker)
 
     def lock_screen(self):
+        """
+        Perform screen locking.
+        """
+
         self.toppane.setDisabled(True)
         self.show_toolbar(locked_state=True)
         self.alarms_settings.set_enabled_state(False)
 
     def unlock_screen(self):
+        """
+        Perform screen unlocking.
+        """
+
         self.toppane.setEnabled(True)
         self.show_toolbar(locked_state=False)
         self.alarms_settings.set_enabled_state(True)
 
     def handle_unlock(self):
+        """
+        Handle the screen unlock procedure.
+        """
+
         button = self.button_unlockscreen
         if button.isDown():
             if button._state == 0:
@@ -375,14 +379,26 @@ class MainWindow(QtWidgets.QMainWindow):
                 button.setAutoRepeatInterval(self.unlockscreen_interval)
 
     def goto_new_patient(self):
+        """
+        Go ahead with shallow set of operational parameters.
+        """
+
         self.show_startup()
 
     def goto_resume_patient(self):
+        """
+        Go ahead with previously used operational parameters.
+        """
+
         self.settings.update_config(self.user_settings)
 
         self.show_startup()
 
     def goto_settings(self):
+        """
+        Open the Settings pane.
+        """
+
         self.show_settings()
         self.show_settingsbar()
         if self._start_stop_worker.mode() == self._start_stop_worker.MODE_PSV:
@@ -391,41 +407,74 @@ class MainWindow(QtWidgets.QMainWindow):
             self.settings.tabs.setCurrentWidget(self.settings.tab_pcv)
 
     def goto_main(self):
+        """
+        Open the home ui
+        """
+
         self.show_main()
         self.show_toolbar()
 
     def exit_settings(self):
+        """
+        Go back to home ui from the Settings pane.
+        """
+
         self.show_main()
         self.show_menu()
 
     def goto_alarms(self):
+        """
+        Open the alarms settings pane.
+        """
+
         self.show_alarms()
         self.show_alarmsbar()
         self.alarms_settings.config_monitors()
 
     def exit_alarms(self):
+        """
+        Go back to home ui from the alarms settings pane.
+        """
+
         self.show_menu()
         self.show_plots()
         self.alarms_settings.deconfig_monitors()
 
     def show_settings(self):
+        """
+        Open the Settings pane.
+        """
+
         self.toppane.setCurrentWidget(self.settings)
         self.settings.tabs.setFocus()
 
     def show_startup(self):
+        """
+        Show the startup pane.
+        """
+
         self.toppane.setCurrentWidget(self.startup)
 
     def show_menu(self):
+        """
+        Open the menu on the bottom of the home pane.
+        """
+
         self.bottombar.setCurrentWidget(self.menu)
 
     def show_numpadbar(self):
+        """
+        Shows the numeric pad in the bottom of the home pane.
+        """
         self.bottombar.setCurrentWidget(self.numpadbar)
 
     def show_toolbar(self, locked_state=False):
         """
         Shows the toolbar in the bottom bar.
 
-        locked_state: If true, shows the unlock button. Otherwise shows the menu button.
+        arguments:
+        - locked_state: If true, shows the unlock button. Otherwise
+                        shows the menu button.
         """
         self.bottombar.setCurrentWidget(self.toolbar)
         if locked_state:
@@ -434,32 +483,70 @@ class MainWindow(QtWidgets.QMainWindow):
             self.home_button.setCurrentWidget(self.goto_menu)
 
     def show_settingsbar(self):
+        """
+        Open the settings submenu.
+        """
+
         self.bottombar.setCurrentWidget(self.settingsbar)
 
     def show_specialbar(self):
+        """
+        Open the special operations submenu.
+        """
+
         self.bottombar.setCurrentWidget(self.specialbar)
 
     def show_main(self):
+        """
+        Show the home pane.
+        """
+
         self.toppane.setCurrentWidget(self.main)
 
     def show_settingsfork(self):
+        """
+        Show the intermediate settings submenu
+        """
+
         self.bottombar.setCurrentWidget(self.settingsfork)
 
     def show_alarms(self):
+        """
+        Shows the alarm settings controls in the center of the alarm
+        settings pane.
+        """
+
         self.centerpane.setCurrentWidget(self.alarms_settings)
 
     def show_plots(self):
+        """
+        Shows the plots in the center of the home pane.
+        """
+
         self.centerpane.setCurrentWidget(self.plots_all)
 
     def show_alarmsbar(self):
+        """
+        Shows the alarm settings controls in the bottom of the alarm
+        settings pane.
+        """
+
         self.bottombar.setCurrentWidget(self.alarmsbar)
 
     def freeze_plots(self):
+        """
+        Open the frozen plots pane.
+        """
+
         self.data_filler.freeze()
         self.rightbar.setCurrentWidget(self.frozen_right)
         self.bottombar.setCurrentWidget(self.frozen_bot)
 
     def unfreeze_plots(self):
+        """
+        Go back to the home pane from the frozen plots pane.
+        """
+
         self.data_filler.unfreeze()
         self.rightbar.setCurrentWidget(self.monitors_bar)
         self.show_specialbar()

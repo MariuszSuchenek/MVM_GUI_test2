@@ -1,9 +1,22 @@
 #!/usr/bin/env python3
+"""
+Module that implements the widget for monitored values, with alarm
+indication and snooze control.
+"""
+
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
 
 class Monitor(QtWidgets.QWidget):
+    #pylint: disable=too-many-instance-attributes
+    """
+    The Monitor class.
+
+    This class provides visual display of monitored data as well as a way
+    to display and snooze alarms.
+    """
+
     def __init__(self, name, config, *args):
         """
         Initialize the Monitor widget.
@@ -56,7 +69,7 @@ class Monitor(QtWidgets.QWidget):
         self.set_alarm_state(False)
         self.update_value(self.value)
         self.update_thresholds(None, None, None, None)
-        self.label_value.resizeEvent = lambda event: self.handle_resize(event)
+        self.label_value.resizeEvent = self.handle_resize
 
         # Get handles for display type
         self.display_opts = self.findChild(
@@ -76,11 +89,12 @@ class Monitor(QtWidgets.QWidget):
         self.config_mode = False
         self.unhighlight()
 
-        # Handle optional stats
-        # TODO: determine is stats are useful/necessary
-
     def setup_bar_disp_type(self):
-        (text, low, high) = self.disp_type.split(" ")
+        """
+        Set a bar display, e.g. the battery charge.
+        """
+
+        (_, low, high) = self.disp_type.split(" ")
         self.shown_widget = self.findChild(QtWidgets.QWidget, "progress_bar")
         self.shown_widget.setStyleSheet(
             "QProgressBar {"
@@ -97,7 +111,7 @@ class Monitor(QtWidgets.QWidget):
         self.progress_bar.setMinimum(int(low))
         self.progress_bar.setMaximum(int(high))
 
-    def name(self):
+    def get_name(self):
         '''
         Returns the configuration name
         for this monitor
@@ -129,6 +143,10 @@ class Monitor(QtWidgets.QWidget):
             self.label_max.show()
 
     def refresh(self):
+        """
+        Update the monitor visuals (text and color) on new data in.
+        """
+
         # Handle optional units
         if self.units is not None:
             self.label_name.setText(self.name + " " + str(self.units))
@@ -139,14 +157,23 @@ class Monitor(QtWidgets.QWidget):
         self.setAutoFillBackground(True)
 
     def handle_resize(self, event):
+        #pylint: disable=unused-argument
+        """
+        Resize event callback function
+        """
+
         # Handle font resize
         self.resize_font(self.label_value, minpx=10, maxpx=50, offset=23)
         self.resize_font(self.progress_bar, minpx=10, maxpx=16, offset=0)
 
     def resize_font(self, label, minpx=10, maxpx=50, offset=0):
-        f = label.font()
-        f.setPixelSize(max(min(self.height() - offset, maxpx), minpx))
-        label.setFont(f)
+        """
+        Compute and update correct font size for the monitor size.
+        """
+
+        font = label.font()
+        font.setPixelSize(max(min(self.height() - offset, maxpx), minpx))
+        label.setFont(font)
 
     def set_alarm_state(self, isalarm):
         '''
@@ -166,12 +193,27 @@ class Monitor(QtWidgets.QWidget):
         self.setPalette(palette)
 
     def highlight(self):
+        """
+        Add a green contour on monitor.
+        """
+
         self.frame.setStyleSheet("#frame { border: 5px solid limegreen; }")
 
     def unhighlight(self):
+        """
+        Remove the green contour on monitor.
+        """
+
         self.frame.setStyleSheet("#frame { border: 0.5px solid white; }")
 
     def update_value(self, value):
+        """
+        Update the displayed value
+
+        arguments:
+        - value: the numeric value to be set.
+        """
+
         if self.step is not None:
             self.value = round(value / self.step) * self.step
         else:
