@@ -164,12 +164,12 @@ class SpecialBar(QtWidgets.QWidget):
                 raise Exception('Call to set_data failed.')
         except Exception as error:
             msg = MessageBox()
-            fn = msg.critical("Critical",
-                              "Severe hardware communication error",
-                              str(error),
-                              "Communication error",
-                              {msg.Ok: lambda: self.stop_timer(mode)})
-            fn()
+            confirm_func = msg.critical("Critical",
+                                        "Severe hardware communication error",
+                                        str(error),
+                                        "Communication error",
+                                        {msg.Ok: lambda: self.stop_timer(mode)})
+            confirm_func()
 
     def stop_timer(self, mode):
         """
