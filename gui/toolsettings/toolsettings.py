@@ -1,24 +1,53 @@
 #!/usr/bin/env python3
+"""
+A "tool settings" widget shows the current value of a setting, plus a slider representing
+how that value relates to the minimum/maximum allowed values of the parameter.
+
+This widget does not allow the value to be changed - it is just informational.
+"""
+
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
 
-
 class ToolSettings(QtWidgets.QWidget):
+    """
+    Class members:
+    - labels: QLabels for various elements
+        - name: For the parameter name
+        - value: For the current value
+        - min: For the minimum allowed value
+        - max: For the maximum allowed value
+        - units: For the units of the parameter
+    - slider_value: QProgressBar for the current value
+    - show_fraction: bool for whether to show the value as 1:X rather than X
+    - min: Minimum allowed value
+    - max: Maximum allowed value
+    - step: Minimum increment of value
+    - _config: Loaded YAML settings
+    """
     def __init__(self, *args):
         """
-        Initialized the ToolSettings widget.
+        Initializes the ToolSettings widget.
 
         Grabs child widgets and and connects slider value to text value.
         """
         super(ToolSettings, self).__init__(*args)
         uic.loadUi("toolsettings/toolsettings.ui", self)
-        self.label_name = self.findChild(QtWidgets.QLabel, "label_name")
-        self.label_value = self.findChild(QtWidgets.QLabel, "label_value")
-        self.slider_value = self.findChild(
-            QtWidgets.QProgressBar, "slider_value")
-        self.label_min = self.findChild(QtWidgets.QLabel, "label_min")
-        self.label_max = self.findChild(QtWidgets.QLabel, "label_max")
-        self.label_units = self.findChild(QtWidgets.QLabel, "label_units")
+
+        self.labels = {}
+        self.labels["name"] = self.findChild(QtWidgets.QLabel, "label_name")
+        self.labels["value"] = self.findChild(QtWidgets.QLabel, "label_value")
+        self.labels["min"] = self.findChild(QtWidgets.QLabel, "label_min")
+        self.labels["max"] = self.findChild(QtWidgets.QLabel, "label_max")
+        self.labels["units"] = self.findChild(QtWidgets.QLabel, "label_units")
+
+        self.slider_value = self.findChild(QtWidgets.QProgressBar, "slider_value")
+
+        self.show_fraction = False
+        self.min = 0
+        self.max = 0
+        self.step = 0
+        self._config = None
 
         # Set background color
         palette = self.palette()
@@ -32,34 +61,39 @@ class ToolSettings(QtWidgets.QWidget):
         Sets up main values for the ToolSettings widget, including the name and the values for the
         range as (minimum, initial, maximum).
 
-        name: The name to be displayed.
-        setrange: Tuple (min, current, max) specifying the allowed min/max values and current value.
-        units: String value for the units to be displayed.
-        step: sets the granularity of a single step of the parameter
-        show_fraction: If true, will display fractional values instead of decimal
+        Arguments:
+        - name: The name to be displayed.
+        - setrange: Tuple (min, current, max) for the allowed min/max values and current value.
+        - units: String value for the units to be displayed.
+        - step: sets the granularity of a single step of the parameter
+        - show_fraction: If True, will display fractional values instead of decimal
         """
-        self.label_name.setText(name)
+        self.labels["name"].setText(name)
 
         # unpack and assign slider min, current, and max
         (low, val, high) = setrange
         self.update_range(valuerange=(low, high), step=step)
-        self.label_min.setText(str(low))
-        self.label_max.setText(str(high))
-        self.value = val
+        self.labels["min"].setText(str(low))
+        self.labels["max"].setText(str(high))
 
-        self.dec_precision = dec_precision
-        self.current = current
         self.show_fraction = show_fraction
 
         # Handle optional units
         if units is not None:
-            self.label_units.setText(str(units))
+            self.labels["units"].setText(str(units))
         else:
-            self.label_units.setText("")
+            self.labels["units"].setText("")
 
         self.update(val)
 
     def load_presets(self, name="default"):
+        """
+        Configure this widget by loading values from the configuration file.
+
+        Arguments:
+        - name: The attribute to look for in the YAML file. If the attribute is not
+            found, default values will be loaded instead (no warning/exception).
+        """
         toolsettings_default = {
             "name": "Param",
             "default": 50,
@@ -80,33 +114,36 @@ class ToolSettings(QtWidgets.QWidget):
             units=entry.get("units", toolsettings_default["units"]),
             step=entry.get("step", toolsettings_default["step"]),
             current=entry.get("current", toolsettings_default["current"]),
-            dec_precision=entry.get(
-                "dec_precision", toolsettings_default["dec_precision"]),
+            dec_precision=entry.get("dec_precision", toolsettings_default["dec_precision"]),
             show_fraction=entry.get("show_fraction", toolsettings_default["show_fraction"]))
 
     def connect_config(self, config):
+        """
+        Tell this class about the current configuration.
+
+        Arguments:
+        - config: Loaded YAML settings.
+        """
         self._config = config
 
     def update_range(self, valuerange=(0, 1), step=0.1):
         """
         Updates the range of the progress bar widget.
 
-        valuerange: (min, max) for the parameter
-        step: sets the granularity of a single step of the parameter
+        Arguments:
+        - valuerange: (min, max) for the parameter
+        - step: sets the granularity of a single step of the parameter
         """
         self.min = valuerange[0]
         self.max = valuerange[1]
         self.step = step
 
-        num_steps = 100 * (self.max - self.min) / self.step
-        self.slider_scale = num_steps / (self.max - self.min)
-
         # set the max for exactly the number of steps we need
         self.slider_value.setMinimum(0)
-        self.slider_value.setMaximum(num_steps)
+        self.slider_value.setMaximum((self.max - self.min) / self.step)
 
-        self.label_min.setText(str(valuerange[0]))
-        self.label_max.setText(str(valuerange[1]))
+        self.labels["min"].setText(str(valuerange[0]))
+        self.labels["max"].setText(str(valuerange[1]))
 
     def update(self, value):
         """
@@ -123,7 +160,6 @@ class ToolSettings(QtWidgets.QWidget):
             # Display decimal/integer
             disp_value = "%g" % (round(value / self.step) * self.step)
 
-        slider_value = int(self.slider_scale * (value - self.min))
+        slider_value = int((value - self.min) / self.step)
         self.slider_value.setValue(slider_value)
-        self.label_value.setText(disp_value)
-        self.value = value
+        self.labels["value"].setText(disp_value)

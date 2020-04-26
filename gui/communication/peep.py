@@ -1,103 +1,165 @@
+"""
+Simulates a patient breath.
+
+The pressure cycle looks like:
+
+     /|
+    / L_____
+   /       |
+__/        L____
+
+1 2  3  4  5 6
+
+1: Hold at baseline
+2: Linear increase from baseline to max
+3: Exponential decay to plateau
+4: Hold at plateau
+5: Exponential decay to baseline
+6: Hold at baseline until start of next cycle
+"""
 import time
-import numpy as np
 import os
+import numpy as np
 import yaml
 
-"""
-a class to simulate the patient breath
-"""
-
-
 class peep:
+    """
+    Settings are loaded from gui/communication/simulation.yaml.
+
+    Class members:
+    - phase_start: When each phase of the cycle starts, in seconds
+    - peeps: Pressures in mbar
+    - flows: Flow rates in lpm
+    - decay_time_factor: Exponential decay tau, as a fraction of the linear rise time
+    - resolution: Random fluctuation of returned values, as a fraction of (max-plateau).
+        Same factor used for pressure and flow.
+    - next_start_jitter: Random fluctuation for time between end of one cycle and start
+        of next.
+    - t_cycle_start: UNIX time of the start of the current cycle
+    """
     def __init__(self):
         base_dir = os.path.dirname(__file__)
         settings_file = os.path.join(base_dir, 'simulation.yaml')
-        with open(settings_file) as f:
-            config = yaml.load(f, Loader=yaml.FullLoader)
+
+        with open(settings_file) as file:
+            config = yaml.load(file, Loader=yaml.FullLoader)
+
         print('Simulator Config:', yaml.dump(config), sep='\n')
-        self.t1 = float(config['t1'])
-        self.t2 = self.t1 + float(config['t2'])
-        self.t3 = self.t2 + float(config['t3'])
-        self.t4 = self.t3 + float(config['t4'])
-        self.t5 = self.t4 + float(config['t5'])
-        self.p0 = float(config['p0'])
-        self.p1 = float(config['p1']) - self.p0
-        self.p2 = float(config['p2']) - self.p0
-        self.f1 = float(config['f1'])
-        self.f2 = float(config['f2'])
-        self.f3 = float(config['f3'])
-        self.f4 = float(config['f4'])
-        self.decaytime = float(config['decay_time'])
+
+        self.phase_start = {}
+        self.phase_start["lin_inc"] = float(config['t1'])
+        self.phase_start["first_decay"] = self.phase_start["lin_inc"] + float(config['t2'])
+        self.phase_start["plateau"] = self.phase_start["first_decay"] + float(config['t3'])
+        self.phase_start["second_decay"] = self.phase_start["plateau"] + float(config['t4'])
+        self.phase_start["restart"] = self.phase_start["second_decay"] + float(config['t5'])
+
+        self.peeps = {}
+        self.peeps["baseline"] = float(config['p0'])
+        self.peeps["plateau"] = float(config['p1']) - self.peeps["baseline"]
+        self.peeps["max"] = float(config['p2']) - self.peeps["baseline"]
+
+        self.flows = {}
+        self.flows["max"] = float(config['f1'])
+        self.flows["plateau"] = float(config['f2'])
+        self.flows["min"] = float(config['f3'])
+        self.flows["baseline"] = float(config['f4'])
+
+        self.decay_time_factor = float(config['decay_time'])
         self.resolution = float(config['resolution'])
-        self.t0 = time.time()
-        self.btiming_fluctuations = float(config['btiming_fluctuations'])
-        print('PEEP timing   : {} {} {} {} {}'.format(self.t1, self.t2, self.t3,
-                                                      self.t4, self.t5))
-        print('PEEP pressures: {} {}'.format(self.p1, self.p2))
-        print('PEEP flow     : {} {} {} {}'.format(
-            self.f1, self.f2, self.f3, self.f4))
+        self.next_start_jitter = float(config['btiming_fluctuations'])
+
+        self.t_cycle_start = time.time()
+
+        print('PEEP timing   : {} {} {} {} {}'.format(self.phase_start["lin_inc"],
+                                                      self.phase_start["first_decay"],
+                                                      self.phase_start["plateau"],
+                                                      self.phase_start["second_decay"],
+                                                      self.phase_start["restart"]))
+        print('PEEP pressures: {} {}'.format(self.peeps["plateau"], self.peeps["max"]))
+        print('PEEP flow     : {} {} {} {}'.format(self.flows["max"],
+                                                   self.flows["plateau"],
+                                                   self.flows["min"],
+                                                   self.flows["baseline"]))
 
     def pressure(self):
         """
-        returns the inspirarion pressure in mbar
-        see the configuration file simulation.yaml for details
+        Get the current inspirarion pressure.
+
+        Returns: pressure in mbar.
         """
-        t = time.time() - self.t0
-        p = self.p0
-        if t > self.t1 and t < self.t2:
+        t_now = time.time() - self.t_cycle_start
+        pressure = self.peeps["baseline"]
+
+        if self.phase_start["lin_inc"] < t_now < self.phase_start["first_decay"]:
             # pressure linear increase
-            a = self.p2 / (self.t2 - self.t1)
-            b = -a * self.t1
-            p += a * t + b
-        elif t >= self.t2 and t < self.t3:
+            rise_time = self.phase_start["first_decay"] - self.phase_start["lin_inc"]
+            rate = self.peeps["max"] / rise_time
+            offset = -rate * self.phase_start["lin_inc"]
+            pressure += rate * t_now + offset
+        elif self.phase_start["first_decay"] <= t_now < self.phase_start["plateau"]:
             # pressure reached its maximum and starts decreasing
             # exponentially
-            tau = (self.t3 - self.t2) * self.decaytime
-            c = self.p1
-            A = self.p2 - self.p1
-            p += c + A * np.exp(-(t - self.t2) / tau)
-        elif t >= self.t3 and t < self.t4:
+            fall_time = self.phase_start["plateau"] - self.phase_start["first_decay"]
+            tau = fall_time * self.decay_time_factor
+            amplitude = self.peeps["max"] - self.peeps["plateau"]
+            pressure += self.peeps["plateau"]
+            pressure += amplitude * np.exp(-(t_now - self.phase_start["first_decay"]) / tau)
+        elif self.phase_start["plateau"] <= t_now < self.phase_start["second_decay"]:
             # pressure stay stable for a while
-            p += self.p1
-        elif t >= self.t4 and t < self.t5:
+            pressure += self.peeps["plateau"]
+        elif self.phase_start["second_decay"] <= t_now < self.phase_start["restart"]:
             # pressure drops exponentially
-            tau = (self.t3 - self.t2) * self.decaytime
-            A = self.p1
-            p += A * np.exp(-(t - self.t4) / tau)
-        elif t > self.t5:
+            fall_time = self.phase_start["plateau"] - self.phase_start["first_decay"]
+            tau = fall_time * self.decay_time_factor
+            amplitude = self.peeps["plateau"]
+            pressure += amplitude * np.exp(-(t_now - self.phase_start["second_decay"]) / tau)
+        elif t_now > self.phase_start["restart"]:
             # restart the cycle
             self.restart()
+
         # add some random fluctuations
-        p += np.random.normal(scale=(self.p2 - self.p1) * self.resolution)
-        return p
+        scale = (self.peeps["max"] - self.peeps["plateau"]) * self.resolution
+        pressure += np.random.normal(scale=scale)
+
+        return pressure
 
     def flow(self):
         """
-        returns the flow in lpm
+        Get the current flow.
+
+        Returns: flow in lpm.
         """
-        t = time.time() - self.t0
-        f = self.f3
-        if t > self.t1 and t < self.t2:
+        t_now = time.time() - self.t_cycle_start
+        flow = self.flows["min"]
+
+        if self.phase_start["lin_inc"] < t_now < self.phase_start["first_decay"]:
             # flow decays exponentially after a fast grow
             # reaching an intermediate level
-            tau = (self.t2 - self.t1) * self.decaytime
-            A = self.f1
-            c = self.f2
-            f = A - c * (1 - np.exp(-(t - self.t1) / tau))
-        elif t >= self.t2 and t < self.t4:
+            fall_time = self.phase_start["first_decay"] - self.phase_start["lin_inc"]
+            tau = fall_time * self.decay_time_factor
+            amplitude = self.flows["max"]
+            const = self.flows["plateau"]
+            flow = amplitude - const * (1 - np.exp(-(t_now - self.phase_start["lin_inc"]) / tau))
+        elif self.phase_start["first_decay"] <= t_now < self.phase_start["second_decay"]:
             # flow drops to low values, then increase
             # exponentially to zero
-            tau = (self.t2 - self.t1) * self.decaytime
-            A = self.f3
-            c = self.f4
-            f = A - c * np.exp(-(t - self.t2) / tau)
-        elif t > self.t5:
+            fall_time = self.phase_start["first_decay"] - self.phase_start["lin_inc"]
+            tau = fall_time * self.decay_time_factor
+            amplitude = self.flows["min"]
+            const = self.flows["baseline"]
+            flow = amplitude - const * np.exp(-(t_now - self.phase_start["first_decay"]) / tau)
+        elif t_now > self.phase_start["restart"]:
             # restart cycle
             self.restart()
+
         # add some random fluctuation
-        f += np.random.normal(scale=(self.f1 - self.f2) * self.resolution)
-        return f
+        scale = (self.flows["max"] - self.flows["plateau"]) * self.resolution
+        flow += np.random.normal(scale=scale)
+        return flow
 
     def restart(self):
+        """
+        Calculate the start time of the next cycle.
+        """
         # the cycle restarts after a fixed +- random time
-        self.t0 = time.time() + np.random.normal(scale=self.btiming_fluctuations)
+        self.t_cycle_start = time.time() + np.random.normal(scale=self.next_start_jitter)
