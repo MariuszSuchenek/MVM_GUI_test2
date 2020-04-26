@@ -10,6 +10,9 @@ from messagebox import MessageBox
 
 
 class SpecialBar(QtWidgets.QWidget):
+    """
+    A widget class for handling Special Operations.
+    """
     def __init__(self, *args):
         """
         Initialize the SpecialBar container widget.
@@ -39,7 +42,7 @@ class SpecialBar(QtWidgets.QWidget):
         arguments:
         - data_h: A reference to the data handler.
         - config: A dictionary of configuration parameters from default_settings.yaml
-        - esp32: A reference to the esp32 
+        - esp32: A reference to the esp32
         - messagebar: Reference to the MessageBar used for confirmation.
         """
         self._data_h = data_h
@@ -106,17 +109,6 @@ class SpecialBar(QtWidgets.QWidget):
                 "Do you wanted to start the Lung Recruitment procedure?",
                 func_confirm=self.start_lung_recruit,
                 color="#00FF00")
-            """
-            msg = MessageBox()
-            fn = msg.question("Please confirm",
-                              "Do you want to start the Lung Recruitment procedure?",
-                              None,
-                              "Confirmation required",
-                              {msg.Yes: lambda: True, msg.No: lambda: False})
-            answer = fn()
-            if not answer:
-                return
-            """
 
     def paused_pressed(self, mode):
         """
@@ -184,7 +176,7 @@ class SpecialBar(QtWidgets.QWidget):
         Stops the QTimer which sends
         signals to the ESP
 
-        arguments: 
+        arguments:
         - mode: The pause mode (either 'pause_exhale' or 'pause_inhale')
         """
         if hasattr(self, '_timer'):
