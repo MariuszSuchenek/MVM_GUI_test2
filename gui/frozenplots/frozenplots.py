@@ -10,7 +10,7 @@ from PyQt5 import QtCore
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 
 
-class Cursor(object):
+class Cursor():
     """
     Handles the cursor lines and cursor labels
     """
