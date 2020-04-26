@@ -150,6 +150,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
 
     def showEvent(self, event):
+        # pylint: disable=C0103
         """
         An override of the the Qt showEvent() slot.
 
@@ -160,6 +161,7 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.signal_shown.emit()
 
     def hideEvent(self, event):
+        # pylint: disable=C0103
         """
         An override of the the Qt hideEvent() slot.
 
