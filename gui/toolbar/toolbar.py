@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
+'''
+Module containing the Toolbar class
+which shows the current status of the
+ventilator
+'''
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui, QtCore
 
-from menu.menu import Menu
-
-
 class Toolbar(QtWidgets.QWidget):
+    '''
+    Shows the current status of the ventilator
+    '''
     def __init__(self, *args):
         """
         Initialize the Toolbar container widget.
@@ -28,16 +33,25 @@ class Toolbar(QtWidgets.QWidget):
         self.set_stopped("PCV")
 
     def set_stopped(self, mode_text=""):
+        '''
+        Sets the status to Stopped
+        '''
         self.label_status.setText("Status: Stopped\n" + mode_text)
         self.label_status.setStyleSheet(
             "QLabel { background-color : red; color: yellow;}")
 
     def set_running(self, mode_text=""):
+        '''
+        Sets the status to Running
+        '''
         self.label_status.setText("Status: Running\n" + mode_text)
         self.label_status.setStyleSheet(
             "QLabel { background-color : green;  color: yellow;}")
 
     def blink_unlock(self):
+        '''
+        Sets blinking
+        '''
         button = self.button_unlockscreen
         if button.blinkstate:
             color = "#aaaaaa"
