@@ -12,7 +12,19 @@ from . import ESP32Alarm, ESP32Warning
 
 
 class FakeMonitored(QtWidgets.QWidget):
-    def __init__(self, name, generator, value=0, random=True):
+    """
+    A class widget for generating fake monitored MVM data.
+    """
+    def __init__(self, name, generator, value=0, is_random=True):
+        """
+        A constructor for the class.
+
+        arguments:
+        - name: The displayed text.
+        - generator: The function for generating fake data.
+        - value: The initiazlized Spin Box value.
+        - is_random: Boolean to indicate using randomized data.
+        """
         super(FakeMonitored, self).__init__()
         uic.loadUi('communication/input_monitor_widget.ui', self)
 
@@ -24,7 +36,7 @@ class FakeMonitored(QtWidgets.QWidget):
         self.value_ib.setValue(value)
 
         self.random_cb = self.findChild(QtWidgets.QCheckBox, "random_checkbox")
-        self.random_cb.setChecked(random)
+        self.random_cb.setChecked(is_random)
         self.random_cb.toggled.connect(self._random_checkbox_fn)
         self._random_checkbox_fn()
 
@@ -32,13 +44,22 @@ class FakeMonitored(QtWidgets.QWidget):
         self.value_ib.setEnabled(not self.random_cb.isChecked())
 
     def generate(self):
+        """
+        Generate Fake data
+
+        returns: An array of fake generated data
+        """
         if self.random_cb.isChecked():
             return self.generator()
-        else:
-            return self.value_ib.value()
+        return self.value_ib.value()
 
 
 class FakeESP32Serial(QtWidgets.QMainWindow):
+    # pylint: disable=too-many-instance-attributes
+    # These are appropriate instances for initialization of dictionaries
+    """
+    A widget class to emulate ESP32 functionality when not connected to hardware.
+    """
     peep = peep()
 
     def __init__(self, config):
@@ -79,6 +100,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.event_log.setReadOnly(True)
         self.show()
 
+    # pylint: disable=too-many-branches
+    # The number of branches is appropriate given the different types of generators.
     def _arrange_fields(self):
         max_colums = 3  # you eventually need to edit the
         # input_monitor_widget.ui file to put more
@@ -93,29 +116,29 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
             elif name == "flow":
                 generator = self.peep.flow
             elif name == "battery_charge":
-                def generator(): return int(random.uniform(0, 100))
+                generator = lambda: int(random.uniform(0, 100))
             elif name == "tidal":
-                def generator(): return random.uniform(1000, 1500)
+                generator = lambda: random.uniform(1000, 1500)
             elif name == "peep":
-                def generator(): return random.uniform(4, 20)
+                generator = lambda: random.uniform(4, 20)
             elif name == "temperature":
-                def generator(): return random.uniform(10, 50)
+                generator = lambda: random.uniform(10, 50)
             elif name == "battery_powered":
-                def generator(): return int(random.uniform(0, 1.5))
+                generator = lambda: int(random.uniform(0, 1.5))
             elif name == "bpm":
-                def generator(): return random.uniform(10, 100)
+                generator = lambda: random.uniform(10, 100)
             elif name == "o2":
-                def generator(): return random.uniform(10, 100)
+                generator = lambda: random.uniform(10, 100)
             elif name == "peak":
-                def generator(): return random.uniform(10, 100)
+                generator = lambda: random.uniform(10, 100)
             elif name == "total_inspired_volume":
-                def generator(): return random.uniform(10, 100)
+                generator = lambda: random.uniform(10, 100)
             elif name == "total_expired_volume":
-                def generator(): return random.uniform(10, 100)
+                generator = lambda: random.uniform(10, 100)
             elif name == "volume_minute":
-                def generator(): return random.uniform(10, 100)
+                generator = lambda: random.uniform(10, 100)
             else:
-                def generator(): return random.uniform(10, 100)
+                generator = lambda: random.uniform(10, 100)
 
             fake_mon = FakeMonitored(name, generator)
             self.observables[name] = fake_mon
@@ -142,9 +165,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.set("warning", number)
 
     def _connect_alarm_and_warning_widgets(self):
-        def get_checkbox(wname, alarm_code):
-            return (1 << alarm_code, self.findChild(
-                QtWidgets.QCheckBox, wname))
+        get_checkbox = lambda wname, alarm_code: (
+            1 << alarm_code, self.findChild(QtWidgets.QCheckBox, wname))
 
         # for simplicity here the bit number is used. It will be converted
         # few lines below.
@@ -205,9 +227,15 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.set('backup', int(self.status_backup.isChecked()))
 
     def log(self, message):
+        """
+        Logs a given message.
+
+        arguments:
+        -message: The message to be logged
+        """
         self.event_log.appendPlainText(message)
-        c = self.event_log.textCursor()
-        c.movePosition(QTextCursor.End)
+        cursor = self.event_log.textCursor()
+        cursor.movePosition(QTextCursor.End)
 
     def set(self, name, value):
         """
