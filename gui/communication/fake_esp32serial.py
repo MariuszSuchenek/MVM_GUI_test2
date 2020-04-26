@@ -100,6 +100,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.event_log.setReadOnly(True)
         self.show()
 
+    # pylint: disable=too-many-branches
+    # The number of branches is appropriate given the different types of generators.
     def _arrange_fields(self):
         max_colums = 3  # you eventually need to edit the
         # input_monitor_widget.ui file to put more
@@ -163,9 +165,8 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.set("warning", number)
 
     def _connect_alarm_and_warning_widgets(self):
-        def get_checkbox(wname, alarm_code):
-            return (1 << alarm_code, self.findChild(
-                QtWidgets.QCheckBox, wname))
+        get_checkbox = lambda wname, alarm_code: (
+            1 << alarm_code, self.findChild(QtWidgets.QCheckBox, wname))
 
         # for simplicity here the bit number is used. It will be converted
         # few lines below.
@@ -226,9 +227,15 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
         self.set('backup', int(self.status_backup.isChecked()))
 
     def log(self, message):
+        """
+        Logs a given message.
+
+        arguments:
+        -message: The message to be logged
+        """
         self.event_log.appendPlainText(message)
-        c = self.event_log.textCursor()
-        c.movePosition(QTextCursor.End)
+        cursor = self.event_log.textCursor()
+        cursor.movePosition(QTextCursor.End)
 
     def set(self, name, value):
         """
