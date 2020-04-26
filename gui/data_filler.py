@@ -237,7 +237,6 @@ class DataFiller():
         # Find the position of the label
         br = self._x_label.boundingRect()
         p = QtCore.QPointF(0, 0)
-        axis = plot.getAxis('bottom')
         x = plot.size().width() / 2. - br.width() / 2.
         y = plot.size().height() - br.height()
         p.setX(0)  # Leave it on the left, so it doesn't cover labels.
@@ -367,7 +366,7 @@ class DataFiller():
         autoRange() used to set X range, then
         custom values used for Y range.
         '''
-        for name, plot in self._qtgraphs.items():
+        for name in self._qtgraphs:
             self.set_default_x_range(name)
             self.restore_y_range(name)
 

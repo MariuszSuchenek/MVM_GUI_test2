@@ -211,7 +211,6 @@ class AlarmHandler:
         #
         if esp32alarm:
             errors = esp32alarm.strerror_all()
-            errors_full = esp32alarm.strerror_all(append_err_no=True)
 
             alarm_codes = esp32alarm.get_alarm_codes()
 
@@ -227,7 +226,6 @@ class AlarmHandler:
         #
         if esp32warning:
             errors = esp32warning.strerror_all()
-            errors_full = esp32warning.strerror_all(append_err_no=True)
 
             warning_codes = esp32warning.get_alarm_codes()
 
