@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
+"""
+Data management and dispatching back and forth the ESP32
+"""
+
 import sys
 from PyQt5.QtCore import QTimer
 from messagebox import MessageBox
-
+from communication import ESP32Exception
 
 class DataHandler():
     '''
@@ -49,18 +53,18 @@ class DataHandler():
             current_values = self._esp32.get_all()
 
             # Converting from str to float
-            for p, v in current_values.items():
-                current_values[p] = float(v)
+            for name, value in current_values.items():
+                current_values[name] = float(value)
 
             current_values = self._convert_values(current_values)
 
             self._gui_alarm.set_data(current_values)
 
             # finally, send values to the DataFiller
-            for p, v in current_values.items():
-                self._data_f.add_data_point(p, v)
+            for name, value in current_values.items():
+                self._data_f.add_data_point(name, value)
 
-        except Exception as error:
+        except ESP32Exception as error:
             self.open_comm_error(str(error))
 
     def _convert_values(self, values):
@@ -82,12 +86,11 @@ class DataHandler():
         callbacks = {msg.Retry: self._restart_timer,
                      msg.Abort: lambda: sys.exit(-1)}
 
-        fn = msg.critical("COMMUNICATION ERROR",
-                          "CANNOT COMMUNICATE WITH THE HARDWARE",
-                          "Check cable connections then click retry.\n" + error,
-                          "COMMUNICATION ERROR",
-                          callbacks)
-        fn()
+        msg.critical("COMMUNICATION ERROR",
+                     "CANNOT COMMUNICATE WITH THE HARDWARE",
+                     "Check cable connections then click retry.\n" + error,
+                     "COMMUNICATION ERROR",
+                     callbacks)()
 
     def _start_timer(self):
         '''
