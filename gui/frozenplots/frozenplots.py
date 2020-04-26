@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+This module handles all frozen-plot related functionality and widgets in the MVM-GUI.
+This includes freezing, unfreezing, scaling, and translating plots as well as a cursor.
+"""
 import numpy as np
 
 from PyQt5 import QtWidgets, uic
@@ -11,6 +15,8 @@ class Cursor(object):
     Handles the cursor lines and cursor labels
     """
 
+    # pylint: disable=too-many-instance-attributes
+    # Eight is reasonable since this sets up the memory space for interal attributes.
     def __init__(self, plots):
         """
         Constructor
@@ -21,7 +27,6 @@ class Cursor(object):
         """
 
         self.plots = plots
-
         self.cursor_x = [None] * 3
         self.cursor_y = [None] * 3
         self.cursor_label = [None] * 3
@@ -96,17 +101,17 @@ class Cursor(object):
         for num, plot in enumerate(self.plots):
             view_box = plot.getViewBox()
             if plot.sceneBoundingRect().contains(pos):
-                mousePoint = view_box.mapSceneToView(pos)
+                mouse_point = view_box.mapSceneToView(pos)
 
                 # Get the x and y data from the plot
                 data_x = self.plot_data_items[num].xData
                 data_y = self.plot_data_items[num].yData
 
                 # Find the x index closest to where the mouse if pointing
-                index = (np.abs(data_x - mousePoint.x())).argmin()
+                index = (np.abs(data_x - mouse_point.x())).argmin()
 
                 if index > 0 and index < len(data_y):
-                    self._x[num] = mousePoint.x()
+                    self._x[num] = mouse_point.x()
                     self._y[num] = data_y[index]
 
                     # Set the cursor x and y positions
