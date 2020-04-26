@@ -7,6 +7,7 @@ from messagebox import MessageBox
 
 
 class StartStopWorker():
+    #pylint: disable=too-many-instance-attributes
     '''
     A class entirely dedicated to start and stop
     the ventilator, and also to set the ventilator
@@ -20,12 +21,26 @@ class StartStopWorker():
     DONOT_RUN = 0
 
     def __init__(self, main_window, config, esp32, button_startstop,
-                 button_autoassist, toolbar, settings):
+                 button_mode, toolbar, settings):
+        #pylint: disable=too-many-arguments
+        '''
+        Constructor
+
+        Arguments:
+        - main_window: the main window
+        - config: the config dictionary
+        - esp32: the instance of the ESP32Serial class
+        - button_startstop: The start/stop button
+        - button_mode: The PCV/PSV button
+        - toolbar: The toolbar
+        - settings: The settings
+        '''
+
         self._main_window = main_window
         self._config = config
         self._esp32 = esp32
         self._button_startstop = button_startstop
-        self._button_autoassist = button_autoassist
+        self._button_mode = button_mode
         self._toolbar = toolbar
         self._settings = settings
         self._messagebar = self._main_window.messagebar
@@ -163,7 +178,7 @@ class StartStopWorker():
 
             if result:
                 self._mode_text = "PSV"
-                self._button_autoassist.setText("Set\nPCV")
+                self._button_mode.setText("Set\nPCV")
                 self.update_startstop_text()
                 self._mode = self.MODE_PSV
             else:
@@ -174,7 +189,7 @@ class StartStopWorker():
 
             if result:
                 self._mode_text = "PCV"
-                self._button_autoassist.setText("Set\nPSV")
+                self._button_mode.setText("Set\nPSV")
                 self.update_startstop_text()
                 self._mode = self.MODE_PCV
             else:
@@ -209,9 +224,9 @@ class StartStopWorker():
         Shows the stop button
         '''
         self._button_startstop.setDisabled(True)
-        self._button_autoassist.setDisabled(True)
+        self._button_mode.setDisabled(True)
         self._button_startstop.repaint()
-        self._button_autoassist.repaint()
+        self._button_mode.repaint()
         self.update_startstop_text()
 
         self._settings.disable_special_ops_tab()
@@ -240,13 +255,13 @@ class StartStopWorker():
         Shows the start button
         '''
         self._button_startstop.setEnabled(True)
-        self._button_autoassist.setEnabled(True)
+        self._button_mode.setEnabled(True)
 
         self.update_startstop_text()
         self._button_startstop.setStyleSheet("color: black")
 
         self._button_startstop.repaint()
-        self._button_autoassist.repaint()
+        self._button_mode.repaint()
 
         self._toolbar.set_stopped(self._mode_text)
         self._settings.enable_special_ops_tab()
@@ -256,7 +271,7 @@ class StartStopWorker():
         Opens a window which asks for confirmation
         when the Start button is pressed.
         '''
-        self._button_autoassist.setDown(False)
+        self._button_mode.setDown(False)
         current_mode = self._mode_text.upper()
         self._messagebar.get_confirmation(
             "**STARTING %s MODE**" % current_mode,
@@ -268,7 +283,7 @@ class StartStopWorker():
         Opens a window which asks for confirmation
         when the Stop button is pressed.
         '''
-        self._button_autoassist.setDown(False)
+        self._button_mode.setDown(False)
         current_mode = self._mode_text.upper()
         self._messagebar.get_confirmation(
             "**STOPPING %s MODE**" % current_mode,
