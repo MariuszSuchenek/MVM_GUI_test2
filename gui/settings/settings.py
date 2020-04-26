@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-from PyQt5 import QtWidgets, uic
-from PyQt5 import QtCore, QtGui, QtWidgets
-import os
 import sys
-import yaml
 import copy
-from .settingsfile import SettingsFile
+from PyQt5 import QtWidgets, uic
 from presets.presets import Presets
 from messagebox import MessageBox
+from .settingsfile import SettingsFile
 
 
 class Settings(QtWidgets.QMainWindow):

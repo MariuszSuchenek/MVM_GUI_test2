@@ -1,8 +1,8 @@
-from PyQt5 import QtGui, QtCore
-import numpy as np
-import pyqtgraph as pg
-from ast import literal_eval  # to convert a string to list
 from copy import copy
+from ast import literal_eval  # to convert a string to list
+import numpy as np
+from PyQt5 import QtGui, QtCore
+import pyqtgraph as pg
 
 
 class DataFiller():

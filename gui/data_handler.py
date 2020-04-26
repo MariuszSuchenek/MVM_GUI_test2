@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys
-import datetime
 from PyQt5.QtCore import QTimer
 from messagebox import MessageBox
 
@@ -59,8 +58,6 @@ class DataHandler():
 
             # finally, send values to the DataFiller
             for p, v in current_values.items():
-
-                # print('Got data at time', datetime.datetime.now(), '=>', parameter, data)
                 self._data_f.add_data_point(p, v)
 
         except Exception as error:

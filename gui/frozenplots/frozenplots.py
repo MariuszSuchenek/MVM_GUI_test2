@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtCore
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 import numpy as np
 

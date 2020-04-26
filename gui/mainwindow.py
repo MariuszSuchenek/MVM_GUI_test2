@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 from PyQt5 import QtWidgets, uic
-from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 from maindisplay.maindisplay import MainDisplay
 from settings.settings import Settings
@@ -26,8 +24,6 @@ from frozenplots.frozenplots import Cursor
 from messagebar.messagebar import MessageBar
 
 import pyqtgraph as pg
-import sys
-import time
 
 
 class MainWindow(QtWidgets.QMainWindow):
