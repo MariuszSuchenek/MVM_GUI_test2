@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
+import numpy as np
+
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
-import numpy as np
 
 
 class Cursor:
@@ -119,6 +120,10 @@ class Cursor:
 
 
 class FrozenPlotsBottomMenu(QtWidgets.QWidget):
+    """
+    A widget for handling bottom menu functions when plots are frozen.
+    Includes X-axis tied zooming between plots, a reset zoom, and the unfreeze function.
+    """
     signal_hided = QtCore.pyqtSignal()
     signal_shown = QtCore.pyqtSignal()
 
@@ -136,10 +141,16 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.xzoom = self.findChild(QtWidgets.QWidget, "xzoom")
 
     def showEvent(self, event):
+        """
+        An override of the the Qt showEvent() slot.
+        """
         super(FrozenPlotsBottomMenu, self).showEvent(event)
         self.signal_shown.emit()
 
     def hideEvent(self, event):
+        """
+        An override of the the Qt hideEvent() slot.
+        """
         super(FrozenPlotsBottomMenu, self).hideEvent(event)
         self.signal_hided.emit()
 
@@ -159,12 +170,20 @@ class FrozenPlotsBottomMenu(QtWidgets.QWidget):
         self.signal_shown.connect(lambda: self.toggle_cursor(True))
 
     def toggle_cursor(self, on=True):
+        """
+        Toggles the cursor on or off.
+
+        on: If true, turns the cursor on. Otherwise, turns it off
+        """
         if on:
             self._cursor.show_cursors()
         else:
             self._cursor.hide_cursors()
 
     def disconnect_workers(self):
+        """
+        Disconnects signals from slots.
+        """
         try:
             self.button_reset_zoom.pressed.disconnect()
         except Exception:
@@ -198,12 +217,19 @@ class FrozenPlotsRightMenu(QtWidgets.QWidget):
         self._cursor = cursor
 
     def disconnect_workers(self):
+        """
+        Disconnects signals from slots.
+        """
         self.yzoom_top.disconnect_workers()
         self.yzoom_mid.disconnect_workers()
         self.yzoom_bot.disconnect_workers()
 
 
 class YZoom(QtWidgets.QWidget):
+    """
+    A widget class for handling Y axis zoom on plots.
+    Includes scaling and translating per plot.
+    """
     def __init__(self, *args):
         """
         Initialize the YZoom widget.
@@ -222,6 +248,9 @@ class YZoom(QtWidgets.QWidget):
         self.translate_factor = 0.1
 
     def disconnect_workers(self):
+        """
+        Disconnects signals from slots.
+        """
         try:
             self.button_plus.pressed.disconnect()
         except Exception:
@@ -240,6 +269,12 @@ class YZoom(QtWidgets.QWidget):
             pass
 
     def connect_workers(self, plot, cursor):
+        """
+        Connects plot and cursor to the Y zoom class.
+
+        plot: The plot to be zoomed.
+        cursor: The cursor to be used in freeze mode.
+        """
         self.button_plus.pressed.connect(lambda: self.zoom_in(plot))
         self.button_minus.pressed.connect(lambda: self.zoom_out(plot))
         self.button_up.pressed.connect(lambda: self.shift_up(plot))
@@ -248,22 +283,47 @@ class YZoom(QtWidgets.QWidget):
         self._cursor = cursor
 
     def zoom_in(self, plot):
+        """
+        Y zooms in.
+
+        plot: The plot that is being zoomed-in in Y.
+        """
         plot.getViewBox().scaleBy(y=1 / self.zoom_factor)
         self._cursor.draw_label()
 
     def zoom_out(self, plot):
+        """
+        Y zooms out.
+
+        plot: The plot that is being zoomed-out in Y.
+        """
         plot.getViewBox().scaleBy(y=self.zoom_factor)
         self._cursor.draw_label()
 
     def compute_translation(self, plot):
-        [[xmin, xmax], [ymin, ymax]] = plot.viewRange()
+        """
+        Determine the translation step in Y based on the current range.
+
+        plot: The plot to be translated.
+        """
+        [[_xmin, _xmax], [ymin, ymax]] = plot.viewRange()
         return (ymax - ymin) * self.translate_factor
 
     def shift_up(self, plot):
+        """
+        Translate the plot up.
+
+        plot: The plot to be translated.
+        """
         plot.getViewBox().translateBy(y=self.compute_translation(plot))
         self._cursor.draw_label()
 
     def shift_down(self, plot):
+        """
+        Translate the plot down.
+
+        plot: The plot to be translated.
+        """
         plot.getViewBox().translateBy(y=-self.compute_translation(plot))
         self._cursor.draw_label()
 
@@ -321,7 +381,7 @@ class XZoom(QtWidgets.QWidget):
         self._cursor.draw_label()
 
     def compute_translation(self, plot):
-        [[xmin, xmax], [ymin, ymax]] = plot.viewRange()
+        [[xmin, xmax], [_ymin, _ymax]] = plot.viewRange()
         return (xmax - xmin) * self.translate_factor
 
     def shift_left(self, plot):
