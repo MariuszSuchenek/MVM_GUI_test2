@@ -107,7 +107,7 @@ class DataFiller():
         plot.setLabel(axis='left', text=y_axis_label)
 
         # Set the X axis
-        if self._config['show_x_axis_labels'] and 'bot' in plot_config['name'] and not self._looping:
+        if self._config['show_x_axis_labels'] and 'bot' in plotname and not self._looping:
             self.add_x_axis_label(plot)
 
         # Remove x ticks, if selected
@@ -258,6 +258,7 @@ class DataFiller():
 
     def add_x_axis_label(self, plot):
         #pylint: disable=invalid-name
+        #pylint: disable=c-extension-no-member
         '''
         Adds the x axis label 'Time [s]' in the form
         of a QGraphicsTextItem. This is done because it
