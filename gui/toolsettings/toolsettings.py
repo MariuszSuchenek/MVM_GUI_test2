@@ -55,7 +55,7 @@ class ToolSettings(QtWidgets.QWidget):
         palette.setColor(role, QtGui.QColor("#eeeeee"))
         self.setPalette(palette)
 
-    def setup(self, name, setrange=(0, 0, 100), units=None, step=0.1, dec_precision=0, current=None,
+    def setup(self, name, setrange=(0, 0, 100), units=None, step=0.1,
               show_fraction=False):
         """
         Sets up main values for the ToolSettings widget, including the name and the values for the
@@ -102,7 +102,6 @@ class ToolSettings(QtWidgets.QWidget):
             "current": None,
             "units": "-",
             "step": 1,
-            "dec_precision": 0,
             "show_fraction": False}
         entry = self._config.get(name, toolsettings_default)
         self.setup(
@@ -113,8 +112,6 @@ class ToolSettings(QtWidgets.QWidget):
                 entry.get("max", toolsettings_default["max"])),
             units=entry.get("units", toolsettings_default["units"]),
             step=entry.get("step", toolsettings_default["step"]),
-            current=entry.get("current", toolsettings_default["current"]),
-            dec_precision=entry.get("dec_precision", toolsettings_default["dec_precision"]),
             show_fraction=entry.get("show_fraction", toolsettings_default["show_fraction"]))
 
     def connect_config(self, config):
