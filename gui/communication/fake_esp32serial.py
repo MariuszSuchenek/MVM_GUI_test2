@@ -7,7 +7,7 @@ import random
 import time
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QTextCursor
-from communication.peep import peep
+from communication.peep import PEEP
 from . import ESP32Alarm, ESP32Warning
 
 
@@ -60,7 +60,7 @@ class FakeESP32Serial(QtWidgets.QMainWindow):
     """
     A widget class to emulate ESP32 functionality when not connected to hardware.
     """
-    peep = peep()
+    peep = PEEP()
 
     def __init__(self, config):
         super(FakeESP32Serial, self).__init__()

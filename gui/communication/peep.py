@@ -22,7 +22,7 @@ import os
 import numpy as np
 import yaml
 
-class peep:
+class PEEP:
     """
     Settings are loaded from gui/communication/simulation.yaml.
 
