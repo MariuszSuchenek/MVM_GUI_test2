@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
+"""
+Bottom message bar that asks for user confirmation.
+"""
+
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore
 
 
 class MessageBar(QtWidgets.QWidget):
+    #pylint: disable=too-many-instance-attributes
+    """
+    The MessageBar widget.
+    """
+
     def __init__(self, parent, *args):
         """
         Initialize the MessageBar widget.
@@ -33,9 +42,11 @@ class MessageBar(QtWidgets.QWidget):
         self.func_cancel = None
         self.button_confirm.pressed.connect(self.confirmed)
         self.button_cancel.pressed.connect(self.cancelled)
+        self.prev_menu = None
 
     def get_confirmation(self, title, message,
                          func_confirm=None, func_cancel=None, color="red"):
+        #pylint: disable=too-many-arguments
         """
         Shows the confirmation in the bottom bar.
 
@@ -101,4 +112,8 @@ class MessageBar(QtWidgets.QWidget):
         self.func_confirm = None
 
     def return_menu(self):
+        """
+        Go back to the previously shown menu, hiding the MessageMenu.
+        """
+
         self.bottombar.setCurrentWidget(self.prev_menu)
