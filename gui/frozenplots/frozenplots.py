@@ -329,6 +329,10 @@ class YZoom(QtWidgets.QWidget):
 
 
 class XZoom(QtWidgets.QWidget):
+    """
+    A widget class for handling X axis zoom on plots.
+    Includes scaling and translating per plot.
+    """
     def __init__(self, *args):
         """
         Initialize the XZoom widget.
@@ -347,6 +351,12 @@ class XZoom(QtWidgets.QWidget):
         self.translate_factor = 0.1
 
     def connect_workers(self, plot, cursor):
+        """
+        Connects plot and cursor to the X zoom class.
+
+        plot: The plot to be zoomed.
+        cursor: The cursor to be used in freeze mode.
+        """
         self.button_plus.pressed.connect(lambda: self.zoom_in(plot))
         self.button_minus.pressed.connect(lambda: self.zoom_out(plot))
         self.button_left.pressed.connect(lambda: self.shift_left(plot))
@@ -355,6 +365,9 @@ class XZoom(QtWidgets.QWidget):
         self._cursor = cursor
 
     def disconnect_workers(self):
+        """
+        Disconnects signals from slots.
+        """
         try:
             self.button_plus.pressed.disconnect()
         except Exception:
@@ -373,21 +386,46 @@ class XZoom(QtWidgets.QWidget):
             pass
 
     def zoom_in(self, plot):
+        """
+        X zooms in.
+
+        plot: The plot that is being zoomed-in in X.
+        """
         plot.getViewBox().scaleBy(x=1 / self.zoom_factor)
         self._cursor.draw_label()
 
     def zoom_out(self, plot):
+        """
+        X zooms in.
+
+        plot: The plot that is being zoomed-in in X.
+        """
         plot.getViewBox().scaleBy(x=self.zoom_factor)
         self._cursor.draw_label()
 
     def compute_translation(self, plot):
+        """
+        Determine the translation step in X based on the current range.
+
+        plot: The plot to be translated.
+        """
         [[xmin, xmax], [_ymin, _ymax]] = plot.viewRange()
         return (xmax - xmin) * self.translate_factor
 
     def shift_left(self, plot):
+        """
+        Translate the plot left.
+
+        plot: The plot to be translated.
+        """
         plot.getViewBox().translateBy(x=-self.compute_translation(plot))
         self._cursor.draw_label()
 
     def shift_right(self, plot):
+        """
+        Translate the plot right.
+
+        plot: The plot to be translated.
+        """
         plot.getViewBox().translateBy(x=self.compute_translation(plot))
         self._cursor.draw_label()
