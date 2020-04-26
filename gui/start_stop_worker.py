@@ -4,9 +4,11 @@ A file from class StartStopWorker
 import sys
 from PyQt5.QtCore import QTimer
 from messagebox import MessageBox
+from communication.esp32serial import ESP32Exception
 
 
 class StartStopWorker():
+    #pylint: disable=too-many-instance-attributes
     '''
     A class entirely dedicated to start and stop
     the ventilator, and also to set the ventilator
@@ -20,12 +22,26 @@ class StartStopWorker():
     DONOT_RUN = 0
 
     def __init__(self, main_window, config, esp32, button_startstop,
-                 button_autoassist, toolbar, settings):
+                 button_mode, toolbar, settings):
+        #pylint: disable=too-many-arguments
+        '''
+        Constructor
+
+        Arguments:
+        - main_window: the main window
+        - config: the config dictionary
+        - esp32: the instance of the ESP32Serial class
+        - button_startstop: The start/stop button
+        - button_mode: The PCV/PSV button
+        - toolbar: The toolbar
+        - settings: The settings
+        '''
+
         self._main_window = main_window
         self._config = config
         self._esp32 = esp32
         self._button_startstop = button_startstop
-        self._button_autoassist = button_autoassist
+        self._button_mode = button_mode
         self._toolbar = toolbar
         self._settings = settings
         self._messagebar = self._main_window.messagebar
@@ -81,7 +97,7 @@ class StartStopWorker():
 
         try:
             self._call_esp32()
-        except Exception as error:
+        except ESP32Exception as error:
             self._raise_comm_error(str(error))
 
     def _call_esp32(self):
@@ -132,6 +148,9 @@ class StartStopWorker():
     def _raise_comm_error(self, message):
         """
         Opens an error window with 'message'.
+
+        arguments:
+        - message: the message to show in the error window
         """
 
         # TODO: find a good exit point
@@ -139,7 +158,7 @@ class StartStopWorker():
         msg.critical('COMMUNICATION ERROR',
                      'Error communicating with the hardware', message,
                      '** COMMUNICATION ERROR **', {msg.Ok: lambda:
-                                                   sys.exit(-1)})()
+                                                           sys.exit(-1)})()
 
     def is_running(self):
         """
@@ -163,7 +182,7 @@ class StartStopWorker():
 
             if result:
                 self._mode_text = "PSV"
-                self._button_autoassist.setText("Set\nPCV")
+                self._button_mode.setText("Set\nPCV")
                 self.update_startstop_text()
                 self._mode = self.MODE_PSV
             else:
@@ -174,7 +193,7 @@ class StartStopWorker():
 
             if result:
                 self._mode_text = "PCV"
-                self._button_autoassist.setText("Set\nPSV")
+                self._button_mode.setText("Set\nPSV")
                 self.update_startstop_text()
                 self._mode = self.MODE_PCV
             else:
@@ -209,18 +228,18 @@ class StartStopWorker():
         Shows the stop button
         '''
         self._button_startstop.setDisabled(True)
-        self._button_autoassist.setDisabled(True)
+        self._button_mode.setDisabled(True)
         self._button_startstop.repaint()
-        self._button_autoassist.repaint()
+        self._button_mode.repaint()
         self.update_startstop_text()
 
         self._settings.disable_special_ops_tab()
 
         QTimer.singleShot(self.button_timeout(), lambda: (
-                          self.update_startstop_text(),
-                          self._button_startstop.setEnabled(True),
-                          self._button_startstop.setStyleSheet("color: red"),
-                          self._toolbar.set_running(self._mode_text)))
+            self.update_startstop_text(),
+            self._button_startstop.setEnabled(True),
+            self._button_startstop.setStyleSheet("color: red"),
+            self._toolbar.set_running(self._mode_text)))
 
     def stop_button_pressed(self):
         '''
@@ -240,13 +259,13 @@ class StartStopWorker():
         Shows the start button
         '''
         self._button_startstop.setEnabled(True)
-        self._button_autoassist.setEnabled(True)
+        self._button_mode.setEnabled(True)
 
         self.update_startstop_text()
         self._button_startstop.setStyleSheet("color: black")
 
         self._button_startstop.repaint()
-        self._button_autoassist.repaint()
+        self._button_mode.repaint()
 
         self._toolbar.set_stopped(self._mode_text)
         self._settings.enable_special_ops_tab()
@@ -256,7 +275,7 @@ class StartStopWorker():
         Opens a window which asks for confirmation
         when the Start button is pressed.
         '''
-        self._button_autoassist.setDown(False)
+        self._button_mode.setDown(False)
         current_mode = self._mode_text.upper()
         self._messagebar.get_confirmation(
             "**STARTING %s MODE**" % current_mode,
@@ -268,7 +287,7 @@ class StartStopWorker():
         Opens a window which asks for confirmation
         when the Stop button is pressed.
         '''
-        self._button_autoassist.setDown(False)
+        self._button_mode.setDown(False)
         current_mode = self._mode_text.upper()
         self._messagebar.get_confirmation(
             "**STOPPING %s MODE**" % current_mode,
@@ -304,6 +323,9 @@ class StartStopWorker():
         Sets the run variable directly.
         Usually called at start up, when reading
         the run value from the ESP.
+
+        arguments:
+        - run: the run value (0 or 1) to set
         '''
         if self._run == run:
             return
@@ -351,6 +373,9 @@ class StartStopWorker():
         Sets the mode variable directly.
         Usually called at start up, when reading
         the mode value from the ESP.
+
+        arguments:
+        - mode: the mode value (0 or 1) to set
         '''
         if self._mode != mode:
             self.toggle_mode()

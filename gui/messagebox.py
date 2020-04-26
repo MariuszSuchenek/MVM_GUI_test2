@@ -1,3 +1,7 @@
+'''
+Module containg the MessageBox which
+handles pop up messages
+'''
 from functools import reduce
 from PyQt5.QtWidgets import QMessageBox
 
@@ -20,17 +24,9 @@ class MessageBox(QMessageBox):
     ```
     '''
 
-    def __init__(self):
-        """
-        Constructor
-
-        Create a new MessageBox instance.
-        """
-
-        super(MessageBox, self).__init__()
-
     def _wrapper(self, text, long_text, detail_text, title,
                  icon, callbacks, do_not_block=False):
+        #pylint: disable=too-many-arguments
         """
         Wrapper function to implement the message box
 
@@ -95,11 +91,12 @@ class MessageBox(QMessageBox):
             for btn, callback in callbacks.items():
                 self.button(btn).clicked.connect(callback)
             return True
-        else:
-            return callbacks[self.exec()]
+
+        return callbacks[self.exec()]
 
     def question(self, text, long_text, detail_text,
                  title, callbacks, do_not_block=False):
+        #pylint: disable=too-many-arguments
         """
         Display a question message window
 
@@ -126,6 +123,7 @@ class MessageBox(QMessageBox):
 
     def critical(self, text, long_text, detail_text,
                  title, callbacks, do_not_block=False):
+        #pylint: disable=too-many-arguments
         """
         Display a critical error window
 
@@ -154,6 +152,7 @@ class MessageBox(QMessageBox):
 
     def warning(self, text, long_text, detail_text,
                 title, callbacks, do_not_block=False):
+        #pylint: disable=too-many-arguments
         """
         Display a warning message window
 

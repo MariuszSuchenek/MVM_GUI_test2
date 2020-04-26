@@ -6,7 +6,7 @@ For the documentation. open a python and type:
 >>> help(esp32serial.ESP32Serial)
 """
 
-#import the library
+# import the library
 import esp32serial
 
 # create a connection
@@ -21,4 +21,3 @@ result = esp32.set("intparameter", 3)
 # this is just an example on what to expect and a possible reaction
 if result != 'OK':
     raise Exception("setting intparameter failed")
-

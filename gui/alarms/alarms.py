@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+'''
+Module containing the Alarms class
+which mnages the alarm thresholds
+'''
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtCore
 
@@ -33,26 +37,45 @@ class AlarmScrollBar(QtWidgets.QScrollBar):
 
 
 def clickable(widget):
+    #pylint: disable=invalid-name
     """
     Creates a click event filter for widgets that are not normally clickable.
     The 'connect' function can be used to now attach a function to the click event.
+
+    arguments:
+    - widget: the widget to be made clickable
     """
     class Filter(QtCore.QObject):
+        '''
+        An extension of QObject that adds a 'clicked'
+        pyqysignal.
+        '''
         clicked = QtCore.pyqtSignal()
 
         def eventFilter(self, obj, event):
+            '''
+            Reimplementation of QObject eventFilter.
+
+            arguments:
+            - obj: the object
+            - event: the event
+            '''
             if obj == widget:
                 if event.type() == QtCore.QEvent.MouseButtonRelease:
                     if obj.rect().contains(event.pos()):
                         self.clicked.emit()
                         return True
             return False
-    filter = Filter(widget)
-    widget.installEventFilter(filter)
-    return filter.clicked
+    clickable_filter = Filter(widget)
+    widget.installEventFilter(clickable_filter)
+    return clickable_filter.clicked
 
 
 class Alarms(QtWidgets.QWidget):
+    #pylint: disable=too-many-instance-attributes
+    '''
+    Allows to set the min and max alarms thresholds
+    '''
     STORED_PER_COL = 7
 
     def __init__(self, *args):
@@ -88,11 +111,18 @@ class Alarms(QtWidgets.QWidget):
 
         self.enabled = True
 
+        self.mainparent = None
+        self.monitors = None
+        self.monitors_slots = None
+        self.displayed_monitors = None
+        self.selected = None
+
     def connect_monitors(self, mainparent):
         """
         Grabs monitors and their corresponding display slots from the main window.
 
-        mainparent: Reference to the main window.
+        arguments:
+        - mainparent: Reference to the main window.
         """
         self.mainparent = mainparent
         self.monitors = mainparent.monitors
@@ -104,13 +134,20 @@ class Alarms(QtWidgets.QWidget):
             clickable(monitor).connect(lambda n=name: self.select_monitor(n))
 
     def set_enabled_state(self, isenabled):
+        '''
+        Sets the state to enabled
+
+        arguments:
+        - isenabled: True is enabled, false otherwise.
+        '''
         self.enabled = isenabled
 
     def select_monitor(self, selected):
         """
         Selected a particular monitor widget by config name.
 
-        selected: config name
+        arguments:
+        - selected: config name
         """
         if not self.enabled:
             return
@@ -129,18 +166,24 @@ class Alarms(QtWidgets.QWidget):
                 monitor.unhighlight()
 
     def set_slider_range(self, slider, monitor):
+        #pylint: disable=no-self-use
         """
         Sets the range for a slider given the current monitor being used.
         Range is set to the coarseness of the monitor.step.
 
-        slider: Reference to the slider to be set.
-        monitor: Reference to the monitor to set slider range.
+        arguments:
+        - slider: Reference to the slider to be set.
+        - monitor: Reference to the monitor to set slider range.
         """
         alarm = monitor.gui_alarm
         if alarm.has_valid_minmax(monitor.configname):
             slider.setMinimum(0)
-            slider.setMaximum((alarm.get_max(monitor.configname) -
-                               alarm.get_min(monitor.configname)) / monitor.step)
+            slider.setMaximum(
+                (alarm.get_max(
+                    monitor.configname) -
+                 alarm.get_min(
+                     monitor.configname)) /
+                monitor.step)
             slider.setSingleStep(monitor.step)
             slider.setPageStep(slider.maximum() / 2)
             slider.setEnabled(True)
@@ -154,8 +197,9 @@ class Alarms(QtWidgets.QWidget):
         """
         A slot for when the minimum alarm slider moves.
 
-        slidervalue: The physical value on the slider.
-        monitor: Reference to the monitor to set the slider value.
+        arguments:
+        - slidervalue: The physical value on the slider.
+        - monitor: Reference to the monitor to set the slider value.
         """
         # Prevent min > max
         alarm = monitor.gui_alarm
@@ -172,8 +216,9 @@ class Alarms(QtWidgets.QWidget):
         """
         A slot for when the maximum alarm slider moves.
 
-        slidervalue: The physical value on the slider.
-        monitor: Reference to the monitor to set the slider value.
+        arguments:
+        - slidervalue: The physical value on the slider.
+        - monitor: Reference to the monitor to set the slider value.
         """
         # Prevent max < min
         alarm = monitor.gui_alarm
@@ -190,7 +235,8 @@ class Alarms(QtWidgets.QWidget):
         """
         Display settins for a given named monitor.
 
-        name: The config name of the monitor.
+        arguments:
+        - name: The config name of the monitor.
         """
         monitor = self.monitors[name]
         alarm = monitor.gui_alarm
@@ -200,8 +246,8 @@ class Alarms(QtWidgets.QWidget):
             "QLabel { color: " + monitor.color + "; background-color: black}")
 
         self.set_slider_range(self.slider_alarmmin, monitor)
-        self.slider_alarmmin.valueChanged.connect(lambda value:
-                                                  self.do_alarmmin_moved(value, monitor))
+        self.slider_alarmmin.valueChanged.connect(
+            lambda value: self.do_alarmmin_moved(value, monitor))
 
         if alarm.has_valid_minmax(name):
             sliderpos = int(
@@ -216,8 +262,8 @@ class Alarms(QtWidgets.QWidget):
             self.alarmmin_max.setText("-")
 
         self.set_slider_range(self.slider_alarmmax, monitor)
-        self.slider_alarmmax.valueChanged.connect(lambda value:
-                                                  self.do_alarmmax_moved(value, monitor))
+        self.slider_alarmmax.valueChanged.connect(
+            lambda value: self.do_alarmmax_moved(value, monitor))
         if alarm.has_valid_minmax(name):
             sliderpos = int(
                 (alarm.get_setmax(name) - alarm.get_min(name)) / monitor.step)
@@ -238,10 +284,18 @@ class Alarms(QtWidgets.QWidget):
         monitor = self.monitors[self.selected]
         alarm = monitor.gui_alarm
         if alarm.has_valid_minmax(monitor.configname):
-            alarm.update_min(monitor.configname,
-                             self.slider_alarmmin.sliderPosition() * monitor.step + alarm.get_min(monitor.configname))
-            alarm.update_max(monitor.configname,
-                             self.slider_alarmmax.sliderPosition() * monitor.step + alarm.get_min(monitor.configname))
+            alarm.update_min(
+                monitor.configname,
+                self.slider_alarmmin.sliderPosition() *
+                monitor.step +
+                alarm.get_min(
+                    monitor.configname))
+            alarm.update_max(
+                monitor.configname,
+                self.slider_alarmmax.sliderPosition() *
+                monitor.step +
+                alarm.get_min(
+                    monitor.configname))
             # monitor.update_thresholds()
 
     def reset_selected(self):
@@ -255,7 +309,8 @@ class Alarms(QtWidgets.QWidget):
         """
         Moves the selected monitor to the index location on the monitor bar
 
-        index: location on the monitor bar
+        arguments:
+        - index: location on the monitor bar
             If None, monitor is removed from the bar
             If >= len(displayed_monitors), adds to end
         """
@@ -314,7 +369,7 @@ class Alarms(QtWidgets.QWidget):
         """
         Removes all monitors from monitor bar and alarms page.
         """
-        for name, monitor in self.monitors.items():
+        for name in self.monitors:
             if name in self.displayed_monitors:
                 self.monitors_slots.removeWidget(self.monitors[name])
             else:
@@ -331,8 +386,9 @@ class Alarms(QtWidgets.QWidget):
         for name, monitor in self.monitors.items():
             if name not in self.displayed_monitors:
                 # Monitor not displayed, so goes on Alarms page
-                self.layout.addWidget(monitor, int(
-                    hidd % self.STORED_PER_COL), 10 - int(hidd / self.STORED_PER_COL))
+                self.layout.addWidget(monitor,
+                                      int(hidd % self.STORED_PER_COL),
+                                      10 - int(hidd / self.STORED_PER_COL))
                 hidd += 1
 
         for (disp, name) in enumerate(self.displayed_monitors):

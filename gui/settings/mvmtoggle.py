@@ -15,6 +15,9 @@ class MVMToggle(QtWidgets.QPushButton):
     def __init__(self, parent=None):
         """
         Constructor
+
+        arguments:
+        - parent: the parent widget
         """
 
         super().__init__(parent)
@@ -23,8 +26,13 @@ class MVMToggle(QtWidgets.QPushButton):
         self.setMinimumHeight(22)
 
     def paintEvent(self, event):
+        #pylint: disable=invalid-name
+        #pylint: disable=unused-argument
         """
         Reimplement the QPushButton.paintEvent function
+
+        arguments:
+        - event: the event
         """
 
         label = "ON" if self.isChecked() else "OFF"
@@ -56,8 +64,12 @@ class MVMToggle(QtWidgets.QPushButton):
         painter.drawText(sw_rect, Qt.AlignCenter, label)
 
     def setValue(self, value):
+        #pylint: disable=invalid-name
         '''
         Just calls setChecked().
+
+        arguments:
+        - value: (bool) the value to set
         '''
         return self.setChecked(value)
 

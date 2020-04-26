@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
+'''
+Module containing the NumPad class
+'''
 from PyQt5 import QtWidgets
 
 
 class NumPad():
+    '''
+    Class defining a numeric pad
+    '''
     def __init__(self, mainparent):
+        #pylint: disable=cell-var-from-loop
+        # See pylint issue 3107
         """
         Creates the numpad menu.
 
-        mainparent: Reference to the main window.
+        arguments:
+        - mainparent: Reference to the main window.
         """
         self.mainparent = mainparent
         self.button_back = self.mainparent.findChild(
@@ -30,8 +39,9 @@ class NumPad():
         Assigns a code to the NumPad. When the correct cdoe is entered, the given function will be
         executed.
 
-        code: String code of digits.
-        func: Function to be executed when correct code is input.
+        arguments:
+        - code: String code of digits.
+        - func: Function to be executed when correct code is input.
         """
         # self.code = [int(int(d)/2)*2 for d in str(code) if d.isdigit()]
         self.code = [int(d) for d in str(code) if d.isdigit()]
@@ -44,7 +54,8 @@ class NumPad():
         Input values are stored in a circular buffer so only the latest N digits (N = len(code))
         need to be correct for the code to be valid.
 
-        num: Number to be added to the input values
+        arguments:
+        - num: Number to be added to the input values
         """
         self.input_values[:-1] = self.input_values[1:]
         self.input_values[-1] = num
