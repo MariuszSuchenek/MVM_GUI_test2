@@ -23,6 +23,8 @@ class MVMToggle(QtWidgets.QPushButton):
         self.setMinimumHeight(22)
 
     def paintEvent(self, event):
+        #pylint: disable=invalid-name
+        #pylint: disable=unused-argument
         """
         Reimplement the QPushButton.paintEvent function
         """
@@ -56,6 +58,7 @@ class MVMToggle(QtWidgets.QPushButton):
         painter.drawText(sw_rect, Qt.AlignCenter, label)
 
     def setValue(self, value):
+        #pylint: disable=invalid-name
         '''
         Just calls setChecked().
         '''
