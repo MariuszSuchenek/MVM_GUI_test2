@@ -35,6 +35,9 @@ class Toolbar(QtWidgets.QWidget):
     def set_stopped(self, mode_text=""):
         '''
         Sets the status to Stopped
+
+        arguments:
+        - mode_text: (str) the current mode (PCV/PSV)
         '''
         self.label_status.setText("Status: Stopped\n" + mode_text)
         self.label_status.setStyleSheet(
@@ -43,6 +46,9 @@ class Toolbar(QtWidgets.QWidget):
     def set_running(self, mode_text=""):
         '''
         Sets the status to Running
+
+        arguments:
+        - mode_text: (str) the current mode (PCV/PSV)
         '''
         self.label_status.setText("Status: Running\n" + mode_text)
         self.label_status.setStyleSheet(

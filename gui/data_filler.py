@@ -45,6 +45,12 @@ class DataFiller():
     '''
 
     def __init__(self, config):
+        '''
+        Constructor
+
+        arguments:
+        - config: the config dictionary
+        '''
         self._qtgraphs = {}
         self._plots = {}
         self._data = {}
@@ -71,6 +77,10 @@ class DataFiller():
         '''
         Connects a plot to this class by
         storing it in a dictionary
+
+        arguments:
+        - plotname: the name of the plot
+        - plot: the PlotItem from the ui file
         '''
         plot_config = self._config['plots'][plotname]
         name = plot_config['observable']
@@ -137,6 +147,9 @@ class DataFiller():
         '''
         Set the Y axis range of the plot to the defaults
         specified in the config file.
+
+        arguments:
+        - name: the plot name to set the y range
         '''
         if name not in self._qtgraphs:
             raise Exception('Cannot set y range for graph',
@@ -158,6 +171,9 @@ class DataFiller():
         '''
         Set the Y axis range of the plot to the max and min
         from the historic data set.
+
+        arguments:
+        - name: the plot name to set the y range
         '''
         if name not in self._historic_data or name not in self._qtgraphs:
             raise Exception('Cannot set y range for graph',
@@ -187,6 +203,9 @@ class DataFiller():
         Restores a previously set y range.
         If the y range was not previously set,
         this method calls set_y_range()
+
+        arguments:
+        - name: the plot name to restore the y range
         '''
         if self._yrange[name] is None:
             self.set_y_range(name)
@@ -199,6 +218,10 @@ class DataFiller():
         '''
         Updates the major and minor ticks
         in the graphs
+
+        arguments:
+        - name: the plot name to update tickes
+        - yrange: (optinal) the yrange to use (otherwise Pyqtgraph default)
         '''
 
         if name not in self._qtgraphs:
@@ -227,6 +250,9 @@ class DataFiller():
         '''
         Set the X axis range of the plot to the defaults
         specified in the config file.
+
+        arguments:
+        - name: the plot name to set the x range
         '''
         self._qtgraphs[name].setXRange(-self._time_window, 0)
 
@@ -236,6 +262,9 @@ class DataFiller():
         Adds the x axis label 'Time [s]' in the form
         of a QGraphicsTextItem. This is done because it
         is hard to customize the PyQtGraph label.
+
+        arguments:
+        - plot: the PlotDataItem to add the label
         '''
         self._x_label = QtGui.QGraphicsTextItem()
         self._x_label.setVisible(True)
@@ -257,6 +286,10 @@ class DataFiller():
         '''
         Add line corresponding to where the
         data is being updated when in "looping" mode.
+
+        arguments:
+        - name: the plot name to add the lines
+        - plot: the PlotItem to add the lines
         '''
 
         self._looping_lines[name] = pg.InfiniteLine(
@@ -275,6 +308,9 @@ class DataFiller():
         '''
         Connect a monitor to this class by
         storing it in a dictionary
+
+        arguments:
+        - monitor: the monitor to connect
         '''
         name = monitor.observable
         self._monitors[name] = monitor
@@ -293,6 +329,10 @@ class DataFiller():
         '''
         Adds a data point to the plot with
         name 'name'
+
+        arguments:
+        - name: the name of the plots (and monitor if available)
+        - data_point: (float) the data point to add
         '''
 
         # print('NORMAL: Received data for monitor', name)
@@ -327,6 +367,9 @@ class DataFiller():
     def update_plot(self, name):
         '''
         Send new data from self._data to the actual pyqtgraph plot.
+
+        arguments:
+        - name: the name of the plot to update
         '''
 
         if not self._frozen:
@@ -386,6 +429,9 @@ class DataFiller():
         '''
         Updates the values in a monitor,
         if a monitor exists with this name
+
+        arguments:
+        - name: the name of the monitor to update
         '''
 
         if name in self._monitors:
@@ -401,6 +447,9 @@ class DataFiller():
         Given a color string in format
         'rgb(X,Y,Z)', it returns a list
         (X,Y,Z)
+
+        arguments:
+        - rgb_string: (str) the rgb string 'rgb(X,Y,Z)'
         '''
 
         color = rgb_string.replace('rgb', '')

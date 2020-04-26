@@ -41,6 +41,10 @@ def clickable(widget):
     """
     Creates a click event filter for widgets that are not normally clickable.
     The 'connect' function can be used to now attach a function to the click event.
+
+    arguments:
+    - widget: the widget to be made clickable
+    '''
     """
     class Filter(QtCore.QObject):
         '''
@@ -53,6 +57,9 @@ def clickable(widget):
             '''
             Reimplementation of QObject eventFilter.
 
+            arguments:
+            - obj: the object
+            - event: the event
             '''
             if obj == widget:
                 if event.type() == QtCore.QEvent.MouseButtonRelease:
@@ -115,7 +122,8 @@ class Alarms(QtWidgets.QWidget):
         """
         Grabs monitors and their corresponding display slots from the main window.
 
-        mainparent: Reference to the main window.
+        arguments:
+        - mainparent: Reference to the main window.
         """
         self.mainparent = mainparent
         self.monitors = mainparent.monitors
@@ -129,6 +137,9 @@ class Alarms(QtWidgets.QWidget):
     def set_enabled_state(self, isenabled):
         '''
         Sets the state to enabled
+
+        arguments:
+        - isenabled: True is enabled, false otherwise.
         '''
         self.enabled = isenabled
 
@@ -136,7 +147,8 @@ class Alarms(QtWidgets.QWidget):
         """
         Selected a particular monitor widget by config name.
 
-        selected: config name
+        arguments:
+        - selected: config name
         """
         if not self.enabled:
             return
@@ -160,8 +172,9 @@ class Alarms(QtWidgets.QWidget):
         Sets the range for a slider given the current monitor being used.
         Range is set to the coarseness of the monitor.step.
 
-        slider: Reference to the slider to be set.
-        monitor: Reference to the monitor to set slider range.
+        arguments:
+        - slider: Reference to the slider to be set.
+        - monitor: Reference to the monitor to set slider range.
         """
         alarm = monitor.gui_alarm
         if alarm.has_valid_minmax(monitor.configname):
@@ -185,8 +198,9 @@ class Alarms(QtWidgets.QWidget):
         """
         A slot for when the minimum alarm slider moves.
 
-        slidervalue: The physical value on the slider.
-        monitor: Reference to the monitor to set the slider value.
+        arguments:
+        - slidervalue: The physical value on the slider.
+        - monitor: Reference to the monitor to set the slider value.
         """
         # Prevent min > max
         alarm = monitor.gui_alarm
@@ -203,8 +217,9 @@ class Alarms(QtWidgets.QWidget):
         """
         A slot for when the maximum alarm slider moves.
 
-        slidervalue: The physical value on the slider.
-        monitor: Reference to the monitor to set the slider value.
+        arguments:
+        - slidervalue: The physical value on the slider.
+        - monitor: Reference to the monitor to set the slider value.
         """
         # Prevent max < min
         alarm = monitor.gui_alarm
@@ -221,7 +236,8 @@ class Alarms(QtWidgets.QWidget):
         """
         Display settins for a given named monitor.
 
-        name: The config name of the monitor.
+        arguments:
+        - name: The config name of the monitor.
         """
         monitor = self.monitors[name]
         alarm = monitor.gui_alarm
@@ -294,7 +310,8 @@ class Alarms(QtWidgets.QWidget):
         """
         Moves the selected monitor to the index location on the monitor bar
 
-        index: location on the monitor bar
+        arguments:
+        - index: location on the monitor bar
             If None, monitor is removed from the bar
             If >= len(displayed_monitors), adds to end
         """

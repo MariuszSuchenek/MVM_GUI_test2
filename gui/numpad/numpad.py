@@ -15,7 +15,8 @@ class NumPad():
         """
         Creates the numpad menu.
 
-        mainparent: Reference to the main window.
+        arguments:
+        - mainparent: Reference to the main window.
         """
         self.mainparent = mainparent
         self.button_back = self.mainparent.findChild(
@@ -38,8 +39,9 @@ class NumPad():
         Assigns a code to the NumPad. When the correct cdoe is entered, the given function will be
         executed.
 
-        code: String code of digits.
-        func: Function to be executed when correct code is input.
+        arguments:
+        - code: String code of digits.
+        - func: Function to be executed when correct code is input.
         """
         # self.code = [int(int(d)/2)*2 for d in str(code) if d.isdigit()]
         self.code = [int(d) for d in str(code) if d.isdigit()]
@@ -52,7 +54,8 @@ class NumPad():
         Input values are stored in a circular buffer so only the latest N digits (N = len(code))
         need to be correct for the code to be valid.
 
-        num: Number to be added to the input values
+        arguments:
+        - num: Number to be added to the input values
         """
         self.input_values[:-1] = self.input_values[1:]
         self.input_values[-1] = num

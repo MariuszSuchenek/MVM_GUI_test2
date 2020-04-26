@@ -147,6 +147,9 @@ class StartStopWorker():
     def _raise_comm_error(self, message):
         """
         Opens an error window with 'message'.
+
+        arguments:
+        - message: the message to show in the error window
         """
 
         # TODO: find a good exit point
@@ -319,6 +322,9 @@ class StartStopWorker():
         Sets the run variable directly.
         Usually called at start up, when reading
         the run value from the ESP.
+
+        arguments:
+        - run: the run value (0 or 1) to set
         '''
         if self._run == run:
             return
@@ -366,6 +372,9 @@ class StartStopWorker():
         Sets the mode variable directly.
         Usually called at start up, when reading
         the mode value from the ESP.
+
+        arguments:
+        - mode: the mode value (0 or 1) to set
         '''
         if self._mode != mode:
             self.toggle_mode()
