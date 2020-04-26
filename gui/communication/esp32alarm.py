@@ -2,7 +2,7 @@
 This module handles ESP32 alarms.
 """
 
-class ESP32BaseAlarm(object):
+class ESP32BaseAlarm():
     '''
     The base ESP Alarm Class
     '''
