@@ -4,6 +4,7 @@ A file from class StartStopWorker
 import sys
 from PyQt5.QtCore import QTimer
 from messagebox import MessageBox
+from communication.esp32serial import ESP32Exception
 
 
 class StartStopWorker():
@@ -96,7 +97,7 @@ class StartStopWorker():
 
         try:
             self._call_esp32()
-        except Exception as error:
+        except ESP32Exception as error:
             self._raise_comm_error(str(error))
 
     def _call_esp32(self):
