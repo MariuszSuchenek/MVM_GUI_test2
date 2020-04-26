@@ -57,6 +57,7 @@ class ToolSettings(QtWidgets.QWidget):
 
     def setup(self, name, setrange=(0, 0, 100), units=None, step=0.1,
               show_fraction=False):
+        #pylint: disable=too-many-arguments
         """
         Sets up main values for the ToolSettings widget, including the name and the values for the
         range as (minimum, initial, maximum).
