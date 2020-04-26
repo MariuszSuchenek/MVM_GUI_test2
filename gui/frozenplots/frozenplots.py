@@ -6,7 +6,7 @@ from PyQt5 import QtCore
 from pyqtgraph import InfiniteLine, TextItem, SignalProxy, PlotDataItem
 
 
-class Cursor(QtWidgets.QWidget):
+class Cursor(object):
     """
     Handles the cursor lines and cursor labels
     """
