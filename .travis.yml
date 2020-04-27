@@ -11,10 +11,10 @@ install:
  - pip install -r requirements.txt
  
  - pip install bandit
+ - pip install mypy-lang
  - bandit-config-generator -o bandit.conf
  
-script:
- - bandit -r gui
- - bandit -r libcloud -f html -o libcloud.html
- 
+script: mypy gui/mvm_gui.py
+#script: bandit -r gui
+#script: bandit -r libcloud -f html -o libcloud.html
 #script: "python gui/mvm_gui.py fakeESP32"
