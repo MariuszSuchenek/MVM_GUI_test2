@@ -1,0 +1,20 @@
+language: python
+python:
+ - "3.5"
+cache: pip
+env:
+ - QT_QPA_PLATFORM=offscreen  #- QT_DEBUG_PLUGINS=1
+install: 
+ - pip install --upgrade pip
+ - sudo apt-get install -qq libegl1-mesa
+ - sudo apt-get install libxcb-render-util0 libxcb-image0 libxcb-keysyms1 libxcb-icccm4 libxkbcommon-x11-0
+ - pip install -r requirements.txt
+ 
+ - pip install bandit
+ - bandit-config-generator -o bandit.conf
+ 
+script:
+ - bandit -r gui
+ - bandit -r libcloud -f html -o libcloud.html
+ 
+#script: "python gui/mvm_gui.py fakeESP32"
